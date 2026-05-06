@@ -1,3 +1,14 @@
+import wheelhausImg from "@/assets/images/wheelhaus.png";
+import coffeeShopImg from "@/assets/images/coffee-shop.png";
+import restaurantImg from "@/assets/images/restaurant.png";
+import neighborhoodBarImg from "@/assets/images/neighborhood-bar.png";
+import sneakerShopImg from "@/assets/images/sneaker-shop.png";
+import nightlifeImg from "@/assets/images/nightlife.png";
+import beltlineImg from "@/assets/images/beltline.png";
+import heroHomeImg from "@/assets/images/hero-home.png";
+import midtownImg from "@/assets/images/midtown.png";
+import eventWatchPartyImg from "@/assets/images/event-watch-party.png";
+
 export const businesses = [
   {
     id: "wheelhaus-bikes",
@@ -8,7 +19,7 @@ export const businesses = [
     offer: "Rental specials and guided ride options available during World Cup season.",
     address: "Atlanta Beltline",
     hours: "Mon-Sun: 9am - 7pm",
-    image: "/src/assets/images/wheelhaus.png",
+    image: wheelhausImg,
     featured: true,
     sponsorTier: "Founding Sponsor",
     about: "Wheelhaus helps people move through Atlanta with style, ease, and local knowledge. From e-bike rentals to repairs and curated rides, Wheelhaus is built for visitors who want to experience the city beyond rideshares and traffic."
@@ -22,7 +33,7 @@ export const businesses = [
     offer: "Show your passport for a free espresso shot with any pastry purchase.",
     address: "1168 Howell Mill Rd, Atlanta, GA",
     hours: "Mon-Sun: 7am - 5pm",
-    image: "/src/assets/images/coffee-shop.png",
+    image: coffeeShopImg,
     featured: true,
     sponsorTier: "Featured Partner",
     about: "Brash is obsessed with serving the best coffee possible. We work closely with farmers across the world to ensure quality and sustainability."
@@ -36,7 +47,7 @@ export const businesses = [
     offer: "Priority seating and a complimentary oyster taster for Passport holders.",
     address: "303 E Howard Ave, Decatur, GA",
     hours: "Tue-Sun: 5pm - 11pm",
-    image: "/src/assets/images/restaurant.png",
+    image: restaurantImg,
     featured: true,
     sponsorTier: "Featured Partner",
     about: "Located in a historic train depot, Kimball House celebrates the changing of the seasons and the purveyors who make our menus possible."
@@ -50,7 +61,7 @@ export const businesses = [
     offer: "10% off your first round of signature cocktails.",
     address: "299 North Highland Avenue Northeast, Atlanta, GA",
     hours: "Wed-Sun: 6pm - 2am",
-    image: "/src/assets/images/neighborhood-bar.png",
+    image: neighborhoodBarImg,
     featured: true,
     sponsorTier: "Starter Listing",
     about: "A casual neighborhood spot with exceptional cocktails, no pretense, and a great soundtrack."
@@ -64,7 +75,7 @@ export const businesses = [
     offer: "Exclusive access to World Cup commemorative drops.",
     address: "447 Moreland Ave NE, Atlanta, GA",
     hours: "Mon-Sat: 12pm - 7pm",
-    image: "/src/assets/images/sneaker-shop.png",
+    image: sneakerShopImg,
     featured: true,
     sponsorTier: "Starter Listing",
     about: "Wish is Atlanta's premier destination for cutting edge streetwear and sneakers."
@@ -78,7 +89,7 @@ export const businesses = [
     offer: "Skip the line access with Passport during select hours.",
     address: "789 Ponce De Leon Ave NE, Atlanta, GA",
     hours: "Mon-Sat: 1pm - 3am",
-    image: "/src/assets/images/nightlife.png",
+    image: nightlifeImg,
     featured: true,
     sponsorTier: "Premier Sponsor",
     about: "An Atlanta institution. If you haven't been to the Clermont, you haven't been to Atlanta."
