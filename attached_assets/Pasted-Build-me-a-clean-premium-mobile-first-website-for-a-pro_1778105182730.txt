@@ -1,0 +1,405 @@
+Build me a clean, premium, mobile-first website for a project called “Atlanta Passport.”
+
+The purpose of the site is to sell sponsorship/listing packages to hyperlocal Atlanta businesses for the 2026 World Cup. The concept combines a physical printed passport booklet with a digital website where visitors can discover local restaurants, bars, shops, events, bike rentals, and neighborhood experiences.
+
+Wheelhaus Bikes is a founding sponsor and should be featured as the sample business listing.
+
+Overall vibe:
+Premium local Atlanta city guide
+Modern editorial travel magazine
+World Cup energy without using official FIFA branding
+Clean, bold, easy to understand
+Mobile-first
+Fast to launch
+Built to help us sell businesses immediately
+
+Do NOT use FIFA logos or imply official FIFA affiliation.
+
+Primary goal:
+Get businesses to apply/pay to be listed in the passport and website.
+
+Secondary goal:
+Show visitors how the passport experience will work.
+
+Site pages needed:
+1. Home
+2. Become a Partner
+3. Explore Atlanta
+4. Business Listing Template
+5. Events
+6. About
+7. Apply / Onboarding Form
+
+Main navigation:
+Home
+Explore
+Partners
+Events
+About
+Apply Now
+
+Brand colors:
+Black
+Cream/off-white
+Deep green
+Warm orange accent
+Gold/tan accent
+
+Typography:
+Use a modern premium sans-serif.
+Large editorial headlines.
+Clean cards.
+Rounded corners.
+Strong spacing.
+
+Homepage structure:
+
+Hero section:
+Headline:
+“Atlanta Passport”
+
+Subheadline:
+“Discover Atlanta like a local during the world’s biggest soccer celebration.”
+
+Supporting copy:
+“A physical and digital city guide connecting World Cup visitors with the best hyperlocal restaurants, bars, shops, events, rentals, and neighborhood experiences across Atlanta.”
+
+Buttons:
+“Become a Partner”
+“Explore the Passport”
+
+Hero visual:
+Use a stylish Atlanta/city/travel/soccer-inspired layout with cards, map elements, QR code mockups, and passport booklet imagery.
+
+Section 2: How It Works
+Title:
+“One passport. A whole city to explore.”
+
+Four steps:
+1. Pick up the physical passport
+2. Scan QR codes around the city
+3. Discover local businesses and events
+4. Unlock perks, offers, and neighborhood experiences
+
+Section 3: Why It Matters
+Title:
+“Visitors need a trusted local guide.”
+
+Copy:
+“During the World Cup, thousands of visitors will be looking for where to eat, drink, shop, ride, gather, and explore. Atlanta Passport gives local businesses a way to show up where visitors are already looking.”
+
+Include cards:
+Restaurants
+Bars & Nightlife
+Coffee Shops
+Retail & Boutiques
+Bike Rentals
+Events & Popups
+
+Section 4: Featured Businesses
+Show 6 sample business cards:
+Wheelhaus Bikes
+A local coffee shop
+A neighborhood bar
+A restaurant
+A sneaker/streetwear shop
+A nightlife/event venue
+
+For now, use placeholder businesses except Wheelhaus.
+
+Wheelhaus card:
+Name: Wheelhaus Bikes
+Category: E-Bike Rentals & Service
+Neighborhood: Atlanta Beltline / Decatur / Atlanta
+Description:
+“Premium e-bike rentals, repairs, and curated urban rides for visitors who want to explore Atlanta beyond the traffic.”
+Offer:
+“World Cup rental specials available.”
+
+Section 5: Neighborhoods
+Title:
+“Explore Atlanta by neighborhood.”
+
+Create cards:
+Downtown
+Midtown
+Old Fourth Ward
+East Atlanta Village
+Decatur
+Westside
+Buckhead
+Summerhill
+
+Each card should have:
+Short description
+“View neighborhood” button
+
+Section 6: Partner CTA
+Title:
+“Put your business in the path of World Cup visitors.”
+
+Copy:
+“Atlanta Passport is onboarding a limited group of local businesses for printed and digital placement before launch.”
+
+Button:
+“Apply to Become a Partner”
+
+Footer:
+Atlanta Passport
+Built by local Atlanta entrepreneurs
+Founding Sponsor: Wheelhaus Bikes
+Links: Explore, Partners, Events, Apply
+
+Partner Page structure:
+
+Hero:
+Headline:
+“Get your business in front of World Cup visitors.”
+
+Subheadline:
+“Atlanta Passport helps local businesses turn World Cup traffic into real customers through physical passport placement, digital listings, QR codes, and neighborhood discovery.”
+
+Button:
+“Apply Now”
+
+Section: What You Get
+Cards:
+Physical Passport Placement
+Digital Business Listing
+QR Code Integration
+Neighborhood Map Placement
+Offer / Reward Feature
+Analytics Snapshot
+
+Section: Packages
+Create three pricing cards:
+
+Starter Listing — $500
+Includes:
+Website listing
+Basic passport mention
+QR code
+Category placement
+Best for small shops, cafes, and local services
+
+Featured Partner — $1,500
+Includes:
+Enhanced website listing
+Larger passport placement
+Featured business card
+Priority neighborhood placement
+QR code
+Offer/reward feature
+Best for restaurants, bars, retail, and experience businesses
+
+Premier Sponsor — $3,000+
+Includes:
+Premium passport placement
+Homepage feature
+Category or neighborhood sponsorship
+Enhanced listing
+QR campaign
+Featured social/promo placement
+Best for venues, larger restaurants, hotels, brands, and major activations
+
+Add note:
+“Custom sponsor packages available for groups, venues, and multi-location partners.”
+
+Section: Why Join
+Use bullets:
+World Cup visitors need local recommendations
+Physical + digital exposure creates repeated impressions
+QR codes connect print to action
+Neighborhood curation makes discovery easier
+Limited placement makes the guide more valuable
+
+Section: Scarcity
+Headline:
+“Limited partner slots by category and neighborhood.”
+
+Copy:
+“To keep the passport curated, we are limiting the number of businesses in each category and neighborhood.”
+
+Section: How It Works
+1. Apply
+2. Get approved
+3. Submit business details and offer
+4. Go live in the digital guide
+5. Appear in the printed passport
+
+CTA:
+“Apply Now”
+
+Explore Atlanta Page:
+Create filterable cards by category and neighborhood.
+Categories:
+Food
+Drinks
+Coffee
+Retail
+Nightlife
+Rentals
+Events
+Experiences
+
+Use sample data.
+Each card should include:
+Business name
+Category
+Neighborhood
+Short description
+Offer
+View listing button
+
+Business Listing Template:
+Create a dynamic-style page layout even if using mock data for now.
+
+Business page sections:
+Hero image area
+Business name
+Category
+Neighborhood
+Short description
+Offer box
+About section
+Hours
+Address
+Map placeholder
+QR stamp placeholder
+Buttons:
+“Get Directions”
+“Save to Passport”
+
+Build Wheelhaus Bikes as the first full listing.
+
+Wheelhaus listing content:
+Name:
+Wheelhaus Bikes
+
+Category:
+E-Bike Rentals & Service
+
+Neighborhood:
+Atlanta
+
+Description:
+“Wheelhaus Bikes is a premium e-bike shop offering rentals, service, repairs, and curated urban rides for visitors and locals exploring Atlanta.”
+
+World Cup Offer:
+“Rental specials and guided ride options available during World Cup season.”
+
+About:
+“Wheelhaus helps people move through Atlanta with style, ease, and local knowledge. From e-bike rentals to repairs and curated rides, Wheelhaus is built for visitors who want to experience the city beyond rideshares and traffic.”
+
+Events Page:
+Create a simple event listing layout.
+Fields:
+Event name
+Date
+Venue
+Neighborhood
+Category
+Description
+Button: View Event
+
+Use placeholder events:
+Opening Weekend Watch Party
+Beltline Ride & Food Crawl
+Atlanta Night Market
+Rooftop Match Day Social
+Local Makers Pop-Up
+
+About Page:
+Tell the story:
+“Atlanta Passport is a local-first city guide built for the 2026 World Cup. Our mission is to help visitors discover the real Atlanta while helping local businesses capture the opportunity of global tourism.”
+
+Mention:
+Physical passport
+Digital guide
+Local business network
+Neighborhood discovery
+World Cup visitor experience
+
+Apply Page:
+Build a clean business onboarding form.
+
+Fields:
+Business Name
+Contact Name
+Email
+Phone
+Website
+Instagram
+Business Category
+Neighborhood
+Address
+Which package are you interested in?
+Options:
+Starter Listing — $500
+Featured Partner — $1,500
+Premier Sponsor — $3,000+
+Custom Package
+
+What offer or experience would you like to feature?
+Upload logo/photo placeholder
+Additional notes
+
+After submit:
+Show thank you message:
+“Thanks for applying. Our team will review your business and follow up with next steps.”
+
+Data Model:
+Create sample JSON/JS data arrays for:
+businesses
+events
+packages
+neighborhoods
+categories
+
+Business object should include:
+id
+name
+category
+neighborhood
+description
+offer
+address
+hours
+image
+featured
+sponsorTier
+
+Event object:
+id
+name
+date
+venue
+neighborhood
+category
+description
+
+Design requirements:
+Mobile-first responsive layout
+Sticky top nav
+CTA buttons throughout
+Premium cards
+Clean spacing
+Rounded corners
+Subtle shadows
+Use placeholder images from unsplash or neutral gradients if images are unavailable
+No clutter
+Fast loading
+
+Important:
+This is a 2-week sales MVP. Prioritize polish on:
+Homepage
+Partner page
+Apply form
+Wheelhaus sample listing
+
+The website should feel real enough to send to business owners immediately.
+
+Add a small disclaimer in footer:
+“Atlanta Passport is an independent local guide and is not affiliated with FIFA or the official World Cup.”
+
+Build the first version now.

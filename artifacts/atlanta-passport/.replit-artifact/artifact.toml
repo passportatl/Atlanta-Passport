@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Atlanta Passport"
+version = "1.0.0"
+id = "artifacts/atlanta-passport"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24032
+
+[services.development]
+run = "pnpm --filter @workspace/atlanta-passport run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/atlanta-passport", "run", "build" ]
+publicDir = "artifacts/atlanta-passport/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24032"
+BASE_PATH = "/"

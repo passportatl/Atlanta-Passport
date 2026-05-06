@@ -1,6 +1,6 @@
-# [Project name]
+# Atlanta Passport
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A premium, mobile-first marketing site for "Atlanta Passport" — a hyperlocal city guide (physical booklet + digital site) selling sponsorship/listing packages to Atlanta businesses ahead of the 2026 World Cup. Wheelhaus Bikes is the founding sponsor and showcase listing.
 
 ## Run & Operate
 
@@ -22,15 +22,22 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/atlanta-passport/` — Atlanta Passport React + Vite frontend (the product)
+- `artifacts/atlanta-passport/src/data/` — sample data (businesses, events, neighborhoods, packages, categories)
+- `artifacts/atlanta-passport/src/index.css` — theme tokens / brand palette
+- `artifacts/api-server/` — shared Express API server (currently only `/api/healthz`)
+- `lib/api-spec/openapi.yaml` — API contract source of truth
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Frontend-only marketing site — no backend wired up; sample data is static in `src/data/`.
+- Apply form is local-state only (no submit endpoint); shows a thank-you state after submit.
+- Routing via `wouter` with base path `import.meta.env.BASE_URL`.
+- No FIFA branding anywhere — independent guide; disclaimer in footer.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Marketing site with: Home, Become a Partner (with $500 / $1,500 / $3,000+ packages), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, About, and Apply onboarding form.
 
 ## User preferences
 

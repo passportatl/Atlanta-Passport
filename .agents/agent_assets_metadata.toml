@@ -1,0 +1,62 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "QSS4knhBXQ-nNgqn6AjtD"
+uri = "file://artifacts/atlanta-passport/src/assets/images/hero-home.png"
+type = "image"
+title = "Atlanta Passport Hero"
+
+[[generated]]
+id = "o9zoBInB8pDAKxRkjc7vr"
+uri = "file://artifacts/atlanta-passport/src/assets/images/wheelhaus.png"
+type = "image"
+title = "Wheelhaus Bikes"
+
+[[generated]]
+id = "INbTmZnaEaygCnkSAb9bs"
+uri = "file://artifacts/atlanta-passport/src/assets/images/coffee-shop.png"
+type = "image"
+title = "Coffee Shop"
+
+[[generated]]
+id = "2SSUiMDir8bXffYpAoXaK"
+uri = "file://artifacts/atlanta-passport/src/assets/images/neighborhood-bar.png"
+type = "image"
+title = "Neighborhood Bar"
+
+[[generated]]
+id = "UklWWgtFod4f4dBFQrvOx"
+uri = "file://artifacts/atlanta-passport/src/assets/images/restaurant.png"
+type = "image"
+title = "Restaurant"
+
+[[generated]]
+id = "PRAh80sAJ3xo4_qtXBnnI"
+uri = "file://artifacts/atlanta-passport/src/assets/images/sneaker-shop.png"
+type = "image"
+title = "Sneaker Shop"
+
+[[generated]]
+id = "gB9wZQXzvpfrRfH6sbfn0"
+uri = "file://artifacts/atlanta-passport/src/assets/images/nightlife.png"
+type = "image"
+title = "Nightlife Venue"
+
+[[generated]]
+id = "XtX772J-uFWSoWLD5YMUh"
+uri = "file://artifacts/atlanta-passport/src/assets/images/beltline.png"
+type = "image"
+title = "Atlanta Beltline"
+
+[[generated]]
+id = "mzYTgKwQj2ZHdvviVzX7T"
+uri = "file://artifacts/atlanta-passport/src/assets/images/midtown.png"
+type = "image"
+title = "Midtown Atlanta"
+
+[[generated]]
+id = "RBC-bipiChwWxR6If1nD0"
+uri = "file://artifacts/atlanta-passport/src/assets/images/event-watch-party.png"
+type = "image"
+title = "Soccer Watch Party"
