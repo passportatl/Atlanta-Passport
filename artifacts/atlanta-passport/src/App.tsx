@@ -11,6 +11,7 @@ import Events from "@/pages/events";
 import About from "@/pages/about";
 import Apply from "@/pages/apply";
 import Listing from "@/pages/listing";
+import Beltline from "@/pages/beltline";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ function Router() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/beltline" component={Beltline} />
         <Route path="/explore" component={Explore} />
         <Route path="/partners" component={Partners} />
         <Route path="/events" component={Events} />

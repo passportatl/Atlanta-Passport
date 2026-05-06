@@ -24,11 +24,8 @@ export default function About() {
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-8 leading-tight">
               A local-first city guide for the world's biggest moment.
             </h1>
-            <p className="text-xl md:text-2xl text-foreground/90 leading-relaxed font-medium mb-6">
-              We are a collection of small businesses launching a neighborhood-driven Tourist Passport Program designed to guide World Cup visitors to the places locals know and love.
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Participating businesses are featured in a curated, bike-friendly route along the Atlanta Beltline — connecting food, culture, shopping, and experiences across the community. A simple, low-cost way to welcome tourists, increase foot traffic, and be part of a citywide celebration.
+            <p className="text-xl md:text-2xl text-foreground/90 leading-relaxed font-medium">
+              Atlanta Passport is a local-first city guide built for the 2026 World Cup. Our mission is to help visitors discover the real Atlanta while helping local businesses capture the opportunity of global tourism.
             </p>
           </motion.div>
         </div>

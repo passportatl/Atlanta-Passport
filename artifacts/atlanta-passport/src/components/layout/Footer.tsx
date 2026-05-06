@@ -19,6 +19,11 @@ export default function Footer() {
             <h4 className="font-medium text-lg">Directory</h4>
             <ul className="space-y-3">
               <li>
+                <Link href="/beltline" className="text-primary-foreground/80 hover:text-secondary transition-colors">
+                  Beltline Tour
+                </Link>
+              </li>
+              <li>
                 <Link href="/explore" className="text-primary-foreground/80 hover:text-secondary transition-colors">
                   Explore
                 </Link>
