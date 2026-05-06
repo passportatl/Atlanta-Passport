@@ -311,11 +311,11 @@ export default function Apply() {
                     <FormItem>
                       <FormLabel>What offer or experience would you like to feature? *</FormLabel>
                       <FormDescription>
-                        Passport holders expect a small perk—a discount, a free item with purchase, or a unique experience.
+                        Participation is simple and flexible — you choose the offer. Examples: 10% off food or drink · Free appetizer with purchase · BOGO beverage · Free dessert · Small souvenir or sticker · Passport-only special.
                       </FormDescription>
                       <FormControl>
                         <Textarea 
-                          placeholder="e.g., 10% off your first round, or a free espresso shot with pastry purchase."
+                          placeholder="e.g., 10% off any drink for Passport holders, or a free pastry with espresso purchase."
                           className="resize-none h-24"
                           {...field}
                         />

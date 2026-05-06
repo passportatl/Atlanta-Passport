@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, MapPin } from "lucide-react";
+import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Stamp, Package, Coffee, Wine, Cake, Sticker, Tag, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
@@ -29,11 +29,18 @@ export default function Partners() {
             variants={fadeInUp}
             className="max-w-3xl mx-auto text-center"
           >
+            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              A simple, low-cost way to welcome the world
+            </div>
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 leading-tight">
-              Get your business in front of World Cup visitors.
+              Showcase your business during the 2026 World Cup.
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10">
-              Atlanta Passport helps local businesses turn World Cup traffic into real customers through physical passport placement, digital listings, QR codes, and neighborhood discovery.
+            <p className="text-xl md:text-2xl text-muted-foreground mb-6">
+              Join a collection of small businesses powering a neighborhood-driven Tourist Passport along the Atlanta Beltline.
+            </p>
+            <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+              Help visitors experience the real Atlanta — one stop at a time. Bring new customers through your doors during the busiest tourism period in Atlanta's history.
             </p>
             <Link href="/apply">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-lg">
@@ -176,19 +183,93 @@ export default function Partners() {
         </div>
       </section>
 
+      {/* What You Provide */}
+      <section className="py-24 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+            >
+              <div className="text-accent font-bold tracking-wider uppercase text-sm mb-4">For Partners</div>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-6">
+                What You Provide
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Participation is intentionally light. You bring three small things — we handle the rest.
+              </p>
+              <ul className="space-y-5">
+                {[
+                  { icon: Tag, title: "A small perk or coupon", desc: "Something simple for Passport holders to redeem in-store." },
+                  { icon: Stamp, title: "A stamp or sticker", desc: "Used to mark each visitor's passport when they stop in." },
+                  { icon: Package, title: "Optional swag for prizes", desc: "A small giveaway item for visitors who turn in completed passports." }
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-4">
+                    <div className="bg-primary/10 text-primary rounded-lg p-2.5 flex-shrink-0">
+                      <item.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-foreground">{item.title}</div>
+                      <div className="text-muted-foreground text-sm">{item.desc}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="bg-muted/40 border border-border rounded-3xl p-10"
+            >
+              <div className="flex items-center gap-2 text-accent font-bold tracking-wider uppercase text-xs mb-3">
+                <Sparkles className="w-4 h-4" /> Example Offers
+              </div>
+              <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-6">
+                Participation is simple and flexible. You choose the offer.
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  { icon: Tag, label: "10% off food or drink" },
+                  { icon: Coffee, label: "Free appetizer with purchase" },
+                  { icon: Wine, label: "BOGO beverage" },
+                  { icon: Cake, label: "Free dessert" },
+                  { icon: Sticker, label: "Small souvenir or sticker" },
+                  { icon: Gift, label: "Passport-only special" }
+                ].map((o, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-background border border-border rounded-xl px-4 py-3">
+                    <div className="text-accent flex-shrink-0">
+                      <o.icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{o.label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-muted-foreground italic mt-6">
+                That's it. You choose the offer.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Why Join */}
       <section className="py-24 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-8">Why Join</h2>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-8">Why Participate</h2>
               <ul className="space-y-6">
                 {[
-                  "World Cup visitors need local recommendations.",
-                  "Physical + digital exposure creates repeated impressions.",
-                  "QR codes connect print to action.",
-                  "Neighborhood curation makes discovery easier.",
-                  "Limited placement makes the guide more valuable."
+                  "Increased foot traffic during the busiest tourism period in Atlanta's history.",
+                  "Placement in a printed passport distributed across the city.",
+                  "Featured in the Beltline route map and digital guide.",
+                  "Social media exposure and connection to a citywide tourism experience.",
+                  "Reach new audiences who would never have found you otherwise."
                 ].map((item, i) => (
                   <li key={i} className="flex items-start">
                     <div className="bg-primary/10 p-2 rounded-full mr-4 text-primary mt-1">

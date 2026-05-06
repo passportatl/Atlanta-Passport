@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { MapPin, ScanLine, Ticket, Store, MoveRight, ArrowRight } from "lucide-react";
+import { MapPin, Stamp, Gift, Bike, MoveRight, ArrowRight, Footprints } from "lucide-react";
 import { motion } from "framer-motion";
 import { businesses, neighborhoods } from "@/data/sample-data";
 import heroHomeImg from "@/assets/images/hero-home.png";
@@ -35,6 +35,10 @@ export default function Home() {
               variants={fadeInUp}
               className="max-w-2xl"
             >
+              <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                A Beltline Tourist Passport · 2026 World Cup
+              </div>
               <h1 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 leading-tight">
                 Atlanta Passport
               </h1>
@@ -42,7 +46,7 @@ export default function Home() {
                 Discover Atlanta like a local during the world's biggest soccer celebration.
               </p>
               <p className="text-lg text-muted-foreground mb-8">
-                A physical and digital city guide connecting World Cup visitors with the best hyperlocal restaurants, bars, shops, events, rentals, and neighborhood experiences across Atlanta.
+                A collection of small businesses launching a neighborhood-driven Tourist Passport Program — a curated, bike-friendly route along the Atlanta Beltline connecting visitors with food, culture, shopping, and experiences across the community.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/explore">
@@ -86,8 +90,11 @@ export default function Home() {
             className="text-center max-w-3xl mx-auto mb-16"
           >
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">
-              One passport. A whole city to explore.
+              Follow the Beltline. Collect stamps. Win rewards.
             </h2>
+            <p className="text-lg text-muted-foreground">
+              A printed and digital guide that turns the Atlanta Beltline into a self-paced adventure.
+            </p>
           </motion.div>
 
           <motion.div 
@@ -98,10 +105,10 @@ export default function Home() {
             className="grid md:grid-cols-4 gap-8"
           >
             {[
-              { icon: Ticket, title: "Pick up the passport", desc: "Get your physical booklet at partner locations." },
-              { icon: ScanLine, title: "Scan QR codes", desc: "Scan codes around the city to unlock content." },
-              { icon: MapPin, title: "Discover local spots", desc: "Find the best hidden gems and experiences." },
-              { icon: Store, title: "Unlock perks", desc: "Get special offers and neighborhood rewards." }
+              { icon: Bike, title: "Follow the Beltline route", desc: "A curated, bike-friendly path through Atlanta's best neighborhoods." },
+              { icon: Footprints, title: "Visit local businesses", desc: "Stop in at participating shops, restaurants, bars, and venues." },
+              { icon: Stamp, title: "Collect Passport stamps", desc: "Get your booklet stamped at every partner you visit." },
+              { icon: Gift, title: "Redeem rewards & prizes", desc: "Unlock exclusive offers and turn in completed passports for prizes." }
             ].map((step, i) => (
               <motion.div key={i} variants={fadeInUp} className="text-center">
                 <div className="w-16 h-16 mx-auto bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-6 shadow-lg">
