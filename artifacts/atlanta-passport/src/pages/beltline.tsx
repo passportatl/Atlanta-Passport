@@ -56,7 +56,7 @@ export default function Beltline() {
       {/* Hero */}
       <section className="relative pt-20 pb-32 overflow-hidden bg-background">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial="hidden"
               animate="visible"
@@ -209,7 +209,7 @@ export default function Beltline() {
       {/* What You Provide + Example Offers */}
       <section className="py-24 bg-muted/40">
         <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
             <motion.div
               initial="hidden"
               whileInView="visible"

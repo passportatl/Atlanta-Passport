@@ -83,7 +83,7 @@ export default function Home() {
       ────────────────────────────────────────────────────────── */}
       <section className="relative section-hero overflow-hidden bg-paper texture-paper">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
             <motion.div
               initial="hidden"
               animate="visible"
@@ -244,7 +244,7 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
             variants={fadeInUp}
-            className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start max-w-6xl mx-auto"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start max-w-6xl mx-auto"
           >
             <div className="relative">
               <div className="rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop aspect-[4/3]">
@@ -666,7 +666,7 @@ export default function Home() {
             className="max-w-5xl mx-auto"
           >
             <div className="card-pop bg-background p-8 md:p-12 lg:p-14">
-              <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
+              <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
                 <div>
                   <div className="section-kicker mb-5">★ For Businesses</div>
                   <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">

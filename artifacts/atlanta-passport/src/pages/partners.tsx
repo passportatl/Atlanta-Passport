@@ -137,7 +137,7 @@ export default function Partners() {
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-10 max-w-6xl mx-auto items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-6xl mx-auto items-stretch">
             {/* Starter — Yellow */}
             <div className="card-pop bg-brand-yellow text-brand-yellow-foreground flex flex-col hover:-translate-y-1 transition-transform">
               <div className="p-7 flex-grow">

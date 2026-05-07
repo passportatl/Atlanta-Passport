@@ -56,7 +56,7 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- **Always pair `lg:grid-cols-*` (or `md:`/`sm:`) with an explicit base `grid-cols-1`.** A grid with no column class at the current breakpoint defaults to a single auto-sized track that takes `max-content`, so any child requesting `max-w-2xl`/`max-w-6xl` will blow the grid wider than the viewport on mobile — overflowing past `overflow-x:hidden` clipping. The visible symptom is hero/CTA buttons sized like the viewport is 672px+ wide. Fixed in: hero + featured + CTA on home, hero + offers on beltline, listing main grid, partners pricing tiers.
 
 ## Pointers
 
