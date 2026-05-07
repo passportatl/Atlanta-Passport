@@ -266,7 +266,7 @@ export default function Apply() {
                               <RadioGroupItem value="starter" />
                             </FormControl>
                             <FormLabel className="font-medium cursor-pointer w-full">
-                              Starter Listing — $500
+                              Starter Listing — $100
                             </FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-3 space-y-0 border border-primary p-4 rounded-lg bg-primary/5">
@@ -274,7 +274,7 @@ export default function Apply() {
                               <RadioGroupItem value="featured" />
                             </FormControl>
                             <FormLabel className="font-medium cursor-pointer w-full flex justify-between">
-                              <span>Featured Partner — $1,500</span>
+                              <span>Featured Partner — $300</span>
                               <span className="text-xs bg-accent text-accent-foreground px-2 py-0.5 rounded uppercase tracking-wider font-bold">Recommended</span>
                             </FormLabel>
                           </FormItem>
@@ -283,7 +283,7 @@ export default function Apply() {
                               <RadioGroupItem value="premier" />
                             </FormControl>
                             <FormLabel className="font-medium cursor-pointer w-full">
-                              Premier Sponsor — $3,000+
+                              Premier Sponsor — $500
                             </FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-3 space-y-0 border p-4 rounded-lg bg-background">

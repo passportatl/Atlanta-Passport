@@ -98,7 +98,7 @@ export default function Partners() {
             <Card className="flex flex-col h-full">
               <CardHeader>
                 <CardTitle className="text-2xl font-serif text-primary">Starter Listing</CardTitle>
-                <div className="text-4xl font-serif font-bold my-4">$500</div>
+                <div className="text-4xl font-serif font-bold my-4">$100</div>
                 <p className="text-sm text-muted-foreground">Best for small shops, cafes, and local services.</p>
               </CardHeader>
               <CardContent className="flex-grow">
@@ -125,7 +125,7 @@ export default function Partners() {
               </div>
               <CardHeader>
                 <CardTitle className="text-2xl font-serif text-primary-foreground">Featured Partner</CardTitle>
-                <div className="text-4xl font-serif font-bold my-4">$1,500</div>
+                <div className="text-4xl font-serif font-bold my-4">$300</div>
                 <p className="text-sm text-primary-foreground/80">Best for restaurants, bars, retail, and experience businesses.</p>
               </CardHeader>
               <CardContent className="flex-grow">
@@ -149,7 +149,7 @@ export default function Partners() {
             <Card className="flex flex-col h-full">
               <CardHeader>
                 <CardTitle className="text-2xl font-serif text-primary">Premier Sponsor</CardTitle>
-                <div className="text-4xl font-serif font-bold my-4">$3,000+</div>
+                <div className="text-4xl font-serif font-bold my-4">$500</div>
                 <p className="text-sm text-muted-foreground">Best for venues, larger restaurants, hotels, brands, and major activations.</p>
               </CardHeader>
               <CardContent className="flex-grow">
