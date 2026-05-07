@@ -1,6 +1,5 @@
 import { Link } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Sparkles } from "lucide-react";
+import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
@@ -28,12 +27,11 @@ export default function Partners() {
             variants={fadeInUp}
             className="max-w-3xl mx-auto text-center"
           >
-            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.18em] uppercase mb-8">
-              <Sparkles className="w-3 h-3" />
-              Founding partner applications now open
+            <div className="inline-block badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-1 mb-8">
+              ★ Founding partner applications open
             </div>
-            <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 leading-[1.05]">
-              Put your business on Atlanta's World Cup map.
+            <h1 className="hero-title text-primary mb-6">
+              Put your business on Atlanta's <span className="highlight-yellow text-foreground">World Cup</span> map.
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 leading-relaxed">
               We're curating a limited group of local restaurants, bars, shops, venues, rides, and experiences for Atlanta Passport.
@@ -100,25 +98,23 @@ export default function Partners() {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {[
-              { icon: BookOpen, title: "Physical Passport Placement", desc: "Featured in the printed guide distributed across the city." },
-              { icon: Smartphone, title: "Digital Business Listing", desc: "A dedicated page on the Atlanta Passport web app." },
-              { icon: QrCode, title: "QR Code Integration", desc: "Custom signage to connect physical visitors to digital rewards." },
-              { icon: Map, title: "Neighborhood Map Placement", desc: "Pinpointed on our curated local neighborhood maps." },
-              { icon: Gift, title: "Offer / Reward Feature", desc: "Highlight a special discount or experience for passport holders." },
-              { icon: BarChart, title: "Analytics Snapshot", desc: "Insights on how many visitors viewed and engaged with your listing." }
+              { icon: BookOpen, title: "Physical Passport Placement", desc: "Featured in the printed guide distributed across the city.", cls: "bg-brand-yellow text-brand-yellow-foreground", iconCls: "bg-foreground text-brand-yellow" },
+              { icon: Smartphone, title: "Digital Business Listing", desc: "A dedicated page on the Atlanta Passport web app.", cls: "bg-brand-red text-white", iconCls: "bg-brand-yellow text-foreground" },
+              { icon: QrCode, title: "QR Code Integration", desc: "Custom signage to connect physical visitors to digital rewards.", cls: "bg-brand-sky text-foreground", iconCls: "bg-foreground text-brand-sky" },
+              { icon: Map, title: "Neighborhood Map Placement", desc: "Pinpointed on our curated local neighborhood maps.", cls: "bg-brand-cream text-foreground", iconCls: "bg-brand-red text-white" },
+              { icon: Gift, title: "Offer / Reward Feature", desc: "Highlight a special discount or experience for passport holders.", cls: "bg-brand-lime text-foreground", iconCls: "bg-foreground text-brand-lime" },
+              { icon: BarChart, title: "Analytics Snapshot", desc: "Insights on how many visitors viewed and engaged with your listing.", cls: "bg-brand-navy text-white", iconCls: "bg-brand-gold text-brand-navy" },
             ].map((feature, i) => (
               <motion.div key={i} variants={fadeInUp}>
-                <Card className="h-full bg-card hover:shadow-lg transition-shadow border-border">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
-                      <feature.icon className="w-6 h-6" />
-                    </div>
-                    <CardTitle className="text-xl font-serif">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{feature.desc}</p>
-                  </CardContent>
-                </Card>
+                <div className={`card-pop h-full p-7 hover:-translate-y-1 transition-transform ${feature.cls}`}>
+                  <div className={`w-14 h-14 rounded-2xl border-[3px] border-foreground shadow-pop-sm flex items-center justify-center mb-5 ${feature.iconCls}`}>
+                    <feature.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-display text-base tracking-wide uppercase mb-3 leading-snug">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed opacity-90">{feature.desc}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -225,9 +221,9 @@ export default function Partners() {
       <section className="py-24 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-4">Why businesses are joining</div>
+            <div className="section-kicker mb-5">Why businesses are joining</div>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-12 leading-tight">
-              The passport turns discovery into foot traffic.
+              The passport turns <span className="highlight-yellow text-foreground">discovery</span> into foot traffic.
             </h2>
             <ul className="space-y-5">
               {[
@@ -256,17 +252,17 @@ export default function Partners() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 relative">
             <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-border -translate-y-1/2 z-0" />
             {[
-              "Apply",
-              "Get approved",
-              "Submit business details and offer",
-              "Go live in the digital guide",
-              "Appear in the printed passport"
+              { label: "Apply", cls: "bg-brand-yellow text-brand-yellow-foreground" },
+              { label: "Get approved", cls: "bg-brand-red text-white" },
+              { label: "Submit business details and offer", cls: "bg-brand-sky text-foreground" },
+              { label: "Go live in the digital guide", cls: "bg-brand-lime text-foreground" },
+              { label: "Appear in the printed passport", cls: "bg-brand-navy text-white" },
             ].map((step, i) => (
-              <div key={i} className="relative z-10 flex flex-col items-center max-w-[200px] w-full bg-background md:bg-transparent">
-                <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl mb-4 border-4 border-background">
+              <div key={i} className="relative z-10 flex flex-col items-center max-w-[200px] w-full bg-background md:bg-transparent px-2">
+                <div className={`w-14 h-14 rounded-full border-[3px] border-foreground shadow-pop-sm flex items-center justify-center font-display text-xl mb-4 ${step.cls}`}>
                   {i + 1}
                 </div>
-                <p className="font-medium text-foreground text-center">{step}</p>
+                <p className="font-medium text-foreground text-center text-sm">{step.label}</p>
               </div>
             ))}
           </div>
@@ -274,10 +270,11 @@ export default function Partners() {
       </section>
 
       {/* Closing CTA */}
-      <section className="py-24 bg-primary text-primary-foreground text-center">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8">
-            Ready to put your business on the map?
+      <section className="py-24 bg-primary text-primary-foreground text-center relative overflow-hidden">
+        <div className="absolute inset-0 dot-grid opacity-10 pointer-events-none" />
+        <div className="container mx-auto px-4 relative">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8 leading-tight">
+            Ready to put your business <span className="highlight-yellow text-foreground">on the map</span>?
           </h2>
           <Link href="/apply" className="button-pop button-pop-yellow">
             Apply Now

@@ -1,5 +1,4 @@
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
   Bike,
@@ -64,29 +63,24 @@ export default function Beltline() {
               variants={fadeInUp}
               className="max-w-2xl"
             >
-              <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                Featured Tour
+              <div className="inline-block badge-sticker bg-brand-lime text-foreground -rotate-1 mb-6">
+                ★ Featured Tour
               </div>
-              <h1 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 leading-tight">
-                The Beltline Tourist Passport
+              <h1 className="hero-title text-primary mb-6">
+                The <span className="highlight-yellow text-foreground">Beltline</span> Tourist Passport
               </h1>
-              <p className="text-xl md:text-2xl font-medium text-foreground/90 mb-6">
+              <p className="text-xl md:text-2xl font-medium text-foreground/90 mb-6 mt-6">
                 Help visitors experience the real Atlanta — one stop at a time.
               </p>
-              <p className="text-lg text-muted-foreground mb-8">
+              <p className="text-lg text-muted-foreground mb-10">
                 A neighborhood-driven Tourist Passport Program along a curated, bike-friendly route on the Atlanta Beltline. Visitors collect stamps at participating small businesses and redeem rewards for completed passports.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/explore">
-                  <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg">
-                    See Stops on the Route
-                  </Button>
+                <Link href="/explore" className="button-pop">
+                  See Stops on the Route
                 </Link>
-                <Link href="/apply">
-                  <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/5 px-8 py-6 text-lg">
-                    Add Your Business
-                  </Button>
+                <Link href="/apply" className="button-pop button-pop-yellow">
+                  Add Your Business
                 </Link>
               </div>
             </motion.div>
@@ -100,14 +94,14 @@ export default function Beltline() {
               <img src={beltlineImg} alt="Atlanta Beltline" className="object-cover w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent mix-blend-multiply" />
               <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2">
-                <span className="bg-background/95 backdrop-blur text-primary text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
-                  <Bike className="w-3.5 h-3.5" /> Bike-friendly
+                <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2 inline-flex items-center gap-1.5 text-[10px]">
+                  <Bike className="w-3.5 h-3.5" /> BIKE-FRIENDLY
                 </span>
-                <span className="bg-background/95 backdrop-blur text-primary text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" /> Neighborhood-driven
+                <span className="badge-sticker bg-brand-red text-white rotate-1 inline-flex items-center gap-1.5 text-[10px]">
+                  <MapPin className="w-3.5 h-3.5" /> NEIGHBORHOOD-DRIVEN
                 </span>
-                <span className="bg-background/95 backdrop-blur text-primary text-xs font-bold tracking-wider uppercase px-3 py-1.5 rounded-full inline-flex items-center gap-1.5">
-                  <Stamp className="w-3.5 h-3.5" /> Stamp & redeem
+                <span className="badge-sticker bg-brand-sky text-foreground -rotate-1 inline-flex items-center gap-1.5 text-[10px]">
+                  <Stamp className="w-3.5 h-3.5" /> STAMP & REDEEM
                 </span>
               </div>
             </motion.div>
@@ -125,9 +119,9 @@ export default function Beltline() {
             variants={fadeInUp}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <div className="text-accent font-bold tracking-wider uppercase text-sm mb-3">How It Works</div>
+            <div className="section-kicker mb-5">How It Works</div>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">
-              Follow the Beltline. Collect stamps. Win rewards.
+              Follow the Beltline. <span className="highlight-yellow text-foreground">Collect stamps</span>. Win rewards.
             </h2>
             <p className="text-lg text-muted-foreground">
               A printed and digital guide that turns the Atlanta Beltline into a self-paced adventure.
@@ -141,15 +135,19 @@ export default function Beltline() {
             viewport={{ once: true, margin: "-100px" }}
             className="grid md:grid-cols-4 gap-8"
           >
-            {visitorSteps.map((step, i) => (
-              <motion.div key={i} variants={fadeInUp} className="text-center">
-                <div className="w-16 h-16 mx-auto bg-primary text-primary-foreground rounded-full flex items-center justify-center mb-6 shadow-lg">
-                  <step.icon className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">{i + 1}. {step.title}</h3>
-                <p className="text-muted-foreground">{step.desc}</p>
-              </motion.div>
-            ))}
+            {visitorSteps.map((step, i) => {
+              const tints = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground"];
+              return (
+                <motion.div key={i} variants={fadeInUp} className="text-center">
+                  <div className={`w-16 h-16 mx-auto rounded-full border-[3px] border-foreground shadow-pop-sm flex items-center justify-center mb-6 ${tints[i]}`}>
+                    <step.icon className="w-7 h-7" />
+                  </div>
+                  <div className="font-display text-[10px] tracking-[0.18em] text-brand-red mb-2">STEP 0{i + 1}</div>
+                  <h3 className="text-xl font-bold mb-3 text-foreground">{step.title}</h3>
+                  <p className="text-muted-foreground">{step.desc}</p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
@@ -163,10 +161,12 @@ export default function Beltline() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeInUp}
-              className="bg-primary text-primary-foreground rounded-3xl p-10 shadow-xl"
+              className="card-pop bg-brand-red text-white p-10 -rotate-1 hover:rotate-0 transition-transform"
             >
-              <div className="text-secondary font-bold tracking-wider uppercase text-xs mb-3">Tourists Receive</div>
-              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-6">A memorable neighborhood adventure</h3>
+              <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground inline-block mb-5 -rotate-2">
+                ★ TOURISTS RECEIVE
+              </div>
+              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-6 leading-tight">A memorable neighborhood adventure</h3>
               <ul className="space-y-4">
                 {[
                   "A fun way to explore ATL",
@@ -175,8 +175,8 @@ export default function Beltline() {
                   "Stamps, rewards, and prizes along the way",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <Sparkles className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
-                    <span className="text-primary-foreground/90">{item}</span>
+                    <Sparkles className="w-5 h-5 text-brand-yellow flex-shrink-0 mt-0.5" />
+                    <span className="text-white/90">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -187,10 +187,12 @@ export default function Beltline() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeInUp}
-              className="bg-card border border-border rounded-3xl p-10 shadow-sm"
+              className="card-pop bg-brand-yellow text-brand-yellow-foreground p-10 rotate-1 hover:rotate-0 transition-transform"
             >
-              <div className="text-accent font-bold tracking-wider uppercase text-xs mb-3">Participating Businesses Receive</div>
-              <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-6">New customers during the busiest tourism moment in Atlanta's history</h3>
+              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-5 rotate-2">
+                ★ BUSINESSES RECEIVE
+              </div>
+              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-6 leading-tight">New customers during the busiest tourism moment in Atlanta's history</h3>
               <ul className="space-y-4">
                 {[
                   "Increased foot traffic",
@@ -200,8 +202,8 @@ export default function Beltline() {
                   "Connection to a citywide tourism experience",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <Trophy className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                    <span className="text-foreground/90">{item}</span>
+                    <Trophy className="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" />
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -220,25 +222,28 @@ export default function Beltline() {
               viewport={{ once: true }}
               variants={fadeInUp}
             >
-              <div className="text-accent font-bold tracking-wider uppercase text-sm mb-4">For Partners</div>
-              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-6">
+              <div className="section-kicker mb-5">For Partners</div>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-6 leading-tight">
                 What You Provide
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
                 Participation is intentionally light. You bring three small things — we handle the rest.
               </p>
               <ul className="space-y-5">
-                {whatYouProvide.map((item, i) => (
-                  <li key={i} className="flex items-start gap-4">
-                    <div className="bg-primary/10 text-primary rounded-lg p-2.5 flex-shrink-0">
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="font-bold text-foreground">{item.title}</div>
-                      <div className="text-muted-foreground text-sm">{item.desc}</div>
-                    </div>
-                  </li>
-                ))}
+                {whatYouProvide.map((item, i) => {
+                  const tints = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground"];
+                  return (
+                    <li key={i} className="flex items-start gap-4">
+                      <div className={`rounded-xl p-3 flex-shrink-0 border-[2px] border-foreground shadow-pop-sm ${tints[i]}`}>
+                        <item.icon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="font-display text-sm tracking-wide uppercase text-foreground">{item.title}</div>
+                        <div className="text-muted-foreground text-sm">{item.desc}</div>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </motion.div>
 
@@ -247,26 +252,27 @@ export default function Beltline() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeInUp}
-              className="bg-background border border-border rounded-3xl p-10"
+              className="card-pop bg-brand-cream p-8 md:p-10"
             >
-              <div className="flex items-center gap-2 text-accent font-bold tracking-wider uppercase text-xs mb-3">
-                <Sparkles className="w-4 h-4" /> Example Offers
+              <div className="badge-sticker bg-brand-red text-white inline-flex items-center gap-1.5 mb-5 -rotate-1">
+                <Sparkles className="w-3.5 h-3.5" /> EXAMPLE OFFERS
               </div>
-              <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-6">
-                Participation is simple and flexible. You choose the offer.
+              <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-6 leading-tight">
+                Simple, flexible. <span className="highlight-yellow text-foreground">You choose the offer</span>.
               </h3>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {exampleOffers.map((o, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-muted/40 border border-border rounded-xl px-4 py-3">
-                    <div className="text-accent flex-shrink-0">
-                      <o.icon className="w-4 h-4" />
+              <div className="grid sm:grid-cols-2 gap-3">
+                {exampleOffers.map((o, i) => {
+                  const tints = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white"];
+                  return (
+                    <div key={i} className={`flex items-center gap-3 rounded-xl px-4 py-3 border-[2px] border-foreground shadow-pop-sm ${tints[i % tints.length]}`}>
+                      <o.icon className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-sm font-display tracking-wide uppercase">{o.label}</span>
                     </div>
-                    <span className="text-sm font-medium text-foreground">{o.label}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-              <p className="text-sm text-muted-foreground italic mt-6">
-                That's it. You choose the offer.
+              <p className="font-display text-xs tracking-[0.18em] text-brand-red mt-6">
+                ★ THAT'S IT.
               </p>
             </motion.div>
           </div>
@@ -274,30 +280,27 @@ export default function Beltline() {
       </section>
 
       {/* Closing CTA */}
-      <section className="py-24 bg-primary text-primary-foreground text-center">
-        <div className="container mx-auto px-4 max-w-3xl">
+      <section className="py-24 bg-primary text-primary-foreground text-center relative overflow-hidden">
+        <div className="absolute inset-0 dot-grid opacity-10 pointer-events-none" />
+        <div className="container mx-auto px-4 max-w-3xl relative">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-              Put your business on the Beltline route.
+            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight">
+              Put your business on the <span className="highlight-yellow text-foreground">Beltline route</span>.
             </h2>
             <p className="text-xl text-primary-foreground/80 mb-10">
               A simple, low-cost way to welcome tourists, increase foot traffic, and be part of a citywide celebration.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/apply">
-                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-lg shadow-xl">
-                  Apply to Join the Route
-                </Button>
+              <Link href="/apply" className="button-pop button-pop-yellow">
+                Apply to Join the Route
               </Link>
-              <Link href="/partners">
-                <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 py-6 text-lg">
-                  See Partner Packages <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
+              <Link href="/partners" className="button-pop button-pop-cream inline-flex items-center gap-2">
+                See Partner Packages <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </motion.div>
