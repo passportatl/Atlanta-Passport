@@ -14,7 +14,6 @@ const navItemClass = (active: boolean) =>
   );
 
 const touristLinks = [
-  { name: "Explore", path: "/explore" },
   { name: "Beltline Tour", path: "/beltline" },
   { name: "Events", path: "/events" },
   { name: "About", path: "/about" },
@@ -58,7 +57,7 @@ export default function Navbar() {
             href="/explore"
             className="button-pop button-pop-yellow ml-4 text-xs px-5 py-2.5"
           >
-            Explore <MoveRight className="w-4 h-4" />
+            Start Exploring <MoveRight className="w-4 h-4" />
           </Link>
         </nav>
 
@@ -68,7 +67,7 @@ export default function Navbar() {
             href="/explore"
             className="button-pop button-pop-yellow text-[10px] px-3 py-2"
           >
-            Explore
+            Start Exploring
           </Link>
           <Sheet>
             <SheetTrigger asChild>

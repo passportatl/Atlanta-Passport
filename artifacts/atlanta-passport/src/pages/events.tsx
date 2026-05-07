@@ -2,7 +2,6 @@ import { Link } from "wouter";
 import { MapPin, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { events } from "@/data/sample-data";
-import eventWatchPartyImg from "@/assets/images/event-watch-party.png";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -26,6 +25,25 @@ const badgeTints = [
   "bg-brand-sky text-foreground",
   "bg-brand-lime text-foreground",
 ];
+
+const headerTints = [
+  "bg-brand-yellow text-brand-yellow-foreground",
+  "bg-brand-red text-white",
+  "bg-brand-sky text-foreground",
+  "bg-brand-lime text-foreground",
+  "bg-brand-orange text-foreground",
+  "bg-foreground text-brand-yellow",
+];
+
+// Parse a "Month Day" or "Month Day-Day" style date into a big-display tile.
+function parseDateTile(dateStr: string): { month: string; day: string } {
+  const cleaned = dateStr.replace(/[–—]/g, "-").trim();
+  const match = cleaned.match(/^([A-Za-z]+)\s+(\d+)/);
+  if (match) {
+    return { month: match[1].slice(0, 3).toUpperCase(), day: match[2] };
+  }
+  return { month: "ATL", day: "★" };
+}
 
 export default function Events() {
   return (
@@ -62,41 +80,50 @@ export default function Events() {
             animate="visible"
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {events.map((event, i) => (
-              <motion.div key={event.id} variants={fadeInUp}>
-                <div className={`card-pop h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform group ${cardTints[i % cardTints.length]}`}>
-                  <div className="aspect-video overflow-hidden relative border-b-[3px] border-foreground">
-                    <img
-                      src={eventWatchPartyImg}
-                      alt={event.name}
-                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className={`absolute top-3 left-3 badge-sticker -rotate-2 text-[10px] ${badgeTints[i % badgeTints.length]}`}>
-                      {event.category}
-                    </div>
-                  </div>
-                  <div className="p-5 flex flex-col flex-grow">
-                    <h3 className="text-2xl font-serif font-bold text-foreground leading-tight mb-3">
-                      {event.name}
-                    </h3>
-                    <div className="space-y-1.5 mb-4">
-                      <div className="flex items-center text-sm text-foreground/80">
-                        <Calendar className="w-4 h-4 mr-2 text-brand-red" /> {event.date}
+            {events.map((event, i) => {
+              const tile = parseDateTile(event.date);
+              const headerTint = headerTints[i % headerTints.length];
+              return (
+                <motion.div key={event.id} variants={fadeInUp}>
+                  <div className={`card-pop h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform ${cardTints[i % cardTints.length]}`}>
+                    {/* Bold typographic date tile — replaces the shared photo */}
+                    <div className={`relative border-b-[3px] border-foreground p-5 flex items-center gap-5 ${headerTint}`}>
+                      <div className="bg-background text-foreground border-[3px] border-foreground shadow-pop-sm rounded-xl w-20 h-20 flex flex-col items-center justify-center flex-shrink-0">
+                        <div className="font-display text-[10px] tracking-[0.18em] leading-none">{tile.month}</div>
+                        <div className="font-serif text-3xl font-bold leading-none mt-1">{tile.day}</div>
                       </div>
-                      <div className="flex items-center text-sm text-foreground/80">
-                        <MapPin className="w-4 h-4 mr-2 text-brand-red" /> {event.venue}, {event.neighborhood}
+                      <div className="flex flex-col gap-2 min-w-0">
+                        <div className={`badge-sticker self-start text-[10px] ${badgeTints[i % badgeTints.length]}`}>
+                          {event.category}
+                        </div>
+                        <div className="font-display text-[11px] tracking-[0.16em] uppercase truncate">
+                          {event.neighborhood}
+                        </div>
                       </div>
                     </div>
-                    <p className="text-muted-foreground text-sm line-clamp-3 mb-5 flex-grow">
-                      {event.description}
-                    </p>
-                    <div className="font-display text-xs tracking-[0.16em] text-brand-red mt-auto">
-                      ★ DETAILS COMING SOON
+                    <div className="p-5 flex flex-col flex-grow">
+                      <h3 className="text-2xl font-serif font-bold text-foreground leading-tight mb-3">
+                        {event.name}
+                      </h3>
+                      <div className="space-y-1.5 mb-4">
+                        <div className="flex items-center text-sm text-foreground/80">
+                          <Calendar className="w-4 h-4 mr-2 text-brand-red" /> {event.date}
+                        </div>
+                        <div className="flex items-center text-sm text-foreground/80">
+                          <MapPin className="w-4 h-4 mr-2 text-brand-red" /> {event.venue}
+                        </div>
+                      </div>
+                      <p className="text-muted-foreground text-sm line-clamp-3 mb-5 flex-grow">
+                        {event.description}
+                      </p>
+                      <div className="font-display text-xs tracking-[0.16em] text-brand-red mt-auto">
+                        ★ DETAILS COMING SOON
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>

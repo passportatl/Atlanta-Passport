@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Check } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -55,7 +55,6 @@ const packageOptions: PackageOption[] = [
   { value: "starter", title: "Starter Listing", price: "$100", cls: "bg-brand-yellow text-brand-yellow-foreground" },
   { value: "featured", title: "Featured Partner", price: "$300", cls: "bg-brand-red text-white", badge: "MOST POPULAR" },
   { value: "premier", title: "Premier Sponsor", price: "$500", cls: "bg-brand-navy text-white" },
-  { value: "custom", title: "Custom Package", price: "Let's talk", cls: "bg-brand-cream text-foreground" },
 ];
 
 export default function Apply() {
@@ -82,6 +81,19 @@ export default function Apply() {
     console.log(values);
     setSubmitted(true);
   }
+
+  // Live progress: count of required fields with valid (non-empty) values
+  const watched = form.watch();
+  const requiredFields: Array<keyof z.infer<typeof formSchema>> = [
+    "businessName", "category", "neighborhood", "address",
+    "contactName", "phone", "email",
+    "package", "offer",
+  ];
+  const completed = requiredFields.filter((k) => {
+    const v = watched[k];
+    return typeof v === "string" ? v.trim().length > 0 : Boolean(v);
+  }).length;
+  const progressPct = Math.round((completed / requiredFields.length) * 100);
 
   if (submitted) {
     return (
@@ -121,6 +133,23 @@ export default function Apply() {
           <p className="font-display text-xs tracking-[0.18em] text-brand-red">
             ★ SPOTS LIMITED PER CATEGORY & NEIGHBORHOOD
           </p>
+        </div>
+
+        {/* Sticky progress strip — confidence + orientation while filling */}
+        <div className="sticky top-16 z-30 -mx-4 sm:mx-0 mb-6">
+          <div className="bg-background/95 backdrop-blur border-y-[3px] sm:border-[3px] border-foreground sm:rounded-2xl px-4 sm:px-5 py-3 sm:shadow-pop-sm">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <span className="font-display text-[10px] tracking-[0.2em] text-foreground/70">
+                YOUR APPLICATION
+              </span>
+              <span className="font-display text-[10px] tracking-[0.2em] text-brand-red">
+                {completed}/{requiredFields.length} COMPLETE
+              </span>
+            </div>
+            <div className="form-progress-track" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100} aria-label="Application progress">
+              <div className="form-progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+          </div>
         </div>
 
         <div className="card-pop bg-card p-6 md:p-10">
@@ -285,7 +314,7 @@ export default function Apply() {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                           aria-label="Passport package"
-                          className="grid sm:grid-cols-2 gap-4"
+                          className="grid sm:grid-cols-3 gap-4"
                         >
                           {packageOptions.map((opt) => {
                             const active = field.value === opt.value;
@@ -295,7 +324,7 @@ export default function Apply() {
                                 className={cn(
                                   "relative border-[3px] border-foreground rounded-2xl p-5 cursor-pointer transition-all flex items-start justify-between gap-3 m-0 focus-within:ring-4 focus-within:ring-brand-yellow focus-within:ring-offset-2 focus-within:ring-offset-background",
                                   active
-                                    ? `${opt.cls} shadow-pop -translate-y-0.5`
+                                    ? `${opt.cls} shadow-pop -translate-y-1 ring-2 ring-foreground`
                                     : "bg-background hover:-translate-y-0.5 hover:shadow-pop-sm"
                                 )}
                               >
@@ -308,16 +337,33 @@ export default function Apply() {
                                     {opt.price}
                                   </div>
                                 </div>
-                                {opt.badge && (
-                                  <span className="badge-sticker bg-brand-lime text-foreground text-[10px] -rotate-3 flex-shrink-0">
+                                {active ? (
+                                  <span className="w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center border-2 border-background shadow-pop-sm flex-shrink-0">
+                                    <Check className="w-4 h-4" strokeWidth={3} />
+                                  </span>
+                                ) : opt.badge ? (
+                                  <span className="badge-sticker bg-brand-lime text-foreground text-[10px] flex-shrink-0">
                                     {opt.badge}
                                   </span>
-                                )}
+                                ) : null}
                               </label>
                             );
                           })}
                         </RadioGroup>
                       </FormControl>
+                      <p className="text-sm text-muted-foreground mt-3">
+                        Need something different?{" "}
+                        <button
+                          type="button"
+                          onClick={() => field.onChange("custom")}
+                          className={cn(
+                            "underline decoration-brand-red decoration-[2px] underline-offset-4 font-medium hover:text-foreground transition-colors",
+                            field.value === "custom" && "text-foreground"
+                          )}
+                        >
+                          Request a custom package →
+                        </button>
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}

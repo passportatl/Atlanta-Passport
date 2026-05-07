@@ -65,14 +65,16 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      {/* Marquee — tourist-first */}
+      {/* Marquee — tourist-first, short phrases for mobile cadence */}
       <Marquee
         items={[
-          "THE UNOFFICIAL GUIDE TO THE REAL ATL",
-          "DISCOVER ATLANTA LIKE A LOCAL",
-          "FOOD · DRINKS · ROUTES · NEIGHBORHOODS",
-          "COLLECT STAMPS · UNLOCK PERKS",
-          "LAUNCHING SUMMER 2026",
+          "THE REAL ATL",
+          "LOCAL PICKS",
+          "NO TOURIST TRAPS",
+          "FOOD · DRINKS · ROUTES",
+          "COLLECT STAMPS",
+          "UNLOCK PERKS",
+          "SUMMER 2026",
         ]}
       />
 
@@ -94,8 +96,9 @@ export default function Home() {
               </Sticker>
 
               <h1 className="hero-title text-primary mb-6">
-                The unofficial guide<br className="hidden sm:block" />{" "}
-                to the <span className="highlight-yellow text-foreground">real Atlanta</span>.
+                The unofficial<br />
+                guide to the<br />
+                <span className="highlight-yellow text-foreground">real Atlanta</span>.
               </h1>
 
               <p className="text-base md:text-lg text-foreground/75 mb-8 max-w-xl leading-relaxed">
@@ -112,9 +115,9 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Tourist chip nav — horizontal scroll on mobile */}
+              {/* Tourist chip nav — horizontal scroll on mobile, fades on right */}
               <div className="-mx-4 sm:mx-0 mb-2">
-                <div className="flex gap-2 overflow-x-auto scrollbar-none px-4 sm:px-0 sm:flex-wrap pb-1">
+                <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r sm:no-fade px-4 sm:px-0 sm:flex-wrap pb-1 pr-8 sm:pr-0">
                   {heroChips.map((chip) => (
                     <Link
                       key={chip.label}
@@ -133,7 +136,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.15 }}
-              className="relative aspect-[4/5] sm:aspect-[5/4] lg:aspect-auto lg:h-[560px]"
+              className="relative aspect-[4/3] sm:aspect-[5/4] lg:aspect-auto lg:h-[560px] max-h-[55vh] sm:max-h-none"
             >
               <div className="absolute inset-2 sm:inset-4 rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop-lg">
                 <img

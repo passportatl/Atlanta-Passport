@@ -25,9 +25,9 @@ export default function Listing() {
 
   const handleSave = () => {
     toast({
-      title: "Saved to Passport!",
-      description: `${business.name} has been added to your digital passport.`,
-      duration: 3000,
+      title: "Coming with the app",
+      description: `Saving spots to your digital passport launches with the app in summer 2026.`,
+      duration: 3500,
     });
   };
 
@@ -147,55 +147,48 @@ export default function Listing() {
                 onClick={handleSave}
                 className="button-pop button-pop-yellow flex-1 inline-flex items-center justify-center gap-2"
               >
-                <BookOpen className="w-5 h-5" /> Save to Passport
+                <BookOpen className="w-5 h-5" /> Save for later
+                <span className="font-display text-[10px] tracking-[0.16em] opacity-70 ml-1">SOON</span>
               </button>
             </div>
           </div>
 
-          {/* Right Column - Map & QR */}
+          {/* Right Column — Find it + Stamp preview */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="card-pop bg-card overflow-hidden">
-              <div className="h-48 bg-brand-sky relative flex items-center justify-center border-b-[3px] border-foreground">
-                <div className="absolute inset-0 dot-grid opacity-30" />
-                <div className="badge-sticker bg-brand-red text-white absolute top-3 left-3 -rotate-3 text-[10px]">
-                  ★ ATL
+            {/* Address card with real Google Maps link */}
+            <div className="card-pop bg-card p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
+                  <MapPin className="w-5 h-5" />
                 </div>
-                <MapPin className="w-12 h-12 text-foreground relative z-10 drop-shadow-[2px_2px_0_rgba(255,255,255,0.6)]" />
+                <h4 className="font-display text-xs tracking-[0.18em] text-foreground">FIND IT</h4>
               </div>
-              <div className="p-5">
-                <h4 className="font-display text-xs tracking-[0.18em] text-foreground mb-1">MAP PREVIEW</h4>
-                <p className="text-sm font-medium text-foreground mb-3">{business.address}</p>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address + ', Atlanta, GA')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-display text-xs tracking-[0.16em] text-brand-red hover:underline inline-block"
-                >
-                  OPEN IN MAPS →
-                </a>
-              </div>
+              <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
+              <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address + ', Atlanta, GA')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
+              >
+                <Navigation className="w-4 h-4" /> Open in Google Maps
+              </a>
             </div>
 
-            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground text-center p-8 rotate-1 hover:rotate-0 transition-transform">
-              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6 -rotate-2">
-                ★ PASSPORT STAMP
+            {/* Passport stamp preview — clearly a preview, no fake "scan" CTA */}
+            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground text-center p-8">
+              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6">
+                ★ STAMP PREVIEW
               </div>
-              <div className="w-44 h-44 mx-auto bg-white border-[3px] border-foreground shadow-pop p-2 flex flex-col">
-                <div className="w-full h-full border-4 border-foreground relative overflow-hidden bg-white">
-                  <div className="absolute top-2 left-2 w-8 h-8 border-4 border-foreground" />
-                  <div className="absolute top-2 right-2 w-8 h-8 border-4 border-foreground" />
-                  <div className="absolute bottom-2 left-2 w-8 h-8 border-4 border-foreground" />
-                  <div className="absolute top-12 left-12 w-16 h-16 bg-foreground/20" />
-                  <div className="absolute bottom-12 right-6 w-10 h-20 bg-foreground/40" />
-                  <div className="absolute top-8 right-16 w-8 h-8 bg-foreground" />
-                  <div className="absolute bottom-8 left-16 w-12 h-4 bg-foreground/80" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-red text-white px-2 py-1 text-[10px] font-display tracking-wider border-2 border-foreground">
-                    SCAN
-                  </div>
-                </div>
+              <div className="w-40 h-40 mx-auto rounded-full border-[6px] border-double border-foreground bg-white flex flex-col items-center justify-center text-foreground">
+                <Sparkles className="w-6 h-6 mb-1 text-brand-red" />
+                <div className="font-display text-[9px] tracking-[0.2em]">VISITED</div>
+                <div className="font-serif text-base font-bold leading-tight px-3 mt-1">{business.name.split(' ').slice(0, 2).join(' ')}</div>
+                <div className="font-display text-[9px] tracking-[0.2em] mt-1">· ATL ·</div>
               </div>
               <p className="text-sm font-medium mt-6 leading-snug">
-                Scan at the spot to unlock your stamp and claim rewards.
+                Visit in person to collect this stamp when the app launches —
+                <span className="block font-display text-[10px] tracking-[0.16em] text-foreground/70 mt-1">SUMMER 2026</span>
               </p>
             </div>
           </div>

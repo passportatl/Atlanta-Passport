@@ -152,63 +152,57 @@ export default function Beltline() {
         </div>
       </section>
 
-      {/* Visitors get / Businesses get */}
-      <section className="py-24">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-8">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="card-pop bg-brand-red text-white p-10 -rotate-1 hover:rotate-0 transition-transform"
-            >
-              <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground inline-block mb-5 -rotate-2">
-                ★ TOURISTS RECEIVE
-              </div>
-              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-6 leading-tight">A memorable neighborhood adventure</h3>
-              <ul className="space-y-4">
-                {[
-                  "A fun way to explore ATL",
-                  "Exclusive deals from trusted businesses",
-                  "Walkable & bikeable routes to explore",
-                  "Stamps, rewards, and prizes along the way",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Sparkles className="w-5 h-5 text-brand-yellow flex-shrink-0 mt-0.5" />
-                    <span className="text-white/90">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+      {/* What tourists get — primary */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="card-pop bg-brand-red text-white p-8 md:p-12"
+          >
+            <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground inline-block mb-6">
+              ★ WHAT YOU GET
+            </div>
+            <h3 className="text-3xl md:text-5xl font-serif font-bold mb-8 leading-tight max-w-3xl">
+              A memorable neighborhood adventure — built by locals.
+            </h3>
+            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+              {[
+                "Walkable & bikeable routes through the Beltline",
+                "Exclusive deals from trusted local spots",
+                "Stamps, rewards, and prizes along the way",
+                "Curated picks — no tourist traps, no chains",
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-brand-yellow flex-shrink-0 mt-0.5" />
+                  <span className="text-white/95 text-lg">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
 
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="card-pop bg-brand-yellow text-brand-yellow-foreground p-10 rotate-1 hover:rotate-0 transition-transform"
-            >
-              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-5 rotate-2">
-                ★ BUSINESSES RECEIVE
+          {/* Businesses — secondary, smaller */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="card-pop bg-brand-cream text-foreground p-6 md:p-8 mt-8 max-w-3xl mx-auto"
+          >
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+              <div className="badge-sticker bg-foreground text-brand-yellow inline-block whitespace-nowrap self-start">
+                FOR BUSINESSES
               </div>
-              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-6 leading-tight">New customers during the busiest tourism moment in Atlanta's history</h3>
-              <ul className="space-y-4">
-                {[
-                  "Increased foot traffic",
-                  "Placement in the printed passport",
-                  "Featured in the Beltline route map",
-                  "Social media exposure",
-                  "Connection to a citywide tourism experience",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Trophy className="w-5 h-5 text-brand-red flex-shrink-0 mt-0.5" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+              <p className="text-base md:text-lg flex-1">
+                Run a spot along the Beltline?{" "}
+                <Link href="/partners" className="font-bold underline decoration-brand-red decoration-[3px] underline-offset-4 hover:text-brand-red transition-colors">
+                  See how listings work →
+                </Link>
+              </p>
+            </div>
+          </motion.div>
         </div>
       </section>
 

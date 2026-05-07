@@ -92,36 +92,39 @@ export default function Explore() {
 
           <div>
             <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4">NEIGHBORHOODS</h3>
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setActiveNeighborhood("All")}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
-                  activeNeighborhood === "All"
-                    ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
-                    : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
-                )}
-              >
-                All
-              </button>
-              {neighborhoods.map((n, i) => {
-                const palette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
-                const active = activeNeighborhood === n.name;
-                return (
-                  <button
-                    key={n.id}
-                    onClick={() => setActiveNeighborhood(n.name)}
-                    className={cn(
-                      "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
-                      active
-                        ? `${palette[i % palette.length]} shadow-pop-sm -translate-y-0.5`
-                        : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
-                    )}
-                  >
-                    {n.name}
-                  </button>
-                );
-              })}
+            {/* Mobile: single-row horizontal scroller. Desktop: wrap. */}
+            <div className="-mx-4 sm:mx-0">
+              <div className="flex sm:flex-wrap gap-3 overflow-x-auto scrollbar-none scroll-fade-r sm:no-fade px-4 sm:px-0 pb-1 pr-8 sm:pr-0">
+                <button
+                  onClick={() => setActiveNeighborhood("All")}
+                  className={cn(
+                    "shrink-0 px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                    activeNeighborhood === "All"
+                      ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
+                      : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
+                  )}
+                >
+                  All
+                </button>
+                {neighborhoods.map((n, i) => {
+                  const palette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
+                  const active = activeNeighborhood === n.name;
+                  return (
+                    <button
+                      key={n.id}
+                      onClick={() => setActiveNeighborhood(n.name)}
+                      className={cn(
+                        "shrink-0 px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                        active
+                          ? `${palette[i % palette.length]} shadow-pop-sm -translate-y-0.5`
+                          : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
+                      )}
+                    >
+                      {n.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

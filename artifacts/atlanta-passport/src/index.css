@@ -232,7 +232,10 @@
   to { transform: translateX(-50%); }
 }
 .animate-marquee {
-  animation: marquee 38s linear infinite;
+  animation: marquee 22s linear infinite;
+}
+@media (min-width: 768px) {
+  .animate-marquee { animation-duration: 38s; }
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; transform: translateX(0); }
@@ -348,10 +351,14 @@
 
   .hero-title {
     font-family: var(--app-font-serif);
-    font-size: clamp(2.75rem, 8vw, 6.5rem);
-    line-height: .92;
+    font-size: clamp(2.25rem, 8vw, 6.5rem);
+    line-height: .95;
     letter-spacing: -0.03em;
     font-weight: 800;
+    overflow-wrap: break-word;
+  }
+  @media (min-width: 768px) {
+    .hero-title { line-height: .92; }
   }
 
   .passport-stamp {
@@ -455,4 +462,30 @@
   /* Hide scrollbar for horizontal chip nav */
   .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Right-edge fade for horizontal scrollers — signals "more →" */
+  .scroll-fade-r {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+  }
+  @media (min-width: 640px) {
+    .sm\:no-fade.scroll-fade-r {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+  }
+
+  /* Slim progress bar for forms */
+  .form-progress-track {
+    height: 6px;
+    background: hsl(var(--brand-cream));
+    border-radius: 999px;
+    border: 2px solid hsl(var(--foreground));
+    overflow: hidden;
+  }
+  .form-progress-fill {
+    height: 100%;
+    background: hsl(var(--brand-red));
+    transition: width .35s ease;
+  }
 }

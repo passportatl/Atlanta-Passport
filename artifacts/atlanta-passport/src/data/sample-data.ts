@@ -7,7 +7,6 @@ import nightlifeImg from "@/assets/images/nightlife.png";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
-import eventWatchPartyImg from "@/assets/images/event-watch-party.png";
 
 export const businesses = [
   {
