@@ -66,6 +66,11 @@
   --color-brand-yellow-foreground: hsl(var(--brand-yellow-foreground));
   --color-brand-red: hsl(var(--brand-red));
   --color-brand-sky: hsl(var(--brand-sky));
+  --color-brand-navy: hsl(var(--brand-navy));
+  --color-brand-gold: hsl(var(--brand-gold));
+  --color-brand-lime: hsl(var(--brand-lime));
+  --color-brand-orange: hsl(var(--brand-orange));
+  --color-brand-cream: hsl(var(--brand-cream));
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -142,8 +147,13 @@
   /* Roadside Americana brand palette */
   --brand-yellow: 46 95% 55%;
   --brand-yellow-foreground: 0 0% 8%;
-  --brand-red: 6 70% 48%;
+  --brand-red: 359 70% 50%;
   --brand-sky: 200 60% 60%;
+  --brand-navy: 211 64% 16%;
+  --brand-gold: 41 78% 47%;
+  --brand-lime: 73 100% 47%;
+  --brand-orange: 32 100% 49%;
+  --brand-cream: 45 100% 92%;
   
   --radius: 0.75rem;
 
@@ -238,4 +248,137 @@
 /* Sticker / stamp helper — slight rotation + offset shadow */
 .sticker {
   box-shadow: 3px 3px 0 0 hsl(var(--foreground) / 0.85);
+}
+
+/* === Pop / sticker design system ===
+   All declared in @layer components so Tailwind utilities (bg-*, text-*, etc.)
+   in @layer utilities reliably override them. */
+@layer components {
+  .shadow-pop {
+    box-shadow: 6px 6px 0 0 hsl(var(--foreground));
+  }
+  .shadow-pop-sm {
+    box-shadow: 4px 4px 0 0 hsl(var(--foreground));
+  }
+  .shadow-pop-lg {
+    box-shadow: 10px 10px 0 0 hsl(var(--foreground));
+  }
+
+  .card-pop {
+    background: hsl(var(--card));
+    border: 3px solid hsl(var(--foreground));
+    border-radius: 20px;
+    box-shadow: 8px 8px 0 0 hsl(var(--foreground));
+  }
+
+  .badge-sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: hsl(var(--brand-yellow));
+    color: hsl(var(--brand-yellow-foreground));
+    border: 2px solid hsl(var(--foreground));
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--app-font-display);
+    font-size: 0.7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+  }
+
+  .section-kicker {
+    display: inline-block;
+    font-family: var(--app-font-display);
+    text-transform: uppercase;
+    color: hsl(var(--foreground));
+    background: hsl(var(--brand-lime));
+    border: 2px solid hsl(var(--foreground));
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 0.7rem;
+    letter-spacing: .14em;
+    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+  }
+
+  .button-pop {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: hsl(var(--brand-red));
+    color: #fff;
+    border: 3px solid hsl(var(--foreground));
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-family: var(--app-font-display);
+    font-size: 0.95rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    box-shadow: 5px 5px 0 0 hsl(var(--foreground));
+    transition: transform .15s ease, box-shadow .15s ease;
+    cursor: pointer;
+  }
+  .button-pop:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+  }
+  .button-pop.button-pop-yellow {
+    background: hsl(var(--brand-yellow));
+    color: hsl(var(--brand-yellow-foreground));
+  }
+  .button-pop.button-pop-cream {
+    background: hsl(var(--brand-cream));
+    color: hsl(var(--foreground));
+  }
+
+  .highlight-yellow {
+    background: hsl(var(--brand-yellow));
+    color: hsl(var(--brand-yellow-foreground));
+    border: 3px solid hsl(var(--foreground));
+    box-shadow: 6px 6px 0 0 hsl(var(--foreground));
+    padding: 0 .12em;
+    border-radius: 12px;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .hero-title {
+    font-family: var(--app-font-serif);
+    font-size: clamp(2.75rem, 8vw, 6.5rem);
+    line-height: .92;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .passport-stamp {
+    width: 140px;
+    height: 140px;
+    border: 4px dashed hsl(var(--brand-red));
+    border-radius: 50%;
+    color: hsl(var(--brand-red));
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-family: var(--app-font-display);
+    font-size: 0.7rem;
+    letter-spacing: .1em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    transform: rotate(-8deg);
+    padding: 14px;
+  }
+
+  .progress-track {
+    height: 14px;
+    border: 2px solid hsl(var(--foreground));
+    border-radius: 999px;
+    background: hsl(var(--brand-cream));
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: hsl(var(--brand-red));
+    border-right: 2px solid hsl(var(--foreground));
+  }
 }

@@ -22,7 +22,7 @@ export const businesses = [
     image: wheelhausImg,
     featured: true,
     sponsorTier: "Founding Sponsor",
-    about: "Wheelhaus is built for the way Atlanta actually moves — by bike, on the Beltline, through the neighborhoods. Premium e-bike rentals, full-service repairs, and curated city rides for visitors who'd rather feel the city than sit in traffic."
+    about: "Premium e-bike rentals, full-service repairs, and curated city rides for visitors who want Atlanta beyond traffic and rideshares. Built for the way the city actually moves — by bike, on the Beltline, through the neighborhoods."
   },
   {
     id: "brash-coffee",

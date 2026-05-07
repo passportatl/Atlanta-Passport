@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, ScanLine, Ticket, Store, MoveRight, ArrowRight, Bike, Stamp, Gift, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { businesses, neighborhoods } from "@/data/sample-data";
@@ -58,22 +58,19 @@ export default function Home() {
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
                 LAUNCHING · SUMMER 2026
               </div>
-              <h1 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 leading-[1.05] tracking-tight">
-                The unofficial guide to the real Atlanta.
+              <h1 className="hero-title text-primary mb-8">
+                The unofficial guide<br />
+                to the <span className="highlight-yellow text-foreground">real Atlanta</span>.
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl leading-relaxed">
-                Discover the restaurants, bars, neighborhoods, events, rides, and local culture shaping Atlanta during the world's biggest soccer celebration.
+              <p className="text-lg md:text-xl text-foreground/75 mb-10 max-w-xl leading-relaxed">
+                Food. Drinks. Rides. Patios. Pop-ups. Neighborhood gems. Atlanta Passport helps visitors find the city locals actually love.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/explore">
-                  <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg">
-                    Explore Atlanta
-                  </Button>
+              <div className="flex flex-wrap gap-5 items-center">
+                <Link href="/explore" className="button-pop">
+                  Explore Atlanta
                 </Link>
-                <Link href="/partners">
-                  <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/5 px-8 py-6 text-lg">
-                    Become a Partner
-                  </Button>
+                <Link href="/partners" className="button-pop button-pop-yellow">
+                  Become a Founding Partner
                 </Link>
               </div>
 

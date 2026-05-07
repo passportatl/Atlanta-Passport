@@ -1,5 +1,4 @@
 import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -37,12 +36,10 @@ export default function Partners() {
               Put your business on Atlanta's World Cup map.
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 leading-relaxed">
-              We're curating a limited group of local businesses, venues, restaurants, shops, and experiences to feature in Atlanta Passport.
+              We're curating a limited group of local restaurants, bars, shops, venues, rides, and experiences for Atlanta Passport.
             </p>
-            <Link href="/apply">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-lg">
-                Apply Now
-              </Button>
+            <Link href="/apply" className="button-pop">
+              Apply Now
             </Link>
           </motion.div>
         </div>
@@ -73,16 +70,13 @@ export default function Partners() {
               ].map((row) => {
                 const pct = Math.round((row.claimed / row.total) * 100);
                 return (
-                  <div key={row.label} className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-xl p-5">
+                  <div key={row.label} className="bg-background text-foreground border-[3px] border-foreground rounded-2xl p-5 shadow-pop-sm">
                     <div className="flex justify-between items-baseline mb-3">
-                      <span className="font-medium">{row.label}</span>
-                      <span className="text-secondary text-sm font-mono tracking-wider">{row.claimed}/{row.total} claimed</span>
+                      <span className="font-display text-sm tracking-wider uppercase">{row.label}</span>
+                      <span className="font-display text-xs tracking-wider text-brand-red">{row.claimed}/{row.total}</span>
                     </div>
-                    <div className="h-1.5 bg-primary-foreground/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-secondary rounded-full transition-all"
-                        style={{ width: `${pct}%` }}
-                      />
+                    <div className="progress-track">
+                      <div className="progress-fill transition-all" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
@@ -139,87 +133,86 @@ export default function Partners() {
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               Built to be affordable for local businesses
             </div>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">Choose Your Package</h2>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-4 leading-[1.05]">
+              Choose your package.
+            </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Pricing designed for small, independent Atlanta businesses — pick the level of exposure that fits, starting at just $100.
+              Three levels of exposure — from a simple listing to full Premier Sponsor placement across the printed passport and the digital guide.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
-            {/* Starter */}
-            <Card className="flex flex-col h-full">
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif text-primary">Starter Listing</CardTitle>
-                <div className="text-4xl font-serif font-bold my-4">$100</div>
-                <p className="text-sm text-muted-foreground">Best for small shops, cafes, and local services.</p>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <ul className="space-y-3 mb-8">
+          <div className="grid lg:grid-cols-3 gap-10 max-w-6xl mx-auto items-stretch">
+            {/* Starter — Yellow */}
+            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground flex flex-col -rotate-1 hover:rotate-0 transition-transform">
+              <div className="p-7 flex-grow">
+                <div className="font-display text-[10px] tracking-[0.2em] mb-3">TIER 01</div>
+                <h3 className="font-serif text-3xl font-bold mb-2">Starter Listing</h3>
+                <div className="flex items-baseline gap-2 my-5">
+                  <div className="font-display text-5xl">$500</div>
+                </div>
+                <p className="text-sm mb-6 opacity-80">Best for small shops, cafes, and local services.</p>
+                <ul className="space-y-2.5 mb-8">
                   {["Website listing", "Basic passport mention", "QR code", "Category placement"].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="w-5 h-5 text-primary mr-2 flex-shrink-0" />
+                    <li key={i} className="flex items-start text-sm">
+                      <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-              <div className="p-6 pt-0 mt-auto">
-                <Link href="/apply">
-                  <Button variant="outline" className="w-full">Apply Now</Button>
-                </Link>
               </div>
-            </Card>
+              <div className="p-7 pt-0">
+                <Link href="/apply" className="button-pop button-pop-cream w-full">Apply</Link>
+              </div>
+            </div>
 
-            {/* Featured */}
-            <Card className="flex flex-col h-full border-accent relative transform lg:scale-105 shadow-xl bg-primary text-primary-foreground">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent text-accent-foreground px-4 py-1 rounded-full text-sm font-bold tracking-wider uppercase">
-                Most Popular
+            {/* Featured — Red */}
+            <div className="card-pop bg-brand-red text-white flex flex-col rotate-1 hover:rotate-0 transition-transform relative lg:-translate-y-3">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 badge-sticker bg-brand-lime text-foreground">
+                MOST POPULAR
               </div>
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif text-primary-foreground">Featured Partner</CardTitle>
-                <div className="text-4xl font-serif font-bold my-4">$300</div>
-                <p className="text-sm text-primary-foreground/80">Best for restaurants, bars, retail, and experience businesses.</p>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <ul className="space-y-3 mb-8">
-                  {["Enhanced website listing", "Larger passport placement", "Featured business card", "Priority neighborhood placement", "QR code", "Offer/reward feature"].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="w-5 h-5 text-accent mr-2 flex-shrink-0" />
+              <div className="p-7 flex-grow">
+                <div className="font-display text-[10px] tracking-[0.2em] mb-3">TIER 02</div>
+                <h3 className="font-serif text-3xl font-bold mb-2">Featured Partner</h3>
+                <div className="flex items-baseline gap-2 my-5">
+                  <div className="font-display text-5xl">$1,500</div>
+                </div>
+                <p className="text-sm mb-6 opacity-90">Best for restaurants, bars, retail, and experience businesses.</p>
+                <ul className="space-y-2.5 mb-8">
+                  {["Enhanced website listing", "Larger passport placement", "Featured business card", "Priority neighborhood placement", "QR code", "Offer / reward feature"].map((item, i) => (
+                    <li key={i} className="flex items-start text-sm">
+                      <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-              <div className="p-6 pt-0 mt-auto">
-                <Link href="/apply">
-                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">Apply Now</Button>
-                </Link>
               </div>
-            </Card>
+              <div className="p-7 pt-0">
+                <Link href="/apply" className="button-pop button-pop-yellow w-full">Apply</Link>
+              </div>
+            </div>
 
-            {/* Premier */}
-            <Card className="flex flex-col h-full">
-              <CardHeader>
-                <CardTitle className="text-2xl font-serif text-primary">Premier Sponsor</CardTitle>
-                <div className="text-4xl font-serif font-bold my-4">$500</div>
-                <p className="text-sm text-muted-foreground">Best for venues, larger restaurants, hotels, brands, and major activations.</p>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <ul className="space-y-3 mb-8">
+            {/* Premier — Navy + Gold */}
+            <div className="card-pop bg-brand-navy text-white flex flex-col -rotate-1 hover:rotate-0 transition-transform">
+              <div className="p-7 flex-grow">
+                <div className="font-display text-[10px] tracking-[0.2em] mb-3 text-brand-gold">TIER 03</div>
+                <h3 className="font-serif text-3xl font-bold mb-2">Premier Sponsor</h3>
+                <div className="flex items-baseline gap-2 my-5">
+                  <div className="font-display text-5xl text-brand-gold">$3,000+</div>
+                </div>
+                <p className="text-sm mb-6 opacity-90">Best for venues, hotels, brands, and major World Cup activations.</p>
+                <ul className="space-y-2.5 mb-8">
                   {["Premium passport placement", "Homepage feature", "Category or neighborhood sponsorship", "Enhanced listing", "QR campaign", "Featured social/promo placement"].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <Check className="w-5 h-5 text-primary mr-2 flex-shrink-0" />
+                    <li key={i} className="flex items-start text-sm">
+                      <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-brand-gold" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-              <div className="p-6 pt-0 mt-auto">
-                <Link href="/apply">
-                  <Button variant="outline" className="w-full">Apply Now</Button>
-                </Link>
               </div>
-            </Card>
+              <div className="p-7 pt-0">
+                <Link href="/apply" className="button-pop button-pop-yellow w-full">Apply</Link>
+              </div>
+            </div>
           </div>
 
           <p className="text-center text-muted-foreground italic mt-12">
@@ -286,10 +279,8 @@ export default function Partners() {
           <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8">
             Ready to put your business on the map?
           </h2>
-          <Link href="/apply">
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-lg">
-              Apply Now
-            </Button>
+          <Link href="/apply" className="button-pop button-pop-yellow">
+            Apply Now
           </Link>
         </div>
       </section>

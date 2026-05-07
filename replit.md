@@ -37,7 +37,7 @@ A premium, mobile-first marketing site for "Atlanta Passport" — a hyperlocal c
 
 ## Product
 
-Marketing site with: Home, Become a Partner (with $500 / $1,500 / $3,000+ packages), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, About, and Apply onboarding form.
+Marketing site with: Home, Become a Partner (Starter $500 / Featured $1,500 / Premier $3,000+), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, About, and Apply onboarding form. Visual identity is playful retro Americana — yellow block "ATL/PASSPORT" wordmark, thick black borders, offset "pop" shadows (`.card-pop`, `.button-pop`, `.badge-sticker`, `.highlight-yellow`), Bungee display font, brand palette tokens (`brand-yellow/red/sky/navy/gold/lime/orange/cream`).
 
 ## User preferences
 

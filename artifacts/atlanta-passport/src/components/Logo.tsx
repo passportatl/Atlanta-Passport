@@ -1,7 +1,10 @@
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 
-type Variant = "default" | "stacked" | "inline-light";
+type Variant = "default" | "stacked" | "compact";
+
+const tile =
+  "inline-flex items-center justify-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-[10px] font-display leading-none";
 
 export default function Logo({
   variant = "default",
@@ -12,28 +15,20 @@ export default function Logo({
   className?: string;
   asLink?: boolean;
 }) {
-  const blockBase =
-    "inline-block bg-brand-yellow text-brand-yellow-foreground border-2 border-foreground/85 px-2.5 py-0.5 leading-none tracking-[0.04em]";
-
   const content =
     variant === "stacked" ? (
-      <span className="inline-flex flex-col gap-1.5 items-start font-display">
-        <span className={cn(blockBase, "text-xl sticker")}>ATLANTA</span>
-        <span className={cn(blockBase, "text-xl sticker")}>PASSPORT</span>
-      </span>
-    ) : variant === "inline-light" ? (
-      <span className="inline-flex items-center gap-1.5 font-display">
-        <span className={cn(blockBase, "text-base sticker")}>ATL</span>
-        <span className="text-primary-foreground text-lg tracking-wide font-display">
+      <span className="inline-grid gap-1.5 -rotate-1">
+        <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm")}>ATLANTA</span>
+        <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm rotate-[2deg] origin-left")}>
           PASSPORT
         </span>
       </span>
+    ) : variant === "compact" ? (
+      <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm -rotate-1")}>ATL · PASS</span>
     ) : (
-      <span className="inline-flex items-center gap-1.5 font-display">
-        <span className={cn(blockBase, "text-base sticker")}>ATL</span>
-        <span className="text-foreground text-lg tracking-wide font-display">
-          PASSPORT
-        </span>
+      <span className="inline-flex items-center gap-1.5 -rotate-1">
+        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm")}>ATL</span>
+        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm rotate-[2deg]")}>PASSPORT</span>
       </span>
     );
 

@@ -1,0 +1,690 @@
+MAJOR VISUAL IDENTITY + CODE UPDATE FOR ATLANTA PASSPORT
+
+We are evolving the Atlanta Passport site into a colorful, playful, iconic Atlanta city guide.
+
+The core tagline remains:
+
+“The unofficial guide to the real Atlanta.”
+
+This brand should feel like:
+A retro Atlanta roadside sign
+A colorful sports-city celebration
+A playful local travel guide
+A collectible passport
+A neighborhood discovery web-app
+A premium but fun cultural brand
+
+It should NOT feel like:
+A generic startup site
+A boring tourism board
+A corporate FIFA site
+A Yelp clone
+A flat SaaS landing page
+
+IMPORTANT LEGAL/BRAND NOTE:
+Do NOT use actual team logos, FIFA logos, Coca-Cola logos, or trademarked brand assets.
+Use color inspiration only.
+Create an original Atlanta-inspired palette using sports/city color energy.
+
+VISUAL INSPIRATION
+
+Use colors inspired by:
+Atlanta Hawks: red, volt/lime, black
+Atlanta Braves: navy, red, cream
+Atlanta Falcons: red, black, silver
+Atlanta United: red, black, gold
+Coca-Cola: red, white, classic Americana
+Waffle House-style roadside signage: yellow blocks, black letters
+
+But make it original.
+
+The site should feel:
+Bright
+Warm
+Colorful
+Urban
+Playful
+Editorial
+Local
+Collectible
+High-energy
+
+PRIMARY BRAND PALETTE
+
+Define these CSS variables:
+
+--passport-yellow: #FFD23F;
+--passport-black: #111111;
+--passport-cream: #FFF4D6;
+--passport-red: #D62828;
+--passport-navy: #102A43;
+--passport-green: #4CAF50;
+--passport-lime: #C7F000;
+--passport-orange: #F77F00;
+--passport-gold: #D4A017;
+--passport-silver: #C0C0C0;
+--passport-white: #FFFFFF;
+
+Use the palette with restraint:
+Yellow/black = core brand/logo
+Red/navy/gold/green/orange = playful section accents
+Cream = main background
+Black = primary text
+
+LOGO / WORDMARK DIRECTION
+
+Create a custom “Atlanta Passport” wordmark component.
+
+It should be inspired by classic roadside block signage, but NOT a direct Waffle House copy.
+
+Logo treatment:
+Each word or letter group sits in warm yellow rounded rectangle blocks.
+Use bold black uppercase letters.
+Slightly imperfect, playful alignment.
+Optional subtle shadow.
+Feels like a sign, sticker, badge, or patch.
+
+Example structure:
+[ ATLANTA ]
+[ PASSPORT ]
+
+or:
+[ ATL ][ ANT ][ A ]
+[ PASS ][ PORT ]
+
+Use CSS only if possible.
+
+Code suggestion:
+Create a LogoBlock component:
+- wrapper: display inline-grid
+- each word in a yellow block
+- black uppercase text
+- border: 3px solid black
+- border-radius: 8px
+- box-shadow: 4px 4px 0 black
+- transform rotations: slight -1deg / 1deg
+- font-weight: 900
+- letter-spacing: .04em
+
+Example CSS:
+
+.logo-block {
+  display: inline-grid;
+  gap: 6px;
+  transform: rotate(-1deg);
+}
+
+.logo-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.logo-tile {
+  background: var(--passport-yellow);
+  color: var(--passport-black);
+  border: 3px solid var(--passport-black);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 var(--passport-black);
+  padding: 8px 12px;
+  font-weight: 900;
+  font-size: clamp(1.2rem, 4vw, 3rem);
+  line-height: 1;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.logo-tile:nth-child(even) {
+  transform: rotate(1deg);
+}
+
+.logo-tile:nth-child(odd) {
+  transform: rotate(-1deg);
+}
+
+HEADER / NAV UPDATE
+
+Make the header more branded.
+
+Header should include:
+Left: Atlanta Passport logo block
+Center/right: Explore, Partners, Events, About
+CTA button: “Apply Now”
+
+Style:
+Cream or yellow background
+Black border-bottom
+Playful CTA button
+Sticky header
+Mobile hamburger
+
+Use border and shadow accents instead of soft SaaS shadows.
+
+GLOBAL UI STYLE
+
+Replace overly minimal startup styling with:
+Thick black outlines
+Playful cards
+Colorful badges
+Sticker-style labels
+Passport stamp graphics
+Map-line doodles
+Rounded rectangles
+Offset shadows
+Retro-inspired section headers
+Bold color blocks
+Editorial image collages
+
+Code suggestion:
+Create reusable classes:
+
+.card-pop {
+  background: var(--passport-white);
+  border: 3px solid var(--passport-black);
+  border-radius: 20px;
+  box-shadow: 8px 8px 0 var(--passport-black);
+}
+
+.badge-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--passport-yellow);
+  color: var(--passport-black);
+  border: 2px solid var(--passport-black);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  transform: rotate(-2deg);
+}
+
+.section-kicker {
+  display: inline-block;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--passport-black);
+  background: var(--passport-lime);
+  border: 2px solid var(--passport-black);
+  border-radius: 999px;
+  padding: 6px 12px;
+  box-shadow: 3px 3px 0 var(--passport-black);
+}
+
+.button-pop {
+  background: var(--passport-red);
+  color: var(--passport-white);
+  border: 3px solid var(--passport-black);
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-weight: 900;
+  box-shadow: 5px 5px 0 var(--passport-black);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.button-pop:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--passport-black);
+}
+
+TYPOGRAPHY UPDATE
+
+Use bolder, more expressive typography.
+
+Headlines:
+Huge, playful, confident.
+Use uppercase or mixed-case editorial style.
+Tight line-height.
+Colorful highlight spans.
+
+Body:
+Readable, clean, warm.
+
+Add CSS:
+.hero-title {
+  font-size: clamp(3rem, 9vw, 8rem);
+  line-height: .88;
+  letter-spacing: -0.06em;
+  font-weight: 950;
+}
+
+.highlight-yellow {
+  background: var(--passport-yellow);
+  color: var(--passport-black);
+  border: 3px solid var(--passport-black);
+  box-shadow: 6px 6px 0 var(--passport-black);
+  padding: 0 .12em;
+  border-radius: 10px;
+}
+
+.highlight-red {
+  color: var(--passport-red);
+}
+
+.highlight-navy {
+  color: var(--passport-navy);
+}
+
+HOMEPAGE HERO UPDATE
+
+Make the hero loud, colorful, and instantly memorable.
+
+Hero headline:
+“The unofficial guide to the real Atlanta.”
+
+Use layout:
+Left side:
+Logo block
+Big tagline
+Short copy
+CTA buttons
+
+Right side:
+Colorful collage of:
+Passport booklet mockup
+QR code card
+Neighborhood stickers
+Map pins
+Business cards
+Stamp marks
+Atlanta-inspired color blocks
+
+Hero copy:
+“Food. Drinks. Rides. Patios. Pop-ups. Neighborhood gems. Atlanta Passport helps visitors find the city locals actually love.”
+
+CTA buttons:
+“Explore Atlanta”
+“Become a Founding Partner”
+
+Add badges around hero:
+“Launching Summer 2026”
+“Founding businesses now onboarding”
+“Built by Atlanta locals”
+“Not your hotel lobby guide”
+
+Add ticker/marquee below hero:
+“WORLD CUP CITY GUIDE • LOCAL SPOTS • MATCH DAY MOVES • FOOD • DRINKS • RIDES • NIGHTLIFE • ATLANTA”
+
+Ticker style:
+Yellow background
+Black text
+Thick black top/bottom border
+Fast but readable movement
+
+CODE SUGGESTION FOR MARQUEE:
+Use CSS animation with duplicated text.
+
+.marquee {
+  overflow: hidden;
+  background: var(--passport-yellow);
+  border-top: 3px solid var(--passport-black);
+  border-bottom: 3px solid var(--passport-black);
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-block;
+  animation: marquee 22s linear infinite;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 12px 0;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+SECTION COLOR CODING
+
+Give major sections different Atlanta-inspired color moods:
+
+Hero:
+Cream + yellow + red + black
+
+How It Works:
+Navy background with cream cards and yellow accents
+
+Why It Exists:
+Red/orange background with cream text panels
+
+Neighborhoods:
+Cream background with colorful cards
+
+Featured Businesses:
+Green/lime accent section
+
+Partner CTA:
+Black background with yellow/red/gold cards
+
+Footer:
+Near-black with yellow logo and cream text
+
+IMPORTANT:
+Keep enough contrast for readability.
+
+HOW IT WORKS SECTION UPDATE
+
+Use playful cards with numbers in big colored circles.
+
+Steps:
+1. Grab the passport
+2. Scan the city
+3. Find the real spots
+4. Unlock local perks
+
+Each card should have:
+Thick black border
+Different accent color
+Icon/sticker
+Short copy
+
+WHY THIS EXISTS SECTION
+
+Make it bold.
+
+Headline:
+“Atlanta deserves better than generic tourism.”
+
+Copy:
+“Most visitors only see stadiums, hotels, and rideshares. Atlanta Passport points them toward the food, bars, shops, rides, neighborhoods, and late-night corners that make the city feel alive.”
+
+Design:
+Use red/orange color block.
+Add large pull quote:
+“Don’t just visit Atlanta. Get into it.”
+
+NEIGHBORHOOD CARDS UPDATE
+
+Make each neighborhood card colorful and distinct.
+
+Neighborhoods:
+Downtown
+Midtown
+Old Fourth Ward
+East Atlanta Village
+Decatur
+Westside
+Buckhead
+Summerhill
+
+Each card:
+Use different accent color
+Sticker label
+Short punchy description
+Button: “Explore”
+
+Example copy:
+Old Fourth Ward:
+“Murals, patios, late nights, and Beltline movement.”
+
+East Atlanta Village:
+“Dive bars, live music, food, and beautiful chaos.”
+
+Decatur:
+“Coffee, cocktails, bookstores, patios, and walkable charm.”
+
+Midtown:
+“Hotels, skyline views, match-day energy, and rooftop nights.”
+
+FEATURED BUSINESS SECTION UPDATE
+
+Title:
+“Selected local spots.”
+
+Subtitle:
+“Not ads. A curated hit list.”
+
+Cards should look like collectible trading cards or passport entries.
+
+Each card:
+Photo area
+Business name
+Category
+Neighborhood
+Offer badge
+Sponsor badge if applicable
+Button: “View Spot”
+
+Wheelhaus Bikes:
+Add “Founding Sponsor” badge.
+Accent color: orange/yellow/black.
+
+Wheelhaus copy:
+“Premium e-bike rentals, repairs, and curated city rides for visitors who want Atlanta beyond traffic and rideshares.”
+
+PARTNER PAGE UPDATE
+
+Make Partner page colorful but credible.
+
+Hero headline:
+“Put your business on Atlanta’s World Cup map.”
+
+Subheadline:
+“We’re curating a limited group of local restaurants, bars, shops, venues, rides, and experiences for Atlanta Passport.”
+
+Add large visual:
+Passport mockup
+Listing preview
+QR code preview
+Map pin preview
+
+Package cards:
+Use color-coded cards:
+Starter Listing: yellow
+Featured Partner: red
+Premier Sponsor: navy/gold
+
+Keep thick black borders and pop shadows.
+
+Package pricing:
+Starter Listing — $500
+Featured Partner — $1,500
+Premier Sponsor — $3,000+
+
+Add scarcity module:
+“Limited placements by neighborhood and category.”
+
+Show fake progress examples:
+Restaurants: 3 / 8 claimed
+Coffee Shops: 2 / 5 claimed
+Bike Rentals: 1 / 3 claimed
+Nightlife: 4 / 10 claimed
+
+Use colorful progress bars.
+
+CODE SUGGESTION:
+.progress-bar {
+  height: 16px;
+  border: 2px solid var(--passport-black);
+  border-radius: 999px;
+  background: var(--passport-cream);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--passport-red);
+  border-right: 2px solid var(--passport-black);
+}
+
+EXPLORE PAGE UPDATE
+
+Explore page should feel like a playful mobile web-app.
+
+Add:
+Sticky category pills
+Neighborhood filters
+Color-coded business cards
+Map-inspired visual divider
+Search bar
+Featured row
+
+Category pills:
+Food
+Drinks
+Coffee
+Retail
+Nightlife
+Rides
+Events
+Experiences
+
+Pills should be colorful with black outlines.
+
+Business cards should be easy to scan on mobile.
+
+DO NOT make it feel like Yelp.
+Make it feel like a curated deck of local cards.
+
+BUSINESS LISTING PAGE UPDATE
+
+Make business pages immersive and collectible.
+
+Layout:
+Large hero image/card
+Business name
+Category badge
+Neighborhood badge
+Offer card
+About
+Hours
+Address
+Map placeholder
+Passport stamp placeholder
+Nearby spots
+
+Add stamp component:
+A circular outlined stamp that says:
+“PASSPORT SPOT”
+“ATLANTA 2026”
+“SCAN TO COLLECT”
+
+CSS suggestion:
+.passport-stamp {
+  width: 140px;
+  height: 140px;
+  border: 4px dashed var(--passport-red);
+  border-radius: 50%;
+  color: var(--passport-red);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-weight: 900;
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+}
+
+EVENTS PAGE UPDATE
+
+Events should feel colorful and alive.
+
+Cards:
+Date badge
+Event name
+Neighborhood
+Category
+Short description
+Button
+
+Use playful labels:
+“Match Day”
+“Pop-Up”
+“Ride”
+“Nightlife”
+“Food Crawl”
+
+ABOUT PAGE UPDATE
+
+Tone should be more human and local.
+
+Headline:
+“Built for the people who want the real city.”
+
+Copy:
+“Atlanta Passport is an independent local guide built to help World Cup visitors discover the restaurants, bars, shops, rides, events, and neighborhoods locals actually care about.”
+
+Mention:
+Created by Atlanta entrepreneurs
+Local-first
+Independent guide
+Not affiliated with FIFA or official World Cup
+
+FOOTER UPDATE
+
+Footer should be bold and branded.
+
+Use black background.
+Yellow logo.
+Cream text.
+Red/orange accents.
+
+Footer copy:
+“The unofficial guide to the real Atlanta.”
+
+Disclaimer:
+“Atlanta Passport is an independent local guide and is not affiliated with FIFA, the official World Cup, or any professional sports team.”
+
+MOBILE UX REQUIREMENTS
+
+Mobile is most important.
+
+Make sure:
+Hero does not overflow
+Logo scales well
+Cards stack cleanly
+Buttons are large
+Text is readable
+Horizontal scroll sections work smoothly
+Category pills are sticky or easy to access
+No tiny tap targets
+Fast load
+
+ACCESSIBILITY REQUIREMENTS
+
+Maintain good color contrast.
+Do not rely only on color to communicate information.
+Add alt text to images.
+Buttons and links should have visible focus states.
+Animations should be subtle and not overwhelming.
+
+CODE IMPLEMENTATION TASKS
+
+1. Add CSS variables for the new color system.
+2. Build/rebuild LogoBlock component.
+3. Replace header logo with LogoBlock.
+4. Add marquee component under homepage hero.
+5. Add reusable classes:
+   card-pop
+   badge-sticker
+   section-kicker
+   button-pop
+   passport-stamp
+6. Update all major sections with colorful styling.
+7. Reduce long paragraphs.
+8. Add more short editorial copy.
+9. Update homepage hero.
+10. Update partner page packages with color-coded cards.
+11. Update explore page to feel like a mobile discovery app.
+12. Update Wheelhaus listing page with founding sponsor badge and premium playful styling.
+13. Add footer disclaimer.
+14. Make sure all pages are mobile responsive.
+
+FINAL BRAND FEEL
+
+The finished site should feel like:
+
+Waffle House sign energy
+Atlanta sports colors
+Coca-Cola red Americana
+Neighborhood stickers
+Travel passport
+City guide
+Playful web-app
+Local cultural movement
+
+But still polished enough that businesses feel comfortable paying $500 to $3,000+ to be included.
+
+Make it pop. Make it Atlanta. Make it sell.
