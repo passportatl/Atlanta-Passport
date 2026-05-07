@@ -48,15 +48,17 @@ export default function Listing() {
         
         {/* Badges */}
         <div className="absolute top-6 left-6 flex gap-2">
-          <div className="bg-background/95 backdrop-blur px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-primary shadow-lg">
+          <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2">
             {business.category}
           </div>
         </div>
         {business.sponsorTier && (
-          <div className="absolute top-6 right-6">
-            <div className="bg-accent text-accent-foreground px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg flex items-center">
-              <Sparkles className="w-3 h-3 mr-1" />
-              {business.sponsorTier}
+          <div className="absolute top-6 right-6 md:top-10 md:right-10 drop-shadow-[0_4px_0_rgba(0,0,0,0.85)]">
+            <div className="passport-stamp bg-white text-brand-red ring-4 ring-foreground/10">
+              <div>
+                <Sparkles className="w-4 h-4 mx-auto mb-1" />
+                Founding<br />Sponsor<br />· ATL ·
+              </div>
             </div>
           </div>
         )}

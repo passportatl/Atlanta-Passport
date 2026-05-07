@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,13 +9,12 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 export default function Explore() {
-  const [location] = useLocation();
-  // Extract query params manually if needed, or just default to "All"
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialNeighborhood = urlParams.get('neighborhood');
-  
+  const initialNeighborhood = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("neighborhood")
+    : null;
+
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [activeNeighborhood, setActiveNeighborhood] = useState<string>("All");
+  const [activeNeighborhood, setActiveNeighborhood] = useState<string>(initialNeighborhood ?? "All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredBusinesses = useMemo(() => {
@@ -35,11 +34,11 @@ export default function Explore() {
     <div className="w-full pt-10 pb-24">
       <div className="container mx-auto px-4">
         <div className="mb-12 max-w-3xl">
-          <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-4">A curated city guide</div>
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-4 leading-tight">
-            Atlanta, unlocked.
+          <div className="section-kicker mb-5">A curated city guide</div>
+          <h1 className="hero-title text-primary mb-4">
+            Atlanta, <span className="highlight-yellow text-foreground">unlocked</span>.
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-muted-foreground mt-6">
             Filter by neighborhood, mood, or category. Every listing is hand-picked by locals — no pay-to-play, no tourist traps.
           </p>
         </div>
@@ -58,64 +57,72 @@ export default function Explore() {
           </div>
 
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Categories</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4">CATEGORIES</h3>
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setActiveCategory("All")}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors border",
-                  activeCategory === "All" 
-                    ? "bg-primary text-primary-foreground border-primary" 
-                    : "bg-background text-foreground hover:bg-muted border-border"
+                  "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                  activeCategory === "All"
+                    ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
+                    : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
                 )}
               >
                 All
               </button>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-sm font-medium transition-colors border",
-                    activeCategory === cat 
-                      ? "bg-primary text-primary-foreground border-primary" 
-                      : "bg-background text-foreground hover:bg-muted border-border"
-                  )}
-                >
-                  {cat}
-                </button>
-              ))}
+              {categories.map((cat, i) => {
+                const palette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
+                const active = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={cn(
+                      "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                      active
+                        ? `${palette[i % palette.length]} shadow-pop-sm -translate-y-0.5`
+                        : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
+                    )}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Neighborhoods</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4">NEIGHBORHOODS</h3>
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setActiveNeighborhood("All")}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-colors border",
-                  activeNeighborhood === "All" 
-                    ? "bg-primary text-primary-foreground border-primary" 
-                    : "bg-background text-foreground hover:bg-muted border-border"
+                  "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                  activeNeighborhood === "All"
+                    ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
+                    : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
                 )}
               >
                 All
               </button>
-              {neighborhoods.map((n) => (
-                <button
-                  key={n.id}
-                  onClick={() => setActiveNeighborhood(n.name)}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-sm font-medium transition-colors border",
-                    activeNeighborhood === n.name 
-                      ? "bg-primary text-primary-foreground border-primary" 
-                      : "bg-background text-foreground hover:bg-muted border-border"
-                  )}
-                >
-                  {n.name}
-                </button>
-              ))}
+              {neighborhoods.map((n, i) => {
+                const palette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
+                const active = activeNeighborhood === n.name;
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => setActiveNeighborhood(n.name)}
+                    className={cn(
+                      "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                      active
+                        ? `${palette[i % palette.length]} shadow-pop-sm -translate-y-0.5`
+                        : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
+                    )}
+                  >
+                    {n.name}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

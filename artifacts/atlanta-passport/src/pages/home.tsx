@@ -163,9 +163,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why This Exists - Editorial brand section */}
-      <section className="py-32 bg-background relative overflow-hidden">
-        <div className="container mx-auto px-4">
+      {/* Why This Exists - Red color block with pull quote */}
+      <section className="py-24 md:py-32 bg-brand-red text-white relative overflow-hidden">
+        <div className="absolute inset-0 dot-grid opacity-15 pointer-events-none" />
+        <div className="container mx-auto px-4 relative">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -173,13 +174,23 @@ export default function Home() {
             variants={fadeInUp}
             className="max-w-4xl mx-auto"
           >
-            <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-6">Why this exists</div>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary leading-[1.05] mb-8">
-              Atlanta deserves better than generic tourism.
+            <div className="inline-block badge-sticker bg-brand-yellow text-brand-yellow-foreground mb-8">
+              ★ Why this exists
+            </div>
+            <h2 className="font-serif font-bold leading-[1.02] mb-10 text-4xl md:text-6xl">
+              Atlanta deserves better than the <span className="highlight-yellow text-foreground">hotel-lobby guide</span>.
             </h2>
-            <p className="text-xl md:text-2xl text-foreground/80 leading-relaxed font-light">
-              Most visitors only experience the stadiums, hotels, and rideshares. Atlanta Passport was created to help people discover the neighborhoods, businesses, food, nightlife, culture, and local experiences that actually define the city.
+            <p className="text-xl md:text-2xl leading-relaxed text-white/90 max-w-3xl mb-10">
+              Most visitors only see the stadium, the hotel, and the rideshare. We made Atlanta Passport so the millions of people coming for 2026 can actually find the neighborhoods, restaurants, bars, rides, and culture that locals love.
             </p>
+            <div className="border-l-4 border-brand-yellow pl-6 max-w-2xl">
+              <p className="font-serif italic text-2xl md:text-3xl leading-snug text-brand-yellow">
+                "If you only see Atlanta from a hotel lobby, you didn't really see Atlanta."
+              </p>
+              <p className="font-display text-xs tracking-[0.18em] mt-4 text-white/70">
+                — THE WHOLE POINT
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
