@@ -1,0 +1,579 @@
+ATLANTA PASSPORT — TOURIST-FIRST UX REFINEMENT
+
+IMPORTANT STRATEGIC SHIFT
+
+The site should now prioritize TOURISTS first.
+
+Businesses are important, but they should feel secondary and intentional.
+
+Right now the “Apply” button in the header makes the experience feel too business-facing too early.
+
+The homepage should feel like:
+a colorful Atlanta discovery guide for visitors.
+
+Businesses should discover partnership opportunities naturally throughout the experience instead of being hit with sales immediately.
+
+CORE EXPERIENCE SHIFT
+
+OLD FEELING:
+“Platform looking for business partners.”
+
+NEW FEELING:
+“Fun Atlanta discovery guide tourists actually want to use.”
+
+Businesses should think:
+“I want my business inside this.”
+
+Tourists should think:
+“I want to explore this city.”
+
+PRIMARY UX CHANGES
+
+1. REMOVE “APPLY” BUTTON FROM HEADER
+2. MAKE HEADER TOURIST-FIRST
+3. MOVE BUSINESS CTA LOWER
+4. CREATE CLEAR TOURIST VS BUSINESS SEPARATION
+5. MAKE BUSINESS OPPORTUNITIES FEEL CURATED + PREMIUM
+6. MAKE ROUTES + DISCOVERY THE MAIN PRODUCT
+
+HEADER REDESIGN
+
+CURRENT:
+Logo | Apply | Menu
+
+NEW:
+Logo | Explore | Menu
+
+OR:
+Logo | Routes | Menu
+
+Preferred:
+Logo | Explore | Menu
+
+Header should feel:
+simple
+playful
+tourist-facing
+exploration-focused
+
+Do NOT push business onboarding immediately.
+
+HEADER CTA RULES
+
+The top-right CTA should now be:
+“Explore”
+or
+“Routes”
+
+NOT:
+Apply
+Partner
+Sponsor
+
+Tourists should never feel like they landed on a B2B site.
+
+MOBILE NAVIGATION
+
+Inside menu:
+Explore
+Routes
+Neighborhoods
+Local Spots
+Events
+Rewards
+About
+
+Then separated lower in the menu:
+
+FOR BUSINESSES
+Get Listed
+Sponsorships
+Partner Info
+
+Make the business section visually separated:
+divider line
+smaller section label
+different background block
+or sticker label
+
+This creates a clear separation between:
+visitor experience
+and
+business onboarding
+
+HOMEPAGE STRUCTURE UPDATE
+
+NEW ORDER:
+
+1. Sticky Header
+2. Marquee
+3. Hero
+4. Explore Categories
+5. Featured Route
+6. Route Collections
+7. Selected Local Spots
+8. Neighborhoods
+9. Compact “How It Works”
+10. Why This Exists (manifesto)
+11. Business CTA
+12. Footer
+
+IMPORTANT:
+Move all business-focused messaging LOWER.
+
+The first 70% of the homepage should feel tourist-facing.
+
+HERO SECTION UPDATE
+
+Keep:
+“The unofficial guide to the real Atlanta.”
+
+Keep:
+“real Atlanta” highlighted in yellow.
+
+Buttons should become:
+
+PRIMARY:
+Explore Atlanta
+
+SECONDARY:
+View Routes
+
+NOT:
+Become a Founding Partner
+
+Move all partner messaging farther down.
+
+Hero should feel:
+discovery
+movement
+fun
+local culture
+
+NOT:
+sales funnel
+
+HERO MICRO-NAV
+
+Under buttons add tappable chips:
+
+Food
+Drinks
+Coffee
+Nightlife
+Routes
+Neighborhoods
+Events
+
+These should scroll horizontally on mobile.
+
+This instantly makes the site feel useful.
+
+EXAMPLE:
+
+[ FOOD ]
+[ DRINKS ]
+[ COFFEE ]
+[ ROUTES ]
+[ BELTLINE ]
+[ EVENTS ]
+[ OPEN LATE ]
+
+CATEGORY SECTION REFINEMENT
+
+Keep colorful cards.
+
+Sharpen copy:
+
+FOOD
+Good plates. No guessing.
+
+DRINKS
+Patios, rooftops, last calls.
+
+COFFEE
+Slow mornings. Strong espresso.
+
+RETAIL
+Vinyl, sneakers, local finds.
+
+NIGHTLIFE
+Dive bars to dance floors.
+
+RIDES
+Skip traffic. Move different.
+
+EVENTS
+Pop-ups, watch parties, movement.
+
+EXPERIENCES
+Routes worth remembering.
+
+ROUTES SHOULD BECOME THE CENTERPIECE
+
+This is the strongest product idea.
+
+Expand the emotional feeling:
+“Explore Atlanta through curated paths.”
+
+Routes should feel:
+collectible
+sponsor-able
+fun
+tourist-friendly
+social-media-worthy
+
+ROUTE SECTION REFINEMENT
+
+Add:
+small map line graphics
+route icons
+passport stamp visuals
+tiny route metrics
+
+Example:
+5 stops
+2.4 miles
+Walkable
+Bike-friendly
+Open late
+
+Each route card should feel like:
+a mission card.
+
+EXAMPLE ROUTES
+
+The Beltline Tourist Passport
+Coffee Before Kickoff
+Atlanta After Midnight
+Patios & Day Drinks
+Streetwear + Vinyl
+Late Night Eats
+Rooftops & Skylines
+The Local Atlanta Starter Pack
+
+SELECTED SPOTS SECTION
+
+Change headline from:
+“Local spots worth your one free night.”
+
+NEW:
+“Local spots worth leaving the hotel for.”
+
+This is clearer and stronger.
+
+BUSINESS CARDS
+
+Make cards feel:
+editorial
+collectible
+premium
+
+Each listing should include:
+photo
+neighborhood
+category
+short vibe sentence
+offer badge
+route badge if applicable
+
+Possible badges:
+LOCAL PICK
+ROUTE STOP
+FOUNDING SPOT
+OPEN LATE
+BELTLINE
+MATCH DAY MOVE
+
+WHEELHAUS CARD
+
+Wheelhaus should remain:
+premium
+stylish
+integrated naturally
+
+Do NOT make it feel like an ad.
+
+Keep:
+FOUNDING SPONSOR
+RIDES
+
+Add:
+ROUTE STOP
+
+Refine copy:
+“Premium e-bike rentals, repairs, and curated city rides for visitors who want Atlanta beyond traffic and rideshares.”
+
+NEIGHBORHOODS SECTION REFINEMENT
+
+The section is visually strong but slightly exhausting after multiple saturated cards.
+
+Refine the pacing:
+alternate between:
+full-color cards
+cream cards
+lighter accent cards
+
+Keep dark green background.
+
+Add tiny route/stamp accents to some cards.
+
+Neighborhood cards should feel:
+playful
+editorial
+discoverable
+
+NOT:
+all equally loud.
+
+HOW IT WORKS SECTION
+
+Keep this compact.
+
+Current version is too long.
+
+Replace with:
+
+HOW IT WORKS
+
+1.
+Pick a route
+
+2.
+Visit local spots
+
+3.
+Collect stamps
+
+4.
+Unlock perks
+
+Done.
+
+Use icons and playful visuals.
+
+This should feel like:
+an instruction card inside a passport booklet.
+
+MANIFESTO SECTION
+
+Move this LOWER on homepage.
+
+People should first understand:
+what the product IS.
+
+Then:
+why it exists.
+
+Keep:
+“Atlanta deserves better than the hotel-lobby guide.”
+
+Keep red background.
+
+Tighten copy:
+“Most visitors only see the stadium, the hotel, and the rideshare. Atlanta Passport points them toward the neighborhoods, restaurants, bars, rides, and culture locals actually love.”
+
+Keep quote.
+
+This section should feel:
+emotional
+memorable
+shareable
+
+NOT:
+too long.
+
+BUSINESS CTA SECTION
+
+Move near the bottom.
+
+This is where business onboarding belongs.
+
+This section should feel:
+exclusive
+curated
+premium
+
+NOT:
+desperate or startup-y.
+
+NEW HEADLINE:
+“Put your business on Atlanta’s route map.”
+
+SUBHEAD:
+“We’re onboarding a limited group of local restaurants, bars, shops, rides, and experiences before launch.”
+
+BUTTON:
+Get Listed
+
+NOT:
+Apply
+
+Support text:
+“Limited placement by category and neighborhood.”
+
+BUSINESS SECTION DESIGN
+
+Use:
+cream or dark background
+clean spacing
+less visual chaos
+
+This should feel:
+professional
+valuable
+selective
+
+NOT:
+salesy.
+
+FOOTER BUSINESS CTA
+
+At bottom of every page include:
+small “For Businesses” area.
+
+Example:
+
+FOR BUSINESSES
+Get listed in Atlanta Passport →
+Sponsor a route →
+Request partnership info →
+
+This keeps businesses supported without hijacking the tourist experience.
+
+MARQUEE FIX
+
+Current marquee text is clipped on mobile.
+
+Fix:
+padding
+animation loop
+overflow handling
+
+Ensure the sentence fully scrolls into view before looping.
+
+IMAGE STRATEGY
+
+Continue replacing generic or AI-looking imagery with:
+real Atlanta photography.
+
+Priority subjects:
+Atlanta Beltline
+Ponce City Market
+Krog Street
+Decatur Square
+Little Five Points
+Midtown
+Patios
+Coffee shops
+Street murals
+Nightlife
+Cycling
+Food
+
+Image tone:
+warm
+street-level
+human
+slightly gritty
+real
+
+Avoid:
+sterile stock imagery
+overly corporate photos
+fake AI city scenes
+
+VISUAL FATIGUE REDUCTION
+
+Right now every section is loud.
+
+Add more:
+cream space
+lighter transitions
+breathing room
+
+Keep:
+playfulness
+
+Reduce:
+constant saturation
+
+Think:
+editorial magazine pacing.
+
+CODE TASKS
+
+1.
+Remove Apply button from sticky header.
+
+2.
+Replace with:
+Explore
+or
+Routes
+
+3.
+Add tourist chip navigation below hero.
+
+4.
+Move business CTA lower.
+
+5.
+Reorder homepage sections.
+
+6.
+Reduce saturated-card repetition.
+
+7.
+Fix marquee clipping.
+
+8.
+Update selected spots headline.
+
+9.
+Refine route cards with metrics/icons/stamps.
+
+10.
+Add footer business links on every page.
+
+11.
+Add route detail page structure.
+
+12.
+Improve mobile spacing consistency.
+
+13.
+Ensure no horizontal overflow.
+
+14.
+Keep all interactions mobile-first.
+
+FINAL FEELING
+
+The site should now feel:
+
+tourist-first
+fun
+explorable
+collectible
+Atlanta-native
+mobile-friendly
+local
+useful
+shareable
+
+Businesses should feel like:
+they are joining something already culturally interesting.
+
+NOT:
+that the site exists primarily to sell ads.
+
+FINAL TEST
+
+When someone lands on the homepage they should think:
+
+“I want to explore Atlanta.”
+
+NOT:
+
+“This website wants me to sponsor something.”

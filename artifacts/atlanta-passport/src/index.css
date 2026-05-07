@@ -234,6 +234,9 @@
 .animate-marquee {
   animation: marquee 38s linear infinite;
 }
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; transform: translateX(0); }
+}
 
 /* Subtle paper grain background */
 .bg-paper {
@@ -448,4 +451,8 @@
     );
     height: 3px;
   }
+
+  /* Hide scrollbar for horizontal chip nav */
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
 }

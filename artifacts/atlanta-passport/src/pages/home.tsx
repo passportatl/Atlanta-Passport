@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import {
   MapPin, Stamp, Bike, Coffee, Beer, Music,
   ShoppingBag, Calendar, Sparkles, Utensils,
-  MoveRight, ArrowRight, Gift, ScanLine, Ticket, Store,
+  MoveRight, ArrowRight, Gift, Ticket, Award, Map,
   Quote
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -26,12 +26,10 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
 };
 
-// Map icon string from data to component
 const iconMap = {
   Utensils, Beer, Coffee, ShoppingBag, Music, Bike, Calendar, Sparkles
 } as const;
 
-// Color → tailwind classes for category cards
 const catColor: Record<string, { bg: string; text: string; pin: string }> = {
   red:    { bg: "bg-brand-red",    text: "text-white",                    pin: "bg-brand-yellow text-brand-yellow-foreground" },
   yellow: { bg: "bg-brand-yellow", text: "text-brand-yellow-foreground",  pin: "bg-brand-red text-white" },
@@ -43,12 +41,23 @@ const catColor: Record<string, { bg: string; text: string; pin: string }> = {
 };
 
 const cardBadges: Array<{ label: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = [
-  { label: "Founding Sponsor", color: "yellow" },
-  { label: "Local Pick",       color: "red" },
-  { label: "Match Day Move",   color: "sky" },
-  { label: "Open Late",        color: "navy" },
-  { label: "Good Patio",       color: "lime" },
-  { label: "ATL Favorite",     color: "cream" },
+  { label: "Founding Spot", color: "yellow" },
+  { label: "Local Pick",    color: "red" },
+  { label: "Match Day Move", color: "sky" },
+  { label: "Open Late",     color: "navy" },
+  { label: "Good Patio",    color: "lime" },
+  { label: "ATL Favorite",  color: "cream" },
+];
+
+const heroChips: Array<{ label: string; href: string }> = [
+  { label: "Food",          href: "/explore?category=food" },
+  { label: "Drinks",        href: "/explore?category=drinks" },
+  { label: "Coffee",        href: "/explore?category=coffee" },
+  { label: "Nightlife",     href: "/explore?category=nightlife" },
+  { label: "Routes",        href: "/explore" },
+  { label: "Beltline",      href: "/beltline" },
+  { label: "Events",        href: "/events" },
+  { label: "Open Late",     href: "/explore?category=nightlife" },
 ];
 
 export default function Home() {
@@ -56,19 +65,19 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      {/* Marquee ticker */}
+      {/* Marquee — tourist-first */}
       <Marquee
         items={[
-          "NOW ONBOARDING ATLANTA BUSINESSES",
           "THE UNOFFICIAL GUIDE TO THE REAL ATL",
           "DISCOVER ATLANTA LIKE A LOCAL",
-          "FOUNDING PARTNER APPLICATIONS OPEN",
+          "FOOD · DRINKS · ROUTES · NEIGHBORHOODS",
+          "COLLECT STAMPS · UNLOCK PERKS",
           "LAUNCHING SUMMER 2026",
         ]}
       />
 
       {/* ──────────────────────────────────────────────────────────
-          HERO — layered like opening a city guide
+          HERO — tourist-facing
       ────────────────────────────────────────────────────────── */}
       <section className="relative section-hero overflow-hidden bg-paper texture-paper">
         <div className="container mx-auto px-4 relative z-10">
@@ -94,37 +103,27 @@ export default function Home() {
                 visitors find the city locals actually love.
               </p>
 
-              <div className="flex flex-wrap gap-4 items-center mb-8">
+              <div className="flex flex-wrap gap-3 sm:gap-4 items-center mb-7">
                 <Link href="/explore" className="button-pop">
                   Explore Atlanta <MoveRight className="w-4 h-4" />
                 </Link>
-                <Link href="/partners" className="button-pop button-pop-yellow">
-                  Become a Founding Partner
+                <Link href="/beltline" className="button-pop button-pop-yellow">
+                  View Routes <Map className="w-4 h-4" />
                 </Link>
               </div>
 
-              {/* Floating sticker cluster — sits in the copy column on mobile so it never overlaps text */}
-              <div className="flex flex-wrap gap-2 mb-8">
-                <Sticker color="red"  >Local Picks</Sticker>
-                <Sticker color="cream">Open Late</Sticker>
-                <Sticker color="lime" >Beltline</Sticker>
-                <Sticker color="navy" >ATL Favorite</Sticker>
-                <Sticker color="yellow">Not Your Hotel Guide</Sticker>
-              </div>
-
-              {/* Momentum indicators */}
-              <div className="grid grid-cols-3 gap-4 max-w-lg border-t-2 border-foreground/15 pt-5">
-                <div>
-                  <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red mb-1">Now</div>
-                  <div className="text-xs sm:text-sm text-foreground/80 leading-snug">Founding businesses onboarding</div>
-                </div>
-                <div>
-                  <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red mb-1">Limited</div>
-                  <div className="text-xs sm:text-sm text-foreground/80 leading-snug">Partner spots available</div>
-                </div>
-                <div>
-                  <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red mb-1">Launch</div>
-                  <div className="text-xs sm:text-sm text-foreground/80 leading-snug">Summer 2026</div>
+              {/* Tourist chip nav — horizontal scroll on mobile */}
+              <div className="-mx-4 sm:mx-0 mb-2">
+                <div className="flex gap-2 overflow-x-auto scrollbar-none px-4 sm:px-0 sm:flex-wrap pb-1">
+                  {heroChips.map((chip) => (
+                    <Link
+                      key={chip.label}
+                      href={chip.href}
+                      className="shrink-0 font-display text-[11px] tracking-[0.16em] uppercase px-3.5 py-2 rounded-full border-2 border-foreground bg-background hover:bg-brand-yellow transition-colors shadow-pop-sm"
+                    >
+                      {chip.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </motion.div>
@@ -146,31 +145,27 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/35 via-transparent to-transparent mix-blend-multiply" />
               </div>
 
-              {/* Passport stamp */}
               <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 z-20">
                 <PassportStamp size="sm" tone="red" rotate={-12}>
                   ATL<br />2026<br />Passport
                 </PassportStamp>
               </div>
 
-              {/* Neighborhood pin */}
               <div className="absolute bottom-6 left-6 z-20">
                 <Sticker color="red" icon={<MapPin className="w-3.5 h-3.5" />}>
                   Old Fourth Ward
                 </Sticker>
               </div>
 
-              {/* Beltline tag */}
               <div className="absolute top-8 right-2 sm:right-4 z-20 hidden sm:block">
                 <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>
                   ★ Beltline
                 </Sticker>
               </div>
 
-              {/* Sponsor sticker */}
               <div className="absolute bottom-12 right-3 z-20">
                 <Sticker color="cream" icon={<Stamp className="w-3.5 h-3.5" />}>
-                  Founding Sponsor
+                  Local Pick
                 </Sticker>
               </div>
             </motion.div>
@@ -237,7 +232,7 @@ export default function Home() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────
-          FEATURED EXPERIENCE — Beltline Tourist Passport (with route stops)
+          FEATURED EXPERIENCE — Beltline Tourist Passport
       ────────────────────────────────────────────────────────── */}
       <section className="section-tight bg-brand-cream/40 texture-paper">
         <div className="container mx-auto px-4 relative">
@@ -248,7 +243,6 @@ export default function Home() {
             variants={fadeInUp}
             className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start max-w-6xl mx-auto"
           >
-            {/* Image + tags */}
             <div className="relative">
               <div className="rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop aspect-[4/3]">
                 <img
@@ -273,7 +267,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Copy + route stops */}
             <div>
               <div className="section-kicker mb-5">★ Featured Experience</div>
               <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">
@@ -285,7 +278,6 @@ export default function Home() {
                 rewards.
               </p>
 
-              {/* Route stop preview cards */}
               <div className="space-y-3 mb-7">
                 {beltlineStops.map((stop) => (
                   <div
@@ -320,43 +312,7 @@ export default function Home() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────
-          MANIFESTO — red color block with pull quote
-      ────────────────────────────────────────────────────────── */}
-      <section className="section-tight bg-brand-red text-white relative overflow-hidden">
-        <div className="absolute inset-0 dot-grid opacity-15 pointer-events-none" />
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="max-w-4xl mx-auto"
-          >
-            <Sticker color="yellow" className="mb-7">★ Why this exists</Sticker>
-            <h2 className="font-serif font-bold leading-[1.02] mb-8 text-3xl md:text-5xl lg:text-6xl">
-              Atlanta deserves better than the{" "}
-              <span className="highlight-yellow text-foreground">hotel-lobby guide</span>.
-            </h2>
-            <p className="text-lg md:text-xl leading-relaxed text-white/90 max-w-3xl mb-10">
-              Most visitors only see the stadium, the hotel, and the rideshare. Atlanta Passport
-              points them toward the neighborhoods, restaurants, bars, rides, and culture locals
-              actually love.
-            </p>
-            <div className="border-l-4 border-brand-yellow pl-6 max-w-2xl">
-              <Quote className="w-6 h-6 text-brand-yellow mb-2 -ml-1" />
-              <p className="font-serif italic text-xl md:text-2xl lg:text-3xl leading-snug text-brand-yellow">
-                If you only see Atlanta from a hotel lobby, you didn't really see Atlanta.
-              </p>
-              <p className="font-display text-[11px] tracking-[0.2em] mt-4 text-white/70">
-                — THE WHOLE POINT
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ──────────────────────────────────────────────────────────
-          ROUTES — "Routes worth leaving the hotel for"
+          ROUTES & COLLECTIONS — the centerpiece
       ────────────────────────────────────────────────────────── */}
       <section className="section-tight bg-background">
         <div className="container mx-auto px-4">
@@ -369,10 +325,11 @@ export default function Home() {
           >
             <div className="section-kicker mb-5">★ Routes & Collections</div>
             <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              Routes worth leaving the hotel for.
+              Explore Atlanta through curated paths.
             </h2>
             <p className="text-base md:text-lg text-foreground/70 mt-4 max-w-2xl">
-              Curated paths through Atlanta — built so visitors stop guessing and start moving.
+              Pick a route. Walk it, ride it, collect the stamps. Built so visitors stop guessing
+              and start moving.
             </p>
           </motion.div>
 
@@ -397,7 +354,7 @@ export default function Home() {
                           {String(i + 1).padStart(2, "0")}
                         </div>
                         <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red text-right pt-1">
-                          {r.stops} stops<br />
+                          Route<br />
                           <span className="text-foreground/60">{r.neighborhood}</span>
                         </div>
                       </div>
@@ -405,11 +362,23 @@ export default function Home() {
                         {r.name}
                       </h3>
                       <p className="text-sm text-foreground/70 leading-snug mb-5">{r.vibe}</p>
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {r.tags.map((t) => (
-                          <Sticker key={t} color="cream">{t}</Sticker>
-                        ))}
+
+                      {/* Mission card metrics */}
+                      <div className="flex items-center gap-4 mb-5 text-[11px] font-display tracking-[0.14em] uppercase text-foreground/70">
+                        <span className="inline-flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5" /> {r.stops} stops
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Map className="w-3.5 h-3.5" /> {r.miles}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Bike className="w-3.5 h-3.5" /> {r.pace}
+                        </span>
                       </div>
+
+                      {/* Decorative route line */}
+                      <div className="route-line mb-5" />
+
                       <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
                         View Route <MoveRight className="ml-2 w-4 h-4" />
                       </span>
@@ -437,7 +406,7 @@ export default function Home() {
             >
               <div className="section-kicker mb-5">★ Selected Spots</div>
               <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-3">
-                Local spots worth your one free night.
+                Local spots worth leaving the hotel for.
               </h2>
               <p className="text-base md:text-lg text-foreground/70">
                 A curated list of Atlanta's favorite independent restaurants, bars, shops, and
@@ -470,8 +439,11 @@ export default function Home() {
                           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
-                        <div className="absolute top-3 left-3">
+                        <div className="absolute top-3 left-3 flex flex-col gap-2">
                           <Sticker color="cream">{biz.category}</Sticker>
+                          {isFounding && (
+                            <Sticker color="yellow">Route Stop</Sticker>
+                          )}
                         </div>
                         {badge && (
                           <div className="absolute top-3 right-3">
@@ -522,7 +494,7 @@ export default function Home() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────
-          NEIGHBORHOODS
+          NEIGHBORHOODS — alternating tone for less visual fatigue
       ────────────────────────────────────────────────────────── */}
       <section className="section-tight bg-primary text-primary-foreground">
         <div className="container mx-auto px-4">
@@ -549,8 +521,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
           >
-            {neighborhoods.map((n) => {
-              const cls = catColor[n.color ?? "yellow"] ?? catColor.yellow;
+            {neighborhoods.map((n, i) => {
+              // Alternate between full-color and quieter cream cards for editorial pacing
+              const isCream = i % 3 === 1;
+              const cls = isCream
+                ? { bg: "bg-brand-cream", text: "text-foreground", pin: "bg-brand-red text-white" }
+                : (catColor[n.color ?? "yellow"] ?? catColor.yellow);
               return (
                 <motion.div key={n.id} variants={fadeInUp}>
                   <Link href={`/explore?neighborhood=${n.id}`}>
@@ -586,20 +562,20 @@ export default function Home() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────
-          HOW THE PASSPORT WORKS — moved lower per brief
+          HOW IT WORKS — compact, instruction-card style
       ────────────────────────────────────────────────────────── */}
-      <section className="section-tight bg-muted/40">
+      <section className="section-tight bg-paper texture-paper">
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
             variants={fadeInUp}
-            className="text-center max-w-3xl mx-auto mb-10 md:mb-14"
+            className="text-center max-w-3xl mx-auto mb-10 md:mb-12"
           >
             <div className="section-kicker mb-5">★ How it Works</div>
             <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              One passport. A whole city to explore.
+              Pick a route. Collect stamps. Unlock perks.
             </h2>
           </motion.div>
 
@@ -608,28 +584,29 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
-            className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6 max-w-5xl mx-auto"
           >
             {[
-              { icon: Ticket,    title: "Pick up the passport", desc: "Get your physical booklet at partner locations.", color: "yellow" },
-              { icon: ScanLine,  title: "Scan QR codes",        desc: "Scan codes around the city to unlock content.",   color: "red" },
-              { icon: MapPin,    title: "Discover local spots", desc: "Find the hidden gems and experiences.",           color: "sky" },
-              { icon: Store,     title: "Unlock perks",         desc: "Get special offers and neighborhood rewards.",     color: "lime" },
+              { icon: Map,       title: "Pick a route",      color: "yellow" },
+              { icon: MapPin,    title: "Visit local spots", color: "red" },
+              { icon: Stamp,     title: "Collect stamps",    color: "sky" },
+              { icon: Award,     title: "Unlock perks",      color: "lime" },
             ].map((step, i) => {
               const cls = catColor[step.color];
               return (
                 <motion.div key={i} variants={fadeInUp} className="text-center">
                   <div className={cn(
-                    "w-16 h-16 mx-auto rounded-full border-[3px] border-foreground grid place-items-center mb-5 shadow-pop-sm",
+                    "w-14 h-14 md:w-16 md:h-16 mx-auto rounded-full border-[3px] border-foreground grid place-items-center mb-4 shadow-pop-sm",
                     cls.bg, cls.text
                   )}>
-                    <step.icon className="w-7 h-7" />
+                    <step.icon className="w-6 h-6 md:w-7 md:h-7" />
                   </div>
                   <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red mb-1.5">
                     Step {i + 1}
                   </div>
-                  <h3 className="font-serif font-bold text-lg md:text-xl mb-2">{step.title}</h3>
-                  <p className="text-sm text-foreground/65 leading-snug">{step.desc}</p>
+                  <h3 className="font-serif font-bold text-base md:text-lg leading-tight">
+                    {step.title}
+                  </h3>
                 </motion.div>
               );
             })}
@@ -638,58 +615,94 @@ export default function Home() {
       </section>
 
       {/* ──────────────────────────────────────────────────────────
-          PARTNER CTA
+          MANIFESTO — moved lower per brief
       ────────────────────────────────────────────────────────── */}
-      <section className="section-tight bg-brand-yellow relative overflow-hidden">
+      <section className="section-tight bg-brand-red text-white relative overflow-hidden">
         <div className="absolute inset-0 dot-grid opacity-15 pointer-events-none" />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 relative">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={fadeInUp}
+            className="max-w-4xl mx-auto"
+          >
+            <Sticker color="yellow" className="mb-7">★ Why this exists</Sticker>
+            <h2 className="font-serif font-bold leading-[1.02] mb-8 text-3xl md:text-5xl lg:text-6xl">
+              Atlanta deserves better than the{" "}
+              <span className="highlight-yellow text-foreground">hotel-lobby guide</span>.
+            </h2>
+            <p className="text-lg md:text-xl leading-relaxed text-white/90 max-w-3xl mb-10">
+              Most visitors only see the stadium, the hotel, and the rideshare. Atlanta Passport
+              points them toward the neighborhoods, restaurants, bars, rides, and culture locals
+              actually love.
+            </p>
+            <div className="border-l-4 border-brand-yellow pl-6 max-w-2xl">
+              <Quote className="w-6 h-6 text-brand-yellow mb-2 -ml-1" />
+              <p className="font-serif italic text-xl md:text-2xl lg:text-3xl leading-snug text-brand-yellow">
+                If you only see Atlanta from a hotel lobby, you didn't really see Atlanta.
+              </p>
+              <p className="font-display text-[11px] tracking-[0.2em] mt-4 text-white/70">
+                — THE WHOLE POINT
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────────────
+          BUSINESS CTA — selective, premium, near the bottom
+      ────────────────────────────────────────────────────────── */}
+      <section className="section-tight bg-brand-cream texture-paper">
+        <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
-            className="grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center max-w-6xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
-            <div>
-              <Sticker color="red" className="mb-5">
-                <Sparkles className="w-3 h-3" /> Applications Open
-              </Sticker>
-              <h2 className="font-serif font-bold text-3xl md:text-5xl lg:text-6xl text-foreground leading-[1.02] mb-5">
-                Put your business where visitors are looking.
-              </h2>
-              <p className="text-base md:text-lg text-foreground/80 mb-8 max-w-2xl">
-                Printed passport placement, digital listing, QR discovery, route inclusion, and
-                curated exposure before kickoff.
-              </p>
-              <div className="flex flex-wrap gap-4 items-center">
-                <Link href="/apply" className="button-pop">
-                  Apply to Become a Partner
-                </Link>
-                <Link href="/partners" className="button-pop button-pop-cream">
-                  See Partner Tiers
-                </Link>
-              </div>
-              <p className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/60 mt-6">
-                ★ Limited launch placements by category and neighborhood.
-              </p>
-            </div>
+            <div className="card-pop bg-background p-8 md:p-12 lg:p-14">
+              <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
+                <div>
+                  <div className="section-kicker mb-5">★ For Businesses</div>
+                  <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">
+                    Put your business on Atlanta's route map.
+                  </h2>
+                  <p className="text-base md:text-lg text-foreground/75 mb-7 max-w-2xl leading-relaxed">
+                    We're onboarding a limited group of local restaurants, bars, shops, rides, and
+                    experiences before launch.
+                  </p>
+                  <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
+                    <Link href="/apply" className="button-pop">
+                      Get Listed <MoveRight className="w-4 h-4" />
+                    </Link>
+                    <Link href="/partners" className="button-pop button-pop-cream">
+                      Sponsor a Route
+                    </Link>
+                  </div>
+                  <p className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/55 mt-6">
+                    ★ Limited placement by category and neighborhood.
+                  </p>
+                </div>
 
-            {/* Stamp cluster */}
-            <div className="relative h-[260px] hidden lg:block">
-              <div className="absolute top-4 left-4">
-                <PassportStamp tone="red" rotate={-10}>
-                  Atlanta<br />2026
-                </PassportStamp>
-              </div>
-              <div className="absolute top-12 right-4">
-                <PassportStamp tone="navy" rotate={8}>
-                  Founding<br />Partner
-                </PassportStamp>
-              </div>
-              <div className="absolute bottom-2 left-20">
-                <PassportStamp tone="green" rotate={-4}>
-                  Scan to<br />Collect
-                </PassportStamp>
+                <div className="relative h-[220px] hidden lg:block">
+                  <div className="absolute top-2 left-2">
+                    <PassportStamp tone="red" rotate={-10}>
+                      Atlanta<br />2026
+                    </PassportStamp>
+                  </div>
+                  <div className="absolute top-10 right-2">
+                    <PassportStamp tone="navy" rotate={8}>
+                      Founding<br />Partner
+                    </PassportStamp>
+                  </div>
+                  <div className="absolute bottom-0 left-16">
+                    <PassportStamp tone="green" rotate={-4}>
+                      Route<br />Stop
+                    </PassportStamp>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
