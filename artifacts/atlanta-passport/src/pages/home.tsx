@@ -79,7 +79,7 @@ export default function Home() {
               variants={fadeInUp}
               className="max-w-2xl relative"
             >
-              <Sticker color="yellow" rotate="left" className="mb-6">
+              <Sticker color="yellow" className="mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse mr-1" />
                 Launching · Summer 2026
               </Sticker>
@@ -105,11 +105,11 @@ export default function Home() {
 
               {/* Floating sticker cluster — sits in the copy column on mobile so it never overlaps text */}
               <div className="flex flex-wrap gap-2 mb-8">
-                <Sticker color="red"   rotate="left">Local Picks</Sticker>
-                <Sticker color="cream" rotate="right">Open Late</Sticker>
-                <Sticker color="lime"  rotate="left">Beltline</Sticker>
-                <Sticker color="navy"  rotate="right">ATL Favorite</Sticker>
-                <Sticker color="yellow" rotate="left">Not Your Hotel Guide</Sticker>
+                <Sticker color="red"  >Local Picks</Sticker>
+                <Sticker color="cream">Open Late</Sticker>
+                <Sticker color="lime" >Beltline</Sticker>
+                <Sticker color="navy" >ATL Favorite</Sticker>
+                <Sticker color="yellow">Not Your Hotel Guide</Sticker>
               </div>
 
               {/* Momentum indicators */}
@@ -155,21 +155,21 @@ export default function Home() {
 
               {/* Neighborhood pin */}
               <div className="absolute bottom-6 left-6 z-20">
-                <Sticker color="red" rotate="left" icon={<MapPin className="w-3.5 h-3.5" />}>
+                <Sticker color="red" icon={<MapPin className="w-3.5 h-3.5" />}>
                   Old Fourth Ward
                 </Sticker>
               </div>
 
               {/* Beltline tag */}
               <div className="absolute top-8 right-2 sm:right-4 z-20 hidden sm:block">
-                <Sticker color="yellow" rotate="right" icon={<Bike className="w-3.5 h-3.5" />}>
+                <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>
                   ★ Beltline
                 </Sticker>
               </div>
 
               {/* Sponsor sticker */}
               <div className="absolute bottom-12 right-3 z-20">
-                <Sticker color="cream" rotate="right" icon={<Stamp className="w-3.5 h-3.5" />}>
+                <Sticker color="cream" icon={<Stamp className="w-3.5 h-3.5" />}>
                   Founding Sponsor
                 </Sticker>
               </div>
@@ -203,17 +203,16 @@ export default function Home() {
             viewport={{ once: true, margin: "-80px" }}
             className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
           >
-            {exploreCategories.map((c, i) => {
+            {exploreCategories.map((c) => {
               const Icon = iconMap[c.icon as keyof typeof iconMap];
               const cls = catColor[c.color];
-              const rot = i % 2 === 0 ? "-rotate-1" : "rotate-1";
               return (
                 <motion.div key={c.id} variants={fadeInUp}>
                   <Link href={`/explore?category=${c.id}`}>
                     <div
                       className={cn(
-                        "h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 cursor-pointer transition-all hover:-translate-y-1 hover:rotate-0 shadow-pop-sm hover:shadow-pop",
-                        cls.bg, cls.text, rot
+                        "h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 cursor-pointer transition-all hover:-translate-y-1 shadow-pop-sm hover:shadow-pop",
+                        cls.bg, cls.text
                       )}
                     >
                       <div className={cn(
@@ -260,7 +259,7 @@ export default function Home() {
                 />
               </div>
               <div className="absolute -top-3 -left-3 z-10">
-                <Sticker color="red" rotate="left">Featured Route</Sticker>
+                <Sticker color="red">Featured Route</Sticker>
               </div>
               <div className="absolute -bottom-4 -right-3 z-10 hidden sm:block">
                 <PassportStamp size="sm" tone="navy" rotate={9}>
@@ -333,7 +332,7 @@ export default function Home() {
             variants={fadeInUp}
             className="max-w-4xl mx-auto"
           >
-            <Sticker color="yellow" rotate="left" className="mb-7">★ Why this exists</Sticker>
+            <Sticker color="yellow" className="mb-7">★ Why this exists</Sticker>
             <h2 className="font-serif font-bold leading-[1.02] mb-8 text-3xl md:text-5xl lg:text-6xl">
               Atlanta deserves better than the{" "}
               <span className="highlight-yellow text-foreground">hotel-lobby guide</span>.
@@ -386,14 +385,10 @@ export default function Home() {
           >
             {routes.map((r, i) => {
               const cls = catColor[r.color] ?? catColor.yellow;
-              const rot = i % 3 === 1 ? "rotate-[0.5deg]" : "-rotate-[0.5deg]";
               return (
                 <motion.div key={r.id} variants={fadeInUp}>
                   <Link href={r.href}>
-                    <div className={cn(
-                      "card-pop p-5 md:p-6 h-full cursor-pointer hover:-translate-y-1 transition-transform",
-                      rot
-                    )}>
+                    <div className="card-pop p-5 md:p-6 h-full cursor-pointer hover:-translate-y-1 transition-transform">
                       <div className="flex items-start justify-between gap-3 mb-4">
                         <div className={cn(
                           "rounded-full w-12 h-12 grid place-items-center border-2 border-foreground font-display text-sm flex-shrink-0",
@@ -480,7 +475,7 @@ export default function Home() {
                         </div>
                         {badge && (
                           <div className="absolute top-3 right-3">
-                            <Sticker color={badge.color} rotate="right">{badge.label}</Sticker>
+                            <Sticker color={badge.color}>{badge.label}</Sticker>
                           </div>
                         )}
                         {isFounding && (
@@ -538,7 +533,7 @@ export default function Home() {
             variants={fadeInUp}
             className="mb-10 md:mb-14 max-w-3xl"
           >
-            <Sticker color="yellow" rotate="left" className="mb-5">★ By Neighborhood</Sticker>
+            <Sticker color="yellow" className="mb-5">★ By Neighborhood</Sticker>
             <h2 className="font-serif font-bold text-3xl md:text-5xl mb-3 leading-[1.05]">
               Each neighborhood has its own pulse.
             </h2>
@@ -554,15 +549,14 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
           >
-            {neighborhoods.map((n, i) => {
+            {neighborhoods.map((n) => {
               const cls = catColor[n.color ?? "yellow"] ?? catColor.yellow;
-              const rot = i % 2 === 0 ? "-rotate-1" : "rotate-1";
               return (
                 <motion.div key={n.id} variants={fadeInUp}>
                   <Link href={`/explore?neighborhood=${n.id}`}>
                     <div className={cn(
-                      "relative h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 hover:-translate-y-1 hover:rotate-0 transition-transform cursor-pointer group shadow-pop-sm hover:shadow-pop",
-                      cls.bg, cls.text, rot
+                      "relative h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 hover:-translate-y-1 transition-transform cursor-pointer group shadow-pop-sm hover:shadow-pop",
+                      cls.bg, cls.text
                     )}>
                       <div className={cn(
                         "absolute -top-3 -right-3 border-2 border-foreground rounded-full w-10 h-10 grid place-items-center",
@@ -657,7 +651,7 @@ export default function Home() {
             className="grid lg:grid-cols-[1.3fr_1fr] gap-10 items-center max-w-6xl mx-auto"
           >
             <div>
-              <Sticker color="red" rotate="left" className="mb-5">
+              <Sticker color="red" className="mb-5">
                 <Sparkles className="w-3 h-3" /> Applications Open
               </Sticker>
               <h2 className="font-serif font-bold text-3xl md:text-5xl lg:text-6xl text-foreground leading-[1.02] mb-5">

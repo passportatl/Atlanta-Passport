@@ -14,9 +14,9 @@ export default function Footer() {
               The unofficial guide to the real Atlanta.
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
-              <Sticker color="yellow" rotate="left">★ Local Picks</Sticker>
-              <Sticker color="red" rotate="right">Match Day Moves</Sticker>
-              <Sticker color="lime" rotate="left">Beltline</Sticker>
+              <Sticker color="yellow">★ Local Picks</Sticker>
+              <Sticker color="red">Match Day Moves</Sticker>
+              <Sticker color="lime">Beltline</Sticker>
             </div>
             <p className="text-background/75 max-w-sm pt-2">
               Built by local Atlanta entrepreneurs.
