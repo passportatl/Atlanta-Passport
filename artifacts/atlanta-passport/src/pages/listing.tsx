@@ -1,7 +1,5 @@
 import { useParams, Link } from "wouter";
 import { businesses } from "@/data/sample-data";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,15 +12,13 @@ export default function Listing() {
   if (!business) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4 bg-muted/20">
-        <Card className="max-w-md w-full p-8 text-center border-border shadow-md">
+        <div className="card-pop bg-card max-w-md w-full p-8 text-center">
           <h2 className="text-2xl font-serif font-bold text-foreground mb-4">Business not found</h2>
           <p className="text-muted-foreground mb-8">We couldn't find the listing you're looking for.</p>
-          <Link href="/explore">
-            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Explore
-            </Button>
+          <Link href="/explore" className="button-pop inline-flex items-center justify-center gap-2 w-full">
+            <ArrowLeft className="w-4 h-4" /> Back to Explore
           </Link>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -137,80 +133,79 @@ export default function Listing() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <a 
+            <div className="flex flex-col sm:flex-row gap-5 pt-6">
+              <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address + ', Atlanta, GA')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1"
+                className="button-pop flex-1 inline-flex items-center justify-center gap-2"
               >
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-14 text-lg">
-                  <Navigation className="w-5 h-5 mr-2" /> Get Directions
-                </Button>
+                <Navigation className="w-5 h-5" /> Get Directions
               </a>
-              <Button 
-                variant="outline" 
-                className="flex-1 border-primary/20 text-primary hover:bg-primary/5 h-14 text-lg"
+              <button
+                type="button"
                 onClick={handleSave}
+                className="button-pop button-pop-yellow flex-1 inline-flex items-center justify-center gap-2"
               >
-                <BookOpen className="w-5 h-5 mr-2" /> Save to Passport
-              </Button>
+                <BookOpen className="w-5 h-5" /> Save to Passport
+              </button>
             </div>
           </div>
 
           {/* Right Column - Map & QR */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="overflow-hidden border-border shadow-md">
-              <div className="h-48 bg-muted relative flex items-center justify-center">
-                {/* Subtle grid pattern for map placeholder */}
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-                <MapPin className="w-10 h-10 text-primary absolute z-10" />
+          <div className="lg:col-span-2 space-y-8">
+            <div className="card-pop bg-card overflow-hidden">
+              <div className="h-48 bg-brand-sky relative flex items-center justify-center border-b-[3px] border-foreground">
+                <div className="absolute inset-0 dot-grid opacity-30" />
+                <div className="badge-sticker bg-brand-red text-white absolute top-3 left-3 -rotate-3 text-[10px]">
+                  ★ ATL
+                </div>
+                <MapPin className="w-12 h-12 text-foreground relative z-10 drop-shadow-[2px_2px_0_rgba(255,255,255,0.6)]" />
               </div>
-              <CardContent className="p-4 bg-card">
-                <h4 className="font-bold text-sm text-muted-foreground uppercase tracking-wider mb-1">Map Preview</h4>
-                <p className="text-sm font-medium">{business.address}</p>
-                <a 
+              <div className="p-5">
+                <h4 className="font-display text-xs tracking-[0.18em] text-foreground mb-1">MAP PREVIEW</h4>
+                <p className="text-sm font-medium text-foreground mb-3">{business.address}</p>
+                <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address + ', Atlanta, GA')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-secondary text-sm font-medium hover:underline mt-2 inline-block"
+                  className="font-display text-xs tracking-[0.16em] text-brand-red hover:underline inline-block"
                 >
-                  Open in Maps
+                  OPEN IN MAPS →
                 </a>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="border-border shadow-md text-center p-8 bg-card">
-              <h4 className="font-bold text-sm text-muted-foreground uppercase tracking-wider mb-6">Passport Stamp QR</h4>
-              <div className="w-48 h-48 mx-auto bg-white p-2 rounded-xl shadow-inner border border-muted flex flex-col">
-                {/* CSS QR pattern placeholder */}
-                <div className="w-full h-full border-4 border-primary rounded-lg relative overflow-hidden bg-white">
-                  <div className="absolute top-2 left-2 w-8 h-8 border-4 border-primary" />
-                  <div className="absolute top-2 right-2 w-8 h-8 border-4 border-primary" />
-                  <div className="absolute bottom-2 left-2 w-8 h-8 border-4 border-primary" />
-                  <div className="absolute top-12 left-12 w-16 h-16 bg-primary/20" />
-                  <div className="absolute bottom-12 right-6 w-10 h-20 bg-primary/40" />
-                  <div className="absolute top-8 right-16 w-8 h-8 bg-primary" />
-                  <div className="absolute bottom-8 left-16 w-12 h-4 bg-primary/80" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 py-1 text-[10px] font-bold text-primary border border-primary">
+            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground text-center p-8 rotate-1 hover:rotate-0 transition-transform">
+              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6 -rotate-2">
+                ★ PASSPORT STAMP
+              </div>
+              <div className="w-44 h-44 mx-auto bg-white border-[3px] border-foreground shadow-pop p-2 flex flex-col">
+                <div className="w-full h-full border-4 border-foreground relative overflow-hidden bg-white">
+                  <div className="absolute top-2 left-2 w-8 h-8 border-4 border-foreground" />
+                  <div className="absolute top-2 right-2 w-8 h-8 border-4 border-foreground" />
+                  <div className="absolute bottom-2 left-2 w-8 h-8 border-4 border-foreground" />
+                  <div className="absolute top-12 left-12 w-16 h-16 bg-foreground/20" />
+                  <div className="absolute bottom-12 right-6 w-10 h-20 bg-foreground/40" />
+                  <div className="absolute top-8 right-16 w-8 h-8 bg-foreground" />
+                  <div className="absolute bottom-8 left-16 w-12 h-4 bg-foreground/80" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-brand-red text-white px-2 py-1 text-[10px] font-display tracking-wider border-2 border-foreground">
                     SCAN
                   </div>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mt-6">
-                Scan at the location to unlock your stamp and claim rewards.
+              <p className="text-sm font-medium mt-6 leading-snug">
+                Scan at the spot to unlock your stamp and claim rewards.
               </p>
-            </Card>
+            </div>
           </div>
 
         </div>
 
         {/* Bottom Nav */}
         <div className="mt-20 pt-8 border-t border-border flex justify-center">
-          <Link href="/explore">
-            <Button variant="ghost" className="text-muted-foreground hover:text-primary">
-              Explore more local businesses →
-            </Button>
+          <Link href="/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors">
+            EXPLORE MORE LOCAL BUSINESSES →
           </Link>
         </div>
       </div>

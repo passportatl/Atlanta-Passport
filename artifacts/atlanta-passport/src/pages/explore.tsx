@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -139,41 +138,46 @@ export default function Explore() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300">
-                  <div className="aspect-[4/3] overflow-hidden relative">
-                    <img 
-                      src={biz.image} 
-                      alt={biz.name}
-                      className="object-cover w-full h-full"
-                    />
-                    <div className="absolute top-4 left-4 bg-background/95 backdrop-blur px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-primary">
-                      {biz.category}
+                <Link href={`/listing/${biz.id}`} className="block h-full group">
+                  <div className="card-pop bg-card h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform">
+                    <div className="aspect-[4/3] overflow-hidden relative border-b-[3px] border-foreground">
+                      <img
+                        src={biz.image}
+                        alt={biz.name}
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3 left-3 badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2 text-[10px]">
+                        {biz.category}
+                      </div>
+                      {biz.sponsorTier === "Founding Sponsor" && (
+                        <div className="absolute top-3 right-3 badge-sticker bg-brand-red text-white rotate-2 text-[10px]">
+                          ★ Founding
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-5 flex-grow flex flex-col">
+                      <h3 className="text-2xl font-serif font-bold text-foreground leading-tight mb-1">
+                        {biz.name}
+                      </h3>
+                      <div className="flex items-center text-muted-foreground text-sm mb-3">
+                        <MapPin className="w-3.5 h-3.5 mr-1" /> {biz.neighborhood}
+                      </div>
+                      <p className="text-muted-foreground line-clamp-3 text-sm mb-4 flex-grow">
+                        {biz.description}
+                      </p>
+                      {biz.offer && (
+                        <div className="border-[2px] border-foreground bg-brand-cream rounded-lg p-3 mt-auto">
+                          <div className="font-display text-[10px] tracking-[0.16em] text-brand-red mb-1">
+                            ★ PASSPORT OFFER
+                          </div>
+                          <p className="text-sm font-medium text-foreground leading-snug">
+                            {biz.offer}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-serif">{biz.name}</CardTitle>
-                    <CardDescription className="flex items-center mt-1">
-                      <MapPin className="w-3 h-3 mr-1" /> {biz.neighborhood}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-muted-foreground line-clamp-3 mb-4">{biz.description}</p>
-                    {biz.offer && (
-                      <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 mt-4">
-                        <p className="text-sm font-medium text-accent-foreground/90">
-                          <span className="font-bold">Offer:</span> {biz.offer}
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                  <CardFooter>
-                    <Link href={`/listing/${biz.id}`} className="w-full">
-                      <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/5 text-primary">
-                        View Listing
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
+                </Link>
               </motion.div>
             ))
           ) : (
