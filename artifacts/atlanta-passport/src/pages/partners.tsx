@@ -87,9 +87,13 @@ export default function Partners() {
       <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              Built to be affordable for local businesses
+            </div>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">Choose Your Package</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Select the level of exposure that fits your business.
+              Pricing designed for small, independent Atlanta businesses — pick the level of exposure that fits, starting at just $100.
             </p>
           </div>
 
