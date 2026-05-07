@@ -106,12 +106,12 @@ export default function Home() {
                 visitors find the city locals actually love.
               </p>
 
-              <div className="flex flex-wrap gap-3 sm:gap-4 items-center mb-7">
-                <Link href="/explore" className="button-pop">
-                  Explore Atlanta <MoveRight className="w-4 h-4" />
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 sm:items-center mb-7">
+                <Link href="/explore" className="button-pop w-full sm:w-auto">
+                  Explore <MoveRight className="w-4 h-4" />
                 </Link>
-                <Link href="/beltline" className="button-pop button-pop-yellow">
-                  View Routes <Map className="w-4 h-4" />
+                <Link href="/beltline" className="button-pop button-pop-yellow w-full sm:w-auto">
+                  Routes <Map className="w-4 h-4" />
                 </Link>
               </div>
 

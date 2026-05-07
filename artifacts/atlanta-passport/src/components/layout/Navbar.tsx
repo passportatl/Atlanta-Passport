@@ -65,9 +65,9 @@ export default function Navbar() {
         <div className="md:hidden flex items-center gap-2">
           <Link
             href="/explore"
-            className="button-pop button-pop-yellow text-[10px] px-3 py-2"
+            className="button-pop button-pop-yellow text-[10px] px-3 py-2 whitespace-nowrap"
           >
-            Start Exploring
+            Explore
           </Link>
           <Sheet>
             <SheetTrigger asChild>
