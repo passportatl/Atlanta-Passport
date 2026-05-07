@@ -52,9 +52,9 @@ type PackageOption = {
 };
 
 const packageOptions: PackageOption[] = [
-  { value: "starter", title: "Starter Listing", price: "$500", cls: "bg-brand-yellow text-brand-yellow-foreground" },
+  { value: "starter", title: "Starter Listing", price: "$100", cls: "bg-brand-yellow text-brand-yellow-foreground" },
   { value: "featured", title: "Featured Partner", price: "$300", cls: "bg-brand-red text-white", badge: "MOST POPULAR" },
-  { value: "premier", title: "Premier Sponsor", price: "$100", cls: "bg-brand-navy text-white" },
+  { value: "premier", title: "Premier Sponsor", price: "$500", cls: "bg-brand-navy text-white" },
   { value: "custom", title: "Custom Package", price: "Let's talk", cls: "bg-brand-cream text-foreground" },
 ];
 

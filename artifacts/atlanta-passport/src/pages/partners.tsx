@@ -144,7 +144,7 @@ export default function Partners() {
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3">TIER 01</div>
                 <h3 className="font-serif text-3xl font-bold mb-2">Starter Listing</h3>
                 <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl">$500</div>
+                  <div className="font-display text-5xl">$100</div>
                 </div>
                 <p className="text-sm mb-6 opacity-80">Best for small shops, cafes, and local services.</p>
                 <ul className="space-y-2.5 mb-8">
@@ -193,7 +193,7 @@ export default function Partners() {
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3 text-brand-gold">TIER 03</div>
                 <h3 className="font-serif text-3xl font-bold mb-2">Premier Sponsor</h3>
                 <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl text-brand-gold">$100</div>
+                  <div className="font-display text-5xl text-brand-gold">$500</div>
                 </div>
                 <p className="text-sm mb-6 opacity-90">Best for venues, hotels, brands, and major World Cup activations.</p>
                 <ul className="space-y-2.5 mb-8">
