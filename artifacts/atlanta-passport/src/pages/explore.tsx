@@ -35,11 +35,12 @@ export default function Explore() {
     <div className="w-full pt-10 pb-24">
       <div className="container mx-auto px-4">
         <div className="mb-12 max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">
-            Explore Atlanta
+          <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-4">A curated city guide</div>
+          <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-4 leading-tight">
+            Atlanta, unlocked.
           </h1>
           <p className="text-xl text-muted-foreground">
-            Discover the best spots in the city, curated for the World Cup experience.
+            Filter by neighborhood, mood, or category. Every listing is hand-picked by locals — no pay-to-play, no tourist traps.
           </p>
         </div>
 

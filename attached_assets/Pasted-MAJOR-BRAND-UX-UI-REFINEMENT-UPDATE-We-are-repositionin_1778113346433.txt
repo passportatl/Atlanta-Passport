@@ -1,0 +1,370 @@
+MAJOR BRAND + UX + UI REFINEMENT UPDATE
+
+We are repositioning Atlanta Passport from:
+“A local business directory”
+
+Into:
+“The unofficial guide to the real Atlanta during the World Cup.”
+
+This should feel less like a startup landing page and more like:
+A premium cultural city guide
+A modern editorial travel experience
+A curated local movement
+A temporary cultural layer over Atlanta
+
+IMPORTANT:
+The site should emotionally communicate:
+“Something important is happening in Atlanta.”
+
+The tone should feel:
+Confident
+Curated
+Culturally plugged in
+Editorial
+Selective
+Modern
+Alive
+
+Avoid:
+Corporate tourism vibes
+Startup SaaS aesthetics
+Generic tech gradients
+Overexplaining
+Stock “soccer fan” energy
+Corporate FIFA-style branding
+
+DO NOT imply official FIFA affiliation.
+
+NEW PRIMARY TAGLINE:
+“The unofficial guide to the real Atlanta.”
+
+Use this prominently throughout the site.
+
+SECONDARY SUPPORTING COPY OPTIONS:
+“Discover Atlanta beyond the stadium.”
+“Where visitors become locals.”
+“The city unlocked.”
+“Curated local experiences for the world’s biggest soccer celebration.”
+
+GLOBAL DESIGN DIRECTION
+
+The website should feel like:
+A24 meets boutique travel guide meets modern city magazine.
+
+Visual references:
+Kinfolk
+Monocle
+Highsnobiety city guides
+Apple editorial layouts
+Luxury hospitality websites
+Modern museum websites
+Soho House city guides
+
+NEW VISUAL SYSTEM
+
+Color palette:
+Warm cream background
+Near-black text
+Deep forest green
+Muted warm orange
+Muted gold/tan accents
+
+Typography:
+Large editorial headlines
+Minimal but bold
+Strong hierarchy
+Short punchy copy
+Wide spacing
+Modern premium sans-serif
+
+UI style:
+Layered layouts
+Subtle texture/grain
+Passport stamp motifs
+Map overlays
+Rounded cards
+Soft shadows
+Editorial spacing
+Image-forward design
+High contrast typography
+
+The website should feel:
+Collected
+Curated
+Premium
+Local
+Cinematic
+Not corporate.
+
+HOMEPAGE REFINEMENT
+
+Hero Section:
+The hero should feel more emotional and cinematic.
+
+Headline:
+“The unofficial guide to the real Atlanta.”
+
+Subheadline:
+“Discover the restaurants, bars, neighborhoods, events, rides, and local culture shaping Atlanta during the world’s biggest soccer celebration.”
+
+Buttons:
+“Explore Atlanta”
+“Become a Partner”
+
+Background treatment:
+Layered Atlanta imagery
+Nightlife
+Beltline
+Food
+Street photography
+Neighborhood energy
+Subtle passport graphics
+Maps
+Texture/grain
+
+Add subtle floating elements:
+Passport stamp graphics
+Map pins
+Neighborhood labels
+QR stamp elements
+
+Add a “Launching Before World Cup Kickoff” badge.
+
+Add momentum indicators:
+“Founding businesses now onboarding”
+“Limited partner spots available”
+“Launching Summer 2026”
+
+SECTION REFINEMENTS
+
+Reduce text density sitewide.
+Replace long explanatory paragraphs with:
+Short editorial copy
+Statements
+Punchy sections
+Visual storytelling
+
+HOW IT WORKS SECTION
+
+Make this highly visual.
+
+Use:
+Passport booklet mockups
+QR interactions
+Map graphics
+Neighborhood discovery visuals
+
+Short step labels:
+Pick up the passport
+Scan the city
+Discover local spots
+Unlock experiences
+
+WHY THIS EXISTS SECTION (NEW)
+
+Add a new emotional brand section:
+
+Headline:
+“Atlanta deserves better than generic tourism.”
+
+Copy:
+“Most visitors only experience the stadiums, hotels, and rideshares. Atlanta Passport was created to help people discover the neighborhoods, businesses, food, nightlife, culture, and local experiences that actually define the city.”
+
+This section is VERY important.
+This is the emotional heart of the brand.
+
+NEIGHBORHOODS SECTION
+
+Make neighborhoods feel alive.
+
+Each neighborhood card should include:
+Mood photography
+Short cultural descriptor
+
+Examples:
+Old Fourth Ward:
+“Street culture, nightlife, food, and creative energy.”
+
+Decatur:
+“Walkable local charm, cocktails, coffee, and community.”
+
+Midtown:
+“Hotels, skyline views, nightlife, and city movement.”
+
+Use layered cards with hover effects.
+
+FEATURED BUSINESS SECTION
+
+This should feel curated, not like ads.
+
+Section title:
+“Selected local spots.”
+
+Add:
+“Founding Partners” label for early sponsors.
+
+Wheelhaus Bikes should feel premium and editorial.
+
+Improve Wheelhaus listing visuals:
+Urban photography
+Atlanta riding imagery
+Minimal modern cards
+
+Wheelhaus listing tone:
+Not salesy.
+More lifestyle-oriented.
+
+Update Wheelhaus copy:
+
+“Premium e-bike rentals, repairs, and curated city rides for visitors who want to experience Atlanta beyond traffic and rideshares.”
+
+Add a “Founding Sponsor” badge.
+
+PARTNER PAGE OVERHAUL
+
+The partner page should feel:
+Exclusive
+High-value
+Selective
+
+NOT:
+“Please buy an ad.”
+
+Headline:
+“Put your business in the path of World Cup visitors.”
+
+Subheadline:
+“We’re curating a limited group of local businesses, venues, restaurants, shops, and experiences to feature in Atlanta Passport.”
+
+Add a section:
+“Why businesses are joining”
+
+Bullets:
+Visitors need trusted local recommendations
+Physical + digital placement creates repeated visibility
+Neighborhood curation builds credibility
+The passport turns discovery into foot traffic
+Limited placements increase attention
+
+SCARCITY SECTION
+
+Make scarcity stronger.
+
+Headline:
+“Limited placements by neighborhood and category.”
+
+Add:
+“To maintain quality and curation, only a select number of businesses will be featured in each neighborhood.”
+
+Add visual progress bars or counters:
+Restaurants: 3/8 claimed
+Coffee shops: 2/5 claimed
+Bike rentals: 1/3 claimed
+
+This creates urgency and momentum.
+
+ADD SOCIAL PROOF / MOMENTUM
+
+Sitewide add:
+“Founding businesses now onboarding”
+“Applications now open”
+“Launching before World Cup kickoff”
+
+Add subtle counters and motion.
+
+EXPLORE PAGE IMPROVEMENTS
+
+The Explore page should feel like:
+A premium city guide app.
+
+Add:
+Neighborhood filters
+Category pills
+Map-style layout inspiration
+Large imagery
+Curated recommendations
+
+Do NOT make it feel like Yelp.
+
+Make it feel curated and editorial.
+
+BUSINESS PAGE IMPROVEMENTS
+
+Business pages should feel immersive.
+
+Add:
+Large hero image
+Neighborhood label
+Editorial layout
+Offer card
+Map card
+Save button
+Passport stamp interaction placeholder
+
+Add:
+“Nearby spots” recommendations section.
+
+EVENTS PAGE
+
+Make events feel alive and time-sensitive.
+
+Use:
+Large event cards
+Neighborhood labels
+Date badges
+Atmospheric visuals
+
+Examples:
+Watch parties
+Food crawls
+Night markets
+Bike rides
+Rooftop socials
+Popups
+
+FOOTER UPDATE
+
+Add:
+“The unofficial guide to the real Atlanta.”
+
+Add disclaimer:
+“Atlanta Passport is an independent local guide and is not affiliated with FIFA or the official World Cup.”
+
+IMPORTANT UX CHANGES
+
+Increase headline sizes sitewide.
+Increase whitespace.
+Reduce paragraph lengths.
+Use more image-led storytelling.
+Add subtle animations/transitions.
+Improve mobile spacing and tap targets.
+Make CTAs more visually distinct.
+
+IMPORTANT BRAND SHIFT
+
+This is NOT:
+A tourism directory.
+
+This IS:
+A curated cultural layer over Atlanta during the World Cup.
+
+Everything should support that feeling.
+
+FINAL PRIORITIES
+
+PRIORITY 1:
+Homepage emotional impact.
+
+PRIORITY 2:
+Partner page conversion optimization.
+
+PRIORITY 3:
+Photography and visual storytelling.
+
+PRIORITY 4:
+Wheelhaus premium showcase page.
+
+PRIORITY 5:
+Momentum and scarcity indicators.
+
+Build all refinements now while maintaining responsive mobile-first performance.

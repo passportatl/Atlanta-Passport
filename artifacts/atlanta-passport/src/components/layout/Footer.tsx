@@ -7,6 +7,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           <div className="md:col-span-2 space-y-4">
             <h3 className="font-serif text-2xl font-bold">Atlanta Passport</h3>
+            <p className="font-serif text-xl text-secondary max-w-sm leading-snug">
+              The unofficial guide to the real Atlanta.
+            </p>
             <p className="text-primary-foreground/80 max-w-sm">
               Built by local Atlanta entrepreneurs.
             </p>

@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { MapPin, ScanLine, Ticket, Store, MoveRight, ArrowRight, Bike, Stamp, Gift } from "lucide-react";
+import { MapPin, ScanLine, Ticket, Store, MoveRight, ArrowRight, Bike, Stamp, Gift, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { businesses, neighborhoods } from "@/data/sample-data";
 import heroHomeImg from "@/assets/images/hero-home.png";
@@ -27,6 +27,15 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden bg-background">
+        {/* Subtle texture/grain */}
+        <div
+          className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-multiply"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(0,0,0,1) 1px, transparent 1px)",
+            backgroundSize: "3px 3px",
+          }}
+        />
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -35,19 +44,20 @@ export default function Home() {
               variants={fadeInUp}
               className="max-w-2xl"
             >
-              <h1 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 leading-tight">
-                Atlanta Passport
+              <div className="inline-flex items-center gap-2 bg-primary/5 text-primary border border-primary/15 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-[0.18em] uppercase mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                Launching before World Cup kickoff · Summer 2026
+              </div>
+              <h1 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 leading-[1.05] tracking-tight">
+                The unofficial guide to the real Atlanta.
               </h1>
-              <p className="text-xl md:text-2xl font-medium text-foreground/90 mb-6">
-                The local spots that locals actually go to.
-              </p>
-              <p className="text-lg text-muted-foreground mb-8">
-                A physical and digital city guide pointing World Cup visitors to the hyperlocal restaurants, bars, shops, events, and neighborhood experiences Atlantans love — the places you'd send a friend, not the tourist traps.
+              <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl leading-relaxed">
+                Discover the restaurants, bars, neighborhoods, events, rides, and local culture shaping Atlanta during the world's biggest soccer celebration.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/explore">
                   <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg">
-                    Explore the Passport
+                    Explore Atlanta
                   </Button>
                 </Link>
                 <Link href="/partners">
@@ -55,6 +65,22 @@ export default function Home() {
                     Become a Partner
                   </Button>
                 </Link>
+              </div>
+
+              {/* Momentum indicators */}
+              <div className="mt-10 grid grid-cols-3 gap-4 max-w-lg border-t border-border pt-6">
+                <div>
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-accent mb-1">Now</div>
+                  <div className="text-sm text-foreground/80 leading-snug">Founding businesses onboarding</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-accent mb-1">Limited</div>
+                  <div className="text-sm text-foreground/80 leading-snug">Partner spots available</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold tracking-widest uppercase text-accent mb-1">Launch</div>
+                  <div className="text-sm text-foreground/80 leading-snug">Summer 2026</div>
+                </div>
               </div>
             </motion.div>
 
@@ -70,6 +96,17 @@ export default function Home() {
                 className="object-cover w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent mix-blend-multiply" />
+
+              {/* Floating passport stamp */}
+              <div className="absolute top-6 right-6 bg-background/95 backdrop-blur border border-border rounded-full px-4 py-2 text-[10px] font-bold tracking-[0.18em] uppercase text-primary shadow-lg flex items-center gap-2">
+                <Stamp className="w-3.5 h-3.5 text-accent" />
+                Atlanta · Est. 2026
+              </div>
+              {/* Floating neighborhood pin */}
+              <div className="absolute bottom-6 left-6 bg-primary text-primary-foreground rounded-full px-4 py-2 text-[11px] font-medium shadow-lg flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-secondary" />
+                Old Fourth Ward
+              </div>
             </motion.div>
           </div>
         </div>
@@ -115,6 +152,27 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Why This Exists - Editorial brand section */}
+      <section className="py-32 bg-background relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-6">Why this exists</div>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary leading-[1.05] mb-8">
+              Atlanta deserves better than generic tourism.
+            </h2>
+            <p className="text-xl md:text-2xl text-foreground/80 leading-relaxed font-light">
+              Most visitors only experience the stadiums, hotels, and rideshares. Atlanta Passport was created to help people discover the neighborhoods, businesses, food, nightlife, culture, and local experiences that actually define the city.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Featured Businesses */}
       <section className="py-24">
         <div className="container mx-auto px-4">
@@ -126,11 +184,12 @@ export default function Home() {
               variants={fadeInUp}
               className="max-w-2xl"
             >
-              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">
-                Where locals actually go.
+              <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-4">Founding Partners</div>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4 leading-tight">
+                Selected local spots.
               </h2>
-              <p className="text-xl text-muted-foreground">
-                A handpicked list of Atlanta's favorite independent restaurants, bars, shops, and venues — vetted by the people who live here.
+              <p className="text-lg text-muted-foreground">
+                A curated list of Atlanta's favorite independent restaurants, bars, shops, and venues — vetted by the people who live here.
               </p>
             </motion.div>
             <Link href="/explore" className="hidden md:flex items-center text-primary font-medium hover:text-primary/80 transition-colors">
@@ -250,11 +309,15 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
-            className="mb-16"
+            className="mb-16 max-w-3xl"
           >
-            <h2 className="text-3xl md:text-5xl font-serif font-bold mb-4">
-              Explore Atlanta by neighborhood.
+            <div className="text-secondary font-bold tracking-[0.2em] uppercase text-xs mb-4">By neighborhood</div>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold mb-4 leading-tight">
+              Each neighborhood has its own pulse.
             </h2>
+            <p className="text-primary-foreground/75 text-lg">
+              Atlanta isn't one city — it's a dozen. Here's where to start.
+            </p>
           </motion.div>
 
           <motion.div 
@@ -295,7 +358,11 @@ export default function Home() {
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6">
+            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.18em] uppercase mb-6">
+              <Sparkles className="w-3 h-3" />
+              Applications now open
+            </div>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 leading-[1.05]">
               Put your business in the path of World Cup visitors.
             </h2>
             <p className="text-xl text-muted-foreground mb-10">

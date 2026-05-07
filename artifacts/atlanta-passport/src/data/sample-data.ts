@@ -15,14 +15,14 @@ export const businesses = [
     name: "Wheelhaus Bikes",
     category: "Rentals",
     neighborhood: "Atlanta",
-    description: "Wheelhaus Bikes is a premium e-bike shop offering rentals, service, repairs, and curated urban rides for visitors and locals exploring Atlanta.",
+    description: "Premium e-bike rentals, repairs, and curated city rides for visitors who want to experience Atlanta beyond traffic and rideshares.",
     offer: "Rental specials and guided ride options available during World Cup season.",
     address: "Atlanta Beltline",
     hours: "Mon-Sun: 9am - 7pm",
     image: wheelhausImg,
     featured: true,
     sponsorTier: "Founding Sponsor",
-    about: "Wheelhaus helps people move through Atlanta with style, ease, and local knowledge. From e-bike rentals to repairs and curated rides, Wheelhaus is built for visitors who want to experience the city beyond rideshares and traffic."
+    about: "Wheelhaus is built for the way Atlanta actually moves — by bike, on the Beltline, through the neighborhoods. Premium e-bike rentals, full-service repairs, and curated city rides for visitors who'd rather feel the city than sit in traffic."
   },
   {
     id: "brash-coffee",
@@ -145,14 +145,14 @@ export const events = [
 ];
 
 export const neighborhoods = [
-  { id: "downtown", name: "Downtown", description: "The heart of the city, home to major attractions and massive sports energy." },
-  { id: "midtown", name: "Midtown", description: "Arts, culture, and towering skyline views mixed with lush green spaces." },
-  { id: "o4w", name: "Old Fourth Ward", description: "Historic roots meeting the modern energy of the Atlanta Beltline." },
+  { id: "o4w", name: "Old Fourth Ward", description: "Street culture, nightlife, food, and creative energy." },
+  { id: "decatur", name: "Decatur", description: "Walkable local charm, cocktails, coffee, and community." },
+  { id: "midtown", name: "Midtown", description: "Hotels, skyline views, nightlife, and city movement." },
+  { id: "westside", name: "Westside", description: "Industrial chic, premium dining, and independent retail." },
   { id: "eav", name: "East Atlanta Village", description: "Alternative, eclectic, and the best late-night spots in town." },
-  { id: "decatur", name: "Decatur", description: "A fiercely independent foodie haven with a small-town feel." },
-  { id: "westside", name: "Westside", description: "Industrial chic, premium dining, and high-end retail." },
-  { id: "buckhead", name: "Buckhead", description: "Luxury shopping, upscale dining, and elegant nightlife." },
-  { id: "summerhill", name: "Summerhill", description: "A historic sports neighborhood reborn as a culinary hotspot." }
+  { id: "summerhill", name: "Summerhill", description: "A historic sports neighborhood reborn as a culinary hotspot." },
+  { id: "downtown", name: "Downtown", description: "Stadium energy, historic landmarks, and a city in motion." },
+  { id: "buckhead", name: "Buckhead", description: "Luxury shopping, upscale dining, and elegant nightlife." }
 ];
 
 export const categories = [

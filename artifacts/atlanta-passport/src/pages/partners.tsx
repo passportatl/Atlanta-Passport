@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check } from "lucide-react";
+import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
@@ -29,11 +29,15 @@ export default function Partners() {
             variants={fadeInUp}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 leading-tight">
-              Get your business in front of World Cup visitors.
+            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.18em] uppercase mb-8">
+              <Sparkles className="w-3 h-3" />
+              Founding partner applications now open
+            </div>
+            <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 leading-[1.05]">
+              Put your business in the path of World Cup visitors.
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10">
-              Atlanta Passport helps local businesses turn World Cup traffic into real customers through physical passport placement, digital listings, QR codes, and neighborhood discovery.
+            <p className="text-xl md:text-2xl text-muted-foreground mb-10 leading-relaxed">
+              We're curating a limited group of local businesses, venues, restaurants, shops, and experiences to feature in Atlanta Passport.
             </p>
             <Link href="/apply">
               <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-lg">
@@ -41,6 +45,50 @@ export default function Partners() {
               </Button>
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Scarcity / Limited Placements */}
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="text-secondary font-bold tracking-[0.2em] uppercase text-xs mb-4">Limited placements</div>
+              <h2 className="text-3xl md:text-5xl font-serif font-bold mb-4 leading-tight">
+                Only a few spots open per neighborhood and category.
+              </h2>
+              <p className="text-primary-foreground/75 text-lg max-w-2xl mx-auto">
+                To maintain quality and curation, only a select number of businesses will be featured in each neighborhood.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                { label: "Restaurants", claimed: 3, total: 8 },
+                { label: "Coffee shops", claimed: 2, total: 5 },
+                { label: "Bike & rentals", claimed: 1, total: 3 },
+                { label: "Bars & nightlife", claimed: 2, total: 6 },
+                { label: "Retail & boutiques", claimed: 1, total: 5 },
+                { label: "Experiences", claimed: 1, total: 4 },
+              ].map((row) => {
+                const pct = Math.round((row.claimed / row.total) * 100);
+                return (
+                  <div key={row.label} className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-xl p-5">
+                    <div className="flex justify-between items-baseline mb-3">
+                      <span className="font-medium">{row.label}</span>
+                      <span className="text-secondary text-sm font-mono tracking-wider">{row.claimed}/{row.total} claimed</span>
+                    </div>
+                    <div className="h-1.5 bg-primary-foreground/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-secondary rounded-full transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -180,35 +228,30 @@ export default function Partners() {
         </div>
       </section>
 
-      {/* Why Join */}
+      {/* Why businesses are joining */}
       <section className="py-24 bg-muted/50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-8">Why Join</h2>
-              <ul className="space-y-6">
-                {[
-                  "World Cup visitors need local recommendations.",
-                  "Physical + digital exposure creates repeated impressions.",
-                  "QR codes connect print to action.",
-                  "Neighborhood curation makes discovery easier.",
-                  "Limited placement makes the guide more valuable."
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <div className="bg-primary/10 p-2 rounded-full mr-4 text-primary mt-1">
-                      <Check className="w-5 h-5" />
-                    </div>
-                    <span className="text-lg text-foreground/90">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-primary text-primary-foreground rounded-2xl p-12 text-center shadow-xl">
-              <h3 className="text-2xl font-serif font-bold mb-4 text-secondary">Limited partner slots by category and neighborhood.</h3>
-              <p className="text-primary-foreground/90 text-lg leading-relaxed">
-                To keep the passport curated, we are limiting the number of businesses in each category and neighborhood. Apply early to secure your placement.
-              </p>
-            </div>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-accent font-bold tracking-[0.2em] uppercase text-xs mb-4">Why businesses are joining</div>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-12 leading-tight">
+              The passport turns discovery into foot traffic.
+            </h2>
+            <ul className="space-y-5">
+              {[
+                "Visitors need trusted local recommendations — not algorithms.",
+                "Physical + digital placement creates repeated visibility across the trip.",
+                "Neighborhood curation builds credibility with the right audience.",
+                "QR codes connect print to action — visits, stamps, redemptions.",
+                "Limited placements increase attention and signal quality."
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-4 border-b border-border/60 pb-5 last:border-b-0">
+                  <div className="text-primary font-serif font-bold text-2xl leading-none mt-1 w-8 flex-shrink-0">
+                    0{i + 1}
+                  </div>
+                  <span className="text-lg md:text-xl text-foreground/90 leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
