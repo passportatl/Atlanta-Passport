@@ -39,10 +39,10 @@ export default function Home() {
                 Atlanta Passport
               </h1>
               <p className="text-xl md:text-2xl font-medium text-foreground/90 mb-6">
-                Discover Atlanta like a local during the world's biggest soccer celebration.
+                The local spots that locals actually go to.
               </p>
               <p className="text-lg text-muted-foreground mb-8">
-                A physical and digital city guide connecting World Cup visitors with the best hyperlocal restaurants, bars, shops, events, rentals, and neighborhood experiences across Atlanta.
+                A physical and digital city guide pointing World Cup visitors to the hyperlocal restaurants, bars, shops, events, and neighborhood experiences Atlantans love — the places you'd send a friend, not the tourist traps.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/explore">
@@ -127,10 +127,10 @@ export default function Home() {
               className="max-w-2xl"
             >
               <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">
-                Featured Partners
+                Where locals actually go.
               </h2>
               <p className="text-xl text-muted-foreground">
-                Discover some of the incredible local businesses that make Atlanta unique.
+                A handpicked list of Atlanta's favorite independent restaurants, bars, shops, and venues — vetted by the people who live here.
               </p>
             </motion.div>
             <Link href="/explore" className="hidden md:flex items-center text-primary font-medium hover:text-primary/80 transition-colors">
