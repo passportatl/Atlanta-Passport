@@ -139,7 +139,7 @@ export default function Partners() {
 
           <div className="grid lg:grid-cols-3 gap-10 max-w-6xl mx-auto items-stretch">
             {/* Starter — Yellow */}
-            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground flex flex-col -rotate-1 hover:rotate-0 transition-transform">
+            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground flex flex-col hover:-translate-y-1 transition-transform">
               <div className="p-7 flex-grow">
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3">TIER 01</div>
                 <h3 className="font-serif text-3xl font-bold mb-2">Starter Listing</h3>
@@ -162,7 +162,7 @@ export default function Partners() {
             </div>
 
             {/* Featured — Red */}
-            <div className="card-pop bg-brand-red text-white flex flex-col rotate-1 hover:rotate-0 transition-transform relative lg:-translate-y-3">
+            <div className="card-pop bg-brand-red text-white flex flex-col hover:-translate-y-1 transition-transform relative lg:-translate-y-3">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 badge-sticker bg-brand-lime text-foreground">
                 MOST POPULAR
               </div>
@@ -170,7 +170,7 @@ export default function Partners() {
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3">TIER 02</div>
                 <h3 className="font-serif text-3xl font-bold mb-2">Featured Partner</h3>
                 <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl">$1,500</div>
+                  <div className="font-display text-5xl">$300</div>
                 </div>
                 <p className="text-sm mb-6 opacity-90">Best for restaurants, bars, retail, and experience businesses.</p>
                 <ul className="space-y-2.5 mb-8">
@@ -188,12 +188,12 @@ export default function Partners() {
             </div>
 
             {/* Premier — Navy + Gold */}
-            <div className="card-pop bg-brand-navy text-white flex flex-col -rotate-1 hover:rotate-0 transition-transform">
+            <div className="card-pop bg-brand-navy text-white flex flex-col hover:-translate-y-1 transition-transform">
               <div className="p-7 flex-grow">
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3 text-brand-gold">TIER 03</div>
                 <h3 className="font-serif text-3xl font-bold mb-2">Premier Sponsor</h3>
                 <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl text-brand-gold">$3,000+</div>
+                  <div className="font-display text-5xl text-brand-gold">$100</div>
                 </div>
                 <p className="text-sm mb-6 opacity-90">Best for venues, hotels, brands, and major World Cup activations.</p>
                 <ul className="space-y-2.5 mb-8">

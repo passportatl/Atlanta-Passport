@@ -38,7 +38,7 @@ A premium, mobile-first marketing site for "Atlanta Passport" — a hyperlocal c
 
 ## Product
 
-Marketing site with: Home, Become a Partner (Starter $500 / Featured $1,500 / Premier $3,000+), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, Beltline Tour, About, and Apply onboarding form. Visual identity is playful retro Americana — yellow block "ATL/PASSPORT" wordmark, thick black borders, offset "pop" shadows.
+Marketing site with: Home, Become a Partner (Starter $500 / Featured $300 / Premier $100), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, Beltline Tour, About, and Apply onboarding form. Visual identity is playful retro Americana — yellow block "ATL/PASSPORT" wordmark, thick black borders, offset "pop" shadows.
 
 **Home page order:** Marquee → Hero (with sticker cluster + passport stamp) → Explore by Category → Featured Experience (Beltline + numbered route stops) → Manifesto (red block) → Routes & Collections → Selected Local Spots → Neighborhoods → How It Works → Partner CTA → Footer.
 
