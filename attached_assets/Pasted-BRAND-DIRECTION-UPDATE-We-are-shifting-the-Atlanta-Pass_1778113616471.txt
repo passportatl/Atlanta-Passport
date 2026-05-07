@@ -1,0 +1,317 @@
+BRAND DIRECTION UPDATE
+
+We are shifting the Atlanta Passport brand identity into something:
+More playful
+More iconic
+More Atlanta
+More memorable
+More culturally recognizable
+
+The brand should still feel curated and premium, BUT with stronger personality and visual identity.
+
+CORE BRAND INSPIRATION:
+Classic Waffle House signage energy
+Retro Atlanta roadside culture
+Southern Americana
+Neighborhood discovery
+Vintage travel guides
+Modern playful editorial design
+
+IMPORTANT:
+DO NOT directly copy Waffle House branding or logos.
+Instead:
+Take inspiration from:
+Block typography
+Bold yellow signage
+Retro roadside Americana
+Simple iconic shapes
+Playful familiarity
+
+The goal is:
+Instantly recognizable Atlanta energy.
+
+NEW BRAND PERSONALITY
+
+The site should feel:
+Colorful
+Fun
+Warm
+Local
+Playful
+Confident
+Culturally aware
+Neighborhood-driven
+
+Imagine:
+If a premium city guide and a retro roadside travel book had a baby.
+
+VISUAL STYLE UPDATE
+
+Add:
+More color
+More layered visuals
+More playful interactions
+More personality
+More movement
+More “discovery” energy
+
+Avoid:
+Overly minimal luxury
+Cold tech startup aesthetics
+Corporate tourism design
+
+TYPOGRAPHY UPDATE
+
+The “Atlanta Passport” logo/wordmark should use:
+Bold block-style typography inspired by classic roadside signage.
+
+Direction:
+Stacked block lettering
+Chunky square typography
+Retro sign energy
+High readability
+Strong visual identity
+
+IMPORTANT:
+DO NOT recreate the Waffle House logo directly.
+
+Instead:
+Create an original typographic system inspired by:
+Retro diner signs
+Roadside Americana
+Vintage motel typography
+Classic Southern signage
+
+LOGO DIRECTION
+
+“Atlanta Passport” should feel iconic.
+
+Possible styling direction:
+Each word inside individual rounded rectangular blocks
+Bold black letters
+Warm yellow background
+Slight imperfections/retro charm
+Modernized execution
+
+Visual feeling:
+Playful but recognizable
+Instagrammable
+Memorable
+Approachable
+
+PRIMARY COLOR PALETTE UPDATE
+
+Main colors:
+Warm Waffle-House-inspired yellow
+Cream/off-white
+Deep green
+Warm orange
+Near-black
+Muted red accents
+Sky blue accents sparingly
+
+The site should feel:
+Sunny
+Warm
+Inviting
+Energetic
+Neighborhood-oriented
+
+BACKGROUND STYLE
+
+Use:
+Warm cream backgrounds
+Textured paper effects
+Passport stamp overlays
+Travel sticker motifs
+Hand-drawn map accents
+Playful arrows/icons
+Neighborhood doodles
+Subtle grain textures
+
+Add layered visual elements:
+Stickers
+Stamp marks
+Neighborhood labels
+Route lines
+Pins
+Handwritten-style accent text
+
+HOMEPAGE UPDATE
+
+Hero should feel:
+Exciting
+Colorful
+Alive
+Like discovering a city.
+
+Headline:
+“The unofficial guide to the real Atlanta.”
+
+Subheadline:
+“Restaurants, bars, neighborhoods, events, rides, and local experiences curated for the world’s biggest soccer celebration.”
+
+Visual additions:
+Retro travel aesthetic
+Bold yellow logo area
+Map overlays
+Passport stamp graphics
+Neighborhood stickers
+Colorful editorial collage layouts
+
+Add:
+Animated marquee text or ticker:
+“NOW ONBOARDING ATLANTA BUSINESSES”
+“WORLD CUP CITY GUIDE”
+“DISCOVER ATLANTA LIKE A LOCAL”
+
+BUTTON STYLE
+
+Buttons should feel playful and tactile.
+
+Use:
+Rounded edges
+Bold colors
+Strong hover states
+Retro-inspired labels
+
+Examples:
+“Explore Atlanta”
+“Get the Passport”
+“Become a Founding Partner”
+
+NEIGHBORHOOD SECTION UPDATE
+
+Each neighborhood card should feel unique and vibrant.
+
+Add:
+Color coding
+Photography
+Small icons
+Playful descriptors
+
+Examples:
+Old Fourth Ward:
+“Late nights, murals, food, movement.”
+
+Decatur:
+“Coffee, cocktails, bookstores, patios.”
+
+Midtown:
+“Skyline energy and match-day movement.”
+
+FEATURED BUSINESS SECTION UPDATE
+
+Businesses should feel:
+Curated
+Fun
+Human
+Experiential
+
+NOT:
+Corporate listings.
+
+Wheelhaus Bikes should feel:
+Cool
+Local
+Stylish
+Urban-adventure oriented
+
+Use:
+Photography-heavy layouts
+Editorial cards
+Playful badges:
+“FOUNDING SPONSOR”
+“LOCAL FAVORITE”
+“MATCH DAY PICK”
+
+EXPLORE PAGE UPDATE
+
+The Explore page should feel like:
+A playful city discovery app.
+
+Inspiration:
+Vintage travel maps
+Modern food guides
+Interactive neighborhood discovery
+
+Add:
+Sticky category pills
+Colorful tags
+Large images
+Neighborhood filters
+Map-inspired layouts
+
+DO NOT make it feel like Yelp or Google Maps.
+
+MOBILE EXPERIENCE
+
+The site should feel amazing on mobile.
+
+Important:
+Large tap targets
+Swipeable cards
+Interactive feeling
+Fun transitions
+Smooth animations
+Discoverability-first
+
+PARTNER PAGE UPDATE
+
+Even though the brand is more playful, the partner page should still communicate:
+Credibility
+Momentum
+Opportunity
+
+Tone:
+Fun but professional.
+
+Headline:
+“Put your business on Atlanta’s World Cup map.”
+
+Subheadline:
+“We’re curating a limited group of local spots to feature in Atlanta Passport.”
+
+Add:
+Colorful sponsor cards
+Visual examples of listings
+Passport mockups
+Map placements
+
+MOTION / MICROINTERACTIONS
+
+Add:
+Hover animations
+Floating sticker graphics
+Animated map lines
+Subtle stamp effects
+Playful transitions
+Scrolling movement
+
+The site should feel:
+Alive.
+
+IMPORTANT:
+Balance playful and premium.
+
+This should feel:
+Thoughtfully designed
+Stylish
+Memorable
+Atlanta-specific
+
+NOT:
+Cheap
+Cartoonish
+Overcrowded
+Touristy
+
+FINAL FEELING
+
+The website should feel like:
+Atlanta itself is inviting you in.
+
+Not a tourism board.
+Not a startup.
+
+A living city guide with personality.

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { businesses, neighborhoods } from "@/data/sample-data";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import beltlineImg from "@/assets/images/beltline.png";
+import Marquee from "@/components/Marquee";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -23,19 +24,28 @@ const staggerContainer = {
 export default function Home() {
   const featuredBusinesses = businesses.slice(0, 6);
 
+  // Playful badges for first few cards — cycled by index
+  const cardBadges: Array<{ label: string; cls: string }> = [
+    { label: "Founding Sponsor", cls: "bg-brand-yellow text-brand-yellow-foreground" },
+    { label: "Local Favorite", cls: "bg-brand-red text-white" },
+    { label: "Match Day Pick", cls: "bg-brand-sky text-foreground" },
+  ];
+
   return (
     <div className="w-full">
+      {/* Marquee ticker */}
+      <Marquee
+        items={[
+          "NOW ONBOARDING ATLANTA BUSINESSES",
+          "WORLD CUP CITY GUIDE",
+          "DISCOVER ATLANTA LIKE A LOCAL",
+          "FOUNDING PARTNER APPLICATIONS OPEN",
+          "LAUNCHING SUMMER 2026",
+        ]}
+      />
+
       {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden bg-background">
-        {/* Subtle texture/grain */}
-        <div
-          className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-multiply"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(0,0,0,1) 1px, transparent 1px)",
-            backgroundSize: "3px 3px",
-          }}
-        />
+      <section className="relative pt-16 pb-32 overflow-hidden bg-paper">
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -44,9 +54,9 @@ export default function Home() {
               variants={fadeInUp}
               className="max-w-2xl"
             >
-              <div className="inline-flex items-center gap-2 bg-primary/5 text-primary border border-primary/15 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-[0.18em] uppercase mb-8">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                Launching before World Cup kickoff · Summer 2026
+              <div className="inline-flex items-center gap-2 bg-brand-yellow text-brand-yellow-foreground border-2 border-foreground/85 sticker px-3 py-1 text-[11px] font-display tracking-[0.14em] mb-8 -rotate-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+                LAUNCHING · SUMMER 2026
               </div>
               <h1 className="text-5xl md:text-7xl font-serif font-bold text-primary mb-6 leading-[1.05] tracking-tight">
                 The unofficial guide to the real Atlanta.
@@ -97,15 +107,19 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent mix-blend-multiply" />
 
-              {/* Floating passport stamp */}
-              <div className="absolute top-6 right-6 bg-background/95 backdrop-blur border border-border rounded-full px-4 py-2 text-[10px] font-bold tracking-[0.18em] uppercase text-primary shadow-lg flex items-center gap-2">
-                <Stamp className="w-3.5 h-3.5 text-accent" />
-                Atlanta · Est. 2026
+              {/* Floating passport stamp sticker */}
+              <div className="absolute top-6 right-6 bg-brand-yellow text-brand-yellow-foreground border-2 border-foreground/85 sticker px-3 py-1.5 text-[10px] font-display tracking-[0.18em] uppercase flex items-center gap-2 rotate-3">
+                <Stamp className="w-3.5 h-3.5" />
+                ATL · Est. 2026
               </div>
-              {/* Floating neighborhood pin */}
-              <div className="absolute bottom-6 left-6 bg-primary text-primary-foreground rounded-full px-4 py-2 text-[11px] font-medium shadow-lg flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-secondary" />
+              {/* Floating neighborhood pin sticker */}
+              <div className="absolute bottom-6 left-6 bg-brand-red text-white border-2 border-foreground/85 sticker px-3 py-1.5 text-[11px] font-display tracking-[0.1em] uppercase flex items-center gap-2 -rotate-2">
+                <MapPin className="w-3.5 h-3.5" />
                 Old Fourth Ward
+              </div>
+              {/* Sky blue pin */}
+              <div className="absolute top-1/2 -left-3 bg-brand-sky text-foreground border-2 border-foreground/85 sticker px-3 py-1.5 text-[10px] font-display tracking-[0.18em] uppercase rotate-[-8deg] hidden md:block">
+                ★ Beltline
               </div>
             </motion.div>
           </div>
@@ -204,10 +218,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {featuredBusinesses.map((biz) => (
+            {featuredBusinesses.map((biz, idx) => {
+              const badge = idx < cardBadges.length ? cardBadges[idx] : null;
+              return (
               <motion.div key={biz.id} variants={fadeInUp}>
                 <Link href={`/listing/${biz.id}`}>
-                  <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border-border">
+                  <Card className="h-full overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer border-border">
                     <div className="aspect-[4/3] overflow-hidden relative">
                       <img 
                         src={biz.image} 
@@ -217,6 +233,11 @@ export default function Home() {
                       <div className="absolute top-4 left-4 bg-background/95 backdrop-blur px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-primary">
                         {biz.category}
                       </div>
+                      {badge && (
+                        <div className={`absolute top-4 right-4 ${badge.cls} border-2 border-foreground/85 sticker px-2.5 py-1 text-[10px] font-display tracking-[0.12em] uppercase rotate-3`}>
+                          {badge.label}
+                        </div>
+                      )}
                     </div>
                     <CardHeader>
                       <div className="flex justify-between items-start">
@@ -234,7 +255,8 @@ export default function Home() {
                   </Card>
                 </Link>
               </motion.div>
-            ))}
+              );
+            })}
           </motion.div>
           
           <div className="mt-8 text-center md:hidden">
@@ -327,21 +349,31 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {neighborhoods.map((n) => (
-              <motion.div key={n.id} variants={fadeInUp}>
-                <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/20 transition-colors h-full">
-                  <CardHeader>
-                    <CardTitle className="font-serif text-xl">{n.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-primary-foreground/80 text-sm mb-6">{n.description}</p>
-                    <Link href={`/explore?neighborhood=${n.id}`} className="text-secondary font-medium flex items-center group">
-                      View neighborhood <MoveRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+            {neighborhoods.map((n) => {
+              const colorMap: Record<string, { bg: string; text: string; pin: string }> = {
+                yellow: { bg: "bg-brand-yellow", text: "text-brand-yellow-foreground", pin: "bg-brand-red text-white" },
+                red:    { bg: "bg-brand-red",    text: "text-white",                    pin: "bg-brand-yellow text-brand-yellow-foreground" },
+                sky:    { bg: "bg-brand-sky",    text: "text-foreground",               pin: "bg-brand-yellow text-brand-yellow-foreground" },
+              };
+              const c = colorMap[n.color ?? "yellow"] ?? colorMap.yellow;
+              return (
+                <motion.div key={n.id} variants={fadeInUp}>
+                  <Link href={`/explore?neighborhood=${n.id}`}>
+                    <div className={`relative h-full ${c.bg} ${c.text} border-2 border-foreground/85 sticker rounded-xl p-6 hover:-translate-y-1 hover:rotate-0 transition-transform cursor-pointer group`}>
+                      <div className={`absolute -top-3 -right-3 ${c.pin} border-2 border-foreground/85 rounded-full w-9 h-9 flex items-center justify-center font-display text-xs`}>
+                        <MapPin className="w-4 h-4" />
+                      </div>
+                      <div className="font-display text-[10px] tracking-[0.2em] mb-3 opacity-80">NEIGHBORHOOD</div>
+                      <h3 className="font-serif font-bold text-2xl leading-tight mb-3">{n.name}</h3>
+                      <p className="text-sm leading-snug mb-6 opacity-90">{n.description}</p>
+                      <span className="inline-flex items-center font-display text-[11px] tracking-[0.14em] uppercase">
+                        Explore <MoveRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>

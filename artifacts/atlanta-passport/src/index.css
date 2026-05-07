@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -60,6 +60,12 @@
   --font-sans: var(--app-font-sans);
   --font-serif: var(--app-font-serif);
   --font-mono: var(--app-font-mono);
+  --font-display: var(--app-font-display);
+
+  --color-brand-yellow: hsl(var(--brand-yellow));
+  --color-brand-yellow-foreground: hsl(var(--brand-yellow-foreground));
+  --color-brand-red: hsl(var(--brand-red));
+  --color-brand-sky: hsl(var(--brand-sky));
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -131,6 +137,13 @@
   --app-font-sans: 'Outfit', sans-serif;
   --app-font-serif: 'Playfair Display', serif;
   --app-font-mono: 'Space Mono', monospace;
+  --app-font-display: 'Bungee', 'Outfit', sans-serif;
+
+  /* Roadside Americana brand palette */
+  --brand-yellow: 46 95% 55%;
+  --brand-yellow-foreground: 0 0% 8%;
+  --brand-red: 6 70% 48%;
+  --brand-sky: 200 60% 60%;
   
   --radius: 0.75rem;
 
@@ -201,4 +214,28 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif font-medium tracking-tight;
   }
+}
+
+/* Marquee ticker */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+/* Subtle paper grain background */
+.bg-paper {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    radial-gradient(rgba(0,0,0,0.025) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 1px;
+}
+
+/* Sticker / stamp helper — slight rotation + offset shadow */
+.sticker {
+  box-shadow: 3px 3px 0 0 hsl(var(--foreground) / 0.85);
 }

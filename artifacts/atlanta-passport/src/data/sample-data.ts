@@ -145,14 +145,14 @@ export const events = [
 ];
 
 export const neighborhoods = [
-  { id: "o4w", name: "Old Fourth Ward", description: "Street culture, nightlife, food, and creative energy." },
-  { id: "decatur", name: "Decatur", description: "Walkable local charm, cocktails, coffee, and community." },
-  { id: "midtown", name: "Midtown", description: "Hotels, skyline views, nightlife, and city movement." },
-  { id: "westside", name: "Westside", description: "Industrial chic, premium dining, and independent retail." },
-  { id: "eav", name: "East Atlanta Village", description: "Alternative, eclectic, and the best late-night spots in town." },
-  { id: "summerhill", name: "Summerhill", description: "A historic sports neighborhood reborn as a culinary hotspot." },
-  { id: "downtown", name: "Downtown", description: "Stadium energy, historic landmarks, and a city in motion." },
-  { id: "buckhead", name: "Buckhead", description: "Luxury shopping, upscale dining, and elegant nightlife." }
+  { id: "o4w", name: "Old Fourth Ward", description: "Late nights, murals, food, movement.", color: "yellow" },
+  { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky" },
+  { id: "midtown", name: "Midtown", description: "Skyline energy and match-day movement.", color: "red" },
+  { id: "westside", name: "Westside", description: "Industrial chic, premium dining, independent retail.", color: "yellow" },
+  { id: "eav", name: "East Atlanta Village", description: "Dive bars, vinyl, late-night eats.", color: "sky" },
+  { id: "summerhill", name: "Summerhill", description: "Stadium-side, reborn as a food destination.", color: "red" },
+  { id: "downtown", name: "Downtown", description: "Stadium energy, history, city in motion.", color: "yellow" },
+  { id: "buckhead", name: "Buckhead", description: "Luxury shopping, upscale dining, elegant nightlife.", color: "sky" }
 ];
 
 export const categories = [

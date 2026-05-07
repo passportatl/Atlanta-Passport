@@ -34,7 +34,7 @@ export default function Partners() {
               Founding partner applications now open
             </div>
             <h1 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-6 leading-[1.05]">
-              Put your business in the path of World Cup visitors.
+              Put your business on Atlanta's World Cup map.
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 leading-relaxed">
               We're curating a limited group of local businesses, venues, restaurants, shops, and experiences to feature in Atlanta Passport.
