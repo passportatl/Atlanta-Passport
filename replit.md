@@ -23,8 +23,9 @@ A premium, mobile-first marketing site for "Atlanta Passport" — a hyperlocal c
 ## Where things live
 
 - `artifacts/atlanta-passport/` — Atlanta Passport React + Vite frontend (the product)
-- `artifacts/atlanta-passport/src/data/` — sample data (businesses, events, neighborhoods, packages, categories)
-- `artifacts/atlanta-passport/src/index.css` — theme tokens / brand palette
+- `artifacts/atlanta-passport/src/data/sample-data.ts` — businesses, events, neighborhoods, packages, categories, **exploreCategories**, **routes**, **beltlineStops**
+- `artifacts/atlanta-passport/src/components/Sticker.tsx` / `PassportStamp.tsx` — reusable brand primitives (color/rotation variants)
+- `artifacts/atlanta-passport/src/index.css` — theme tokens, brand palette, all design-system classes
 - `artifacts/api-server/` — shared Express API server (currently only `/api/healthz`)
 - `lib/api-spec/openapi.yaml` — API contract source of truth
 
@@ -37,7 +38,11 @@ A premium, mobile-first marketing site for "Atlanta Passport" — a hyperlocal c
 
 ## Product
 
-Marketing site with: Home, Become a Partner (Starter $500 / Featured $1,500 / Premier $3,000+), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, Beltline Tour, About, and Apply onboarding form. Visual identity is playful retro Americana — yellow block "ATL/PASSPORT" wordmark, thick black borders, offset "pop" shadows. All pages use the same primitives: `.card-pop`, `.button-pop` / `.button-pop-yellow` / `.button-pop-cream`, `.badge-sticker`, `.section-kicker`, `.highlight-yellow`, `.hero-title`, `.passport-stamp`, `.progress-track/.progress-fill`, `.shadow-pop/.shadow-pop-sm`, `.dot-grid`. Bungee display font; brand palette tokens (`brand-yellow/red/sky/navy/gold/lime/orange/cream` + `brand-yellow-foreground`).
+Marketing site with: Home, Become a Partner (Starter $500 / Featured $1,500 / Premier $3,000+), Explore (filterable by category & neighborhood), Business Listing template (Wheelhaus Bikes as showcase), Events, Beltline Tour, About, and Apply onboarding form. Visual identity is playful retro Americana — yellow block "ATL/PASSPORT" wordmark, thick black borders, offset "pop" shadows.
+
+**Home page order:** Marquee → Hero (with sticker cluster + passport stamp) → Explore by Category → Featured Experience (Beltline + numbered route stops) → Manifesto (red block) → Routes & Collections → Selected Local Spots → Neighborhoods → How It Works → Partner CTA → Footer.
+
+**Brand primitives (in `src/index.css`):** `.card-pop`, `.button-pop` (+`-yellow`/`-cream`/`-dark`), `.badge-sticker`, `.sticker-pill` + `.sticker-{yellow,red,cream,navy,lime,sky,orange}`, `.section-kicker`, `.highlight-yellow`, `.hero-title`, `.passport-stamp`, `.texture-paper`, `.section-tight` / `.section-hero` (mobile-first spacing: 56px / 88px), `.shadow-pop`/`-sm`/`-lg`, `.dot-grid`, `.bg-paper`, `.route-line`, `.progress-track`/`.progress-fill`. **Reusable React components:** `<Sticker color rotate icon>` and `<PassportStamp size tone rotate>`. Bungee display font; brand palette tokens (`brand-yellow/red/sky/navy/gold/lime/orange/cream` + `brand-yellow-foreground`).
 
 ## User preferences
 

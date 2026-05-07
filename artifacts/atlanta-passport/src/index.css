@@ -381,4 +381,71 @@
     background: hsl(var(--brand-red));
     border-right: 2px solid hsl(var(--foreground));
   }
+
+  /* Dark variant of pop button (deep green) */
+  .button-pop.button-pop-dark {
+    background: hsl(var(--primary));
+    color: hsl(var(--brand-cream));
+  }
+
+  /* Reusable sticker primitive (color via .sticker-*) */
+  .sticker-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 2px solid hsl(var(--foreground));
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-family: var(--app-font-display);
+    font-size: 0.7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+    line-height: 1;
+  }
+  .sticker-yellow { background: hsl(var(--brand-yellow)); color: hsl(var(--brand-yellow-foreground)); }
+  .sticker-red    { background: hsl(var(--brand-red));    color: #fff; }
+  .sticker-cream  { background: hsl(var(--brand-cream));  color: hsl(var(--primary)); }
+  .sticker-navy   { background: hsl(var(--brand-navy));   color: hsl(var(--brand-cream)); }
+  .sticker-lime   { background: hsl(var(--brand-lime));   color: hsl(var(--foreground)); }
+  .sticker-sky    { background: hsl(var(--brand-sky));    color: hsl(var(--foreground)); }
+  .sticker-orange { background: hsl(var(--brand-orange)); color: #fff; }
+
+  /* Paper / halftone texture overlay (use as wrapper) */
+  .texture-paper {
+    position: relative;
+  }
+  .texture-paper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image:
+      radial-gradient(hsl(var(--foreground)) 0.7px, transparent 0.7px);
+    background-size: 7px 7px;
+  }
+
+  /* Mobile-first tighter section spacing.
+     Use in place of py-24/py-32 where the brief asks for tighter rhythm. */
+  .section-tight { padding-top: 56px; padding-bottom: 56px; }
+  @media (min-width: 768px) {
+    .section-tight { padding-top: 88px; padding-bottom: 88px; }
+  }
+  .section-hero { padding-top: 48px; padding-bottom: 56px; }
+  @media (min-width: 768px) {
+    .section-hero { padding-top: 80px; padding-bottom: 120px; }
+  }
+
+  /* Subtle hand-drawn route line for collage decoration */
+  .route-line {
+    background-image: repeating-linear-gradient(
+      to right,
+      hsl(var(--foreground)) 0,
+      hsl(var(--foreground)) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    height: 3px;
+  }
 }

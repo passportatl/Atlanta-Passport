@@ -145,16 +145,100 @@ export const events = [
 ];
 
 export const neighborhoods = [
-  { id: "o4w", name: "Old Fourth Ward", description: "Late nights, murals, food, movement.", color: "yellow" },
+  { id: "o4w", name: "Old Fourth Ward", description: "Murals, patios, late nights, and Beltline movement.", color: "yellow" },
   { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky" },
   { id: "midtown", name: "Midtown", description: "Skyline energy and match-day movement.", color: "red" },
   { id: "westside", name: "Westside", description: "Industrial chic, premium dining, independent retail.", color: "yellow" },
-  { id: "eav", name: "East Atlanta Village", description: "Dive bars, vinyl, late-night eats.", color: "sky" },
+  { id: "eav", name: "East Atlanta Village", description: "Dive bars, live music, food, and beautiful chaos.", color: "sky" },
   { id: "summerhill", name: "Summerhill", description: "Stadium-side, reborn as a food destination.", color: "red" },
   { id: "downtown", name: "Downtown", description: "Stadium energy, history, city in motion.", color: "yellow" },
-  { id: "buckhead", name: "Buckhead", description: "Luxury shopping, upscale dining, elegant nightlife.", color: "sky" }
+  { id: "buckhead", name: "Buckhead", description: "Luxury shopping, upscale dining, elegant nightlife.", color: "sky" },
+  { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red" },
+  { id: "poncey", name: "Poncey-Highland", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow" }
 ];
 
 export const categories = [
   "Food", "Drinks", "Coffee", "Retail", "Nightlife", "Rentals", "Events", "Experiences"
 ];
+
+export const exploreCategories = [
+  { id: "food",        label: "Food",        tagline: "Where the good plates are.",          color: "red",    icon: "Utensils" },
+  { id: "drinks",      label: "Drinks",      tagline: "Patios, rooftops, late nights.",      color: "yellow", icon: "Beer" },
+  { id: "coffee",      label: "Coffee",      tagline: "Slow mornings & strong espresso.",    color: "cream",  icon: "Coffee" },
+  { id: "retail",      label: "Retail",      tagline: "Local shops, vinyl, streetwear.",     color: "lime",   icon: "ShoppingBag" },
+  { id: "nightlife",   label: "Nightlife",   tagline: "Dive bars to dance floors.",          color: "navy",   icon: "Music" },
+  { id: "rides",       label: "Rides",       tagline: "Move through the city.",              color: "sky",    icon: "Bike" },
+  { id: "events",      label: "Events",      tagline: "Watch parties & match-day moves.",    color: "orange", icon: "Calendar" },
+  { id: "experiences", label: "Experiences", tagline: "Tours, markets, only-in-ATL stuff.",  color: "red",    icon: "Sparkles" },
+];
+
+export const routes = [
+  {
+    id: "beltline",
+    name: "Beltline Tourist Passport",
+    neighborhood: "Eastside Trail",
+    stops: 5,
+    vibe: "A bike-friendly route connecting food, culture, shopping, and patios.",
+    tags: ["Featured Route", "Bike Friendly", "Collect Stamps"],
+    color: "yellow",
+    href: "/beltline",
+  },
+  {
+    id: "coffee-kickoff",
+    name: "Coffee Before Kickoff",
+    neighborhood: "Westside · Midtown",
+    stops: 4,
+    vibe: "Espresso, pastries, and patios for slow mornings before match day.",
+    tags: ["Coffee", "Walkable"],
+    color: "cream",
+    href: "/explore",
+  },
+  {
+    id: "rooftops",
+    name: "Rooftops & Late Nights",
+    neighborhood: "O4W · Downtown",
+    stops: 5,
+    vibe: "Skyline cocktails, neon signs, and the long way home.",
+    tags: ["Drinks", "Rooftop"],
+    color: "navy",
+    href: "/explore",
+  },
+  {
+    id: "patio-crawl",
+    name: "The Patio Crawl",
+    neighborhood: "Decatur · EAV",
+    stops: 6,
+    vibe: "Front-yard tables, cold beers, and the best people-watching in town.",
+    tags: ["Food", "Drinks"],
+    color: "lime",
+    href: "/explore",
+  },
+  {
+    id: "shops-streetwear",
+    name: "Local Shops & Streetwear",
+    neighborhood: "L5P · Westside",
+    stops: 5,
+    vibe: "Vintage racks, sneaker drops, and indie boutiques worth the trip.",
+    tags: ["Retail"],
+    color: "red",
+    href: "/explore",
+  },
+  {
+    id: "after-midnight",
+    name: "Atlanta After Midnight",
+    neighborhood: "Poncey · EAV",
+    stops: 4,
+    vibe: "Dive bars, late-night eats, and the city locals actually live in.",
+    tags: ["Nightlife"],
+    color: "sky",
+    href: "/explore",
+  },
+] as const;
+
+export const beltlineStops = [
+  { n: 1, name: "Wheelhaus Bikes",       category: "Rentals",   note: "Pick up your e-bike & passport." },
+  { n: 2, name: "Brash Coffee",          category: "Coffee",    note: "Espresso & pastry stop." },
+  { n: 3, name: "Ponce City Market",     category: "Food",      note: "Food hall lunch break." },
+  { n: 4, name: "Krog Street Market",    category: "Retail",    note: "Local makers & artisan goods." },
+  { n: 5, name: "Little Spirit",         category: "Drinks",    note: "Cocktails to close the loop." },
+] as const;

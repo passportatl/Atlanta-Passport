@@ -1,0 +1,698 @@
+DEEP MOBILE BRAND + UX REFINEMENT FOR ATLANTA PASSPORT
+
+The current site is strong and moving in the right direction. Now refine it from “good MVP” into a more iconic, collectible, playful Atlanta cultural guide.
+
+Core tagline:
+“The unofficial guide to the real Atlanta.”
+
+Keep the Waffle-House-inspired yellow block logo feel, but make sure it remains original and not a direct copy.
+
+IMPORTANT:
+Do not use actual Waffle House, Coca-Cola, FIFA, World Cup, Hawks, Braves, Falcons, Atlanta United, or team logos.
+Use only original design, inspired colors, and local Atlanta energy.
+
+OVERALL GOAL
+
+Make the site feel like:
+A collectible Atlanta city guide
+A playful mobile web-app
+A local cultural product
+A travel passport
+A street-level Atlanta discovery game
+A brand people would want as a sticker, tote, booklet, or hat
+
+NOT:
+A generic startup landing page
+A boring directory
+A corporate tourism site
+A sports fan page
+A Yelp clone
+
+PRIMARY DESIGN FIXES
+
+1. Improve typography hierarchy.
+2. Add more texture, stickers, stamps, and tactile detail.
+3. Make the hero feel more layered and energetic.
+4. Tighten vertical spacing on mobile.
+5. Unify the button system.
+6. Add real Atlanta photography.
+7. Make routes/passport collections more prominent.
+8. Make the tourist experience feel like a discovery product.
+
+TYPOGRAPHY SYSTEM
+
+Right now there are too many type styles competing.
+
+Create strict typography rules:
+
+A. Editorial Serif
+Use for:
+- Hero headline
+- Emotional section headlines
+- Big section titles
+- Manifesto copy
+
+B. Retro Block Font
+Use for:
+- Logo
+- Badges
+- Buttons
+- Stickers
+- Labels
+- Navigation accents
+
+C. Clean Sans
+Use for:
+- Body copy
+- Card descriptions
+- Forms
+- Supporting text
+
+Do not introduce additional font styles.
+
+Make sure:
+- Headlines feel bold and editorial.
+- Badges/buttons feel playful.
+- Body copy feels clean and readable.
+
+HERO SECTION FIXES
+
+The hero is strong but still feels slightly empty.
+
+Add layered visual elements around the hero:
+- Passport stamp graphics
+- Sticker labels
+- Neighborhood tags
+- Small route-line doodles
+- Map pin graphics
+- Collectible badge shapes
+- Mini “ATL 2026” stamp
+- “Tourist Trap Free” sticker
+- “Local Picks” sticker
+- “Match Day Moves” sticker
+
+Make the hero feel like opening a colorful city guide, not just reading a landing page.
+
+Hero copy remains:
+
+Headline:
+“The unofficial guide to the real Atlanta.”
+
+Body:
+“Food. Drinks. Rides. Patios. Pop-ups. Neighborhood gems. Atlanta Passport helps visitors find the city locals actually love.”
+
+Buttons:
+“Explore Atlanta”
+“Become a Founding Partner”
+
+Add small rotating or floating stickers:
+“LOCAL PICKS”
+“OPEN LATE”
+“BELTLINE”
+“ATL FAVORITE”
+“NOT YOUR HOTEL GUIDE”
+
+Keep it readable. Do not overcrowd.
+
+MOBILE SPACING FIXES
+
+Tighten vertical spacing across mobile.
+
+Reduce excessive:
+- top padding between sections
+- bottom padding after hero
+- large blank gaps between cards
+- overly tall empty areas
+
+Mobile should feel like constant discovery.
+
+Use:
+section padding mobile: 56px top/bottom max
+hero padding mobile: 48px top / 56px bottom
+card gap mobile: 20px to 28px
+headline-to-body gap: 18px to 24px
+
+Avoid giant empty scroll zones.
+
+BUTTON SYSTEM
+
+Unify all buttons into one visual language.
+
+Primary button:
+Red background
+White text
+Black border
+Offset black shadow
+Rounded pill or rounded rectangle
+
+Secondary button:
+Yellow background
+Black text
+Black border
+Offset black shadow
+
+Dark button:
+Deep green or black background
+Cream/white text
+Black border/shadow
+
+All buttons should:
+- use retro block font
+- uppercase
+- feel tactile
+- have hover/tap pressed state
+- have consistent padding and border radius
+
+Do not mix random orange, green, and SaaS-style button treatments unless they follow this same system.
+
+STICKER SYSTEM
+
+Create reusable Sticker/Badge components.
+
+Sticker examples:
+LOCAL PICK
+MATCH DAY MOVE
+OPEN LATE
+BELTLINE
+FOUNDING SPOT
+ATL FAVORITE
+GOOD PATIO
+TOURIST TRAP FREE
+FOUNDING SPONSOR
+PASSPORT OFFER
+ROUTE STOP
+SCAN TO COLLECT
+
+Sticker styles:
+- yellow with black text
+- red with white text
+- cream with green text
+- navy with cream text
+- lime with black text
+
+All with:
+black border
+small offset shadow
+slight rotation option
+uppercase block font
+
+Use stickers throughout:
+- hero
+- business cards
+- neighborhood cards
+- Wheelhaus listing
+- routes
+- events
+
+STAMP SYSTEM
+
+Create reusable PassportStamp component.
+
+Use on:
+- business listing pages
+- route cards
+- rewards section
+- hero collage
+
+Stamp styles:
+Circular
+Dashed/double border
+Red, navy, or green
+Slight rotation
+Text options:
+PASSPORT SPOT
+ATLANTA 2026
+SCAN TO COLLECT
+ROUTE STOP
+LOCAL FAVORITE
+
+Make stamps feel printable and collectible.
+
+TEXTURE + TACTILE DETAILS
+
+Add subtle texture:
+- light grain over cream backgrounds
+- halftone paper texture
+- subtle map-line background
+- stamp overlays
+- worn paper effect on some cards
+- slight imperfect rotations on stickers
+
+Keep performance fast.
+Use CSS textures/pseudo-elements where possible.
+Avoid massive image files.
+
+REAL ATLANTA IMAGE STRATEGY
+
+Replace AI-looking or generic images with real Atlanta photography.
+
+Search for and use royalty-free / properly licensed images from Unsplash, Pexels, Wikimedia Commons, or other usable sources.
+
+Important:
+Use images that feel like real Atlanta, not generic city stock.
+
+Find images for:
+- Atlanta Beltline
+- Old Fourth Ward
+- Decatur square
+- East Atlanta Village
+- Midtown Atlanta
+- Downtown Atlanta
+- Atlanta murals / street art
+- Atlanta patios / restaurants
+- Atlanta coffee shops
+- Atlanta nightlife
+- Atlanta skyline
+- Atlanta bike riding / urban cycling
+- Ponce City Market
+- Krog Street Market
+- Summerhill
+- Little Five Points
+- Westside Provisions / West Midtown
+
+Use image search terms like:
+“Atlanta Beltline people walking”
+“Old Fourth Ward Atlanta mural”
+“Decatur Square Atlanta”
+“East Atlanta Village street”
+“Midtown Atlanta skyline”
+“Atlanta patio restaurant”
+“Atlanta coffee shop”
+“Atlanta nightlife street”
+“Ponce City Market Atlanta”
+“Krog Street Tunnel Atlanta”
+“Little Five Points Atlanta”
+“Atlanta urban cycling”
+
+Image rules:
+- avoid obvious AI images
+- avoid generic skyline-only visuals
+- avoid sterile corporate images
+- prioritize street-level, human-scale photography
+- use warm, lively, local-feeling images
+- optimize all images for web
+- use alt text
+- credit sources if required by license
+
+If image search is unavailable:
+Use placeholders labeled clearly, but structure the components so images can be swapped easily.
+
+HOMEPAGE STRUCTURE REFINEMENT
+
+Use this homepage order:
+
+1. Sticky Header
+2. Yellow onboarding marquee
+3. Hero
+4. Momentum stats
+5. Passport artifact/image collage
+6. Explore by category
+7. Beltline Tourist Passport / Featured Experience
+8. Why this exists / manifesto
+9. Selected local spots
+10. Neighborhoods
+11. How the passport works
+12. For businesses CTA
+13. Footer
+
+Move “How it works” lower.
+Move “Explore by category” and “Featured Experience” higher.
+
+Tourists should feel the product before reading instructions.
+
+EXPLORE BY CATEGORY SECTION
+
+Add a colorful section after hero/momentum.
+
+Title:
+“Start where you’re hungry, thirsty, curious, or stuck in traffic.”
+
+Categories:
+Food
+Drinks
+Coffee
+Retail
+Nightlife
+Rides
+Events
+Experiences
+
+Each card should have:
+- sticker-style category label
+- icon
+- one short line
+- bright color background
+- black border/shadow
+
+Example copy:
+Food: “Where the good plates are.”
+Drinks: “Patios, rooftops, late nights.”
+Rides: “Move through the city.”
+Events: “Watch parties, pop-ups, match-day moves.”
+
+BELTLINE TOURIST PASSPORT SECTION
+
+This is a strong idea. Make it more prominent.
+
+Keep:
+“The Beltline Tourist Passport”
+
+Add badges:
+FEATURED ROUTE
+BIKE FRIENDLY
+COLLECT STAMPS
+
+Copy:
+“A bike-friendly route connecting food, culture, shopping, patios, and neighborhood stops along the Atlanta Beltline.”
+
+Add route stop preview cards:
+Start: Wheelhaus Bikes
+Stop 2: Coffee
+Stop 3: Food
+Stop 4: Market
+Stop 5: Patio / Nightlife
+
+Add CTA:
+“Preview the Route”
+
+This section should visually show that Atlanta Passport is more than a directory.
+It is an experience platform.
+
+ADD ROUTES / COLLECTIONS SECTION
+
+Add a new section:
+
+Title:
+“Routes worth leaving the hotel for.”
+
+Cards:
+1. Beltline Tourist Passport
+2. Coffee Before Kickoff
+3. Rooftops & Late Nights
+4. The Patio Crawl
+5. Local Shops & Streetwear
+6. Atlanta After Midnight
+
+Each route card:
+- route name
+- category stickers
+- number of stops
+- neighborhood
+- short vibe description
+- CTA: “View Route”
+
+These can use placeholder data for now.
+
+SELECTED LOCAL SPOTS SECTION
+
+This section looks good. Improve it by making cards more collectible.
+
+Each card should include:
+- image
+- sticker badge
+- sponsor badge if applicable
+- business name
+- neighborhood
+- category
+- one-line description
+- passport offer badge
+- “View Spot” button
+
+Wheelhaus should remain the strongest card.
+
+Wheelhaus badges:
+FOUNDING SPONSOR
+RIDES
+LOCAL PICK
+
+NEIGHBORHOOD SECTION
+
+Neighborhood cards are strong. Add more energy.
+
+Each card:
+- unique color
+- map-pin sticker
+- short descriptor
+- “Explore” CTA
+- optional mini stamp
+
+Add these neighborhoods:
+Old Fourth Ward
+Decatur
+Midtown
+East Atlanta Village
+Downtown
+Westside
+Buckhead
+Summerhill
+Little Five Points
+Poncey-Highland
+
+Keep copy short and flavorful.
+
+Examples:
+Old Fourth Ward:
+“Murals, patios, late nights, and Beltline movement.”
+
+East Atlanta Village:
+“Dive bars, live music, food, and beautiful chaos.”
+
+Little Five Points:
+“Vintage shops, weird corners, music, and street-level Atlanta.”
+
+Poncey-Highland:
+“Food halls, rooftops, markets, and Beltline energy.”
+
+MANIFESTO SECTION
+
+The red section is one of the strongest parts. Keep it but refine spacing.
+
+Title:
+“Atlanta deserves better than the hotel-lobby guide.”
+
+Keep strong visual treatment.
+
+Copy should be shorter and punchier:
+“Most visitors only see the stadium, the hotel, and the rideshare. Atlanta Passport points them toward the neighborhoods, restaurants, bars, rides, and culture locals actually love.”
+
+Quote:
+“If you only see Atlanta from a hotel lobby, you didn’t really see Atlanta.”
+
+Attribution:
+“— The whole point”
+
+Make the quote beautiful but readable.
+
+WHEELHAUS LISTING / CARD
+
+Make Wheelhaus feel like a premium founding sponsor and a model for future paid listings.
+
+Copy:
+“Premium e-bike rentals, repairs, and curated city rides for visitors who want Atlanta beyond traffic and rideshares.”
+
+Add:
+- Founding Sponsor badge
+- Passport Offer badge
+- Route Stop badge
+- Get Directions CTA
+- View Spot CTA
+
+If the site has a Wheelhaus detail page, improve it with:
+- hero image
+- “Why ride with Wheelhaus”
+- “Perfect for Beltline, Decatur, Midtown, and neighborhood hopping”
+- offer section
+- passport stamp
+- route inclusion
+- nearby spots
+
+PARTNER / BUSINESS CTA SECTION
+
+Current CTA is good but make it more sales-focused.
+
+Headline:
+“Put your business where visitors are looking.”
+
+Subheadline:
+“Printed passport placement, digital listing, QR discovery, route inclusion, and curated exposure before kickoff.”
+
+Button:
+“Apply to Become a Partner”
+
+Add support text:
+“Limited launch placements by category and neighborhood.”
+
+FOOTER
+
+Footer should feel like a branded ending, not an afterthought.
+
+Use:
+Black/dark green background
+Yellow logo
+Cream text
+Sticker badges
+CTA to apply
+CTA to explore
+
+Include disclaimer:
+“Atlanta Passport is an independent local guide and is not affiliated with FIFA, the official World Cup, Waffle House, Coca-Cola, or any professional sports team.”
+
+CODE / COMPONENT TASKS
+
+Create or refine these components:
+
+LogoBlock
+StickerBadge
+PassportStamp
+MarqueeTicker
+CategoryCard
+RouteCard
+BusinessCard
+NeighborhoodCard
+PartnerCTA
+ImageCollage
+ProgressStats
+
+CSS classes:
+
+.card-pop {
+  background: var(--passport-white);
+  border: 3px solid var(--passport-black);
+  border-radius: 20px;
+  box-shadow: 8px 8px 0 var(--passport-black);
+}
+
+.card-pop:hover {
+  transform: translateY(-3px);
+}
+
+.button-primary {
+  background: var(--passport-red);
+  color: var(--passport-white);
+  border: 3px solid var(--passport-black);
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: 5px 5px 0 var(--passport-black);
+}
+
+.button-secondary {
+  background: var(--passport-yellow);
+  color: var(--passport-black);
+  border: 3px solid var(--passport-black);
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: 5px 5px 0 var(--passport-black);
+}
+
+.button-primary:hover,
+.button-secondary:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--passport-black);
+}
+
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid var(--passport-black);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  box-shadow: 3px 3px 0 var(--passport-black);
+}
+
+.sticker-yellow {
+  background: var(--passport-yellow);
+  color: var(--passport-black);
+}
+
+.sticker-red {
+  background: var(--passport-red);
+  color: var(--passport-white);
+}
+
+.sticker-cream {
+  background: var(--passport-cream);
+  color: var(--passport-green);
+}
+
+.sticker-navy {
+  background: var(--passport-navy);
+  color: var(--passport-cream);
+}
+
+.passport-stamp {
+  width: 132px;
+  height: 132px;
+  border: 4px dashed var(--passport-red);
+  border-radius: 50%;
+  color: var(--passport-red);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-weight: 900;
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+  line-height: 1.1;
+}
+
+.texture-paper {
+  position: relative;
+}
+
+.texture-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image:
+    radial-gradient(var(--passport-black) 0.7px, transparent 0.7px);
+  background-size: 7px 7px;
+}
+
+MOBILE REQUIREMENTS
+
+Test mobile first.
+
+Fix:
+- no horizontal overflow
+- logo scales properly
+- hero stickers do not block text
+- cards do not feel too tall
+- section spacing is tighter
+- buttons are thumb-friendly
+- category cards can scroll or stack cleanly
+- images are optimized and not blurry
+- text remains readable over image backgrounds
+
+PERFORMANCE REQUIREMENTS
+
+Optimize images.
+Lazy-load below-the-fold images.
+Avoid giant background images.
+Keep animations lightweight.
+Use CSS instead of heavy libraries where possible.
+
+FINAL CHECK
+
+After edits, the site should feel:
+More tactile
+More collectible
+More colorful
+More Atlanta
+More like a real tourist web-app
+Less like a generic landing page
+More useful to visitors
+More convincing to business owners
+
+The feeling should be:
+“I want to use this.”
+and
+“I want my business listed on this.”
