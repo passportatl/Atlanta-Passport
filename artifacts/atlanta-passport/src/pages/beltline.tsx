@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
   Bike,
@@ -51,6 +52,7 @@ const whatYouProvide = [
 ];
 
 export default function Beltline() {
+  const { t } = useTranslation();
   return (
     <div className="w-full">
       {/* Hero */}
@@ -64,23 +66,23 @@ export default function Beltline() {
               className="max-w-2xl"
             >
               <div className="inline-block badge-sticker bg-brand-lime text-foreground -rotate-1 mb-6">
-                ★ Featured Tour
+                {t("beltline_page.kicker")}
               </div>
               <h1 className="hero-title text-primary mb-6">
-                The <span className="highlight-yellow text-foreground">Beltline</span> Tourist Passport
+                {t("beltline_page.title_line1")} <span className="highlight-yellow text-foreground">{t("beltline_page.title_highlight")}</span> {t("beltline_page.title_line2")}
               </h1>
               <p className="text-xl md:text-2xl font-medium text-foreground/90 mb-6 mt-6">
-                Help visitors experience the real Atlanta — one stop at a time.
+                {t("beltline_page.subtitle")}
               </p>
               <p className="text-lg text-muted-foreground mb-10">
-                A neighborhood-driven Tourist Passport Program along a curated, bike-friendly route on the Atlanta Beltline. Visitors collect stamps at participating small businesses and redeem rewards for completed passports.
+                {t("beltline_page.intro")}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/explore" className="button-pop">
-                  See Stops on the Route
+                  {t("beltline_page.cta_see_stops")}
                 </Link>
                 <Link href="/apply" className="button-pop button-pop-yellow">
-                  Add Your Business
+                  {t("beltline_page.cta_add_business")}
                 </Link>
               </div>
             </motion.div>
@@ -119,12 +121,12 @@ export default function Beltline() {
             variants={fadeInUp}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <div className="section-kicker mb-5">How It Works</div>
+            <div className="section-kicker mb-5">{t("how_it_works.kicker")}</div>
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">
-              Follow the Beltline. <span className="highlight-yellow text-foreground">Collect stamps</span>. Win rewards.
+              {t("how_it_works.title")}
             </h2>
             <p className="text-lg text-muted-foreground">
-              A printed and digital guide that turns the Atlanta Beltline into a self-paced adventure.
+              {t("beltline_page.intro")}
             </p>
           </motion.div>
 
@@ -162,11 +164,11 @@ export default function Beltline() {
             variants={fadeInUp}
             className="card-pop bg-brand-red text-white p-8 md:p-12"
           >
-            <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground inline-block mb-6">
-              ★ WHAT YOU GET
+            <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground inline-block mb-6 uppercase">
+              ★ {t("beltline_page.what_you_get_title")}
             </div>
             <h3 className="text-3xl md:text-5xl font-serif font-bold mb-8 leading-tight max-w-3xl">
-              A memorable neighborhood adventure — built by locals.
+              {t("beltline_page.what_you_get_p1")}
             </h3>
             <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
               {[
@@ -192,13 +194,12 @@ export default function Beltline() {
             className="card-pop bg-brand-cream text-foreground p-6 md:p-8 mt-8 max-w-3xl mx-auto"
           >
             <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-              <div className="badge-sticker bg-foreground text-brand-yellow inline-block whitespace-nowrap self-start">
-                FOR BUSINESSES
+              <div className="badge-sticker bg-foreground text-brand-yellow inline-block whitespace-nowrap self-start uppercase">
+                {t("nav.for_businesses")}
               </div>
               <p className="text-base md:text-lg flex-1">
-                Run a spot along the Beltline?{" "}
                 <Link href="/partners" className="font-bold underline decoration-brand-red decoration-[3px] underline-offset-4 hover:text-brand-red transition-colors">
-                  See how listings work →
+                  {t("nav.partner_tiers")} →
                 </Link>
               </p>
             </div>
@@ -216,12 +217,12 @@ export default function Beltline() {
               viewport={{ once: true }}
               variants={fadeInUp}
             >
-              <div className="section-kicker mb-5">For Partners</div>
+              <div className="section-kicker mb-5">{t("nav.for_businesses")}</div>
               <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-6 leading-tight">
-                What You Provide
+                {t("beltline_page.offers_title")}
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Participation is intentionally light. You bring three small things — we handle the rest.
+                {t("beltline_page.offers_subtitle")}
               </p>
               <ul className="space-y-5">
                 {whatYouProvide.map((item, i) => {
@@ -248,11 +249,11 @@ export default function Beltline() {
               variants={fadeInUp}
               className="card-pop bg-brand-cream p-8 md:p-10"
             >
-              <div className="badge-sticker bg-brand-red text-white inline-flex items-center gap-1.5 mb-5 -rotate-1">
-                <Sparkles className="w-3.5 h-3.5" /> EXAMPLE OFFERS
+              <div className="badge-sticker bg-brand-red text-white inline-flex items-center gap-1.5 mb-5 -rotate-1 uppercase">
+                <Sparkles className="w-3.5 h-3.5" /> {t("beltline_page.offer_examples_title")}
               </div>
               <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary mb-6 leading-tight">
-                Simple, flexible. <span className="highlight-yellow text-foreground">You choose the offer</span>.
+                {t("beltline_page.offers_subtitle")}
               </h3>
               <div className="grid sm:grid-cols-2 gap-3">
                 {exampleOffers.map((o, i) => {
@@ -284,17 +285,17 @@ export default function Beltline() {
             variants={fadeInUp}
           >
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight">
-              Put your business on the <span className="highlight-yellow text-foreground">Beltline route</span>.
+              {t("business_cta.title")}
             </h2>
             <p className="text-xl text-primary-foreground/80 mb-10">
-              A simple, low-cost way to welcome tourists, increase foot traffic, and be part of a citywide celebration.
+              {t("business_cta.subtitle")}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/apply" className="button-pop button-pop-yellow">
-                Apply to Join the Route
+                {t("beltline_page.cta_join")}
               </Link>
               <Link href="/partners" className="button-pop button-pop-cream inline-flex items-center gap-2">
-                See Partner Packages <ArrowRight className="w-5 h-5" />
+                {t("business_cta.cta_partners")} <ArrowRight className="w-5 h-5 rtl:rotate-180" />
               </Link>
             </div>
           </motion.div>

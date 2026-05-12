@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -58,6 +59,7 @@ const packageOptions: PackageOption[] = [
 ];
 
 export default function Apply() {
+  const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -102,15 +104,15 @@ export default function Apply() {
           <div className="w-20 h-20 bg-foreground text-brand-yellow rounded-full border-[3px] border-foreground shadow-pop-sm flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10" />
           </div>
-          <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-4">
-            ★ APPLICATION RECEIVED
+          <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-4 uppercase">
+            ★ {t("apply_page.thanks_title")}
           </div>
-          <h1 className="text-3xl font-serif font-bold mb-4">Thanks for applying.</h1>
+          <h1 className="text-3xl font-serif font-bold mb-4">{t("apply_page.thanks_title")}</h1>
           <p className="mb-8 text-lg leading-snug">
-            We'll review your business and follow up by email with next steps shortly.
+            {t("apply_page.thanks_subtitle")}
           </p>
           <Link href="/" className="button-pop inline-flex justify-center w-full">
-            Back to Home
+            {t("apply_page.thanks_back")}
           </Link>
         </div>
       </div>
@@ -122,16 +124,16 @@ export default function Apply() {
       <div className="container mx-auto max-w-3xl">
         <div className="mb-12 text-center">
           <div className="inline-block badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-1 mb-6">
-            ★ Founding partner applications open
+            {t("apply_page.kicker")}
           </div>
           <h1 className="hero-title text-primary mb-6">
-            Get on the <span className="highlight-yellow text-foreground">passport</span>.
+            {t("apply_page.title")}
           </h1>
           <p className="text-lg text-muted-foreground mt-4 mb-3">
-            Join the local guide for World Cup visitors. Fill out the form to secure your placement.
+            {t("apply_page.subtitle")}
           </p>
-          <p className="font-display text-xs tracking-[0.18em] text-brand-red">
-            ★ SPOTS LIMITED PER CATEGORY & NEIGHBORHOOD
+          <p className="font-display text-xs tracking-[0.18em] text-brand-red uppercase">
+            ★ {t("partners_page.limited_kicker")}
           </p>
         </div>
 
@@ -139,11 +141,8 @@ export default function Apply() {
         <div className="sticky top-16 z-30 -mx-4 sm:mx-0 mb-6">
           <div className="bg-background/95 backdrop-blur border-y-[3px] sm:border-[3px] border-foreground sm:rounded-2xl px-4 sm:px-5 py-3 sm:shadow-pop-sm">
             <div className="flex items-center justify-between gap-3 mb-2">
-              <span className="font-display text-[10px] tracking-[0.2em] text-foreground/70">
-                YOUR APPLICATION
-              </span>
-              <span className="font-display text-[10px] tracking-[0.2em] text-brand-red">
-                {completed}/{requiredFields.length} COMPLETE
+              <span className="font-display text-[10px] tracking-[0.2em] text-foreground/70 uppercase">
+                {t("apply_page.progress_label", { completed, total: requiredFields.length, defaultValue: `${completed}/${requiredFields.length} required fields` })}
               </span>
             </div>
             <div className="form-progress-track" role="progressbar" aria-valuenow={progressPct} aria-valuemin={0} aria-valuemax={100} aria-label="Application progress">
@@ -157,8 +156,8 @@ export default function Apply() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
 
               <div className="space-y-6">
-                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3">
-                  01 · BUSINESS INFO
+                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
+                  01 · {t("apply_page.section_about_title")}
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField
@@ -166,7 +165,7 @@ export default function Apply() {
                     name="businessName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Business Name *</FormLabel>
+                        <FormLabel>{t("apply_page.field_name")} *</FormLabel>
                         <FormControl>
                           <Input placeholder="Wheelhaus Bikes" {...field} />
                         </FormControl>
@@ -179,11 +178,11 @@ export default function Apply() {
                     name="category"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Business Category *</FormLabel>
+                        <FormLabel>{t("apply_page.field_category")} *</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a category" />
+                              <SelectValue placeholder={t("apply_page.select_placeholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -204,11 +203,11 @@ export default function Apply() {
                     name="neighborhood"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Neighborhood *</FormLabel>
+                        <FormLabel>{t("apply_page.field_neighborhood")} *</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a neighborhood" />
+                              <SelectValue placeholder={t("apply_page.select_placeholder")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -226,7 +225,7 @@ export default function Apply() {
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Physical Address *</FormLabel>
+                        <FormLabel>{t("apply_page.field_address")} *</FormLabel>
                         <FormControl>
                           <Input placeholder="123 Main St, Atlanta, GA" {...field} />
                         </FormControl>
@@ -238,8 +237,8 @@ export default function Apply() {
               </div>
 
               <div className="space-y-6">
-                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3">
-                  02 · CONTACT
+                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
+                  02 · {t("apply_page.section_contact_title")}
                 </h3>
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField
@@ -247,7 +246,7 @@ export default function Apply() {
                     name="contactName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Contact Name *</FormLabel>
+                        <FormLabel>{t("apply_page.field_contact_name")} *</FormLabel>
                         <FormControl>
                           <Input placeholder="Jane Doe" {...field} />
                         </FormControl>
@@ -260,7 +259,7 @@ export default function Apply() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Number *</FormLabel>
+                        <FormLabel>{t("apply_page.field_phone")} *</FormLabel>
                         <FormControl>
                           <Input placeholder="(404) 555-0123" {...field} />
                         </FormControl>
@@ -275,7 +274,7 @@ export default function Apply() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Address *</FormLabel>
+                        <FormLabel>{t("apply_page.field_email")} *</FormLabel>
                         <FormControl>
                           <Input type="email" placeholder="jane@example.com" {...field} />
                         </FormControl>
@@ -288,7 +287,7 @@ export default function Apply() {
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Website (Optional)</FormLabel>
+                        <FormLabel>{t("apply_page.field_website")} ({t("apply_page.optional")})</FormLabel>
                         <FormControl>
                           <Input placeholder="https://example.com" {...field} />
                         </FormControl>
@@ -300,8 +299,8 @@ export default function Apply() {
               </div>
 
               <div className="space-y-6">
-                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3">
-                  03 · PASSPORT PACKAGE
+                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
+                  03 · {t("apply_page.section_package_title")}
                 </h3>
                 <FormField
                   control={form.control}
@@ -352,7 +351,6 @@ export default function Apply() {
                         </RadioGroup>
                       </FormControl>
                       <p className="text-sm text-muted-foreground mt-3">
-                        Need something different?{" "}
                         <button
                           type="button"
                           onClick={() => field.onChange("custom")}
@@ -361,7 +359,7 @@ export default function Apply() {
                             field.value === "custom" && "text-foreground"
                           )}
                         >
-                          Request a custom package →
+                          {t("partners_page.request_custom")} →
                         </button>
                       </p>
                       <FormMessage />
@@ -371,21 +369,18 @@ export default function Apply() {
               </div>
 
               <div className="space-y-6">
-                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3">
-                  04 · OFFER & DETAILS
+                <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
+                  04 · {t("apply_page.section_offer_title")}
                 </h3>
                 <FormField
                   control={form.control}
                   name="offer"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>What offer or experience would you like to feature? *</FormLabel>
-                      <FormDescription>
-                        Keep it simple. Examples: 10% off food or drink · Free appetizer with purchase · BOGO beverage · Free dessert · Small souvenir or sticker · Passport-only special.
-                      </FormDescription>
+                      <FormLabel>{t("apply_page.field_offer_desc")} *</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., 10% off any drink for Passport holders, or a free pastry with espresso purchase."
+                          placeholder={t("apply_page.field_offer_placeholder")}
                           className="resize-none h-24"
                           {...field}
                         />
@@ -412,10 +407,10 @@ export default function Apply() {
                     name="notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Additional Notes (Optional)</FormLabel>
+                        <FormLabel>{t("apply_page.field_notes")} ({t("apply_page.optional")})</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Anything else we should know?"
+                            placeholder={t("apply_page.field_notes_placeholder")}
                             className="resize-none h-full min-h-[100px]"
                             {...field}
                           />
@@ -428,7 +423,7 @@ export default function Apply() {
               </div>
 
               <button type="submit" className="button-pop w-full text-lg py-5 mt-4">
-                Submit Application →
+                {t("apply_page.submit")} →
               </button>
             </form>
           </Form>

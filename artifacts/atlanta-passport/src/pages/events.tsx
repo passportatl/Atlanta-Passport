@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { MapPin, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { events } from "@/data/sample-data";
@@ -46,6 +47,7 @@ function parseDateTile(dateStr: string): { month: string; day: string } {
 }
 
 export default function Events() {
+  const { t } = useTranslation();
   return (
     <div className="w-full">
       {/* Hero */}
@@ -58,13 +60,13 @@ export default function Events() {
             className="max-w-3xl mx-auto"
           >
             <div className="inline-block badge-sticker bg-brand-red text-white -rotate-1 mb-8">
-              ★ Around town · Summer 2026
+              {t("events_page.kicker")}
             </div>
             <h1 className="hero-title text-primary mb-6">
-              Atlanta during the <span className="highlight-yellow text-foreground">World Cup</span>.
+              {t("events_page.title")}
             </h1>
             <p className="text-xl text-muted-foreground mt-6">
-              From watch parties to neighborhood pop-ups — the events worth crossing town for during the tournament.
+              {t("events_page.subtitle")}
             </p>
           </motion.div>
         </div>
@@ -73,7 +75,7 @@ export default function Events() {
       {/* Events Grid */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <div className="section-kicker mb-8">Upcoming featured events</div>
+          <div className="section-kicker mb-8">{t("events_page.kicker")}</div>
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -116,8 +118,8 @@ export default function Events() {
                       <p className="text-muted-foreground text-sm line-clamp-3 mb-5 flex-grow">
                         {event.description}
                       </p>
-                      <div className="font-display text-xs tracking-[0.16em] text-brand-red mt-auto">
-                        ★ DETAILS COMING SOON
+                      <div className="font-display text-xs tracking-[0.16em] text-brand-red mt-auto uppercase">
+                        ★ {t("events_page.view_event")}
                       </div>
                     </div>
                   </div>
@@ -132,13 +134,13 @@ export default function Events() {
       <section className="py-20 text-center px-4 bg-paper">
         <div className="max-w-2xl mx-auto">
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary mb-6 leading-tight">
-            Hosting something during the Cup?
+            {t("business_cta.title")}
           </h2>
           <p className="text-xl text-muted-foreground mb-10">
-            Get your watch party, pop-up, or block party listed in the Passport.
+            {t("business_cta.subtitle")}
           </p>
           <Link href="/apply" className="button-pop">
-            List Your Event
+            {t("business_cta.cta_apply")}
           </Link>
         </div>
       </section>

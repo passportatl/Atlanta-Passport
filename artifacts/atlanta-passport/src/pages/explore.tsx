@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search } from "lucide-react";
@@ -8,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
 export default function Explore() {
+  const { t } = useTranslation();
   const initialNeighborhood = typeof window !== "undefined"
     ? new URLSearchParams(window.location.search).get("neighborhood")
     : null;
@@ -33,12 +35,12 @@ export default function Explore() {
     <div className="w-full pt-10 pb-24">
       <div className="container mx-auto px-4">
         <div className="mb-12 max-w-3xl">
-          <div className="section-kicker mb-5">A curated city guide</div>
+          <div className="section-kicker mb-5">{t("explore_page.kicker")}</div>
           <h1 className="hero-title text-primary mb-4">
-            Atlanta, <span className="highlight-yellow text-foreground">unlocked</span>.
+            {t("explore_page.title")}
           </h1>
           <p className="text-xl text-muted-foreground mt-6">
-            Filter by neighborhood, mood, or category. Every listing is hand-picked by locals — no pay-to-play, no tourist traps.
+            {t("explore_page.subtitle")}
           </p>
         </div>
 
@@ -48,7 +50,7 @@ export default function Explore() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input 
               type="text"
-              placeholder="Search businesses..."
+              placeholder={t("common.search_placeholder", { defaultValue: "Search..." })}
               className="pl-10 py-6 text-base bg-white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -56,7 +58,7 @@ export default function Explore() {
           </div>
 
           <div>
-            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4">CATEGORIES</h3>
+            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4 uppercase">{t("explore_page.filter_category")}</h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setActiveCategory("All")}
@@ -67,7 +69,7 @@ export default function Explore() {
                     : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
                 )}
               >
-                All
+                {t("explore_page.all")}
               </button>
               {categories.map((cat, i) => {
                 const palette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
@@ -91,7 +93,7 @@ export default function Explore() {
           </div>
 
           <div>
-            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4">NEIGHBORHOODS</h3>
+            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4 uppercase">{t("explore_page.filter_neighborhood")}</h3>
             {/* Mobile: single-row horizontal scroller. Desktop: wrap. */}
             <div className="-mx-4 sm:mx-0">
               <div className="flex sm:flex-wrap gap-3 overflow-x-auto scrollbar-none scroll-fade-r sm:no-fade px-4 sm:px-0 pb-1 pr-8 sm:pr-0">
@@ -104,7 +106,7 @@ export default function Explore() {
                       : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
                   )}
                 >
-                  All
+                  {t("explore_page.all")}
                 </button>
                 {neighborhoods.map((n, i) => {
                   const palette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
@@ -154,7 +156,7 @@ export default function Explore() {
                       </div>
                       {biz.sponsorTier === "Founding Sponsor" && (
                         <div className="absolute top-3 right-3 badge-sticker bg-brand-red text-white rotate-2 text-[10px]">
-                          ★ Founding
+                          ★ {t("listing_page.founding_badge")}
                         </div>
                       )}
                     </div>
@@ -170,8 +172,8 @@ export default function Explore() {
                       </p>
                       {biz.offer && (
                         <div className="border-[2px] border-foreground bg-brand-cream rounded-lg p-3 mt-auto">
-                          <div className="font-display text-[10px] tracking-[0.16em] text-brand-red mb-1">
-                            ★ PASSPORT OFFER
+                          <div className="font-display text-[10px] tracking-[0.16em] text-brand-red mb-1 uppercase">
+                            ★ {t("listing_page.passport_offer_label")}
                           </div>
                           <p className="text-sm font-medium text-foreground leading-snug">
                             {biz.offer}
@@ -185,8 +187,8 @@ export default function Explore() {
             ))
           ) : (
             <div className="col-span-full py-20 text-center">
-              <h3 className="text-2xl font-serif font-bold text-muted-foreground mb-2">No businesses found</h3>
-              <p className="text-muted-foreground">Try adjusting your filters or search query.</p>
+              <h3 className="text-2xl font-serif font-bold text-muted-foreground mb-2">{t("explore_page.no_results_title")}</h3>
+              <p className="text-muted-foreground">{t("explore_page.no_results_subtitle")}</p>
               <Button 
                 variant="outline" 
                 className="mt-6"
@@ -196,7 +198,7 @@ export default function Explore() {
                   setSearchQuery("");
                 }}
               >
-                Clear all filters
+                {t("explore_page.clear_filters")}
               </Button>
             </div>
           )}

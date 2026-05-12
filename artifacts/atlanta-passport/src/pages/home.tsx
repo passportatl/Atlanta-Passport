@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import {
   MapPin, Stamp, Bike, Coffee, Beer, Music,
   ShoppingBag, Calendar, Sparkles, Utensils,
@@ -40,47 +41,41 @@ const catColor: Record<string, { bg: string; text: string; pin: string }> = {
   orange: { bg: "bg-brand-orange", text: "text-white",                    pin: "bg-brand-yellow text-brand-yellow-foreground" },
 };
 
-const cardBadges: Array<{ label: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = [
-  { label: "Founding Spot", color: "yellow" },
-  { label: "Local Pick",    color: "red" },
-  { label: "Match Day Move", color: "sky" },
-  { label: "Open Late",     color: "navy" },
-  { label: "Good Patio",    color: "lime" },
-  { label: "ATL Favorite",  color: "cream" },
+const cardBadgeKeys: Array<{ key: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = [
+  { key: "founding_spot",   color: "yellow" },
+  { key: "local_pick",      color: "red" },
+  { key: "match_day_move",  color: "sky" },
+  { key: "open_late",       color: "navy" },
+  { key: "good_patio",      color: "lime" },
+  { key: "atl_favorite",    color: "cream" },
 ];
 
-const heroChips: Array<{ label: string; href: string }> = [
-  { label: "Food",          href: "/explore?category=food" },
-  { label: "Drinks",        href: "/explore?category=drinks" },
-  { label: "Coffee",        href: "/explore?category=coffee" },
-  { label: "Nightlife",     href: "/explore?category=nightlife" },
-  { label: "Routes",        href: "/explore" },
-  { label: "Beltline",      href: "/beltline" },
-  { label: "Events",        href: "/events" },
-  { label: "Open Late",     href: "/explore?category=nightlife" },
+const heroChipKeys: Array<{ key: string; href: string }> = [
+  { key: "chip_food",       href: "/explore?category=food" },
+  { key: "chip_drinks",     href: "/explore?category=drinks" },
+  { key: "chip_coffee",     href: "/explore?category=coffee" },
+  { key: "chip_nightlife",  href: "/explore?category=nightlife" },
+  { key: "chip_routes",     href: "/explore" },
+  { key: "chip_beltline",   href: "/beltline" },
+  { key: "chip_events",     href: "/events" },
+  { key: "chip_open_late",  href: "/explore?category=nightlife" },
+];
+
+const marqueeKeys = [
+  "real_atl", "local_picks", "no_tourist_traps",
+  "food_drinks_routes", "collect_stamps", "unlock_perks", "summer_2026",
 ];
 
 export default function Home() {
+  const { t } = useTranslation();
   const featuredBusinesses = businesses.slice(0, 6);
 
   return (
     <div className="w-full">
-      {/* Marquee — tourist-first, short phrases for mobile cadence */}
-      <Marquee
-        items={[
-          "THE REAL ATL",
-          "LOCAL PICKS",
-          "NO TOURIST TRAPS",
-          "FOOD · DRINKS · ROUTES",
-          "COLLECT STAMPS",
-          "UNLOCK PERKS",
-          "SUMMER 2026",
-        ]}
-      />
+      {/* Marquee */}
+      <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
 
-      {/* ──────────────────────────────────────────────────────────
-          HERO — tourist-facing
-      ────────────────────────────────────────────────────────── */}
+      {/* HERO */}
       <section className="relative section-hero overflow-hidden bg-paper texture-paper">
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
@@ -92,46 +87,43 @@ export default function Home() {
             >
               <Sticker color="yellow" className="mb-6">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse mr-1" />
-                Launching · Summer 2026
+                {t("hero.launching")}
               </Sticker>
 
               <h1 className="hero-title text-primary mb-6">
-                The unofficial<br />
-                guide to the<br />
-                <span className="highlight-yellow text-foreground">real Atlanta</span>.
+                {t("hero.title_line1")}<br />
+                {t("hero.title_line2")}<br />
+                <span className="highlight-yellow text-foreground">{t("hero.title_highlight")}</span>.
               </h1>
 
               <p className="text-base md:text-lg text-foreground/75 mb-8 max-w-xl leading-relaxed">
-                Food. Drinks. Rides. Patios. Pop-ups. Neighborhood gems. Atlanta Passport helps
-                visitors find the city locals actually love.
+                {t("hero.subtitle")}
               </p>
 
               <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 sm:items-center mb-7">
                 <Link href="/explore" className="button-pop w-full sm:w-auto">
-                  Explore <MoveRight className="w-4 h-4" />
+                  {t("hero.cta_explore")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
                 </Link>
                 <Link href="/beltline" className="button-pop button-pop-yellow w-full sm:w-auto">
-                  Routes <Map className="w-4 h-4" />
+                  {t("hero.cta_routes")} <Map className="w-4 h-4" />
                 </Link>
               </div>
 
-              {/* Tourist chip nav — horizontal scroll on mobile, fades on right */}
               <div className="-mx-4 sm:mx-0 mb-2">
                 <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r sm:no-fade px-4 sm:px-0 sm:flex-wrap pb-1 pr-8 sm:pr-0">
-                  {heroChips.map((chip) => (
+                  {heroChipKeys.map((chip) => (
                     <Link
-                      key={chip.label}
+                      key={chip.key}
                       href={chip.href}
                       className="shrink-0 font-display text-[11px] tracking-[0.16em] uppercase px-3.5 py-2 rounded-full border-2 border-foreground bg-background hover:bg-brand-yellow transition-colors shadow-pop-sm"
                     >
-                      {chip.label}
+                      {t(`hero.${chip.key}`)}
                     </Link>
                   ))}
                 </div>
               </div>
             </motion.div>
 
-            {/* Hero collage */}
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -141,7 +133,7 @@ export default function Home() {
               <div className="absolute inset-2 sm:inset-4 rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop-lg">
                 <img
                   src={heroHomeImg}
-                  alt="Atlanta street life"
+                  alt="Atlanta"
                   className="object-cover w-full h-full"
                   loading="eager"
                 />
@@ -156,19 +148,19 @@ export default function Home() {
 
               <div className="absolute bottom-6 left-6 z-20">
                 <Sticker color="red" icon={<MapPin className="w-3.5 h-3.5" />}>
-                  Old Fourth Ward
+                  {t("hero.stamp_old_fourth_ward")}
                 </Sticker>
               </div>
 
               <div className="absolute top-8 right-2 sm:right-4 z-20 hidden sm:block">
                 <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>
-                  ★ Beltline
+                  {t("hero.stamp_beltline")}
                 </Sticker>
               </div>
 
               <div className="absolute bottom-12 right-3 z-20">
                 <Sticker color="cream" icon={<Stamp className="w-3.5 h-3.5" />}>
-                  Local Pick
+                  {t("hero.stamp_local_pick")}
                 </Sticker>
               </div>
             </motion.div>
@@ -176,9 +168,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          EXPLORE BY CATEGORY
-      ────────────────────────────────────────────────────────── */}
+      {/* EXPLORE BY CATEGORY */}
       <section className="section-tight bg-background">
         <div className="container mx-auto px-4">
           <motion.div
@@ -188,9 +178,9 @@ export default function Home() {
             variants={fadeInUp}
             className="max-w-3xl mb-10 md:mb-14"
           >
-            <div className="section-kicker mb-5">★ Explore</div>
+            <div className="section-kicker mb-5">{t("explore_section.kicker")}</div>
             <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              Start where you're hungry, thirsty, curious, or stuck in traffic.
+              {t("explore_section.title")}
             </h2>
           </motion.div>
 
@@ -234,9 +224,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          FEATURED EXPERIENCE — Beltline Tourist Passport
-      ────────────────────────────────────────────────────────── */}
+      {/* FEATURED EXPERIENCE — Beltline */}
       <section className="section-tight bg-brand-cream/40 texture-paper">
         <div className="container mx-auto px-4 relative">
           <motion.div
@@ -250,35 +238,33 @@ export default function Home() {
               <div className="rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop aspect-[4/3]">
                 <img
                   src={beltlineImg}
-                  alt="The Atlanta Beltline"
+                  alt="Beltline"
                   className="object-cover w-full h-full"
                   loading="lazy"
                 />
               </div>
               <div className="absolute -top-3 -left-3 z-10">
-                <Sticker color="red">Featured Route</Sticker>
+                <Sticker color="red">{t("featured.kicker")}</Sticker>
               </div>
               <div className="absolute -bottom-4 -right-3 z-10 hidden sm:block">
                 <PassportStamp size="sm" tone="navy" rotate={9}>
-                  Route<br />Stop
+                  Stop
                 </PassportStamp>
               </div>
               <div className="mt-5 flex flex-wrap gap-2">
-                <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>Bike Friendly</Sticker>
-                <Sticker color="lime" icon={<Stamp className="w-3.5 h-3.5" />}>Collect Stamps</Sticker>
-                <Sticker color="cream" icon={<Gift className="w-3.5 h-3.5" />}>Redeem Rewards</Sticker>
+                <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>{t("hero.stamp_beltline")}</Sticker>
+                <Sticker color="lime" icon={<Stamp className="w-3.5 h-3.5" />}>{t("how_it_works.step3_title")}</Sticker>
+                <Sticker color="cream" icon={<Gift className="w-3.5 h-3.5" />}>{t("how_it_works.step4_title")}</Sticker>
               </div>
             </div>
 
             <div>
-              <div className="section-kicker mb-5">★ Featured Experience</div>
+              <div className="section-kicker mb-5">{t("featured.kicker")}</div>
               <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">
-                The Beltline Tourist Passport.
+                {t("featured.title")} <span className="highlight-yellow">{t("featured.title_highlight")}</span>
               </h2>
               <p className="text-base md:text-lg text-foreground/75 mb-7 leading-relaxed">
-                A bike-friendly route connecting food, culture, shopping, patios, and neighborhood
-                stops along the Atlanta Beltline. Pick up your passport, collect stamps, redeem
-                rewards.
+                {t("featured.subtitle")}
               </p>
 
               <div className="space-y-3 mb-7">
@@ -292,7 +278,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-display text-xs tracking-wide uppercase text-brand-red leading-none mb-1">
-                        Stop {stop.n}
+                        {t("featured.stops_label")} {stop.n}
                       </div>
                       <div className="font-serif font-bold text-base md:text-lg leading-tight truncate">
                         {stop.name}
@@ -307,16 +293,14 @@ export default function Home() {
               </div>
 
               <Link href="/beltline" className="button-pop">
-                Preview the Route <MoveRight className="w-4 h-4" />
+                {t("featured.cta")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
               </Link>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          ROUTES & COLLECTIONS — the centerpiece
-      ────────────────────────────────────────────────────────── */}
+      {/* ROUTES & COLLECTIONS */}
       <section className="section-tight bg-background">
         <div className="container mx-auto px-4">
           <motion.div
@@ -326,13 +310,12 @@ export default function Home() {
             variants={fadeInUp}
             className="max-w-3xl mb-10 md:mb-14"
           >
-            <div className="section-kicker mb-5">★ Routes & Collections</div>
+            <div className="section-kicker mb-5">{t("routes_section.kicker")}</div>
             <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              Explore Atlanta through curated paths.
+              {t("routes_section.title")}
             </h2>
             <p className="text-base md:text-lg text-foreground/70 mt-4 max-w-2xl">
-              Pick a route. Walk it, ride it, collect the stamps. Built so visitors stop guessing
-              and start moving.
+              {t("routes_section.subtitle")}
             </p>
           </motion.div>
 
@@ -341,7 +324,7 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
           >
             {routes.map((r, i) => {
               const cls = catColor[r.color] ?? catColor.yellow;
@@ -357,7 +340,7 @@ export default function Home() {
                           {String(i + 1).padStart(2, "0")}
                         </div>
                         <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red text-right pt-1">
-                          Route<br />
+                          {t("routes_section.kicker").replace("★ ", "")}<br />
                           <span className="text-foreground/60">{r.neighborhood}</span>
                         </div>
                       </div>
@@ -366,10 +349,9 @@ export default function Home() {
                       </h3>
                       <p className="text-sm text-foreground/70 leading-snug mb-5">{r.vibe}</p>
 
-                      {/* Mission card metrics */}
                       <div className="flex items-center gap-4 mb-5 text-[11px] font-display tracking-[0.14em] uppercase text-foreground/70">
                         <span className="inline-flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5" /> {r.stops} stops
+                          <MapPin className="w-3.5 h-3.5" /> {r.stops} {t("routes_section.stops_label")}
                         </span>
                         <span className="inline-flex items-center gap-1.5">
                           <Map className="w-3.5 h-3.5" /> {r.miles}
@@ -379,11 +361,10 @@ export default function Home() {
                         </span>
                       </div>
 
-                      {/* Decorative route line */}
                       <div className="route-line mb-5" />
 
                       <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
-                        View Route <MoveRight className="ml-2 w-4 h-4" />
+                        {t("routes_section.view_route")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180" />
                       </span>
                     </div>
                   </Link>
@@ -394,9 +375,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          SELECTED LOCAL SPOTS
-      ────────────────────────────────────────────────────────── */}
+      {/* SELECTED LOCAL SPOTS */}
       <section className="section-tight bg-brand-cream/40">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-between items-end gap-6 mb-10 md:mb-14">
@@ -407,17 +386,16 @@ export default function Home() {
               variants={fadeInUp}
               className="max-w-2xl"
             >
-              <div className="section-kicker mb-5">★ Selected Spots</div>
+              <div className="section-kicker mb-5">{t("spots_section.kicker")}</div>
               <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-3">
-                Local spots worth leaving the hotel for.
+                {t("spots_section.title")}
               </h2>
               <p className="text-base md:text-lg text-foreground/70">
-                A curated list of Atlanta's favorite independent restaurants, bars, shops, and
-                venues — vetted by the people who live here.
+                {t("spots_section.subtitle")}
               </p>
             </motion.div>
             <Link href="/explore" className="hidden md:inline-flex font-display text-xs tracking-[0.16em] uppercase text-brand-red items-center hover:gap-2 transition-all">
-              View All <ArrowRight className="ml-2 w-4 h-4" />
+              {t("common.view_all")} <ArrowRight className="ml-2 w-4 h-4 rtl:rotate-180" />
             </Link>
           </div>
 
@@ -426,10 +404,10 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
           >
             {featuredBusinesses.map((biz, idx) => {
-              const badge = idx < cardBadges.length ? cardBadges[idx] : null;
+              const badge = idx < cardBadgeKeys.length ? cardBadgeKeys[idx] : null;
               const isFounding = biz.id === "wheelhaus-bikes";
               return (
                 <motion.div key={biz.id} variants={fadeInUp}>
@@ -445,18 +423,18 @@ export default function Home() {
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
                           <Sticker color="cream">{biz.category}</Sticker>
                           {isFounding && (
-                            <Sticker color="yellow">Route Stop</Sticker>
+                            <Sticker color="yellow">{t("card_badges.founding_spot")}</Sticker>
                           )}
                         </div>
                         {badge && (
                           <div className="absolute top-3 right-3">
-                            <Sticker color={badge.color}>{badge.label}</Sticker>
+                            <Sticker color={badge.color}>{t(`card_badges.${badge.key}`)}</Sticker>
                           </div>
                         )}
                         {isFounding && (
                           <div className="absolute -bottom-3 right-4 z-10">
                             <PassportStamp size="sm" tone="red" rotate={10}>
-                              Passport<br />Spot
+                              ATL
                             </PassportStamp>
                           </div>
                         )}
@@ -478,7 +456,7 @@ export default function Home() {
                           </div>
                         )}
                         <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
-                          View Spot <MoveRight className="ml-2 w-4 h-4" />
+                          {t("spots_section.view_listing")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180" />
                         </span>
                       </div>
                     </div>
@@ -490,15 +468,13 @@ export default function Home() {
 
           <div className="mt-8 text-center md:hidden">
             <Link href="/explore" className="button-pop button-pop-yellow w-full justify-center">
-              View All Listings
+              {t("spots_section.view_all")}
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          NEIGHBORHOODS — alternating tone for less visual fatigue
-      ────────────────────────────────────────────────────────── */}
+      {/* NEIGHBORHOODS */}
       <section className="section-tight bg-primary text-primary-foreground">
         <div className="container mx-auto px-4">
           <motion.div
@@ -508,12 +484,12 @@ export default function Home() {
             variants={fadeInUp}
             className="mb-10 md:mb-14 max-w-3xl"
           >
-            <Sticker color="yellow" className="mb-5">★ By Neighborhood</Sticker>
+            <Sticker color="yellow" className="mb-5">{t("neighborhoods_section.kicker")}</Sticker>
             <h2 className="font-serif font-bold text-3xl md:text-5xl mb-3 leading-[1.05]">
-              Each neighborhood has its own pulse.
+              {t("neighborhoods_section.title")}
             </h2>
             <p className="text-primary-foreground/75 text-base md:text-lg">
-              Atlanta isn't one city — it's a dozen. Here's where to start.
+              {t("neighborhoods_section.subtitle")}
             </p>
           </motion.div>
 
@@ -522,10 +498,9 @@ export default function Home() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
           >
             {neighborhoods.map((n, i) => {
-              // Alternate between full-color and quieter cream cards for editorial pacing
               const isCream = i % 3 === 1;
               const cls = isCream
                 ? { bg: "bg-brand-cream", text: "text-foreground", pin: "bg-brand-red text-white" }
@@ -544,7 +519,7 @@ export default function Home() {
                         <MapPin className="w-4 h-4" />
                       </div>
                       <div className="font-display text-[10px] tracking-[0.18em] mb-3 opacity-80">
-                        Neighborhood
+                        {t("listing_page.neighborhood_label")}
                       </div>
                       <h3 className="font-serif font-bold text-xl md:text-2xl leading-tight mb-3">
                         {n.name}
@@ -553,7 +528,7 @@ export default function Home() {
                         {n.description}
                       </p>
                       <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase">
-                        Explore <MoveRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        {t("nav.explore")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 transition-transform" />
                       </span>
                     </div>
                   </Link>
@@ -564,9 +539,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          HOW IT WORKS — compact, instruction-card style
-      ────────────────────────────────────────────────────────── */}
+      {/* HOW IT WORKS */}
       <section className="section-tight bg-paper texture-paper">
         <div className="container mx-auto px-4">
           <motion.div
@@ -576,9 +549,9 @@ export default function Home() {
             variants={fadeInUp}
             className="text-center max-w-3xl mx-auto mb-10 md:mb-12"
           >
-            <div className="section-kicker mb-5">★ How it Works</div>
+            <div className="section-kicker mb-5">{t("how_it_works.kicker")}</div>
             <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              Pick a route. Collect stamps. Unlock perks.
+              {t("how_it_works.title")}
             </h2>
           </motion.div>
 
@@ -590,25 +563,26 @@ export default function Home() {
             className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6 max-w-5xl mx-auto"
           >
             {[
-              { icon: Map,       title: "Pick a route",      color: "yellow" },
-              { icon: MapPin,    title: "Visit local spots", color: "red" },
-              { icon: Stamp,     title: "Collect stamps",    color: "sky" },
-              { icon: Award,     title: "Unlock perks",      color: "lime" },
+              { icon: Map,    titleKey: "how_it_works.step1_title", color: "yellow" },
+              { icon: MapPin, titleKey: "how_it_works.step2_title", color: "red" },
+              { icon: Stamp,  titleKey: "how_it_works.step3_title", color: "sky" },
+              { icon: Award,  titleKey: "how_it_works.step4_title", color: "lime" },
             ].map((step, i) => {
               const cls = catColor[step.color];
+              const Icon = step.icon;
               return (
                 <motion.div key={i} variants={fadeInUp} className="text-center">
                   <div className={cn(
                     "w-14 h-14 md:w-16 md:h-16 mx-auto rounded-full border-[3px] border-foreground grid place-items-center mb-4 shadow-pop-sm",
                     cls.bg, cls.text
                   )}>
-                    <step.icon className="w-6 h-6 md:w-7 md:h-7" />
+                    <Icon className="w-6 h-6 md:w-7 md:h-7" />
                   </div>
                   <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red mb-1.5">
-                    Step {i + 1}
+                    {String(i + 1).padStart(2, "0")}
                   </div>
                   <h3 className="font-serif font-bold text-base md:text-lg leading-tight">
-                    {step.title}
+                    {t(step.titleKey)}
                   </h3>
                 </motion.div>
               );
@@ -617,9 +591,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          MANIFESTO — moved lower per brief
-      ────────────────────────────────────────────────────────── */}
+      {/* MANIFESTO */}
       <section className="section-tight bg-brand-red text-white relative overflow-hidden">
         <div className="absolute inset-0 dot-grid opacity-15 pointer-events-none" />
         <div className="container mx-auto px-4 relative">
@@ -630,32 +602,24 @@ export default function Home() {
             variants={fadeInUp}
             className="max-w-4xl mx-auto"
           >
-            <Sticker color="yellow" className="mb-7">★ Why this exists</Sticker>
+            <Sticker color="yellow" className="mb-7">{t("manifesto.kicker")}</Sticker>
             <h2 className="font-serif font-bold leading-[1.02] mb-8 text-3xl md:text-5xl lg:text-6xl">
-              Atlanta deserves better than the{" "}
-              <span className="highlight-yellow text-foreground">hotel-lobby guide</span>.
+              {t("manifesto.title")}
             </h2>
             <p className="text-lg md:text-xl leading-relaxed text-white/90 max-w-3xl mb-10">
-              Most visitors only see the stadium, the hotel, and the rideshare. Atlanta Passport
-              points them toward the neighborhoods, restaurants, bars, rides, and culture locals
-              actually love.
+              {t("manifesto.body")}
             </p>
-            <div className="border-l-4 border-brand-yellow pl-6 max-w-2xl">
+            <div className="border-l-4 border-brand-yellow ltr:pl-6 rtl:border-l-0 rtl:border-r-4 rtl:pr-6 max-w-2xl">
               <Quote className="w-6 h-6 text-brand-yellow mb-2 -ml-1" />
               <p className="font-serif italic text-xl md:text-2xl lg:text-3xl leading-snug text-brand-yellow">
-                If you only see Atlanta from a hotel lobby, you didn't really see Atlanta.
-              </p>
-              <p className="font-display text-[11px] tracking-[0.2em] mt-4 text-white/70">
-                — THE WHOLE POINT
+                {t("manifesto.title")}
               </p>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────
-          BUSINESS CTA — selective, premium, near the bottom
-      ────────────────────────────────────────────────────────── */}
+      {/* BUSINESS CTA */}
       <section className="section-tight bg-brand-cream texture-paper">
         <div className="container mx-auto px-4">
           <motion.div
@@ -668,24 +632,23 @@ export default function Home() {
             <div className="card-pop bg-background p-8 md:p-12 lg:p-14">
               <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
                 <div>
-                  <div className="section-kicker mb-5">★ For Businesses</div>
+                  <div className="section-kicker mb-5">{t("business_cta.kicker")}</div>
                   <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">
-                    Put your business on Atlanta's route map.
+                    {t("business_cta.title")}
                   </h2>
                   <p className="text-base md:text-lg text-foreground/75 mb-7 max-w-2xl leading-relaxed">
-                    We're onboarding a limited group of local restaurants, bars, shops, rides, and
-                    experiences before launch.
+                    {t("business_cta.subtitle")}
                   </p>
                   <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
                     <Link href="/apply" className="button-pop">
-                      Get Listed <MoveRight className="w-4 h-4" />
+                      {t("business_cta.cta_apply")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
                     </Link>
                     <Link href="/partners" className="button-pop button-pop-cream">
-                      Sponsor a Route
+                      {t("business_cta.cta_partners")}
                     </Link>
                   </div>
                   <p className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/55 mt-6">
-                    ★ Limited placement by category and neighborhood.
+                    ★ {t("business_cta.limited_label")}
                   </p>
                 </div>
 
@@ -697,12 +660,12 @@ export default function Home() {
                   </div>
                   <div className="absolute top-10 right-2">
                     <PassportStamp tone="navy" rotate={8}>
-                      Founding<br />Partner
+                      Founding
                     </PassportStamp>
                   </div>
                   <div className="absolute bottom-0 left-16">
                     <PassportStamp tone="green" rotate={-4}>
-                      Route<br />Stop
+                      Stop
                     </PassportStamp>
                   </div>
                 </div>

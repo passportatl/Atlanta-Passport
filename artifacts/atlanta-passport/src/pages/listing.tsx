@@ -1,9 +1,11 @@
 import { useParams, Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { businesses } from "@/data/sample-data";
 import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Listing() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   
@@ -13,10 +15,10 @@ export default function Listing() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4 bg-muted/20">
         <div className="card-pop bg-card max-w-md w-full p-8 text-center">
-          <h2 className="text-2xl font-serif font-bold text-foreground mb-4">Business not found</h2>
-          <p className="text-muted-foreground mb-8">We couldn't find the listing you're looking for.</p>
+          <h2 className="text-2xl font-serif font-bold text-foreground mb-4">{t("common.error")}</h2>
+          <p className="text-muted-foreground mb-8">{t("common.error")}</p>
           <Link href="/explore" className="button-pop inline-flex items-center justify-center gap-2 w-full">
-            <ArrowLeft className="w-4 h-4" /> Back to Explore
+            <ArrowLeft className="w-4 h-4 rtl:rotate-180" /> {t("listing_page.back")}
           </Link>
         </div>
       </div>
@@ -25,8 +27,8 @@ export default function Listing() {
 
   const handleSave = () => {
     toast({
-      title: "Coming with the app",
-      description: `Saving spots to your digital passport launches with the app in summer 2026.`,
+      title: t("common.loading"),
+      description: t("listing_page.stamp_label"),
       duration: 3500,
     });
   };
@@ -53,7 +55,7 @@ export default function Listing() {
             <div className="passport-stamp bg-white text-brand-red ring-4 ring-foreground/10">
               <div>
                 <Sparkles className="w-4 h-4 mx-auto mb-1" />
-                Founding<br />Sponsor<br />· ATL ·
+                {t("listing_page.founding_badge")}<br />· ATL ·
               </div>
             </div>
           </div>
@@ -93,7 +95,7 @@ export default function Listing() {
                 <div className="bg-accent text-accent-foreground w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md">
                   <Gift className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-accent-foreground/90 tracking-wide uppercase text-sm">Passport Offer</h3>
+                <h3 className="font-bold text-accent-foreground/90 tracking-wide uppercase text-sm">{t("listing_page.passport_offer_label")}</h3>
               </div>
               <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
                 {business.offer}
@@ -108,7 +110,7 @@ export default function Listing() {
           {/* Left Column - Details */}
           <div className="lg:col-span-3 space-y-10">
             <section>
-              <h2 className="text-2xl font-serif font-bold text-primary mb-4">About</h2>
+              <h2 className="text-2xl font-serif font-bold text-primary mb-4">{t("nav.about")}</h2>
               <p className="text-muted-foreground leading-relaxed text-lg">
                 {business.about}
               </p>
@@ -117,7 +119,7 @@ export default function Listing() {
             <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-border">
               <div>
                 <div className="flex items-center text-primary font-bold mb-2">
-                  <Clock className="w-5 h-5 mr-2" /> Hours
+                  <Clock className="w-5 h-5 mr-2" /> {t("listing_page.hours_label")}
                 </div>
                 <p className="text-muted-foreground whitespace-pre-line">
                   {business.hours}
@@ -125,7 +127,7 @@ export default function Listing() {
               </div>
               <div>
                 <div className="flex items-center text-primary font-bold mb-2">
-                  <MapPin className="w-5 h-5 mr-2" /> Address
+                  <MapPin className="w-5 h-5 mr-2" /> {t("listing_page.address_label")}
                 </div>
                 <p className="text-muted-foreground">
                   {business.address}
@@ -140,14 +142,14 @@ export default function Listing() {
                 rel="noopener noreferrer"
                 className="button-pop flex-1 inline-flex items-center justify-center gap-2"
               >
-                <Navigation className="w-5 h-5" /> Get Directions
+                <Navigation className="w-5 h-5" /> {t("listing_page.directions_label")}
               </a>
               <button
                 type="button"
                 onClick={handleSave}
                 className="button-pop button-pop-yellow flex-1 inline-flex items-center justify-center gap-2"
               >
-                <BookOpen className="w-5 h-5" /> Save for later
+                <BookOpen className="w-5 h-5" /> {t("common.view_all", { defaultValue: "Save for later" })}
                 <span className="font-display text-[10px] tracking-[0.16em] opacity-70 ml-1">SOON</span>
               </button>
             </div>
@@ -161,7 +163,7 @@ export default function Listing() {
                 <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <h4 className="font-display text-xs tracking-[0.18em] text-foreground">FIND IT</h4>
+                <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
               </div>
               <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
               <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
@@ -171,14 +173,14 @@ export default function Listing() {
                 rel="noopener noreferrer"
                 className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
               >
-                <Navigation className="w-4 h-4" /> Open in Google Maps
+                <Navigation className="w-4 h-4" /> {t("listing_page.view_on_map")}
               </a>
             </div>
 
             {/* Passport stamp preview — clearly a preview, no fake "scan" CTA */}
             <div className="card-pop bg-brand-yellow text-brand-yellow-foreground text-center p-8">
-              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6">
-                ★ STAMP PREVIEW
+              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6 uppercase">
+                ★ {t("listing_page.stamp_label")}
               </div>
               <div className="w-40 h-40 mx-auto rounded-full border-[6px] border-double border-foreground bg-white flex flex-col items-center justify-center text-foreground">
                 <Sparkles className="w-6 h-6 mb-1 text-brand-red" />
@@ -197,8 +199,8 @@ export default function Listing() {
 
         {/* Bottom Nav */}
         <div className="mt-20 pt-8 border-t border-border flex justify-center">
-          <Link href="/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors">
-            EXPLORE MORE LOCAL BUSINESSES →
+          <Link href="/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors uppercase">
+            {t("listing_page.more_in_area")} →
           </Link>
         </div>
       </div>

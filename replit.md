@@ -50,6 +50,16 @@ Marketing site with: Home, Become a Partner (Starter $100 / Featured $300 / Prem
 
 **Page conventions:** Events cards use bold typographic date tiles (parsed Month + Day) instead of shared photos. Listing pages show a stamp preview + real Google Maps deep-link (no fake QR/scan UI). Apply form has a sticky `top-16` progress strip showing live `completed/total` of required fields; package picker is 3 tiers (Starter/Featured/Premier) with a text-link "Request a custom package" that selects the `custom` enum.
 
+## Internationalization (i18n)
+
+- `i18next` + `react-i18next` + `i18next-browser-languagedetector` (LocalStorage key `atlanta-passport-lang`).
+- 9 locales: en, es, fr, pt, de, it, ja, ko, ar — all under `src/i18n/locales/*.json`.
+- Initialized in `src/i18n/index.ts`; imported by `main.tsx`. `applyDir()` strips region (`ar-SA` → `ar`) and sets `dir="rtl"`/`lang` on `<html>` for Arabic.
+- Switcher: `<LanguageSwitcher variant="navbar"|"menu" />` (Globe + flag dropdown). Wired into `Navbar` (desktop + mobile menu).
+- Translations regenerated via `scripts/translate-i18n.mjs <comma-list>` using the AI Anthropic integration. Brand names (Atlanta Passport, Beltline, Wheelhaus Bikes, World Cup, ATL, $100, TIER, etc.) preserved untranslated.
+- Sample data in `src/data/sample-data.ts` (business names/descriptions/addresses/hours) is intentionally NOT translated — out of scope for the marketing site.
+- RTL: use `rtl:rotate-180` on directional icons (ArrowRight/MoveRight); use `ltr:`/`rtl:` border/padding pairs where physical sides matter.
+
 ## User preferences
 
 _Populate as you build — explicit user instructions worth remembering across sessions._
