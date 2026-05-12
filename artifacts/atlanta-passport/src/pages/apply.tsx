@@ -442,36 +442,23 @@ export default function Apply() {
                   )}
                 />
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <div className="text-sm font-medium leading-none">Logo / Photo Upload</div>
-                    <p className="text-sm text-muted-foreground">Upload a high-res image of your business.</p>
-                    <div className="border-[3px] border-dashed border-foreground rounded-2xl p-6 text-center bg-brand-cream cursor-pointer hover:bg-brand-yellow transition-colors">
-                      <input type="file" accept="image/*" className="hidden" id="file-upload" />
-                      <label htmlFor="file-upload" className="cursor-pointer font-display text-xs tracking-[0.16em] text-foreground">
-                        ★ CLICK TO UPLOAD
-                      </label>
-                    </div>
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="notes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("apply_page.field_notes")} ({t("apply_page.optional")})</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder={t("apply_page.field_notes_placeholder")}
-                            className="resize-none h-full min-h-[100px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("apply_page.field_notes")} ({t("apply_page.optional")})</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={t("apply_page.field_notes_placeholder")}
+                          className="resize-none min-h-[100px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <button type="submit" className="button-pop w-full text-lg py-5 mt-4">
