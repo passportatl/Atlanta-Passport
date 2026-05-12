@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check } from "lucide-react";
+import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Route } from "lucide-react";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
@@ -218,6 +218,45 @@ export default function Partners() {
           <p className="text-center text-muted-foreground italic mt-12">
             {t("partners_page.request_custom")}
           </p>
+
+          {/* Sponsor a Route — premium add-on */}
+          <div className="max-w-6xl mx-auto mt-16">
+            <div className="card-pop bg-brand-cream text-foreground p-7 md:p-10 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-[3px] border-foreground bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
+                <Route className="w-8 h-8 md:w-10 md:h-10" />
+              </div>
+              <div className="text-center md:text-left">
+                <div className="font-display text-[10px] tracking-[0.22em] uppercase text-brand-red mb-2">
+                  ★ {t("partners_page.sponsor_route_kicker", { defaultValue: "New · Limited" })}
+                </div>
+                <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2 leading-tight">
+                  {t("partners_page.sponsor_route_title", { defaultValue: "Sponsor a Route" })}
+                </h3>
+                <p className="text-base text-foreground/80 leading-snug max-w-xl">
+                  {t("partners_page.sponsor_route_desc", {
+                    defaultValue:
+                      "Put your name on a curated Atlanta Passport route — Beltline, Coffee Before Kickoff, Rooftops & Late Nights, and more. Logo on the route page, every stop card, and the printed map insert.",
+                  })}
+                </p>
+                <div className="mt-3 flex flex-wrap justify-center md:justify-start gap-2">
+                  {["Logo on route page", "Printed map placement", "Custom stamp", "Co-branded QR"].map((tag) => (
+                    <span key={tag} className="sticker-pill sticker-yellow text-[10px]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:items-end items-center flex-shrink-0">
+                <div className="font-display text-3xl md:text-4xl">$1,200</div>
+                <div className="font-display text-[10px] tracking-[0.18em] text-foreground/60 uppercase">
+                  {t("partners_page.sponsor_route_per", { defaultValue: "per route · season" })}
+                </div>
+                <Link href="/apply?package=route" className="button-pop button-pop-yellow text-xs px-5 py-2.5 mt-2">
+                  {t("partners_page.sponsor_route_cta", { defaultValue: "Sponsor a Route" })} →
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

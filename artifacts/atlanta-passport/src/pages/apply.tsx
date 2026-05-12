@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Link } from "wouter";
+import { useEffect, useState } from "react";
+import { Link, useSearch } from "wouter";
 import { useTranslation } from "react-i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { CheckCircle2, Check } from "lucide-react";
+import { CheckCircle2, Check, Route } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { categories, neighborhoods } from "@/data/sample-data";
+import { categories, neighborhoods, routes } from "@/data/sample-data";
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -37,15 +37,16 @@ const formSchema = z.object({
   category: z.string().min(1, "Please select a category."),
   neighborhood: z.string().min(1, "Please select a neighborhood."),
   address: z.string().min(5, "Please enter your address."),
-  package: z.enum(["starter", "featured", "premier", "custom"], {
+  package: z.enum(["starter", "featured", "premier", "route", "custom"], {
     required_error: "Please select a package.",
   }),
+  routeId: z.string().optional(),
   offer: z.string().min(10, "Please describe your offer or experience."),
   notes: z.string().optional(),
 });
 
 type PackageOption = {
-  value: "starter" | "featured" | "premier" | "custom";
+  value: "starter" | "featured" | "premier" | "route" | "custom";
   title: string;
   price: string;
   cls: string;
@@ -56,11 +57,13 @@ const packageOptions: PackageOption[] = [
   { value: "starter", title: "Starter Listing", price: "$100", cls: "bg-brand-yellow text-brand-yellow-foreground" },
   { value: "featured", title: "Featured Partner", price: "$300", cls: "bg-brand-red text-white", badge: "MOST POPULAR" },
   { value: "premier", title: "Premier Sponsor", price: "$500", cls: "bg-brand-navy text-white" },
+  { value: "route", title: "Sponsor a Route", price: "$1,200", cls: "bg-brand-cream text-foreground", badge: "NEW" },
 ];
 
 export default function Apply() {
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
+  const search = useSearch();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,10 +77,20 @@ export default function Apply() {
       category: "",
       neighborhood: "",
       address: "",
+      routeId: "",
       notes: "",
       offer: "",
     },
   });
+
+  // Pre-select package via ?package=route|starter|featured|premier|custom
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const pkg = params.get("package");
+    if (pkg && ["starter", "featured", "premier", "route", "custom"].includes(pkg)) {
+      form.setValue("package", pkg as z.infer<typeof formSchema>["package"]);
+    }
+  }, [search, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -313,7 +326,7 @@ export default function Apply() {
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                           aria-label="Passport package"
-                          className="grid sm:grid-cols-3 gap-4"
+                          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"
                         >
                           {packageOptions.map((opt) => {
                             const active = field.value === opt.value;
@@ -366,6 +379,45 @@ export default function Apply() {
                     </FormItem>
                   )}
                 />
+
+                {/* Route picker — only when "route" package is selected */}
+                {form.watch("package") === "route" && (
+                  <FormField
+                    control={form.control}
+                    name="routeId"
+                    render={({ field }) => (
+                      <FormItem className="bg-brand-cream border-[3px] border-foreground rounded-2xl p-5 shadow-pop-sm">
+                        <FormLabel className="flex items-center gap-2 font-display text-xs tracking-[0.16em] uppercase">
+                          <Route className="w-4 h-4" />
+                          {t("apply_page.field_route", { defaultValue: "Which route would you like to sponsor?" })}
+                        </FormLabel>
+                        <FormDescription>
+                          {t("apply_page.field_route_desc", {
+                            defaultValue: "Each route gets one exclusive sponsor per season. We'll confirm availability after you apply.",
+                          })}
+                        </FormDescription>
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("apply_page.select_placeholder")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {routes.map((r) => (
+                              <SelectItem key={r.id} value={r.id}>
+                                {r.name}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value="open-to-suggestions">
+                              {t("apply_page.field_route_open", { defaultValue: "Open to suggestions" })}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
 
               <div className="space-y-6">
