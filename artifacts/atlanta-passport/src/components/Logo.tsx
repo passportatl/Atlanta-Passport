@@ -18,17 +18,17 @@ export default function Logo({
   const content =
     variant === "stacked" ? (
       <span className="inline-grid gap-1.5 -rotate-1">
-        <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm")}>ATLANTA</span>
+        <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm")}>PASSPORT</span>
         <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm rotate-[2deg] origin-left")}>
-          PASSPORT
+          ATLANTA
         </span>
       </span>
     ) : variant === "compact" ? (
-      <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm -rotate-1")}>ATL · PASS</span>
+      <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm -rotate-1")}>PASS · ATL</span>
     ) : (
       <span className="inline-flex items-center gap-1.5 -rotate-1">
-        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm")}>ATL</span>
-        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm rotate-[2deg]")}>PASSPORT</span>
+        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm")}>PASSPORT</span>
+        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm rotate-[2deg]")}>ATL</span>
       </span>
     );
 
