@@ -2,10 +2,16 @@ import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MoveRight } from "lucide-react";
+import { Menu, MoveRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItemClass = (active: boolean) =>
   cn(
@@ -56,6 +62,40 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+
+          {/* For Businesses dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  navItemClass(location === "/partners" || location === "/apply"),
+                  "inline-flex items-center gap-1 cursor-pointer"
+                )}
+                data-testid="button-business-menu"
+              >
+                {t("nav.for_businesses")}
+                <ChevronDown className="w-3 h-3 opacity-70" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="border-2 border-foreground bg-background shadow-pop-sm rounded-xl min-w-[220px] p-1"
+            >
+              {businessLinks.map((link) => (
+                <DropdownMenuItem
+                  key={link.path}
+                  asChild
+                  className="cursor-pointer rounded-md font-display text-[12px] tracking-[0.12em] uppercase px-3 py-2"
+                >
+                  <Link href={link.path} data-testid={`link-business-${link.path.slice(1)}`}>
+                    {link.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <div className="ml-3">
             <LanguageSwitcher />
           </div>
