@@ -247,7 +247,7 @@ export default function Partners() {
                 </div>
               </div>
               <div className="flex flex-col gap-2 md:items-end items-center flex-shrink-0">
-                <div className="font-display text-3xl md:text-4xl">$200</div>
+                <div className="font-display text-3xl md:text-4xl">$250</div>
                 <div className="font-display text-[10px] tracking-[0.18em] text-foreground/60 uppercase">
                   {t("partners_page.sponsor_route_per", { defaultValue: "per route · season" })}
                 </div>
