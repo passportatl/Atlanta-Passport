@@ -1,0 +1,242 @@
+Replace the fake Passport ATL businesses with the real neighborhoods and businesses below. Keep the existing digital passport, stamp, rewards, and route system. Create a unique digital neighborhood stamp for each neighborhood.
+
+Use “stamps,” not “marks.”
+
+NEIGHBORHOODS + BUSINESSES
+
+West End:
+- Boxcar
+- Westwood
+- El Tesoro
+- Wellness from the Wealth Summit
+- Sammy’s
+
+East Atlanta Village:
+- Wheelhaus
+- Argosy
+- Midway
+- ABV Gallery
+- Black Habbit
+- Soba / Octopus Bar
+
+Downtown / Castleberry:
+- Atlantucky
+- Walters
+- Masquerade
+- Coca-Cola
+- High Museum
+- Feliz Social Club
+
+Grant Park:
+- Manny’s
+- JenChan’s
+- Little’s
+- Oakland Cemetery
+- Vickery’s
+- Fernbank
+- La Semilla
+
+Little Five Points:
+- Yacht
+- L5Pub
+- Vortex
+- Elmyr
+- Wish
+
+Summerhill:
+- Talat Market
+
+Cabbagetown:
+- Peachtree Wellness
+- Estoria
+
+Kirkwood:
+- Taproom
+- Gene’s
+- Poor Hendrix
+- Evergreen Bakery / Butcher
+
+Edgewood:
+- Bona Fide
+- Vin Wine Bar
+
+Old Fourth Ward:
+- Our Bar
+- Lloyd’s
+- Joystick
+- Glide Pizza
+
+Decatur:
+- No. 246
+- My Parent’s Basement
+- Kimball House
+- The Pool Turtle
+- Brainwave Pizza / Inner Voice Brewery
+- Sole Play
+
+Reynoldstown:
+- La Semilla
+- Homegrown
+- Sugarloaf
+
+Poncey-Highland:
+- Pickled Paint
+- Smith’s Olde Bar
+- Virginia-Highland Bars
+
+Midtown:
+- Rí Rá
+- 5Church
+- 11th Street Pub
+- Gallery Anderson Smith
+- Atlanta Botanical Garden
+
+Outliers:
+- Pure Quill Superette
+- That Art Gallery We Went To Last Week
+
+DATA STRUCTURE
+
+Each business should include:
+- id
+- slug
+- name
+- neighborhood
+- category
+- contactName if included in parentheses
+- stampName
+- stampColor
+- icon
+- isActive: true
+
+If a person/contact is in parentheses, store it as contactName but do not show it publicly on tourist-facing pages.
+
+Create clean slugs, for example:
+- boxcar
+- wheelhaus
+- el-tesoro
+- my-parents-basement
+- brainwave-pizza-inner-voice-brewery
+- atlanta-botanical-garden
+
+NEIGHBORHOOD STAMPS
+
+Create one stamp design per neighborhood:
+
+West End Stamp:
+- Text: WEST END / ATL / EXPLORED
+- Color: dark green
+- Icon: train or neighborhood arch
+
+East Atlanta Village Stamp:
+- Text: EAV / ATL / EXPLORED
+- Color: red
+- Icon: lightning bolt or music note
+
+Downtown / Castleberry Stamp:
+- Text: DOWNTOWN / ATL / EXPLORED
+- Color: black and yellow
+- Icon: skyline
+
+Grant Park Stamp:
+- Text: GRANT PARK / ATL / EXPLORED
+- Color: green
+- Icon: tree or park gate
+
+Little Five Points Stamp:
+- Text: LITTLE FIVE / ATL / EXPLORED
+- Color: black
+- Icon: star or record
+
+Summerhill Stamp:
+- Text: SUMMERHILL / ATL / EXPLORED
+- Color: orange
+- Icon: plate or flame
+
+Cabbagetown Stamp:
+- Text: CABBAGETOWN / ATL / EXPLORED
+- Color: blue
+- Icon: house or mural
+
+Kirkwood Stamp:
+- Text: KIRKWOOD / ATL / EXPLORED
+- Color: yellow
+- Icon: coffee cup
+
+Edgewood Stamp:
+- Text: EDGEWOOD / ATL / EXPLORED
+- Color: lime #BCF000
+- Icon: cocktail or wine glass
+
+Old Fourth Ward Stamp:
+- Text: OLD FOURTH WARD / ATL / EXPLORED
+- Color: red
+- Icon: bridge or flame
+
+Decatur Stamp:
+- Text: DECATUR / ATL / EXPLORED
+- Color: blue
+- Icon: courthouse or square
+
+Reynoldstown Stamp:
+- Text: REYNOLDSTOWN / ATL / EXPLORED
+- Color: green
+- Icon: bike or track
+
+Poncey-Highland Stamp:
+- Text: PONCEY-HIGHLAND / ATL / EXPLORED
+- Color: cream and black
+- Icon: marquee or record
+
+Midtown Stamp:
+- Text: MIDTOWN / ATL / EXPLORED
+- Color: dark green
+- Icon: skyline
+
+Outliers Stamp:
+- Text: ATL OUTLIER / ATL / EXPLORED
+- Color: black and lime
+- Icon: compass
+
+BUSINESS STAMP LOGIC
+
+When a visitor scans a business QR code:
+1. Add that business stamp to their passport.
+2. Also count progress toward that neighborhood stamp.
+3. Once they collect at least 1 stamp in a neighborhood, show the neighborhood stamp as “started.”
+4. Once they collect 3 stamps in that neighborhood, show the neighborhood stamp as “earned.”
+5. Once they collect 5 stamps in that neighborhood, unlock that neighborhood’s secret route.
+
+If a neighborhood has fewer than 5 listed businesses, unlock its secret route after all listed businesses are collected.
+
+SECRET ROUTES
+
+Create secret routes for each neighborhood, locked until the visitor earns enough neighborhood stamps.
+
+Examples:
+- West End Local Loop
+- EAV After Dark
+- Downtown Culture Run
+- Grant Park Day Out
+- Little Five Weird & Wonderful
+- Summerhill Food Stop
+- Cabbagetown Hidden Corner
+- Kirkwood Easy Afternoon
+- Edgewood Night Run
+- Old Fourth Ward Late Loop
+- Decatur Food + Finds
+- Reynoldstown Ride Through
+- Poncey-Highland Classic Crawl
+- Midtown Arts + Drinks
+- ATL Outlier Finds
+
+ADMIN PAGE
+
+Update /admin/stamps to show every real business grouped by neighborhood with:
+- business name
+- neighborhood
+- QR URL
+- copy button
+- open stamp page button
+
+Keep the UI mobile-first and matching the current Passport ATL visual style from the screenshots.
