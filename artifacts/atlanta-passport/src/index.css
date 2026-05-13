@@ -363,6 +363,7 @@
     border-radius: 12px;
     display: inline-block;
     line-height: 1;
+    margin-top: .18em;
   }
 
   .hero-title {
