@@ -139,12 +139,7 @@ export default function Navbar() {
           >
             <BookMarked className="h-4 w-4" />
           </Link>
-          <Link
-            href="/explore"
-            className="button-pop button-pop-yellow text-[10px] px-3 py-2 whitespace-nowrap"
-          >
-            {t("nav.explore_short")}
-          </Link>
+          <LanguageSwitcher />
           <Sheet>
             <SheetTrigger asChild>
               <Button
