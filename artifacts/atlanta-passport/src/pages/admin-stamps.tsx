@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   useListBusinesses,
   getListBusinessesQueryKey,
   type Business,
 } from "@workspace/api-client-react";
 import { Copy, ExternalLink, Lock, QrCode } from "lucide-react";
+import { NEIGHBORHOODS } from "@/passport/data";
 
 const ADMIN_PASSWORD = (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
@@ -14,6 +15,8 @@ function buildStampUrl(slug: string): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   return `${window.location.origin}${base}/stamp/${slug}`;
 }
+
+const NEIGHBORHOOD_ORDER = NEIGHBORHOODS.map((n) => n.name);
 
 function AdminGate({ onUnlock }: { onUnlock: () => void }) {
   const [pw, setPw] = useState("");
@@ -64,6 +67,61 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
   );
 }
 
+interface BusinessCardProps {
+  business: Business;
+  copied: string | null;
+  onCopy: (slug: string, url: string) => void;
+}
+
+function BusinessCard({ business: b, copied, onCopy }: BusinessCardProps) {
+  const url = buildStampUrl(b.slug);
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
+    url,
+  )}&size=240x240&margin=10`;
+  return (
+    <div className="card-pop bg-white p-4">
+      <div className="flex gap-3">
+        <img
+          src={qrSrc}
+          alt={`QR for ${b.name}`}
+          width={96}
+          height={96}
+          className="border-2 border-foreground rounded-lg bg-white shrink-0"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="font-black text-sm leading-tight" style={{ fontFamily: "Bungee, sans-serif" }}>
+            {b.name}
+          </div>
+          <div className="text-[10px] uppercase tracking-wider font-bold opacity-70 mt-0.5">
+            {b.category}
+          </div>
+          <div className="mt-1.5 text-[10px] break-all bg-[hsl(var(--brand-cream))] border-2 border-foreground rounded p-1.5 font-mono">
+            {url}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2 mt-3">
+        <button
+          onClick={() => onCopy(b.slug, url)}
+          className="button-pop button-pop-cream text-xs flex items-center justify-center gap-1"
+        >
+          <Copy className="w-3.5 h-3.5" />
+          {copied === b.slug ? "Copied!" : "Copy link"}
+        </button>
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="button-pop button-pop-yellow text-xs flex items-center justify-center gap-1"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          Open stamp
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminStamps() {
   const [unlocked, setUnlocked] = useState(false);
 
@@ -76,6 +134,23 @@ export default function AdminStamps() {
   });
   const businesses = (businessesRaw as Business[] | undefined) ?? [];
   const [copied, setCopied] = useState<string | null>(null);
+
+  const grouped = useMemo(() => {
+    const buckets: Record<string, Business[]> = {};
+    businesses.forEach((b) => {
+      (buckets[b.neighborhood] ??= []).push(b);
+    });
+    Object.values(buckets).forEach((list) => list.sort((a, b) => a.name.localeCompare(b.name)));
+    const ordered = NEIGHBORHOOD_ORDER.filter((n) => buckets[n]?.length).map((n) => ({
+      neighborhood: n,
+      list: buckets[n]!,
+    }));
+    const extras = Object.keys(buckets)
+      .filter((n) => !NEIGHBORHOOD_ORDER.includes(n))
+      .sort()
+      .map((n) => ({ neighborhood: n, list: buckets[n]! }));
+    return [...ordered, ...extras];
+  }, [businesses]);
 
   const copy = async (slug: string, url: string) => {
     try {
@@ -91,7 +166,7 @@ export default function AdminStamps() {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <div
@@ -104,7 +179,7 @@ export default function AdminStamps() {
               Demo QR Codes
             </h1>
             <p className="text-sm text-foreground/70 mt-1">
-              Print or share these links so visitors can collect stamps.
+              {businesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
             </p>
           </div>
           <button
@@ -118,56 +193,26 @@ export default function AdminStamps() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {businesses.map((b) => {
-            const url = buildStampUrl(b.slug);
-            const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
-              url,
-            )}&size=240x240&margin=10`;
-            return (
-              <div key={b.id} className="card-pop bg-white p-5">
-                <div className="flex gap-4">
-                  <img
-                    src={qrSrc}
-                    alt={`QR for ${b.name}`}
-                    width={120}
-                    height={120}
-                    className="border-2 border-foreground rounded-lg bg-white shrink-0"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-black text-lg leading-tight" style={{ fontFamily: "Bungee, sans-serif" }}>
-                      {b.name}
-                    </div>
-                    <div className="text-xs uppercase tracking-wider font-bold opacity-70 mt-0.5">
-                      {b.neighborhood} • {b.category}
-                    </div>
-                    <div className="mt-2 text-xs break-all bg-[hsl(var(--brand-cream))] border-2 border-foreground rounded p-2 font-mono">
-                      {url}
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                  <button
-                    onClick={() => copy(b.slug, url)}
-                    className="button-pop button-pop-cream text-xs flex items-center justify-center gap-1"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    {copied === b.slug ? "Copied!" : "Copy link"}
-                  </button>
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button-pop button-pop-yellow text-xs flex items-center justify-center gap-1"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    Open stamp
-                  </a>
-                </div>
+        {grouped.map(({ neighborhood, list }) => (
+          <section key={neighborhood} className="mb-8">
+            <div className="flex items-baseline justify-between mb-3">
+              <h2
+                className="text-xl font-black"
+                style={{ fontFamily: "Bungee, sans-serif" }}
+              >
+                {neighborhood}
+              </h2>
+              <div className="text-[11px] font-black uppercase tracking-wider opacity-60">
+                {list.length} spot{list.length === 1 ? "" : "s"}
               </div>
-            );
-          })}
-        </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {list.map((b) => (
+                <BusinessCard key={b.id} business={b} copied={copied} onCopy={copy} />
+              ))}
+            </div>
+          </section>
+        ))}
 
         {businesses.length === 0 && (
           <div className="card-pop bg-white p-8 text-center">

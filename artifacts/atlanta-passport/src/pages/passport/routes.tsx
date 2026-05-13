@@ -1,19 +1,18 @@
 import { Link } from "wouter";
 import {
   useListVisitorStamps,
+  useListBusinesses,
   getListVisitorStampsQueryKey,
   type Stamp,
+  type Business,
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
-import { PUBLIC_ROUTES, SECRET_ROUTES } from "@/passport/data";
+import {
+  PUBLIC_ROUTES,
+  NEIGHBORHOODS,
+  neighborhoodUnlockThreshold,
+} from "@/passport/data";
 import { Lock, Unlock, MapPin, Sparkles } from "lucide-react";
-
-const TONE_BG: Record<string, string> = {
-  yellow: "bg-[hsl(var(--brand-yellow))]",
-  red: "bg-[hsl(var(--brand-red))] text-[hsl(var(--brand-cream))]",
-  lime: "bg-[hsl(var(--brand-lime))]",
-  navy: "bg-[hsl(var(--brand-navy))] text-[hsl(var(--brand-cream))]",
-};
 
 export default function PassportRoutes() {
   const { visitorId } = useVisitor();
@@ -23,11 +22,17 @@ export default function PassportRoutes() {
       enabled: !!visitorId,
     },
   });
+  const { data: businessesRaw } = useListBusinesses();
   const stamps = (stampsRaw as Stamp[] | undefined) ?? [];
-  const total = stamps.length;
-  const byNeighborhood: Record<string, number> = {};
+  const businesses = (businessesRaw as Business[] | undefined) ?? [];
+
+  const stampsByNeighborhood: Record<string, number> = {};
   stamps.forEach((s) => {
-    byNeighborhood[s.neighborhood] = (byNeighborhood[s.neighborhood] ?? 0) + 1;
+    stampsByNeighborhood[s.neighborhood] = (stampsByNeighborhood[s.neighborhood] ?? 0) + 1;
+  });
+  const businessesByNeighborhood: Record<string, number> = {};
+  businesses.forEach((b) => {
+    businessesByNeighborhood[b.neighborhood] = (businessesByNeighborhood[b.neighborhood] ?? 0) + 1;
   });
 
   return (
@@ -43,7 +48,7 @@ export default function PassportRoutes() {
           Public & Secret Routes
         </h1>
         <p className="text-sm text-foreground/70 mt-1">
-          Curated walks, rides, and night-outs. Some unlock as you stamp.
+          Curated walks, rides, and night-outs. Each neighborhood unlocks a secret route once you collect enough stamps there.
         </p>
       </div>
 
@@ -75,31 +80,32 @@ export default function PassportRoutes() {
 
       <section>
         <h2 className="text-sm font-black uppercase tracking-wider mb-3 opacity-70">
-          Secret routes
+          Secret neighborhood routes
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {SECRET_ROUTES.map((r) => {
-            const current =
-              r.unlock.type === "total"
-                ? total
-                : byNeighborhood[r.unlock.neighborhood] ?? 0;
-            const need = r.unlock.count;
-            const unlocked = current >= need;
-            const pct = Math.min(100, Math.round((current / need) * 100));
+          {NEIGHBORHOODS.map((n) => {
+            const totalBiz = businessesByNeighborhood[n.name] ?? 0;
+            const need = neighborhoodUnlockThreshold(totalBiz);
+            const current = stampsByNeighborhood[n.name] ?? 0;
+            const unlocked = current >= need && totalBiz > 0;
+            const pct = need > 0 ? Math.min(100, Math.round((current / need) * 100)) : 0;
             const reqLabel =
-              r.unlock.type === "total"
-                ? `${need} total stamps`
-                : `${need} stamps in ${r.unlock.neighborhood}`;
+              totalBiz === 0
+                ? "Spots coming soon"
+                : need < 5
+                  ? `All ${need} spot${need === 1 ? "" : "s"} in ${n.name}`
+                  : `${need} stamps in ${n.name}`;
+
+            const cardClass = unlocked
+              ? "bg-[hsl(var(--brand-navy))] text-[hsl(var(--brand-cream))]"
+              : "bg-white";
 
             return (
-              <div
-                key={r.id}
-                className={`card-pop p-5 ${unlocked ? TONE_BG[r.tone] : "bg-white"}`}
-              >
+              <div key={n.name} className={`card-pop p-5 ${cardClass}`}>
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider mb-1">
                   {unlocked ? (
                     <>
-                      <Sparkles className="w-3.5 h-3.5" /> Secret route unlocked!
+                      <Sparkles className="w-3.5 h-3.5" /> Unlocked
                     </>
                   ) : (
                     <>
@@ -108,20 +114,20 @@ export default function PassportRoutes() {
                   )}
                 </div>
                 <div className="font-black text-lg" style={{ fontFamily: "Bungee, sans-serif" }}>
-                  {r.name}
+                  {n.secretRouteName}
                 </div>
                 <p className={`text-sm mt-1 mb-3 ${unlocked ? "opacity-90" : "text-foreground/70"}`}>
-                  {r.description}
+                  {n.secretRouteDescription}
                 </p>
                 <div className="flex items-baseline justify-between mb-1">
                   <div className="text-[11px] font-black uppercase tracking-wider opacity-80">
                     Unlock: {reqLabel}
                   </div>
                   <div className="text-xs font-black">
-                    {Math.min(current, need)} / {need}
+                    {Math.min(current, need)} / {need || 0}
                   </div>
                 </div>
-                {!unlocked && (
+                {!unlocked && need > 0 && (
                   <div className="progress-track">
                     <div className="progress-fill" style={{ width: `${pct}%` }} />
                   </div>

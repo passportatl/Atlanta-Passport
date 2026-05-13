@@ -7,6 +7,18 @@ import {
   Utensils,
   MapPin,
   Lock,
+  Music,
+  Building2,
+  Trees,
+  TrainFront,
+  Star,
+  Flame,
+  Home,
+  Palette,
+  GlassWater,
+  Compass,
+  Gamepad2,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 
@@ -17,16 +29,41 @@ const ICON_MAP: Record<string, LucideIcon> = {
   "shopping-bag": ShoppingBag,
   disc: Disc,
   utensils: Utensils,
+  music: Music,
+  building: Building2,
+  tree: Trees,
+  train: TrainFront,
+  star: Star,
+  flame: Flame,
+  home: Home,
+  palette: Palette,
+  glass: GlassWater,
+  compass: Compass,
+  gamepad: Gamepad2,
+  sparkles: Sparkles,
 };
 
-const COLOR_MAP: Record<string, { bg: string; ring: string; ink: string }> = {
-  yellow: { bg: "hsl(var(--brand-yellow))", ring: "hsl(var(--foreground))", ink: "hsl(var(--brand-yellow-foreground))" },
-  red:    { bg: "hsl(var(--brand-red))",    ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
-  lime:   { bg: "hsl(var(--brand-lime))",   ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
-  cream:  { bg: "hsl(var(--brand-cream))",  ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
-  navy:   { bg: "hsl(var(--brand-navy))",   ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
-  orange: { bg: "hsl(var(--brand-orange))", ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
-  sky:    { bg: "hsl(var(--brand-sky))",    ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
+interface Palette {
+  bg: string;
+  ring: string;
+  ink: string;
+}
+
+const COLOR_MAP: Record<string, Palette> = {
+  yellow:       { bg: "hsl(var(--brand-yellow))", ring: "hsl(var(--foreground))", ink: "hsl(var(--brand-yellow-foreground))" },
+  red:          { bg: "hsl(var(--brand-red))",    ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
+  lime:         { bg: "#BCF000",                  ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
+  cream:        { bg: "hsl(var(--brand-cream))",  ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
+  navy:         { bg: "hsl(var(--brand-navy))",   ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
+  orange:       { bg: "hsl(var(--brand-orange))", ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
+  sky:          { bg: "hsl(var(--brand-sky))",    ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
+  "green-dark": { bg: "#16432B",                  ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
+  green:        { bg: "#2C7A3D",                  ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
+  black:        { bg: "#141414",                  ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
+  "black-yellow": { bg: "#141414",                ring: "hsl(var(--brand-yellow))", ink: "hsl(var(--brand-yellow))" },
+  "black-lime": { bg: "#141414",                  ring: "#BCF000", ink: "#BCF000" },
+  blue:         { bg: "#1E5DA8",                  ring: "hsl(var(--foreground))", ink: "#FFF5D6" },
+  "cream-black":{ bg: "hsl(var(--brand-cream))",  ring: "hsl(var(--foreground))", ink: "hsl(var(--foreground))" },
 };
 
 interface Props {
@@ -62,6 +99,10 @@ export function StampGraphic({
     : null;
 
   const upperText = neighborhood.toUpperCase();
+  // Stable id suffix for SVG defs to avoid collisions when many stamps render
+  const idSuffix = neighborhood.replace(/[^a-z0-9]/gi, "-").toLowerCase();
+  // Scale arc text down a bit when the label is long
+  const topFontSize = upperText.length > 14 ? 11 : 14;
 
   return (
     <div
@@ -75,18 +116,18 @@ export function StampGraphic({
     >
       <svg viewBox="0 0 200 200" width={size} height={size} className="absolute inset-0">
         <defs>
-          <path id={`arc-top-${neighborhood}`} d="M30,100 A70,70 0 0,1 170,100" fill="none" />
-          <path id={`arc-bot-${neighborhood}`} d="M170,100 A70,70 0 0,1 30,100" fill="none" />
+          <path id={`arc-top-${idSuffix}`} d="M30,100 A70,70 0 0,1 170,100" fill="none" />
+          <path id={`arc-bot-${idSuffix}`} d="M170,100 A70,70 0 0,1 30,100" fill="none" />
         </defs>
         <circle cx="100" cy="100" r="92" fill={palette.bg} stroke={palette.ring} strokeWidth="6" />
         <circle cx="100" cy="100" r="78" fill="none" stroke={palette.ring} strokeWidth="2" strokeDasharray="3 4" />
-        <text fill={palette.ink} fontSize="14" fontFamily="Bungee, sans-serif" letterSpacing="2">
-          <textPath href={`#arc-top-${neighborhood}`} startOffset="50%" textAnchor="middle">
+        <text fill={palette.ink} fontSize={topFontSize} fontFamily="Bungee, sans-serif" letterSpacing="2">
+          <textPath href={`#arc-top-${idSuffix}`} startOffset="50%" textAnchor="middle">
             {upperText}
           </textPath>
         </text>
         <text fill={palette.ink} fontSize="11" fontFamily="Bungee, sans-serif" letterSpacing="3">
-          <textPath href={`#arc-bot-${neighborhood}`} startOffset="50%" textAnchor="middle">
+          <textPath href={`#arc-bot-${idSuffix}`} startOffset="50%" textAnchor="middle">
             {dateLabel ? `${label} • ${dateLabel}` : label}
           </textPath>
         </text>

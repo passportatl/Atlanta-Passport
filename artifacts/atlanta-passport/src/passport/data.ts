@@ -34,26 +34,150 @@ export const REWARDS: RewardDef[] = [
     type: "total",
     tone: "red",
   },
+];
+
+// Neighborhood progression thresholds (per spec)
+export const NEIGHBORHOOD_STARTED = 1;
+export const NEIGHBORHOOD_EARNED = 3;
+export const NEIGHBORHOOD_SECRET = 5;
+
+export interface NeighborhoodDef {
+  name: string;
+  short: string; // arc-text label, kept short
+  stampColor: string;
+  stampIcon: string;
+  secretRouteName: string;
+  secretRouteDescription: string;
+}
+
+export const NEIGHBORHOODS: NeighborhoodDef[] = [
   {
-    id: "neighborhood-route",
-    name: "Secret Neighborhood Route",
-    description: "5 stamps in the same neighborhood unlocks a hyperlocal secret route.",
-    threshold: 5,
-    type: "neighborhood",
-    tone: "navy",
+    name: "West End",
+    short: "WEST END",
+    stampColor: "green-dark",
+    stampIcon: "train",
+    secretRouteName: "West End Local Loop",
+    secretRouteDescription: "A neighborhood walk through patios, plates, and the spots locals send their friends to.",
+  },
+  {
+    name: "East Atlanta Village",
+    short: "EAV",
+    stampColor: "red",
+    stampIcon: "music",
+    secretRouteName: "EAV After Dark",
+    secretRouteDescription: "Late-night EAV: dive bars, dance floors, and the kitchen still slinging at 1am.",
+  },
+  {
+    name: "Downtown / Castleberry",
+    short: "DOWNTOWN",
+    stampColor: "black-yellow",
+    stampIcon: "building",
+    secretRouteName: "Downtown Culture Run",
+    secretRouteDescription: "Murals, museums, and the city's deepest live-music history in one afternoon.",
+  },
+  {
+    name: "Grant Park",
+    short: "GRANT PARK",
+    stampColor: "green",
+    stampIcon: "tree",
+    secretRouteName: "Grant Park Day Out",
+    secretRouteDescription: "Cemetery-to-patio: a slow Grant Park morning that turns into a long, easy night.",
+  },
+  {
+    name: "Little Five Points",
+    short: "LITTLE FIVE",
+    stampColor: "black",
+    stampIcon: "star",
+    secretRouteName: "Little Five Weird & Wonderful",
+    secretRouteDescription: "Punk records, Vortex burgers, vintage racks, and the corners only L5P regulars know.",
+  },
+  {
+    name: "Summerhill",
+    short: "SUMMERHILL",
+    stampColor: "orange",
+    stampIcon: "flame",
+    secretRouteName: "Summerhill Food Stop",
+    secretRouteDescription: "A short, dense Summerhill food crawl built around Talat Market and the new wave.",
+  },
+  {
+    name: "Cabbagetown",
+    short: "CABBAGETOWN",
+    stampColor: "blue",
+    stampIcon: "home",
+    secretRouteName: "Cabbagetown Hidden Corner",
+    secretRouteDescription: "Mill-town murals, porch culture, and the wellness + food spots tucked behind it all.",
+  },
+  {
+    name: "Kirkwood",
+    short: "KIRKWOOD",
+    stampColor: "yellow",
+    stampIcon: "coffee",
+    secretRouteName: "Kirkwood Easy Afternoon",
+    secretRouteDescription: "Bakery to taproom to dinner — the relaxed Kirkwood loop locals do on a Saturday.",
+  },
+  {
+    name: "Edgewood",
+    short: "EDGEWOOD",
+    stampColor: "lime",
+    stampIcon: "glass",
+    secretRouteName: "Edgewood Night Run",
+    secretRouteDescription: "A tight Edgewood crawl — wine bar in, late-night spot out.",
+  },
+  {
+    name: "Old Fourth Ward",
+    short: "OLD FOURTH WARD",
+    stampColor: "red",
+    stampIcon: "flame",
+    secretRouteName: "Old Fourth Ward Late Loop",
+    secretRouteDescription: "O4W after sunset: pizza, arcade games, and the secret bars off Auburn.",
+  },
+  {
+    name: "Decatur",
+    short: "DECATUR",
+    stampColor: "blue",
+    stampIcon: "building",
+    secretRouteName: "Decatur Food + Finds",
+    secretRouteDescription: "Square-to-square eating, with a stop for vintage and one for cocktails on the way.",
+  },
+  {
+    name: "Reynoldstown",
+    short: "REYNOLDSTOWN",
+    stampColor: "green",
+    stampIcon: "bike",
+    secretRouteName: "Reynoldstown Ride Through",
+    secretRouteDescription: "A quick BeltLine-adjacent ride hitting the spots that made Reynoldstown.",
+  },
+  {
+    name: "Poncey-Highland",
+    short: "PONCEY-HIGHLAND",
+    stampColor: "cream-black",
+    stampIcon: "disc",
+    secretRouteName: "Poncey-Highland Classic Crawl",
+    secretRouteDescription: "Old Atlanta done right: marquee venues, dive booths, and a couple of secret shots.",
+  },
+  {
+    name: "Midtown",
+    short: "MIDTOWN",
+    stampColor: "green-dark",
+    stampIcon: "building",
+    secretRouteName: "Midtown Arts + Drinks",
+    secretRouteDescription: "Gallery hop into late dinner, ending at the rooftop locals actually drink at.",
+  },
+  {
+    name: "Outliers",
+    short: "ATL OUTLIER",
+    stampColor: "black-lime",
+    stampIcon: "compass",
+    secretRouteName: "ATL Outlier Finds",
+    secretRouteDescription: "The drive-to spots worth the gas — galleries, superettes, and out-of-pocket gems.",
   },
 ];
 
-export interface SecretRouteDef {
-  id: string;
-  name: string;
-  description: string;
-  unlock:
-    | { type: "total"; count: number }
-    | { type: "neighborhood"; neighborhood: string; count: number };
-  tone: "yellow" | "red" | "lime" | "navy";
-}
+export const NEIGHBORHOOD_BY_NAME: Record<string, NeighborhoodDef> = Object.fromEntries(
+  NEIGHBORHOODS.map((n) => [n.name, n]),
+);
 
+// Public, always-unlocked routes
 export const PUBLIC_ROUTES = [
   {
     id: "first-time",
@@ -81,45 +205,7 @@ export const PUBLIC_ROUTES = [
   },
 ];
 
-export const SECRET_ROUTES: SecretRouteDef[] = [
-  {
-    id: "midtown-after-dark",
-    name: "Midtown After Dark",
-    description: "Rooftops, late dinners, and live music — a Midtown crawl past sunset.",
-    unlock: { type: "neighborhood", neighborhood: "Midtown", count: 5 },
-    tone: "red",
-  },
-  {
-    id: "hidden-atlanta",
-    name: "Hidden Atlanta",
-    description: "Secret speakeasies, off-menu spots, and murals you can't find on a map.",
-    unlock: { type: "total", count: 10 },
-    tone: "navy",
-  },
-  {
-    id: "eastside-night-run",
-    name: "Eastside Night Run",
-    description: "Lit-up BeltLine miles ending with tacos and drinks in Inman Park.",
-    unlock: { type: "total", count: 10 },
-    tone: "lime",
-  },
-  {
-    id: "local-favorites",
-    name: "Local Favorites",
-    description: "20 stamps deep — this is the route locals send their best friends on.",
-    unlock: { type: "total", count: 20 },
-    tone: "yellow",
-  },
-];
-
-export const SAMPLE_NEIGHBORHOODS = [
-  "Old Fourth Ward",
-  "Midtown",
-  "BeltLine",
-  "Decatur",
-  "Little Five Points",
-  "Westside",
-];
+export const SAMPLE_NEIGHBORHOODS = NEIGHBORHOODS.map((n) => n.name);
 
 export const CATEGORY_LABEL: Record<string, string> = {
   coffee: "Coffee",
@@ -127,4 +213,27 @@ export const CATEGORY_LABEL: Record<string, string> = {
   rides: "Rides",
   retail: "Shop",
   food: "Food",
+  nightlife: "Nightlife",
+  arts: "Arts",
+  wellness: "Wellness",
+  events: "Events",
 };
+
+/** Compute neighborhood unlock threshold given how many businesses it has. */
+export function neighborhoodUnlockThreshold(totalBusinesses: number): number {
+  if (totalBusinesses <= 0) return NEIGHBORHOOD_SECRET;
+  return Math.min(NEIGHBORHOOD_SECRET, totalBusinesses);
+}
+
+export type NeighborhoodStatus = "locked" | "started" | "earned" | "unlocked";
+
+export function neighborhoodStatus(
+  collectedCount: number,
+  totalBusinesses: number,
+): NeighborhoodStatus {
+  const unlockAt = neighborhoodUnlockThreshold(totalBusinesses);
+  if (collectedCount >= unlockAt) return "unlocked";
+  if (collectedCount >= NEIGHBORHOOD_EARNED) return "earned";
+  if (collectedCount >= NEIGHBORHOOD_STARTED) return "started";
+  return "locked";
+}

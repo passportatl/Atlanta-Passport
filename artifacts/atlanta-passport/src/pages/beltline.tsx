@@ -47,7 +47,7 @@ const exampleOffers = [
 
 const whatYouProvide = [
   { icon: Tag, title: "A small perk or coupon", desc: "Something simple for Passport holders to redeem in-store." },
-  { icon: Stamp, title: "A stamp or sticker", desc: "Used to mark each visitor's passport when they stop in." },
+  { icon: Stamp, title: "A stamp or sticker", desc: "Used to stamp each visitor's passport when they stop in." },
   { icon: Package, title: "Optional swag for prizes", desc: "A small giveaway item for visitors who turn in completed passports." },
 ];
 

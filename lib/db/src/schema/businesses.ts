@@ -11,6 +11,7 @@ export const businessesTable = pgTable("businesses", {
   description: text("description").notNull(),
   address: text("address").notNull(),
   image: text("image"),
+  contactName: text("contact_name"),
   stampName: text("stamp_name").notNull(),
   stampColor: text("stamp_color").notNull(),
   icon: text("icon").notNull(),
