@@ -54,7 +54,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
         <Logo />
 
         {/* Desktop Nav — tourist-first */}
@@ -134,10 +134,11 @@ export default function Navbar() {
             href="/passport"
             aria-label={passportShort}
             title={passportShort}
-            className="h-10 w-10 inline-flex items-center justify-center border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+            className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
             data-testid="link-mobile-passport"
           >
             <BookMarked className="h-4 w-4" />
+            <span>Pass</span>
           </Link>
           <LanguageSwitcher />
           <Sheet>
