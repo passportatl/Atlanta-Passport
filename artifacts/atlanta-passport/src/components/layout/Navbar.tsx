@@ -2,10 +2,11 @@ import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MoveRight, ChevronDown } from "lucide-react";
+import { Menu, MoveRight, ChevronDown, BookMarked } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useVisitor } from "@/passport/visitor-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,12 @@ const navItemClass = (active: boolean) =>
 export default function Navbar() {
   const [location] = useLocation();
   const { t } = useTranslation();
+  const { visitorId, visitor } = useVisitor();
+  const hasPassport = !!visitorId;
+  const passportLabel = hasPassport
+    ? `${visitor?.firstName ? `${visitor.firstName}'s` : "My"} Passport`
+    : "Start Your Passport";
+  const passportShort = hasPassport ? "My Passport" : "Get Passport";
 
   const touristLinks = [
     { name: t("nav.beltline_tour"), path: "/beltline" },
@@ -96,19 +103,41 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <Link
+            href="/passport"
+            className={cn(
+              navItemClass(location.startsWith("/passport")),
+              "inline-flex items-center gap-1.5 ml-1",
+            )}
+            data-testid="link-nav-passport"
+          >
+            <BookMarked className="w-3.5 h-3.5" />
+            {hasPassport ? "My Passport" : "Passport"}
+          </Link>
+
           <div className="ml-3">
             <LanguageSwitcher />
           </div>
           <Link
-            href="/explore"
+            href={hasPassport ? "/passport" : "/explore"}
             className="button-pop button-pop-yellow ml-3 text-xs px-5 py-2.5"
+            data-testid="button-nav-cta"
           >
-            {t("nav.start_exploring")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
+            {hasPassport ? passportLabel : t("nav.start_exploring")}{" "}
+            <MoveRight className="w-4 h-4 rtl:rotate-180" />
           </Link>
         </nav>
 
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-2">
+          <Link
+            href="/passport"
+            className="button-pop button-pop-cream text-[10px] px-3 py-2 whitespace-nowrap inline-flex items-center gap-1"
+            data-testid="link-mobile-passport"
+          >
+            <BookMarked className="w-3 h-3" />
+            {passportShort}
+          </Link>
           <Link
             href="/explore"
             className="button-pop button-pop-yellow text-[10px] px-3 py-2 whitespace-nowrap"
@@ -149,6 +178,17 @@ export default function Navbar() {
                     {link.name}
                   </Link>
                 ))}
+                <Link
+                  href="/passport"
+                  className={cn(
+                    "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
+                    location.startsWith("/passport") ? "text-foreground" : "text-foreground/60",
+                  )}
+                  data-testid="link-mobile-menu-passport"
+                >
+                  <BookMarked className="w-4 h-4" />
+                  {hasPassport ? "My Passport" : "Start Passport"}
+                </Link>
 
                 {/* Language picker inside the menu (was cut off in header on small phones) */}
                 <div className="pt-2 border-t border-foreground/15">
