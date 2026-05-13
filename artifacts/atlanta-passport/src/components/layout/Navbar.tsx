@@ -109,7 +109,6 @@ export default function Navbar() {
 
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-2">
-          <LanguageSwitcher />
           <Link
             href="/explore"
             className="button-pop button-pop-yellow text-[10px] px-3 py-2 whitespace-nowrap"
@@ -150,6 +149,11 @@ export default function Navbar() {
                     {link.name}
                   </Link>
                 ))}
+
+                {/* Language picker inside the menu (was cut off in header on small phones) */}
+                <div className="pt-2 border-t border-foreground/15">
+                  <LanguageSwitcher variant="menu" />
+                </div>
               </div>
 
               {/* Separated business section */}
