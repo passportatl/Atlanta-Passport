@@ -91,9 +91,17 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
-          <p>{t("footer.disclaimer")}</p>
-          <p>&copy; {new Date().getFullYear()} Atlanta Passport. {t("footer.rights")}</p>
+        <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed flex flex-col md:flex-row md:items-end md:justify-between gap-4 max-w-5xl">
+          <div className="space-y-2 max-w-3xl">
+            <p>{t("footer.disclaimer")}</p>
+            <p>&copy; {new Date().getFullYear()} Atlanta Passport. {t("footer.rights")}</p>
+          </div>
+          <Link
+            href="/admin/stamps"
+            className="text-background/40 hover:text-brand-yellow transition-colors tracking-widest uppercase text-[10px] font-bold"
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </footer>
