@@ -5,18 +5,30 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  Business,
+  BusinessList,
+  CollectStampInput,
+  CreateVisitorInput,
+  HealthStatus,
+  StampCollection,
+  StampList,
+  Visitor,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -25,7 +37,6 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
@@ -99,3 +110,511 @@ export function useHealthCheck<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Create a passport visitor
+ */
+export const getCreateVisitorUrl = () => {
+  return `/api/visitors`;
+};
+
+export const createVisitor = async (
+  createVisitorInput: CreateVisitorInput,
+  options?: RequestInit,
+): Promise<Visitor> => {
+  return customFetch<Visitor>(getCreateVisitorUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createVisitorInput),
+  });
+};
+
+export const getCreateVisitorMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createVisitor>>,
+    TError,
+    { data: BodyType<CreateVisitorInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createVisitor>>,
+  TError,
+  { data: BodyType<CreateVisitorInput> },
+  TContext
+> => {
+  const mutationKey = ["createVisitor"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createVisitor>>,
+    { data: BodyType<CreateVisitorInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createVisitor(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateVisitorMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createVisitor>>
+>;
+export type CreateVisitorMutationBody = BodyType<CreateVisitorInput>;
+export type CreateVisitorMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a passport visitor
+ */
+export const useCreateVisitor = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createVisitor>>,
+    TError,
+    { data: BodyType<CreateVisitorInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createVisitor>>,
+  TError,
+  { data: BodyType<CreateVisitorInput> },
+  TContext
+> => {
+  return useMutation(getCreateVisitorMutationOptions(options));
+};
+
+/**
+ * @summary Get a visitor
+ */
+export const getGetVisitorUrl = (id: string) => {
+  return `/api/visitors/${id}`;
+};
+
+export const getVisitor = async (
+  id: string,
+  options?: RequestInit,
+): Promise<Visitor> => {
+  return customFetch<Visitor>(getGetVisitorUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetVisitorQueryKey = (id: string) => {
+  return [`/api/visitors/${id}`] as const;
+};
+
+export const getGetVisitorQueryOptions = <
+  TData = Awaited<ReturnType<typeof getVisitor>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getVisitor>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetVisitorQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getVisitor>>> = ({
+    signal,
+  }) => getVisitor(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getVisitor>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetVisitorQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getVisitor>>
+>;
+export type GetVisitorQueryError = ErrorType<void>;
+
+/**
+ * @summary Get a visitor
+ */
+
+export function useGetVisitor<
+  TData = Awaited<ReturnType<typeof getVisitor>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getVisitor>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetVisitorQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List a visitor's collected stamps
+ */
+export const getListVisitorStampsUrl = (id: string) => {
+  return `/api/visitors/${id}/stamps`;
+};
+
+export const listVisitorStamps = async (
+  id: string,
+  options?: RequestInit,
+): Promise<StampList> => {
+  return customFetch<StampList>(getListVisitorStampsUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListVisitorStampsQueryKey = (id: string) => {
+  return [`/api/visitors/${id}/stamps`] as const;
+};
+
+export const getListVisitorStampsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listVisitorStamps>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listVisitorStamps>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListVisitorStampsQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listVisitorStamps>>
+  > = ({ signal }) => listVisitorStamps(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listVisitorStamps>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListVisitorStampsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listVisitorStamps>>
+>;
+export type ListVisitorStampsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List a visitor's collected stamps
+ */
+
+export function useListVisitorStamps<
+  TData = Awaited<ReturnType<typeof listVisitorStamps>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listVisitorStamps>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListVisitorStampsQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List active participating businesses
+ */
+export const getListBusinessesUrl = () => {
+  return `/api/businesses`;
+};
+
+export const listBusinesses = async (
+  options?: RequestInit,
+): Promise<BusinessList> => {
+  return customFetch<BusinessList>(getListBusinessesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListBusinessesQueryKey = () => {
+  return [`/api/businesses`] as const;
+};
+
+export const getListBusinessesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listBusinesses>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listBusinesses>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListBusinessesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listBusinesses>>> = ({
+    signal,
+  }) => listBusinesses({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listBusinesses>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListBusinessesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listBusinesses>>
+>;
+export type ListBusinessesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List active participating businesses
+ */
+
+export function useListBusinesses<
+  TData = Awaited<ReturnType<typeof listBusinesses>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listBusinesses>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListBusinessesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get a single business by slug
+ */
+export const getGetBusinessBySlugUrl = (slug: string) => {
+  return `/api/businesses/${slug}`;
+};
+
+export const getBusinessBySlug = async (
+  slug: string,
+  options?: RequestInit,
+): Promise<Business> => {
+  return customFetch<Business>(getGetBusinessBySlugUrl(slug), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetBusinessBySlugQueryKey = (slug: string) => {
+  return [`/api/businesses/${slug}`] as const;
+};
+
+export const getGetBusinessBySlugQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBusinessBySlug>>,
+  TError = ErrorType<void>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getBusinessBySlug>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetBusinessBySlugQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getBusinessBySlug>>
+  > = ({ signal }) => getBusinessBySlug(slug, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBusinessBySlug>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetBusinessBySlugQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getBusinessBySlug>>
+>;
+export type GetBusinessBySlugQueryError = ErrorType<void>;
+
+/**
+ * @summary Get a single business by slug
+ */
+
+export function useGetBusinessBySlug<
+  TData = Awaited<ReturnType<typeof getBusinessBySlug>>,
+  TError = ErrorType<void>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getBusinessBySlug>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetBusinessBySlugQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Collect a stamp for a visitor
+ */
+export const getCollectStampUrl = () => {
+  return `/api/stamps`;
+};
+
+export const collectStamp = async (
+  collectStampInput: CollectStampInput,
+  options?: RequestInit,
+): Promise<StampCollection> => {
+  return customFetch<StampCollection>(getCollectStampUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(collectStampInput),
+  });
+};
+
+export const getCollectStampMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof collectStamp>>,
+    TError,
+    { data: BodyType<CollectStampInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof collectStamp>>,
+  TError,
+  { data: BodyType<CollectStampInput> },
+  TContext
+> => {
+  const mutationKey = ["collectStamp"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof collectStamp>>,
+    { data: BodyType<CollectStampInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return collectStamp(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CollectStampMutationResult = NonNullable<
+  Awaited<ReturnType<typeof collectStamp>>
+>;
+export type CollectStampMutationBody = BodyType<CollectStampInput>;
+export type CollectStampMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Collect a stamp for a visitor
+ */
+export const useCollectStamp = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof collectStamp>>,
+    TError,
+    { data: BodyType<CollectStampInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof collectStamp>>,
+  TError,
+  { data: BodyType<CollectStampInput> },
+  TContext
+> => {
+  return useMutation(getCollectStampMutationOptions(options));
+};

@@ -1,0 +1,169 @@
+Add a full Passport ATL digital stamp system to the existing app.
+
+Keep the current visual style of the site:
+- cream background
+- thick black outlines
+- yellow #F9C61F
+- red #D92629
+- lime #BCF000
+- dark green accents
+- bold rounded “passport” UI style
+
+DO NOT rebuild the whole app. Add these features into the current app.
+
+FEATURES TO ADD:
+
+1. Digital Passport User System
+Create a lightweight visitor passport flow.
+Visitors should be able to start a passport using:
+- first name
+- email
+- optional phone
+
+Store visitor data locally in database.
+
+Each visitor should have:
+- id
+- firstName
+- email
+- phone
+- createdAt
+
+If user is already stored in localStorage, keep them logged into their passport.
+
+2. Businesses Table / Data
+Create sample participating businesses with:
+- id
+- slug
+- name
+- category
+- neighborhood
+- description
+- address
+- image
+- stampName
+- stampColor
+- icon
+- isActive
+
+Sample businesses:
+- Ponce Coffee Co. / coffee / Old Fourth Ward
+- Midtown Rooftop / drinks / Midtown
+- BeltLine Bikes / rides / BeltLine
+- Decatur Market / retail / Decatur
+- Little Five Records / retail / Little Five Points
+- Westside Tacos / food / Westside
+
+3. Stamp Collection System
+Create a stamps/checkins table:
+- id
+- visitorId
+- businessId
+- businessSlug
+- stampName
+- neighborhood
+- category
+- collectedAt
+
+Prevent duplicate stamps from the same business for the same visitor.
+If already collected, show “Stamp Already Collected” but still show the stamp.
+
+4. QR Scan Routes
+Create public routes:
+- /stamp/:businessSlug
+- /passport
+- /passport/stamps
+- /passport/rewards
+- /passport/routes
+
+When someone visits /stamp/:businessSlug:
+A. If they do not have a passport yet, show a “Start Your Passport” form.
+B. After creating passport, collect the stamp.
+C. Show a full-screen “STAMP COLLECTED!” page.
+D. Include:
+   - business name
+   - neighborhood
+   - digital stamp graphic
+   - button: “View My Passport”
+   - button: “Keep Exploring”
+
+5. Digital Passport Page
+Create /passport page showing:
+- Passport ATL header
+- “Your Passport”
+- visitor name
+- total stamps collected
+- neighborhoods explored
+- progress bar toward next reward
+- grid of collected stamps
+- locked faded stamps for sample neighborhoods not collected yet
+
+Use circular stamp graphics that match the Passport ATL look.
+
+6. My Stamps Page
+Create /passport/stamps showing all collected stamps.
+Add filters:
+- All
+- Neighborhoods
+- Categories
+
+Each stamp should look like a circular collectible passport stamp with:
+- neighborhood
+- ATL
+- category icon
+- “EXPLORED”
+- collected date
+
+7. Rewards Page
+Create reward logic:
+- 5 stamps = Weekly Giveaway Entry
+- 10 stamps = Secret Route Access
+- 20 stamps = Grand Prize Entry
+- 5 stamps in same neighborhood = Secret Neighborhood Route
+
+Create /passport/rewards showing:
+- Available rewards
+- In progress rewards
+- Claimed rewards placeholder
+
+8. Secret Routes
+Create /passport/routes.
+Show public routes unlocked by default:
+- First Time in Atlanta
+- BeltLine Day
+- Coffee & Local Finds
+
+Show secret routes locked until requirements are met:
+- Midtown After Dark: unlock with 5 Midtown stamps
+- Hidden Atlanta: unlock with 10 total stamps
+- Eastside Night Run: unlock with 10 total stamps
+- Local Favorites: unlock with 20 total stamps
+
+When unlocked, show “SECRET ROUTE UNLOCKED!”
+
+9. Admin Seed / Demo QR Codes
+Create an admin/demo section at /admin/stamps showing all businesses with:
+- business name
+- QR URL
+- copy link button
+- open stamp page button
+
+QR URL should be:
+https://CURRENT_DOMAIN/stamp/business-slug
+
+10. Styling
+Make the UI mobile-first and match the provided screenshots.
+Use:
+- thick rounded cards
+- black shadows
+- bold labels
+- yellow/red/lime accents
+- playful stamp graphics
+- clean bottom navigation:
+  Home / Stamps / Routes / Rewards / Profile
+
+11. Important
+Do not remove existing homepage.
+Add the stamp system as new pages/components.
+Use the existing framework and database setup if available.
+If there is no database yet, use SQLite or Replit database, whichever fits the existing project best.

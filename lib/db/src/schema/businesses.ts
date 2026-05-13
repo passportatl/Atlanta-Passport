@@ -1,0 +1,22 @@
+import { pgTable, text, boolean, uuid } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const businessesTable = pgTable("businesses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  neighborhood: text("neighborhood").notNull(),
+  description: text("description").notNull(),
+  address: text("address").notNull(),
+  image: text("image"),
+  stampName: text("stamp_name").notNull(),
+  stampColor: text("stamp_color").notNull(),
+  icon: text("icon").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
+export const insertBusinessSchema = createInsertSchema(businessesTable).omit({ id: true });
+export type InsertBusiness = z.infer<typeof insertBusinessSchema>;
+export type Business = typeof businessesTable.$inferSelect;

@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,10 +12,18 @@ import About from "@/pages/about";
 import Apply from "@/pages/apply";
 import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
+import StampPage from "@/pages/stamp";
+import PassportHome from "@/pages/passport/index";
+import PassportStamps from "@/pages/passport/stamps";
+import PassportRewards from "@/pages/passport/rewards";
+import PassportRoutes from "@/pages/passport/routes";
+import AdminStamps from "@/pages/admin-stamps";
+import { VisitorProvider } from "@/passport/visitor-context";
+import { PassportLayout } from "@/passport/PassportLayout";
 
 const queryClient = new QueryClient();
 
-function Router() {
+function MarketingRoutes() {
   return (
     <Layout>
       <Switch>
@@ -33,14 +41,48 @@ function Router() {
   );
 }
 
+function PassportRoutesGroup() {
+  return (
+    <PassportLayout>
+      <Switch>
+        <Route path="/passport" component={PassportHome} />
+        <Route path="/passport/stamps" component={PassportStamps} />
+        <Route path="/passport/rewards" component={PassportRewards} />
+        <Route path="/passport/routes" component={PassportRoutes} />
+        <Route component={NotFound} />
+      </Switch>
+    </PassportLayout>
+  );
+}
+
+function Router() {
+  const [location] = useLocation();
+  if (location.startsWith("/stamp/")) {
+    return (
+      <Switch>
+        <Route path="/stamp/:businessSlug" component={StampPage} />
+      </Switch>
+    );
+  }
+  if (location === "/admin/stamps") {
+    return <AdminStamps />;
+  }
+  if (location === "/passport" || location.startsWith("/passport/")) {
+    return <PassportRoutesGroup />;
+  }
+  return <MarketingRoutes />;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
+        <VisitorProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </VisitorProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

@@ -8,3 +8,58 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface Visitor {
+  id: string;
+  firstName: string;
+  email: string;
+  phone?: string | null;
+  createdAt: string;
+}
+
+export interface CreateVisitorInput {
+  /** @minLength 1 */
+  firstName: string;
+  email: string;
+  phone?: string;
+}
+
+export interface Business {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  neighborhood: string;
+  description: string;
+  address: string;
+  image?: string | null;
+  stampName: string;
+  stampColor: string;
+  icon: string;
+  isActive: boolean;
+}
+
+export type BusinessList = Business[];
+
+export interface Stamp {
+  id: string;
+  visitorId: string;
+  businessId: string;
+  businessSlug: string;
+  stampName: string;
+  neighborhood: string;
+  category: string;
+  collectedAt: string;
+}
+
+export type StampList = Stamp[];
+
+export interface CollectStampInput {
+  visitorId: string;
+  businessSlug: string;
+}
+
+export interface StampCollection {
+  stamp: Stamp;
+  alreadyCollected: boolean;
+}

@@ -8,9 +8,125 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
+});
+
+/**
+ * @summary Create a passport visitor
+ */
+
+export const CreateVisitorBody = zod.object({
+  firstName: zod.string().min(1),
+  email: zod.string().email(),
+  phone: zod.string().optional(),
+});
+
+export const CreateVisitorResponse = zod.object({
+  id: zod.string(),
+  firstName: zod.string(),
+  email: zod.string(),
+  phone: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Get a visitor
+ */
+export const GetVisitorParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const GetVisitorResponse = zod.object({
+  id: zod.string(),
+  firstName: zod.string(),
+  email: zod.string(),
+  phone: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary List a visitor's collected stamps
+ */
+export const ListVisitorStampsParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const ListVisitorStampsResponseItem = zod.object({
+  id: zod.string(),
+  visitorId: zod.string(),
+  businessId: zod.string(),
+  businessSlug: zod.string(),
+  stampName: zod.string(),
+  neighborhood: zod.string(),
+  category: zod.string(),
+  collectedAt: zod.coerce.date(),
+});
+export const ListVisitorStampsResponse = zod.array(
+  ListVisitorStampsResponseItem,
+);
+
+/**
+ * @summary List active participating businesses
+ */
+export const ListBusinessesResponseItem = zod.object({
+  id: zod.string(),
+  slug: zod.string(),
+  name: zod.string(),
+  category: zod.string(),
+  neighborhood: zod.string(),
+  description: zod.string(),
+  address: zod.string(),
+  image: zod.string().nullish(),
+  stampName: zod.string(),
+  stampColor: zod.string(),
+  icon: zod.string(),
+  isActive: zod.boolean(),
+});
+export const ListBusinessesResponse = zod.array(ListBusinessesResponseItem);
+
+/**
+ * @summary Get a single business by slug
+ */
+export const GetBusinessBySlugParams = zod.object({
+  slug: zod.coerce.string(),
+});
+
+export const GetBusinessBySlugResponse = zod.object({
+  id: zod.string(),
+  slug: zod.string(),
+  name: zod.string(),
+  category: zod.string(),
+  neighborhood: zod.string(),
+  description: zod.string(),
+  address: zod.string(),
+  image: zod.string().nullish(),
+  stampName: zod.string(),
+  stampColor: zod.string(),
+  icon: zod.string(),
+  isActive: zod.boolean(),
+});
+
+/**
+ * @summary Collect a stamp for a visitor
+ */
+export const CollectStampBody = zod.object({
+  visitorId: zod.string(),
+  businessSlug: zod.string(),
+});
+
+export const CollectStampResponse = zod.object({
+  stamp: zod.object({
+    id: zod.string(),
+    visitorId: zod.string(),
+    businessId: zod.string(),
+    businessSlug: zod.string(),
+    stampName: zod.string(),
+    neighborhood: zod.string(),
+    category: zod.string(),
+    collectedAt: zod.coerce.date(),
+  }),
+  alreadyCollected: zod.boolean(),
 });

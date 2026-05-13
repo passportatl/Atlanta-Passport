@@ -10,13 +10,18 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: visitors
+    description: Passport visitor accounts
+  - name: businesses
+    description: Participating businesses
+  - name: stamps
+    description: Stamp collection
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,119 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /visitors:
+    post:
+      operationId: createVisitor
+      tags: [visitors]
+      summary: Create a passport visitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVisitorInput"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Visitor"
+
+  /visitors/{id}:
+    get:
+      operationId: getVisitor
+      tags: [visitors]
+      summary: Get a visitor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Visitor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Visitor"
+        "404":
+          description: Not found
+
+  /visitors/{id}/stamps:
+    get:
+      operationId: listVisitorStamps
+      tags: [stamps]
+      summary: List a visitor's collected stamps
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Stamps
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StampList"
+
+  /businesses:
+    get:
+      operationId: listBusinesses
+      tags: [businesses]
+      summary: List active participating businesses
+      responses:
+        "200":
+          description: Businesses
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessList"
+
+  /businesses/{slug}:
+    get:
+      operationId: getBusinessBySlug
+      tags: [businesses]
+      summary: Get a single business by slug
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Business
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Business"
+        "404":
+          description: Not found
+
+  /stamps:
+    post:
+      operationId: collectStamp
+      tags: [stamps]
+      summary: Collect a stamp for a visitor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CollectStampInput"
+      responses:
+        "200":
+          description: Collected (or already collected)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StampCollection"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +149,133 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    Visitor:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, firstName, email, createdAt]
+
+    CreateVisitorInput:
+      type: object
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+      required: [firstName, email]
+
+    Business:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        neighborhood:
+          type: string
+        description:
+          type: string
+        address:
+          type: string
+        image:
+          type: string
+          nullable: true
+        stampName:
+          type: string
+        stampColor:
+          type: string
+        icon:
+          type: string
+        isActive:
+          type: boolean
+      required:
+        - id
+        - slug
+        - name
+        - category
+        - neighborhood
+        - description
+        - address
+        - stampName
+        - stampColor
+        - icon
+        - isActive
+
+    BusinessList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Business"
+
+    Stamp:
+      type: object
+      properties:
+        id:
+          type: string
+        visitorId:
+          type: string
+        businessId:
+          type: string
+        businessSlug:
+          type: string
+        stampName:
+          type: string
+        neighborhood:
+          type: string
+        category:
+          type: string
+        collectedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - visitorId
+        - businessId
+        - businessSlug
+        - stampName
+        - neighborhood
+        - category
+        - collectedAt
+
+    StampList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Stamp"
+
+    CollectStampInput:
+      type: object
+      properties:
+        visitorId:
+          type: string
+        businessSlug:
+          type: string
+      required: [visitorId, businessSlug]
+
+    StampCollection:
+      type: object
+      properties:
+        stamp:
+          $ref: "#/components/schemas/Stamp"
+        alreadyCollected:
+          type: boolean
+      required: [stamp, alreadyCollected]

@@ -31,10 +31,24 @@ A premium, mobile-first marketing site for "Atlanta Passport" — a hyperlocal c
 
 ## Architecture decisions
 
-- Frontend-only marketing site — no backend wired up; sample data is static in `src/data/`.
+- Marketing site uses static sample data in `src/data/`.
 - Apply form is local-state only (no submit endpoint); shows a thank-you state after submit.
-- Routing via `wouter` with base path `import.meta.env.BASE_URL`.
+- **Digital Passport** is backend-wired (Postgres + Express). Visitor accounts, businesses, and stamp collection live in `@workspace/db`; API contract lives in `lib/api-spec/openapi.yaml`; React Query hooks come from `@workspace/api-client-react` (Orval codegen). Visitor id persists in `localStorage` (`atlanta-passport-visitor-id`) via `VisitorProvider`.
+- Routing via `wouter` with base path `import.meta.env.BASE_URL`. App.tsx splits routing by URL prefix: `/stamp/:slug` (full-bleed), `/admin/stamps` (admin), `/passport*` (PassportLayout w/ bottom nav), everything else (marketing Layout w/ Navbar+Footer).
 - No FIFA branding anywhere — independent guide; disclaimer in footer.
+
+## Passport stamp system
+
+- **Schema** (`lib/db/src/schema/`): `visitors`, `businesses`, `stamps` (unique `(visitorId, businessId)` to prevent duplicates).
+- **Server seeds** 6 sample businesses on boot (`artifacts/api-server/src/lib/seed.ts`) — idempotent via `onConflictDoNothing(slug)`. Push schema with `pnpm --filter @workspace/db run push`.
+- **Endpoints**: `POST /api/visitors`, `GET /api/visitors/:id`, `GET /api/visitors/:id/stamps`, `GET /api/businesses`, `GET /api/businesses/:slug`, `POST /api/stamps` (returns `{stamp, alreadyCollected}`).
+- **Frontend pages**: `/stamp/:slug` (auto-collects after passport exists; full-screen success), `/passport` (profile/home), `/passport/stamps` (filterable grid: All / Neighborhoods / Categories), `/passport/rewards` (5/10/20 + neighborhood thresholds), `/passport/routes` (3 public + 4 secret routes), `/admin/stamps` (QR + copy-link grid using qrserver.com).
+- **Reward thresholds** (in `src/passport/data.ts`): 5 = Weekly Giveaway, 10 = Secret Route Access, 20 = Grand Prize, 5-in-neighborhood = Secret Neighborhood Route. Secret routes require: Midtown After Dark (5 Midtown), Hidden Atlanta (10 total), Eastside Night Run (10 total), Local Favorites (20 total).
+- **Brand stamp graphic** (`src/passport/StampGraphic.tsx`): circular SVG with neighborhood arc-text, ATL center, lucide icon, EXPLORED + date arc. Color palette maps to brand tokens (yellow/red/lime/cream/navy/orange/sky). `locked` prop greys it out and swaps icon to Lock.
+- **Bottom nav** (`PassportLayout`): Home (/) · Stamps · Routes · Rewards · Profile (/passport).
+- **Wouter v3 convention**: pass `className` directly on `<Link>`, never wrap with a child `<a>` (causes nested-anchor hydration error).
+- **Codegen gotcha**: don't name an OpenAPI schema `XxxResponse` if there's an operation named `xxx` — orval generates an operation response constant with the same name, causing duplicate-export collision in `@workspace/api-zod`. (We use `StampCollection` for the `POST /stamps` body schema.)
+- **Codegen gotcha 2**: orval-generated react-query hooks require explicit `queryKey: getXxxQueryKey(...)` inside the `query` options object (react-query v5 typing). Generated `XxxBody` zod schemas (not `XxxInput`) are the value exports; the `Input` names from the OpenAPI components only become TS types.
 
 ## Product
 
