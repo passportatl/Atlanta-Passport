@@ -129,14 +129,15 @@ export default function Navbar() {
         </nav>
 
         {/* Mobile Nav — tourist CTA + menu */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className="md:hidden flex items-center gap-1.5">
           <Link
             href="/passport"
-            className="button-pop button-pop-cream text-[10px] px-3 py-2 whitespace-nowrap inline-flex items-center gap-1"
+            aria-label={passportShort}
+            title={passportShort}
+            className="h-10 w-10 inline-flex items-center justify-center border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
             data-testid="link-mobile-passport"
           >
-            <BookMarked className="w-3 h-3" />
-            {passportShort}
+            <BookMarked className="h-4 w-4" />
           </Link>
           <Link
             href="/explore"
