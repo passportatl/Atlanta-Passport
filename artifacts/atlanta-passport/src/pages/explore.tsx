@@ -14,13 +14,20 @@ export default function Explore() {
     ? new URLSearchParams(window.location.search).get("neighborhood")
     : null;
 
-  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [activeCategories, setActiveCategories] = useState<string[]>([]);
   const [activeNeighborhood, setActiveNeighborhood] = useState<string>(initialNeighborhood ?? "All");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const toggleCategory = (cat: string) => {
+    setActiveCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+    );
+  };
+
   const filteredBusinesses = useMemo(() => {
     return businesses.filter((biz) => {
-      const matchCategory = activeCategory === "All" || biz.category === activeCategory;
+      const matchCategory =
+        activeCategories.length === 0 || activeCategories.includes(biz.category);
       const matchNeighborhood = activeNeighborhood === "All" || 
         // Simple mapping for demo purposes since neighborhood IDs might not exactly match the string
         biz.neighborhood.toLowerCase().includes(activeNeighborhood.toLowerCase());
@@ -29,7 +36,7 @@ export default function Explore() {
       
       return matchCategory && matchNeighborhood && matchSearch;
     });
-  }, [activeCategory, activeNeighborhood, searchQuery]);
+  }, [activeCategories, activeNeighborhood, searchQuery]);
 
   return (
     <div className="w-full pt-10 pb-24">
@@ -61,10 +68,10 @@ export default function Explore() {
             <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4 uppercase">{t("explore_page.filter_category")}</h3>
             <div className="flex flex-wrap gap-3">
               <button
-                onClick={() => setActiveCategory("All")}
+                onClick={() => setActiveCategories([])}
                 className={cn(
                   "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
-                  activeCategory === "All"
+                  activeCategories.length === 0
                     ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
                     : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
                 )}
@@ -73,11 +80,12 @@ export default function Explore() {
               </button>
               {categories.map((cat, i) => {
                 const palette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
-                const active = activeCategory === cat;
+                const active = activeCategories.includes(cat);
                 return (
                   <button
                     key={cat}
-                    onClick={() => setActiveCategory(cat)}
+                    onClick={() => toggleCategory(cat)}
+                    aria-pressed={active}
                     className={cn(
                       "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
                       active
@@ -198,7 +206,7 @@ export default function Explore() {
                 variant="outline" 
                 className="mt-6"
                 onClick={() => {
-                  setActiveCategory("All");
+                  setActiveCategories([]);
                   setActiveNeighborhood("All");
                   setSearchQuery("");
                 }}
