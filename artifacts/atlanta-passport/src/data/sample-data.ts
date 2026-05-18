@@ -154,6 +154,15 @@ export const events = [
     description: "Premium viewing experience with skyline views, craft cocktails, and VIP lounges."
   },
   {
+    id: "battle-of-the-bands",
+    name: "Battle of the Bands",
+    date: "June 13, 2026",
+    venue: "Atlantucky Brewing",
+    neighborhood: "Castleberry Hill",
+    category: "Music",
+    description: "3pm – 9pm. Music, ice cream, vendors, and vibes. IG @atlkybob · @dp.and.co_atl · @peachtreewellnessatl"
+  },
+  {
     id: "local-makers-popup",
     name: "Local Makers Pop-Up",
     date: "July 2, 2026",
