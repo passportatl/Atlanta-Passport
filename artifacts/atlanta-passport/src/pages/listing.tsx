@@ -36,13 +36,20 @@ export default function Listing() {
   return (
     <div className="w-full pb-24 bg-background">
       {/* Hero Image */}
-      <div className="w-full h-[40vh] md:h-[50vh] relative">
-        <img 
-          src={business.image} 
-          alt={business.name} 
-          className="w-full h-full object-cover"
+      <div className={`w-full h-[40vh] md:h-[50vh] relative ${business.imageFit === "contain" ? "bg-[hsl(var(--brand-cream))]" : ""}`}>
+        <img
+          src={business.image}
+          alt={business.name}
+          className={business.imageFit === "contain"
+            ? "w-full h-full object-contain p-12 md:p-16"
+            : "w-full h-full object-cover"}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        {business.imageFit !== "contain" && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        )}
+        {business.imageFit === "contain" && (
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+        )}
         
         {/* Badges */}
         <div className="absolute top-6 left-6 flex gap-2 flex-wrap max-w-[70%]">

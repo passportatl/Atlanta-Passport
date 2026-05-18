@@ -20,6 +20,7 @@ export const businesses = [
     address: "585 Memorial Dr SE, Atlanta, GA 30312",
     hours: "Mon-Sun: 11am - 8pm",
     image: peachtreeWellnessImg,
+    imageFit: "contain" as const,
     website: "https://peachtreewellnessatl.com",
     featured: true,
     sponsorTier: "Founding Sponsor",
