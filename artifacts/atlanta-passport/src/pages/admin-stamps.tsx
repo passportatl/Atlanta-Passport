@@ -6,6 +6,7 @@ import {
 } from "@workspace/api-client-react";
 import { Copy, ExternalLink, Lock, QrCode } from "lucide-react";
 import { NEIGHBORHOODS } from "@/passport/data";
+import AdminNav from "@/components/AdminNav";
 
 const ADMIN_PASSWORD = (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
@@ -167,30 +168,14 @@ export default function AdminStamps() {
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-            <div
-              className="inline-block bg-[hsl(var(--brand-navy))] text-[hsl(var(--brand-cream))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-2"
-              style={{ fontFamily: "Bungee, sans-serif" }}
-            >
-              ADMIN
-            </div>
-            <h1 className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-              Demo QR Codes
-            </h1>
-            <p className="text-sm text-foreground/70 mt-1">
-              {businesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
-            </p>
-          </div>
-          <button
-            onClick={() => {
-              sessionStorage.removeItem(UNLOCK_KEY);
-              setUnlocked(false);
-            }}
-            className="text-xs underline opacity-70 hover:opacity-100 shrink-0"
-          >
-            Lock
-          </button>
+        <AdminNav onLock={() => setUnlocked(false)} />
+        <div className="mb-6">
+          <h1 className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
+            Stamp QR Codes
+          </h1>
+          <p className="text-sm text-foreground/70 mt-1">
+            {businesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
+          </p>
         </div>
 
         {grouped.map(({ neighborhood, list }) => (

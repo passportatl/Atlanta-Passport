@@ -5,6 +5,7 @@ import {
   type Application,
 } from "@workspace/api-client-react";
 import { Lock, Mail, Phone, Globe, Instagram, MapPin, Inbox } from "lucide-react";
+import AdminNav from "@/components/AdminNav";
 
 const ADMIN_PASSWORD =
   (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
@@ -211,37 +212,21 @@ export default function AdminApplications() {
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-            <div
-              className="inline-block bg-[hsl(var(--brand-navy))] text-[hsl(var(--brand-cream))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-2"
-              style={{ fontFamily: "Bungee, sans-serif" }}
-            >
-              ADMIN
-            </div>
-            <h1
-              className="text-3xl font-black"
-              style={{ fontFamily: "Bungee, sans-serif" }}
-            >
-              Partner Applications
-            </h1>
-            <p className="text-sm text-foreground/70 mt-1">
-              {counts.total} total · Starter {counts.starter} · Featured {counts.featured} ·
-              Premier {counts.premier} · Route {counts.route} · Custom {counts.custom}
-            </p>
-            <p className="text-xs text-foreground/60 mt-1">
-              Notifications send to <strong>touristpassportatl@gmail.com</strong>.
-            </p>
-          </div>
-          <button
-            onClick={() => {
-              sessionStorage.removeItem(UNLOCK_KEY);
-              setUnlocked(false);
-            }}
-            className="text-xs underline opacity-70 hover:opacity-100 shrink-0"
+        <AdminNav onLock={() => setUnlocked(false)} />
+        <div className="mb-6">
+          <h1
+            className="text-3xl font-black"
+            style={{ fontFamily: "Bungee, sans-serif" }}
           >
-            Lock
-          </button>
+            Partner Applications
+          </h1>
+          <p className="text-sm text-foreground/70 mt-1">
+            {counts.total} total · Starter {counts.starter} · Featured {counts.featured} ·
+            Premier {counts.premier} · Route {counts.route} · Custom {counts.custom}
+          </p>
+          <p className="text-xs text-foreground/60 mt-1">
+            Notifications send to <strong>touristpassportatl@gmail.com</strong>.
+          </p>
         </div>
 
         {isLoading && (
