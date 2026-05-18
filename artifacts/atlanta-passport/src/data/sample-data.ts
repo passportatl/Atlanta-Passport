@@ -65,7 +65,7 @@ export const businesses = [
     neighborhood: "West End",
     description: "Independent craft brewery and taproom pouring small-batch ATL-inspired beers.",
     offer: "First pour 25% off when you show your passport.",
-    address: "1037 Marietta St NW, Atlanta, GA",
+    address: "847 Ralph David Abernathy Blvd SW, Atlanta, GA",
     hours: "Wed-Sun: 4pm - 12am",
     image: nightlifeImg,
     featured: true,
