@@ -32,7 +32,14 @@ const formSchema = z.object({
   contactName: z.string().min(2, "Contact name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   phone: z.string().min(10, "Please enter a valid phone number."),
-  website: z.string().url("Please enter a valid URL.").optional().or(z.literal("")),
+  website: z
+    .string()
+    .optional()
+    .transform((v) => (v ?? "").trim())
+    .refine(
+      (v) => v === "" || /^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(v.replace(/^https?:\/\//i, "")),
+      "Please enter a website like yoursite.com"
+    ),
   instagram: z.string().optional(),
   category: z.string().min(1, "Please select a category."),
   neighborhood: z.string().min(1, "Please select a neighborhood."),
