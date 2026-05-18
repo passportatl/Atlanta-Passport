@@ -421,30 +421,30 @@ export default function Apply() {
                               <label
                                 key={opt.value}
                                 className={cn(
-                                  "relative border-[3px] border-foreground rounded-2xl p-5 cursor-pointer transition-all flex items-start justify-between gap-3 m-0 focus-within:ring-4 focus-within:ring-brand-yellow focus-within:ring-offset-2 focus-within:ring-offset-background",
+                                  "relative border-[3px] border-foreground rounded-2xl p-4 pt-6 cursor-pointer transition-all flex flex-col gap-2 m-0 min-w-0 focus-within:ring-4 focus-within:ring-brand-yellow focus-within:ring-offset-2 focus-within:ring-offset-background",
                                   active
                                     ? `${opt.cls} shadow-pop -translate-y-1 ring-2 ring-foreground`
                                     : "bg-background hover:-translate-y-0.5 hover:shadow-pop-sm"
                                 )}
                               >
                                 <RadioGroupItem value={opt.value} className="sr-only" aria-label={`${opt.title} — ${opt.price}`} />
-                                <div>
-                                  <div className="font-display text-xs tracking-[0.16em] mb-1 opacity-80">
-                                    {opt.title.toUpperCase()}
-                                  </div>
-                                  <div className="font-display text-2xl">
-                                    {opt.price}
-                                  </div>
-                                </div>
                                 {active ? (
-                                  <span className="w-7 h-7 rounded-full bg-foreground text-background flex items-center justify-center border-2 border-background shadow-pop-sm flex-shrink-0">
-                                    <Check className="w-4 h-4" strokeWidth={3} />
+                                  <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center border-2 border-background shadow-pop-sm">
+                                    <Check className="w-3.5 h-3.5" strokeWidth={3} />
                                   </span>
                                 ) : opt.badge ? (
-                                  <span className="badge-sticker bg-brand-lime text-foreground text-[10px] flex-shrink-0">
+                                  <span className="absolute -top-2 right-2 badge-sticker bg-brand-lime text-foreground text-[9px] px-2 py-0.5 whitespace-nowrap">
                                     {opt.badge}
                                   </span>
                                 ) : null}
+                                <div className="min-w-0">
+                                  <div className="font-display text-[10px] tracking-[0.1em] mb-1 opacity-80 leading-tight break-words">
+                                    {opt.title.toUpperCase()}
+                                  </div>
+                                  <div className="font-display text-2xl leading-none">
+                                    {opt.price}
+                                  </div>
+                                </div>
                               </label>
                             );
                           })}
