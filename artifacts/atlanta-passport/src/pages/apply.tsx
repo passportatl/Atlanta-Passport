@@ -62,6 +62,7 @@ const packageOptions: PackageOption[] = [
 export default function Apply() {
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
+  const [neighborhoodOther, setNeighborhoodOther] = useState(false);
   const search = useSearch();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -218,24 +219,53 @@ export default function Apply() {
                   <FormField
                     control={form.control}
                     name="neighborhood"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("apply_page.field_neighborhood")} *</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t("apply_page.select_placeholder")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {neighborhoods.map((n) => (
-                              <SelectItem key={n.id} value={n.name}>{n.name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const knownNames = neighborhoods.map((n) => n.name);
+                      const isOther =
+                        neighborhoodOther ||
+                        (field.value !== "" && !knownNames.includes(field.value));
+                      const selectValue = isOther
+                        ? "__other__"
+                        : field.value || undefined;
+                      return (
+                        <FormItem>
+                          <FormLabel>{t("apply_page.field_neighborhood")} *</FormLabel>
+                          <Select
+                            value={selectValue}
+                            onValueChange={(val) => {
+                              if (val === "__other__") {
+                                setNeighborhoodOther(true);
+                                field.onChange("");
+                              } else {
+                                setNeighborhoodOther(false);
+                                field.onChange(val);
+                              }
+                            }}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder={t("apply_page.select_placeholder")} />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {neighborhoods.map((n) => (
+                                <SelectItem key={n.id} value={n.name}>{n.name}</SelectItem>
+                              ))}
+                              <SelectItem value="__other__">Other (type below)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {isOther && (
+                            <Input
+                              className="mt-2"
+                              placeholder="Type your neighborhood"
+                              value={field.value}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
+                          )}
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   <FormField
                     control={form.control}
