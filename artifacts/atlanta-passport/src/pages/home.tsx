@@ -673,6 +673,40 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Sponsorship strip */}
+      <section className="bg-brand-red text-white border-t-[3px] border-b-[3px] border-foreground">
+        <div className="container mx-auto px-4 py-5 md:py-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 text-center md:text-left">
+            <span className="inline-block self-center md:self-auto bg-brand-yellow text-brand-yellow-foreground border-[2px] border-foreground rounded-full px-3 py-1 font-display text-[11px] tracking-[0.18em] uppercase shadow-pop-sm shrink-0">
+              ★ Sponsored
+            </span>
+            <p className="font-display text-sm md:text-base tracking-wide leading-snug">
+              <span className="uppercase tracking-[0.08em]">Hot Sauce Fest ATL</span>
+              {" — November 14th at "}
+              <span className="underline decoration-brand-yellow decoration-[3px] underline-offset-2">Atlantucky Brewing</span>
+              {". Visit "}
+              <a
+                href="https://hotsaucefestatl.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-brand-yellow decoration-[3px] underline-offset-2 hover:text-brand-yellow"
+              >
+                hotsaucefestatl.com
+              </a>
+              {" · IG "}
+              <a
+                href="https://instagram.com/hotsaucefest.atl"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline decoration-brand-yellow decoration-[3px] underline-offset-2 hover:text-brand-yellow"
+              >
+                @hotsaucefest.atl
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
