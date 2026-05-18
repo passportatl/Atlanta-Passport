@@ -198,7 +198,7 @@ export const PUBLIC_ROUTES = [
   {
     id: "coffee-local",
     name: "Coffee & Local Finds",
-    description: "Slow mornings, indie shops, and a late lunch on the Westside.",
+    description: "Slow mornings, indie shops, and a late lunch on the West End.",
     stops: 5,
     miles: "2.1 mi",
     pace: "Morning",

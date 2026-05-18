@@ -62,7 +62,7 @@ export const businesses = [
     id: "hartsfield-hops",
     name: "Hartsfield Hops Co.",
     category: "Food & Drink",
-    neighborhood: "Westside",
+    neighborhood: "West End",
     description: "Independent craft brewery and taproom pouring small-batch ATL-inspired beers.",
     offer: "First pour 25% off when you show your passport.",
     address: "1037 Marietta St NW, Atlanta, GA",
@@ -70,7 +70,7 @@ export const businesses = [
     image: nightlifeImg,
     featured: true,
     sponsorTier: "Featured Partner",
-    about: "A neighborhood taproom in the Westside warehouse district. Eight rotating taps, an open patio, and a kitchen run by a rotating cast of pop-up chefs every weekend.",
+    about: "A neighborhood taproom on the West End. Eight rotating taps, an open patio, and a kitchen run by a rotating cast of pop-up chefs every weekend.",
   },
   {
     id: "sweet-auburn-smokehouse",
@@ -157,8 +157,8 @@ export const events = [
     id: "local-makers-popup",
     name: "Local Makers Pop-Up",
     date: "July 2, 2026",
-    venue: "Westside Provisions District",
-    neighborhood: "Westside",
+    venue: "West End Mall",
+    neighborhood: "West End",
     category: "Retail",
     description: "Shop exclusive Atlanta-made goods, apparel, and souvenirs from independent local creators."
   }
@@ -168,9 +168,10 @@ export const neighborhoods = [
   { id: "o4w", name: "Old Fourth Ward", description: "Murals, patios, late nights, and Beltline movement.", color: "yellow" },
   { id: "grant-park", name: "Grant Park", description: "Memorial Drive, zoo & history, indie shops, Beltline edge.", color: "sky" },
   { id: "eav", name: "East Atlanta Village", description: "Dive bars, live music, bike-friendly streets, and beautiful chaos.", color: "red" },
+  { id: "reynoldstown", name: "Reynoldstown", description: "Beltline-adjacent, bike-friendly, low-key local energy.", color: "sky" },
   { id: "castleberry", name: "Castleberry Hill", description: "Galleries, breweries, lofts, and weekend art walks.", color: "yellow" },
   { id: "midtown", name: "Midtown", description: "Skyline energy and match-day movement.", color: "red" },
-  { id: "westside", name: "Westside", description: "Industrial chic, premium dining, independent retail.", color: "sky" },
+  { id: "west-end", name: "West End", description: "Historic Black ATL, indie food, art, and Beltline Westside Trail.", color: "sky" },
   { id: "downtown", name: "Downtown", description: "Stadium energy, history, city in motion.", color: "yellow" },
   { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red" },
   { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky" },
@@ -207,7 +208,7 @@ export const routes = [
   {
     id: "coffee-kickoff",
     name: "Coffee Before Kickoff",
-    neighborhood: "Westside · Midtown",
+    neighborhood: "West End · Midtown",
     stops: 4,
     miles: "1.8 mi",
     pace: "Walkable",
@@ -243,7 +244,7 @@ export const routes = [
   {
     id: "shops-streetwear",
     name: "Streetwear + Vinyl",
-    neighborhood: "L5P · Westside",
+    neighborhood: "L5P · West End",
     stops: 5,
     miles: "1.6 mi",
     pace: "Walkable",
