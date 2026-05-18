@@ -1,7 +1,7 @@
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses } from "@/data/sample-data";
-import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen } from "lucide-react";
+import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen, Bike } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Listing() {
@@ -45,10 +45,15 @@ export default function Listing() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
         {/* Badges */}
-        <div className="absolute top-6 left-6 flex gap-2">
+        <div className="absolute top-6 left-6 flex gap-2 flex-wrap max-w-[70%]">
           <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2">
             {business.category}
           </div>
+          {business.bikePickup && (
+            <div className="badge-sticker bg-brand-navy text-brand-cream rotate-1 inline-flex items-center gap-1">
+              <Bike className="w-3.5 h-3.5" /> Wheelhaus Bike Pickup
+            </div>
+          )}
         </div>
         {business.sponsorTier && (
           <div className="absolute top-6 right-6 md:top-10 md:right-10 drop-shadow-[0_4px_0_rgba(0,0,0,0.85)]">

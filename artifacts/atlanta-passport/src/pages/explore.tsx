@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search } from "lucide-react";
+import { MapPin, Search, Bike } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -157,6 +157,11 @@ export default function Explore() {
                       {biz.sponsorTier === "Founding Sponsor" && (
                         <div className="absolute top-3 right-3 badge-sticker bg-brand-red text-white rotate-2 text-[10px]">
                           ★ {t("listing_page.founding_badge")}
+                        </div>
+                      )}
+                      {biz.bikePickup && (
+                        <div className="absolute bottom-3 left-3 badge-sticker bg-brand-navy text-brand-cream -rotate-2 text-[10px] inline-flex items-center gap-1">
+                          <Bike className="w-3 h-3" /> Wheelhaus Bike Pickup
                         </div>
                       )}
                     </div>
