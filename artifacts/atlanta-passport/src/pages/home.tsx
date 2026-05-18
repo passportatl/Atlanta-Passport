@@ -51,8 +51,7 @@ const cardBadgeKeys: Array<{ key: string; color: "yellow" | "red" | "sky" | "lim
 ];
 
 const heroChipKeys: Array<{ key: string; href: string }> = [
-  { key: "chip_food",       href: "/explore?category=food" },
-  { key: "chip_drinks",     href: "/explore?category=drinks" },
+  { key: "chip_food",       href: "/explore?category=food-drink" },
   { key: "chip_coffee",     href: "/explore?category=coffee" },
   { key: "chip_nightlife",  href: "/explore?category=nightlife" },
   { key: "chip_routes",     href: "/explore" },

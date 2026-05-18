@@ -44,7 +44,7 @@ export const businesses = [
   {
     id: "atlantucky-brewing",
     name: "Atlantucky Brewing",
-    category: "Drinks",
+    category: "Food & Drink",
     neighborhood: "Castleberry Hill",
     description: "A brewpub in the heart of Atlanta owned by the Nappy Roots.",
     offer: "Passport offer coming soon.",
@@ -59,7 +59,7 @@ export const businesses = [
   {
     id: "hartsfield-hops",
     name: "Hartsfield Hops Co.",
-    category: "Drinks",
+    category: "Food & Drink",
     neighborhood: "Westside",
     description: "Independent craft brewery and taproom pouring small-batch ATL-inspired beers.",
     offer: "First pour 25% off when you show your passport.",
@@ -73,7 +73,7 @@ export const businesses = [
   {
     id: "sweet-auburn-smokehouse",
     name: "Sweet Auburn Smokehouse",
-    category: "Food",
+    category: "Food & Drink",
     neighborhood: "Downtown",
     description: "Low-and-slow Southern barbecue served family-style just off the historic Sweet Auburn corridor.",
     offer: "Free side with any plate for Passport holders.",
@@ -176,12 +176,11 @@ export const neighborhoods = [
 ];
 
 export const categories = [
-  "Food", "Drinks", "Coffee", "Retail", "Nightlife", "Rentals", "Events", "Experiences"
+  "Food & Drink", "Coffee", "Retail", "Nightlife", "Rentals", "Events", "Experiences"
 ];
 
 export const exploreCategories = [
-  { id: "food",        label: "Food",        tagline: "Good plates. No guessing.",            color: "red",    icon: "Utensils" },
-  { id: "drinks",      label: "Drinks",      tagline: "Patios, rooftops, last calls.",        color: "yellow", icon: "Beer" },
+  { id: "food-drink",  label: "Food & Drink", tagline: "Good plates, patios, last calls.",   color: "red",    icon: "Utensils" },
   { id: "coffee",      label: "Coffee",      tagline: "Slow mornings. Strong espresso.",      color: "cream",  icon: "Coffee" },
   { id: "retail",      label: "Retail",      tagline: "Vinyl, sneakers, local finds.",        color: "lime",   icon: "ShoppingBag" },
   { id: "nightlife",   label: "Nightlife",   tagline: "Dive bars to dance floors.",           color: "navy",   icon: "Music" },
@@ -223,7 +222,7 @@ export const routes = [
     miles: "2.1 mi",
     pace: "Open Late",
     vibe: "Skyline cocktails, neon signs, and the long way home.",
-    tags: ["Drinks", "Rooftop"],
+    tags: ["Food & Drink", "Rooftop"],
     color: "navy",
     href: "/explore",
   },
@@ -235,7 +234,7 @@ export const routes = [
     miles: "3.0 mi",
     pace: "Walkable",
     vibe: "Front-yard tables, cold beers, and the best people-watching in town.",
-    tags: ["Food", "Drinks"],
+    tags: ["Food & Drink"],
     color: "lime",
     href: "/explore",
   },
@@ -268,7 +267,7 @@ export const routes = [
 export const beltlineStops = [
   { n: 1, name: "Wheelhaus Bikes",       category: "Rentals",   note: "Pick up your e-bike & passport." },
   { n: 2, name: "Peachtree Wellness",    category: "Retail",    note: "Crystals, hot sauce, & founder energy on Memorial." },
-  { n: 3, name: "Ponce City Market",     category: "Food",      note: "Food hall lunch break." },
-  { n: 4, name: "Krog Street Market",    category: "Retail",    note: "Local makers & artisan goods." },
-  { n: 5, name: "Atlantucky Brewing",    category: "Drinks",    note: "Closing brews from the Nappy Roots." },
+  { n: 3, name: "Ponce City Market",     category: "Food & Drink", note: "Food hall lunch break." },
+  { n: 4, name: "Krog Street Market",    category: "Retail",       note: "Local makers & artisan goods." },
+  { n: 5, name: "Atlantucky Brewing",    category: "Food & Drink", note: "Closing brews from the Nappy Roots." },
 ] as const;
