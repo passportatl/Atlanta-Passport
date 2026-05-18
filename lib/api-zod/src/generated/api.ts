@@ -130,3 +130,60 @@ export const CollectStampResponse = zod.object({
   }),
   alreadyCollected: zod.boolean(),
 });
+
+/**
+ * @summary Submit a partner application
+ */
+export const submitApplicationBodyBusinessNameMin = 2;
+
+export const submitApplicationBodyContactNameMin = 2;
+
+export const submitApplicationBodyPhoneMin = 7;
+
+export const submitApplicationBodyAddressMin = 5;
+
+export const submitApplicationBodyOfferMin = 5;
+
+export const SubmitApplicationBody = zod.object({
+  businessName: zod.string().min(submitApplicationBodyBusinessNameMin),
+  contactName: zod.string().min(submitApplicationBodyContactNameMin),
+  email: zod.string().email(),
+  phone: zod.string().min(submitApplicationBodyPhoneMin),
+  website: zod.string().optional(),
+  instagram: zod.string().optional(),
+  category: zod.string().min(1),
+  neighborhood: zod.string().min(1),
+  address: zod.string().min(submitApplicationBodyAddressMin),
+  package: zod.enum(["starter", "featured", "premier", "route", "custom"]),
+  routeId: zod.string().optional(),
+  offer: zod.string().min(submitApplicationBodyOfferMin),
+  notes: zod.string().optional(),
+});
+
+export const SubmitApplicationResponse = zod.object({
+  id: zod.string(),
+  emailDelivered: zod.string(),
+});
+
+/**
+ * @summary List all partner applications (admin)
+ */
+export const ListApplicationsResponseItem = zod.object({
+  id: zod.string(),
+  businessName: zod.string(),
+  contactName: zod.string(),
+  email: zod.string(),
+  phone: zod.string(),
+  website: zod.string().nullish(),
+  instagram: zod.string().nullish(),
+  category: zod.string(),
+  neighborhood: zod.string(),
+  address: zod.string(),
+  package: zod.string(),
+  routeId: zod.string().nullish(),
+  offer: zod.string(),
+  notes: zod.string().nullish(),
+  emailDelivered: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListApplicationsResponse = zod.array(ListApplicationsResponseItem);

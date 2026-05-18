@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { CheckCircle2, Check, Route } from "lucide-react";
+import { CheckCircle2, Check, Route, Loader2 } from "lucide-react";
+import { useSubmitApplication } from "@workspace/api-client-react";
 import {
   Form,
   FormControl,
@@ -92,9 +93,15 @@ export default function Apply() {
     }
   }, [search, form]);
 
+  const submitMutation = useSubmitApplication();
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    setSubmitted(true);
+    submitMutation.mutate(
+      { data: values },
+      {
+        onSuccess: () => setSubmitted(true),
+      },
+    );
   }
 
   // Live progress: count of required fields with valid (non-empty) values
@@ -461,8 +468,24 @@ export default function Apply() {
                 />
               </div>
 
-              <button type="submit" className="button-pop w-full text-lg py-5 mt-4">
-                {t("apply_page.submit")} →
+              {submitMutation.isError && (
+                <div className="card-pop bg-brand-red text-white p-4 text-sm font-medium">
+                  Something went wrong submitting your application. Please try again, or email us at touristpassportatl@gmail.com.
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={submitMutation.isPending}
+                className="button-pop w-full text-lg py-5 mt-4 disabled:opacity-60 inline-flex items-center justify-center gap-2"
+              >
+                {submitMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Sending…
+                  </>
+                ) : (
+                  <>{t("apply_page.submit")} →</>
+                )}
               </button>
             </form>
           </Form>

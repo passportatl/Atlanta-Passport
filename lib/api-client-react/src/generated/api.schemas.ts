@@ -63,3 +63,63 @@ export interface StampCollection {
   stamp: Stamp;
   alreadyCollected: boolean;
 }
+
+export type SubmitApplicationInputPackage =
+  (typeof SubmitApplicationInputPackage)[keyof typeof SubmitApplicationInputPackage];
+
+export const SubmitApplicationInputPackage = {
+  starter: "starter",
+  featured: "featured",
+  premier: "premier",
+  route: "route",
+  custom: "custom",
+} as const;
+
+export interface SubmitApplicationInput {
+  /** @minLength 2 */
+  businessName: string;
+  /** @minLength 2 */
+  contactName: string;
+  email: string;
+  /** @minLength 7 */
+  phone: string;
+  website?: string;
+  instagram?: string;
+  /** @minLength 1 */
+  category: string;
+  /** @minLength 1 */
+  neighborhood: string;
+  /** @minLength 5 */
+  address: string;
+  package: SubmitApplicationInputPackage;
+  routeId?: string;
+  /** @minLength 5 */
+  offer: string;
+  notes?: string;
+}
+
+export interface Application {
+  id: string;
+  businessName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  website?: string | null;
+  instagram?: string | null;
+  category: string;
+  neighborhood: string;
+  address: string;
+  package: string;
+  routeId?: string | null;
+  offer: string;
+  notes?: string | null;
+  emailDelivered: string;
+  createdAt: string;
+}
+
+export type ApplicationList = Application[];
+
+export interface ApplicationReceipt {
+  id: string;
+  emailDelivered: string;
+}

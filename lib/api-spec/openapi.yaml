@@ -16,6 +16,8 @@ tags:
     description: Participating businesses
   - name: stamps
     description: Stamp collection
+  - name: applications
+    description: Partner applications
 paths:
   /healthz:
     get:
@@ -141,6 +143,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StampCollection"
+
+  /applications:
+    post:
+      operationId: submitApplication
+      tags: [applications]
+      summary: Submit a partner application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitApplicationInput"
+      responses:
+        "200":
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationReceipt"
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List all partner applications (admin)
+      responses:
+        "200":
+          description: Applications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationList"
 
 components:
   schemas:
@@ -279,3 +311,77 @@ components:
         alreadyCollected:
           type: boolean
       required: [stamp, alreadyCollected]
+
+    SubmitApplicationInput:
+      type: object
+      properties:
+        businessName: { type: string, minLength: 2 }
+        contactName: { type: string, minLength: 2 }
+        email: { type: string, format: email }
+        phone: { type: string, minLength: 7 }
+        website: { type: string }
+        instagram: { type: string }
+        category: { type: string, minLength: 1 }
+        neighborhood: { type: string, minLength: 1 }
+        address: { type: string, minLength: 5 }
+        package:
+          type: string
+          enum: [starter, featured, premier, route, custom]
+        routeId: { type: string }
+        offer: { type: string, minLength: 5 }
+        notes: { type: string }
+      required:
+        - businessName
+        - contactName
+        - email
+        - phone
+        - category
+        - neighborhood
+        - address
+        - package
+        - offer
+
+    Application:
+      type: object
+      properties:
+        id: { type: string }
+        businessName: { type: string }
+        contactName: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        website: { type: string, nullable: true }
+        instagram: { type: string, nullable: true }
+        category: { type: string }
+        neighborhood: { type: string }
+        address: { type: string }
+        package: { type: string }
+        routeId: { type: string, nullable: true }
+        offer: { type: string }
+        notes: { type: string, nullable: true }
+        emailDelivered: { type: string }
+        createdAt: { type: string, format: date-time }
+      required:
+        - id
+        - businessName
+        - contactName
+        - email
+        - phone
+        - category
+        - neighborhood
+        - address
+        - package
+        - offer
+        - emailDelivered
+        - createdAt
+
+    ApplicationList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Application"
+
+    ApplicationReceipt:
+      type: object
+      properties:
+        id: { type: string }
+        emailDelivered: { type: string }
+      required: [id, emailDelivered]

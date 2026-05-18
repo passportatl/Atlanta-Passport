@@ -18,6 +18,7 @@ import PassportStamps from "@/pages/passport/stamps";
 import PassportRewards from "@/pages/passport/rewards";
 import PassportRoutes from "@/pages/passport/routes";
 import AdminStamps from "@/pages/admin-stamps";
+import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/visitor-context";
 import { PassportLayout } from "@/passport/PassportLayout";
 
@@ -66,6 +67,9 @@ function Router() {
   }
   if (location === "/admin/stamps") {
     return <AdminStamps />;
+  }
+  if (location === "/admin/applications") {
+    return <AdminApplications />;
   }
   if (location === "/passport" || location.startsWith("/passport/")) {
     return <PassportRoutesGroup />;

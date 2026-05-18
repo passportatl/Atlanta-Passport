@@ -17,6 +17,8 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  ApplicationList,
+  ApplicationReceipt,
   Business,
   BusinessList,
   CollectStampInput,
@@ -24,6 +26,7 @@ import type {
   HealthStatus,
   StampCollection,
   StampList,
+  SubmitApplicationInput,
   Visitor,
 } from "./api.schemas";
 
@@ -618,3 +621,164 @@ export const useCollectStamp = <
 > => {
   return useMutation(getCollectStampMutationOptions(options));
 };
+
+/**
+ * @summary Submit a partner application
+ */
+export const getSubmitApplicationUrl = () => {
+  return `/api/applications`;
+};
+
+export const submitApplication = async (
+  submitApplicationInput: SubmitApplicationInput,
+  options?: RequestInit,
+): Promise<ApplicationReceipt> => {
+  return customFetch<ApplicationReceipt>(getSubmitApplicationUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(submitApplicationInput),
+  });
+};
+
+export const getSubmitApplicationMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof submitApplication>>,
+    TError,
+    { data: BodyType<SubmitApplicationInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof submitApplication>>,
+  TError,
+  { data: BodyType<SubmitApplicationInput> },
+  TContext
+> => {
+  const mutationKey = ["submitApplication"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof submitApplication>>,
+    { data: BodyType<SubmitApplicationInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return submitApplication(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SubmitApplicationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof submitApplication>>
+>;
+export type SubmitApplicationMutationBody = BodyType<SubmitApplicationInput>;
+export type SubmitApplicationMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Submit a partner application
+ */
+export const useSubmitApplication = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof submitApplication>>,
+    TError,
+    { data: BodyType<SubmitApplicationInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof submitApplication>>,
+  TError,
+  { data: BodyType<SubmitApplicationInput> },
+  TContext
+> => {
+  return useMutation(getSubmitApplicationMutationOptions(options));
+};
+
+/**
+ * @summary List all partner applications (admin)
+ */
+export const getListApplicationsUrl = () => {
+  return `/api/applications`;
+};
+
+export const listApplications = async (
+  options?: RequestInit,
+): Promise<ApplicationList> => {
+  return customFetch<ApplicationList>(getListApplicationsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListApplicationsQueryKey = () => {
+  return [`/api/applications`] as const;
+};
+
+export const getListApplicationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listApplications>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listApplications>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListApplicationsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listApplications>>
+  > = ({ signal }) => listApplications({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listApplications>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListApplicationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listApplications>>
+>;
+export type ListApplicationsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all partner applications (admin)
+ */
+
+export function useListApplications<
+  TData = Awaited<ReturnType<typeof listApplications>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listApplications>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListApplicationsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}

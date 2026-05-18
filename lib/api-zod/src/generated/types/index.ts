@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./application";
+export * from "./applicationList";
+export * from "./applicationReceipt";
 export * from "./business";
 export * from "./businessList";
 export * from "./collectStampInput";
@@ -14,4 +17,6 @@ export * from "./healthStatus";
 export * from "./stamp";
 export * from "./stampCollection";
 export * from "./stampList";
+export * from "./submitApplicationInput";
+export * from "./submitApplicationInputPackage";
 export * from "./visitor";
