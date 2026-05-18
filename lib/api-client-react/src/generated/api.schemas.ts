@@ -95,6 +95,7 @@ export interface SubmitApplicationInput {
   routeId?: string;
   /** @minLength 5 */
   offer: string;
+  prizeSponsorship?: string;
   notes?: string;
 }
 
@@ -112,6 +113,7 @@ export interface Application {
   package: string;
   routeId?: string | null;
   offer: string;
+  prizeSponsorship?: string | null;
   notes?: string | null;
   emailDelivered: string;
   createdAt: string;

@@ -42,6 +42,7 @@ router.post("/applications", async (req, res) => {
       package: data.package,
       routeId: data.routeId ?? null,
       offer: data.offer,
+      prizeSponsorship: data.prizeSponsorship ?? null,
       notes: data.notes ?? null,
     })
     .returning();
@@ -63,6 +64,7 @@ router.post("/applications", async (req, res) => {
         ${renderRow("Website", data.website)}
         ${renderRow("Instagram", data.instagram)}
         ${renderRow("Offer", data.offer)}
+        ${renderRow("Prize Sponsorship", data.prizeSponsorship)}
         ${renderRow("Notes", data.notes)}
       </table>
       <p style="margin-top:16px;font-size:12px;color:#555;">Application id: ${row!.id}</p>
@@ -84,6 +86,7 @@ router.post("/applications", async (req, res) => {
     data.instagram ? `Instagram: ${data.instagram}` : "",
     ``,
     `Offer: ${data.offer}`,
+    data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
     data.notes ? `Notes: ${data.notes}` : "",
     ``,
     `Application id: ${row!.id}`,

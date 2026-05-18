@@ -14,6 +14,7 @@ export const applicationsTable = pgTable("applications", {
   package: text("package").notNull(),
   routeId: text("route_id"),
   offer: text("offer").notNull(),
+  prizeSponsorship: text("prize_sponsorship"),
   notes: text("notes"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

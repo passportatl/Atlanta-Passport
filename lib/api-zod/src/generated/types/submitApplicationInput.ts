@@ -27,5 +27,6 @@ export interface SubmitApplicationInput {
   routeId?: string;
   /** @minLength 5 */
   offer: string;
+  prizeSponsorship?: string;
   notes?: string;
 }

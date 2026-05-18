@@ -41,6 +41,7 @@ const formSchema = z.object({
     required_error: "Please select a package.",
   }),
   offer: z.string().min(10, "Please describe your offer or experience."),
+  prizeSponsorship: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -79,6 +80,7 @@ export default function Apply() {
       address: "",
       notes: "",
       offer: "",
+      prizeSponsorship: "",
     },
   });
 
@@ -430,6 +432,27 @@ export default function Apply() {
                         <Textarea
                           placeholder={t("apply_page.field_offer_placeholder")}
                           className="resize-none h-24"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="prizeSponsorship"
+                  render={({ field }) => (
+                    <FormItem className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-5 shadow-pop-sm">
+                      <FormLabel className="text-base">Sponsor a passport prize? ({t("apply_page.optional")})</FormLabel>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Would you like to sponsor us with items, gift cards, or exclusive experiences for prizes for stamped passport holders? Your logo will be featured on our website and passport as sponsor of the passport stamps prize packages.
+                      </p>
+                      <FormControl>
+                        <Textarea
+                          placeholder="e.g. $50 gift card, free brewery tour for 4, branded merch bundle…"
+                          className="resize-none min-h-[90px] bg-white"
                           {...field}
                         />
                       </FormControl>

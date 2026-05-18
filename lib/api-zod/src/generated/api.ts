@@ -157,6 +157,7 @@ export const SubmitApplicationBody = zod.object({
   package: zod.enum(["starter", "featured", "premier", "route", "custom"]),
   routeId: zod.string().optional(),
   offer: zod.string().min(submitApplicationBodyOfferMin),
+  prizeSponsorship: zod.string().optional(),
   notes: zod.string().optional(),
 });
 
@@ -182,6 +183,7 @@ export const ListApplicationsResponseItem = zod.object({
   package: zod.string(),
   routeId: zod.string().nullish(),
   offer: zod.string(),
+  prizeSponsorship: zod.string().nullish(),
   notes: zod.string().nullish(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),

@@ -20,6 +20,7 @@ export interface Application {
   package: string;
   routeId?: string | null;
   offer: string;
+  prizeSponsorship?: string | null;
   notes?: string | null;
   emailDelivered: string;
   createdAt: Date;
