@@ -60,3 +60,33 @@ id = "RBC-bipiChwWxR6If1nD0"
 uri = "file://artifacts/atlanta-passport/src/assets/images/event-watch-party.png"
 type = "image"
 title = "Soccer Watch Party"
+
+[[generated]]
+id = "Fxs6PzwLC2itKlJVYmV0-"
+uri = "file://artifacts/atlanta-passport/src/assets/images/hartsfield-hops.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "jBlG5_sL3iQeNfjxB1Tjk"
+uri = "file://artifacts/atlanta-passport/src/assets/images/atlantucky.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "7mdob984XOaAIo9HmLZMq"
+uri = "file://artifacts/atlanta-passport/src/assets/images/sweet-auburn-smokehouse.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "m8tC_Lzb-2LNcviVINf96"
+uri = "file://artifacts/atlanta-passport/src/assets/images/marta-line-coffee.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "XAs2KJ4rUfgl9cFOAuU2V"
+uri = "file://artifacts/atlanta-passport/src/assets/images/stone-mountain-records.png"
+type = "image"
+title = "generated_image"

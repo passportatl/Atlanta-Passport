@@ -1,10 +1,10 @@
 import wheelhausImg from "@/assets/images/wheelhaus.png";
 import peachtreeWellnessImg from "@/assets/images/peachtree-wellness.jpeg";
-import coffeeShopImg from "@/assets/images/coffee-shop.png";
-import restaurantImg from "@/assets/images/restaurant.png";
-import neighborhoodBarImg from "@/assets/images/neighborhood-bar.png";
-import sneakerShopImg from "@/assets/images/sneaker-shop.png";
-import nightlifeImg from "@/assets/images/nightlife.png";
+import atlantuckyImg from "@/assets/images/atlantucky.png";
+import hartsfieldHopsImg from "@/assets/images/hartsfield-hops.png";
+import sweetAuburnSmokehouseImg from "@/assets/images/sweet-auburn-smokehouse.png";
+import martaLineCoffeeImg from "@/assets/images/marta-line-coffee.png";
+import stoneMountainRecordsImg from "@/assets/images/stone-mountain-records.png";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
@@ -52,7 +52,7 @@ export const businesses = [
     offer: "Passport offer coming soon.",
     address: "170 Northside Dr SW, Suite 96, Atlanta, GA 30313",
     hours: "Wed-Fri: 3pm - 11pm · Sat: 4pm - 11:30pm (subject to change for FIFA)",
-    image: neighborhoodBarImg,
+    image: atlantuckyImg,
     featured: true,
     sponsorTier: "Founding Sponsor",
     bikePickup: true,
@@ -67,7 +67,7 @@ export const businesses = [
     offer: "First pour 25% off when you show your passport.",
     address: "847 Ralph David Abernathy Blvd SW, Atlanta, GA",
     hours: "Wed-Sun: 4pm - 12am",
-    image: nightlifeImg,
+    image: hartsfieldHopsImg,
     featured: true,
     sponsorTier: "Featured Partner",
     about: "A neighborhood taproom on the West End. Eight rotating taps, an open patio, and a kitchen run by a rotating cast of pop-up chefs every weekend.",
@@ -81,7 +81,7 @@ export const businesses = [
     offer: "Free side with any plate for Passport holders.",
     address: "243 Auburn Ave NE, Atlanta, GA",
     hours: "Tue-Sun: 11am - 9pm",
-    image: restaurantImg,
+    image: sweetAuburnSmokehouseImg,
     featured: true,
     sponsorTier: "Featured Partner",
     about: "Texas-style brisket meets Georgia peach BBQ sauce. Built into a renovated 1920s storefront with patio seating that spills onto Auburn Ave on match days.",
@@ -95,7 +95,7 @@ export const businesses = [
     offer: "Free espresso shot with any pastry purchase.",
     address: "684 Spring St NW, Atlanta, GA",
     hours: "Mon-Sun: 7am - 5pm",
-    image: coffeeShopImg,
+    image: martaLineCoffeeImg,
     featured: true,
     sponsorTier: "Featured Partner",
     about: "Single-origin espresso, sourdough biscuits, and a soundtrack that leans 90s ATL hip-hop. Built for commuters, visitors, and the morning regulars who've made the place a neighborhood living room.",
@@ -109,7 +109,7 @@ export const businesses = [
     offer: "15% off any single LP for Passport holders.",
     address: "1129 Euclid Ave NE, Atlanta, GA",
     hours: "Wed-Mon: 12pm - 8pm",
-    image: sneakerShopImg,
+    image: stoneMountainRecordsImg,
     featured: true,
     sponsorTier: "Starter Listing",
     about: "A vinyl shop with a deep Southern catalog — Goodie Mob and OutKast pressings, deep crate jazz, and a wall of consigned local releases. Listening stations and a turntable repair bench in the back.",
