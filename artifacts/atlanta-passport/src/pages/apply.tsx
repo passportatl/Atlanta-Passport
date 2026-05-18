@@ -4,12 +4,11 @@ import { useTranslation } from "react-i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { CheckCircle2, Check, Route, Loader2 } from "lucide-react";
+import { CheckCircle2, Check, Loader2 } from "lucide-react";
 import { useSubmitApplication } from "@workspace/api-client-react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { categories, neighborhoods, routes } from "@/data/sample-data";
+import { categories, neighborhoods } from "@/data/sample-data";
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -41,7 +40,6 @@ const formSchema = z.object({
   package: z.enum(["starter", "featured", "premier", "route", "custom"], {
     required_error: "Please select a package.",
   }),
-  routeId: z.string().optional(),
   offer: z.string().min(10, "Please describe your offer or experience."),
   notes: z.string().optional(),
 });
@@ -78,7 +76,6 @@ export default function Apply() {
       category: "",
       neighborhood: "",
       address: "",
-      routeId: "",
       notes: "",
       offer: "",
     },
@@ -387,44 +384,6 @@ export default function Apply() {
                   )}
                 />
 
-                {/* Route picker — only when "route" package is selected */}
-                {form.watch("package") === "route" && (
-                  <FormField
-                    control={form.control}
-                    name="routeId"
-                    render={({ field }) => (
-                      <FormItem className="bg-brand-cream border-[3px] border-foreground rounded-2xl p-5 shadow-pop-sm">
-                        <FormLabel className="flex items-center gap-2 font-display text-xs tracking-[0.16em] uppercase">
-                          <Route className="w-4 h-4" />
-                          {t("apply_page.field_route", { defaultValue: "Which route would you like to sponsor?" })}
-                        </FormLabel>
-                        <FormDescription>
-                          {t("apply_page.field_route_desc", {
-                            defaultValue: "Each route gets one exclusive sponsor per season. We'll confirm availability after you apply.",
-                          })}
-                        </FormDescription>
-                        <Select onValueChange={field.onChange} value={field.value || ""}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t("apply_page.select_placeholder")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {routes.map((r) => (
-                              <SelectItem key={r.id} value={r.id}>
-                                {r.name}
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="open-to-suggestions">
-                              {t("apply_page.field_route_open", { defaultValue: "Open to suggestions" })}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
               </div>
 
               <div className="space-y-6">
