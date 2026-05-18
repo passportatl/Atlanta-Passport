@@ -30,7 +30,7 @@ export const businesses = [
     id: "wheelhaus-bikes",
     name: "Wheelhaus Bikes",
     category: "Rentals",
-    neighborhood: "Reynoldstown",
+    neighborhood: "East Atlanta Village",
     description: "Premium e-bike rentals, repairs, and curated city rides for visitors who want Atlanta beyond traffic and rideshares.",
     offer: "Rental specials and guided ride options during World Cup season.",
     address: "1188 Glenwood Ave SE, Suite B, Atlanta, GA 30316",
@@ -166,7 +166,7 @@ export const events = [
 export const neighborhoods = [
   { id: "o4w", name: "Old Fourth Ward", description: "Murals, patios, late nights, and Beltline movement.", color: "yellow" },
   { id: "grant-park", name: "Grant Park", description: "Memorial Drive, zoo & history, indie shops, Beltline edge.", color: "sky" },
-  { id: "reynoldstown", name: "Reynoldstown", description: "Beltline-adjacent, bike-friendly, low-key local energy.", color: "red" },
+  { id: "eav", name: "East Atlanta Village", description: "Dive bars, live music, bike-friendly streets, and beautiful chaos.", color: "red" },
   { id: "castleberry", name: "Castleberry Hill", description: "Galleries, breweries, lofts, and weekend art walks.", color: "yellow" },
   { id: "midtown", name: "Midtown", description: "Skyline energy and match-day movement.", color: "red" },
   { id: "westside", name: "Westside", description: "Industrial chic, premium dining, independent retail.", color: "sky" },
