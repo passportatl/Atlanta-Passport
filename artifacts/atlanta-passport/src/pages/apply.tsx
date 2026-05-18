@@ -56,10 +56,10 @@ type PackageOption = {
 };
 
 const packageOptions: PackageOption[] = [
-  { value: "starter", title: "Starter Listing", price: "$50", cls: "bg-brand-yellow text-brand-yellow-foreground" },
+  { value: "starter", title: "Local Spot Partner", price: "$50", cls: "bg-brand-yellow text-brand-yellow-foreground" },
   { value: "featured", title: "Featured Partner", price: "$100", cls: "bg-brand-red text-white", badge: "MOST POPULAR" },
-  { value: "premier", title: "Premier Sponsor", price: "$150", cls: "bg-brand-navy text-white" },
-  { value: "route", title: "Sponsor a Route", price: "$250", cls: "bg-brand-cream text-foreground", badge: "NEW" },
+  { value: "premier", title: "Premier Partner", price: "$175", cls: "bg-brand-navy text-white" },
+  { value: "route", title: "Neighborhood Route Sponsor", price: "$250", cls: "bg-brand-cream text-foreground", badge: "NEW" },
 ];
 
 export default function Apply() {

@@ -141,76 +141,112 @@ export default function Partners() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-6xl mx-auto items-stretch">
-            {/* Starter — Yellow */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 max-w-7xl mx-auto items-stretch">
+            {/* 01 · Local Spot — Yellow */}
             <div className="card-pop bg-brand-yellow text-brand-yellow-foreground flex flex-col hover:-translate-y-1 transition-transform">
-              <div className="p-7 flex-grow">
+              <div className="p-6 flex-grow">
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3">{t("partners_page.tier_label")} 01</div>
-                <h3 className="font-serif text-3xl font-bold mb-2">{t("partners_page.tier_starter_name")}</h3>
-                <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl">{t("partners_page.tier_starter_price")}</div>
-                </div>
-                <p className="text-sm mb-6 opacity-80">{t("partners_page.tier_starter_desc")}</p>
-                <ul className="space-y-2.5 mb-8">
-                  {["Website listing", "Basic passport mention", "QR code", "Category placement"].map((item, i) => (
-                    <li key={i} className="flex items-start text-sm">
+                <h3 className="font-serif text-2xl font-bold mb-1 leading-tight">{t("partners_page.tier_starter_name")}</h3>
+                <p className="font-display text-[11px] tracking-[0.14em] uppercase opacity-70 mb-4">"Be part of the route."</p>
+                <div className="font-display text-5xl mb-4">{t("partners_page.tier_starter_price")}</div>
+                <p className="text-sm mb-5 opacity-80 leading-snug">{t("partners_page.tier_starter_desc")}</p>
+                <ul className="space-y-2 mb-5">
+                  {["Official Passport stamp location", "Placement on neighborhood route map", "Business listing on Passport website/app", "Name in participating business directory", "Inclusion in visitor exploration experience"].map((item, i) => (
+                    <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
+                <p className="text-[11px] uppercase tracking-[0.14em] font-display opacity-70 leading-snug">
+                  Best for: coffee shops, small retailers, grab-and-go spots, bars, neighborhood staples
+                </p>
               </div>
-              <div className="p-7 pt-0">
-                <Link href="/apply" className="button-pop button-pop-cream w-full">{t("partners_page.cta_apply")}</Link>
+              <div className="p-6 pt-0">
+                <Link href="/apply?package=starter" className="button-pop button-pop-cream w-full">{t("partners_page.cta_apply")}</Link>
               </div>
             </div>
 
-            {/* Featured — Red */}
-            <div className="card-pop bg-brand-red text-white flex flex-col hover:-translate-y-1 transition-transform relative lg:-translate-y-3">
+            {/* 02 · Featured — Red */}
+            <div className="card-pop bg-brand-red text-white flex flex-col hover:-translate-y-1 transition-transform relative xl:-translate-y-3">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 badge-sticker bg-brand-lime text-foreground uppercase">
-                ★
+                ★ Most Popular
               </div>
-              <div className="p-7 flex-grow">
+              <div className="p-6 flex-grow">
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3">{t("partners_page.tier_label")} 02</div>
-                <h3 className="font-serif text-3xl font-bold mb-2">{t("partners_page.tier_featured_name")}</h3>
-                <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl">{t("partners_page.tier_featured_price")}</div>
-                </div>
-                <p className="text-sm mb-6 opacity-90">{t("partners_page.tier_featured_desc")}</p>
-                <ul className="space-y-2.5 mb-8">
-                  {["Enhanced website listing", "Larger passport placement", "Featured business card", "Priority neighborhood placement", "QR code", "Offer / reward feature"].map((item, i) => (
-                    <li key={i} className="flex items-start text-sm">
+                <h3 className="font-serif text-2xl font-bold mb-1 leading-tight">{t("partners_page.tier_featured_name")}</h3>
+                <p className="font-display text-[11px] tracking-[0.14em] uppercase opacity-80 mb-4">"Get seen before visitors arrive."</p>
+                <div className="font-display text-5xl mb-4">{t("partners_page.tier_featured_price")}</div>
+                <p className="text-sm mb-5 opacity-90 leading-snug">{t("partners_page.tier_featured_desc")}</p>
+                <ul className="space-y-2 mb-5">
+                  {["Everything in Local Spot", "Featured business highlight on social media", "Instagram collaboration post", "Priority placement on digital listings", "\"Recommended stop\" designation on route map"].map((item, i) => (
+                    <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
+                <p className="text-[11px] uppercase tracking-[0.14em] font-display opacity-80 leading-snug">
+                  Best for: restaurants, breweries, boutiques, experiential businesses
+                </p>
               </div>
-              <div className="p-7 pt-0">
-                <Link href="/apply" className="button-pop button-pop-yellow w-full">{t("partners_page.cta_apply")}</Link>
+              <div className="p-6 pt-0">
+                <Link href="/apply?package=featured" className="button-pop button-pop-yellow w-full">{t("partners_page.cta_apply")}</Link>
               </div>
             </div>
 
-            {/* Premier — Navy + Gold */}
+            {/* 03 · Premier — Navy + Gold */}
             <div className="card-pop bg-brand-navy text-white flex flex-col hover:-translate-y-1 transition-transform">
-              <div className="p-7 flex-grow">
+              <div className="p-6 flex-grow">
                 <div className="font-display text-[10px] tracking-[0.2em] mb-3 text-brand-gold">{t("partners_page.tier_label")} 03</div>
-                <h3 className="font-serif text-3xl font-bold mb-2">{t("partners_page.tier_premier_name")}</h3>
-                <div className="flex items-baseline gap-2 my-5">
-                  <div className="font-display text-5xl text-brand-gold">{t("partners_page.tier_premier_price")}</div>
-                </div>
-                <p className="text-sm mb-6 opacity-90">{t("partners_page.tier_premier_desc")}</p>
-                <ul className="space-y-2.5 mb-8">
-                  {["Premium passport placement", "Homepage feature", "Category or neighborhood sponsorship", "Enhanced listing", "QR campaign", "Featured social/promo placement"].map((item, i) => (
-                    <li key={i} className="flex items-start text-sm">
+                <h3 className="font-serif text-2xl font-bold mb-1 leading-tight">{t("partners_page.tier_premier_name")}</h3>
+                <p className="font-display text-[11px] tracking-[0.14em] uppercase opacity-80 mb-4">"Tell your story."</p>
+                <div className="font-display text-5xl mb-4 text-brand-gold">{t("partners_page.tier_premier_price")}</div>
+                <p className="text-sm mb-5 opacity-90 leading-snug">{t("partners_page.tier_premier_desc")}</p>
+                <ul className="space-y-2 mb-5">
+                  {["Everything in Featured", "Full-page feature in printed & digital Passport", "Dedicated business spotlight section", "Instagram Reel collaboration", "Expanded description, photos & branding", "Priority visibility to route explorers"].map((item, i) => (
+                    <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-brand-gold" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
+                <p className="text-[11px] uppercase tracking-[0.14em] font-display opacity-80 leading-snug">
+                  Best for: destination restaurants, flagship businesses, entertainment venues, major local attractions
+                </p>
               </div>
-              <div className="p-7 pt-0">
-                <Link href="/apply" className="button-pop button-pop-yellow w-full">{t("partners_page.cta_apply")}</Link>
+              <div className="p-6 pt-0">
+                <Link href="/apply?package=premier" className="button-pop button-pop-yellow w-full">{t("partners_page.cta_apply")}</Link>
+              </div>
+            </div>
+
+            {/* 04 · Neighborhood Route Sponsor — Cream */}
+            <div className="card-pop bg-brand-cream text-foreground flex flex-col hover:-translate-y-1 transition-transform relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 badge-sticker bg-brand-red text-white uppercase">
+                ★ Limited
+              </div>
+              <div className="p-6 flex-grow">
+                <div className="font-display text-[10px] tracking-[0.2em] mb-3 text-brand-red flex items-center gap-2">
+                  <Route className="w-3 h-3" /> {t("partners_page.tier_label")} 04
+                </div>
+                <h3 className="font-serif text-2xl font-bold mb-1 leading-tight">{t("partners_page.tier_route_name")}</h3>
+                <p className="font-display text-[11px] tracking-[0.14em] uppercase opacity-70 mb-4">"Own the experience."</p>
+                <div className="font-display text-5xl mb-4">{t("partners_page.tier_route_price")}</div>
+                <p className="text-sm mb-5 opacity-80 leading-snug">{t("partners_page.tier_route_desc")}</p>
+                <ul className="space-y-2 mb-5">
+                  {["Everything in Premier", "Official sponsor of a neighborhood route", "Featured placement on route intro page", "Brand/logo on route maps", "Homepage feature on website/app", "Social mentions throughout campaign", "Include branded swag, coupons, or prizes for completed Passports"].map((item, i) => (
+                    <li key={i} className="flex items-start text-sm leading-snug">
+                      <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-brand-red" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-[11px] uppercase tracking-[0.14em] font-display opacity-70 leading-snug">
+                  Best for: anchor restaurants, breweries, hospitality groups, major retailers, community brands
+                </p>
+              </div>
+              <div className="p-6 pt-0">
+                <Link href="/apply?package=route" className="button-pop button-pop-dark w-full">{t("partners_page.cta_apply")}</Link>
               </div>
             </div>
           </div>
@@ -218,45 +254,6 @@ export default function Partners() {
           <p className="text-center text-muted-foreground italic mt-12">
             {t("partners_page.request_custom")}
           </p>
-
-          {/* Sponsor a Route — premium add-on */}
-          <div className="max-w-6xl mx-auto mt-16">
-            <div className="card-pop bg-brand-cream text-foreground p-7 md:p-10 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl border-[3px] border-foreground bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm flex items-center justify-center flex-shrink-0 mx-auto md:mx-0">
-                <Route className="w-8 h-8 md:w-10 md:h-10" />
-              </div>
-              <div className="text-center md:text-left">
-                <div className="font-display text-[10px] tracking-[0.22em] uppercase text-brand-red mb-2">
-                  ★ {t("partners_page.sponsor_route_kicker", { defaultValue: "New · Limited" })}
-                </div>
-                <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2 leading-tight">
-                  {t("partners_page.sponsor_route_title", { defaultValue: "Sponsor a Route" })}
-                </h3>
-                <p className="text-base text-foreground/80 leading-snug max-w-xl">
-                  {t("partners_page.sponsor_route_desc", {
-                    defaultValue:
-                      "Put your name on a curated Atlanta Passport route — Beltline, Coffee Before Kickoff, Rooftops & Late Nights, and more. Logo on the route page, every stop card, and the printed map insert.",
-                  })}
-                </p>
-                <div className="mt-3 flex flex-wrap justify-center md:justify-start gap-2">
-                  {["Logo on route page", "Printed map placement", "Custom stamp", "Co-branded QR"].map((tag) => (
-                    <span key={tag} className="sticker-pill sticker-yellow text-[10px]">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col gap-2 md:items-end items-center flex-shrink-0">
-                <div className="font-display text-3xl md:text-4xl">$250</div>
-                <div className="font-display text-[10px] tracking-[0.18em] text-foreground/60 uppercase">
-                  {t("partners_page.sponsor_route_per", { defaultValue: "per route · season" })}
-                </div>
-                <Link href="/apply?package=route" className="button-pop button-pop-yellow text-xs px-5 py-2.5 mt-2">
-                  {t("partners_page.sponsor_route_cta", { defaultValue: "Sponsor a Route" })} →
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
