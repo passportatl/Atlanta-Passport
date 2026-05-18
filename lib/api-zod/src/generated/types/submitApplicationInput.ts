@@ -28,5 +28,7 @@ export interface SubmitApplicationInput {
   /** @minLength 5 */
   offer: string;
   prizeSponsorship?: string;
+  nearMarta?: boolean;
+  nearBeltline?: boolean;
   notes?: string;
 }

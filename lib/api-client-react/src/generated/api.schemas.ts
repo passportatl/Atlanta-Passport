@@ -96,6 +96,8 @@ export interface SubmitApplicationInput {
   /** @minLength 5 */
   offer: string;
   prizeSponsorship?: string;
+  nearMarta?: boolean;
+  nearBeltline?: boolean;
   notes?: string;
 }
 
@@ -114,6 +116,8 @@ export interface Application {
   routeId?: string | null;
   offer: string;
   prizeSponsorship?: string | null;
+  nearMarta?: boolean | null;
+  nearBeltline?: boolean | null;
   notes?: string | null;
   emailDelivered: string;
   createdAt: string;

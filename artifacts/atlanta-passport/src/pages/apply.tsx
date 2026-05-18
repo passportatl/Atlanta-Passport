@@ -42,6 +42,8 @@ const formSchema = z.object({
   }),
   offer: z.string().min(10, "Please describe your offer or experience."),
   prizeSponsorship: z.string().optional(),
+  nearMarta: z.boolean().optional(),
+  nearBeltline: z.boolean().optional(),
   notes: z.string().optional(),
 });
 
@@ -81,6 +83,8 @@ export default function Apply() {
       notes: "",
       offer: "",
       prizeSponsorship: "",
+      nearMarta: undefined,
+      nearBeltline: undefined,
     },
   });
 
@@ -278,6 +282,53 @@ export default function Apply() {
                         <FormControl>
                           <Input placeholder="123 Main St, Atlanta, GA" {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="nearMarta"
+                    render={({ field }) => (
+                      <FormItem className="rounded-2xl border-[3px] border-foreground bg-white p-4 shadow-pop-sm">
+                        <FormLabel className="text-sm">Walking distance from a MARTA train station?</FormLabel>
+                        <RadioGroup
+                          className="flex gap-4 mt-2"
+                          value={field.value === undefined ? "" : field.value ? "yes" : "no"}
+                          onValueChange={(v) => field.onChange(v === "yes")}
+                        >
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <RadioGroupItem value="yes" /> Yes
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <RadioGroupItem value="no" /> No
+                          </label>
+                        </RadioGroup>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="nearBeltline"
+                    render={({ field }) => (
+                      <FormItem className="rounded-2xl border-[3px] border-foreground bg-white p-4 shadow-pop-sm">
+                        <FormLabel className="text-sm">Walking distance from the Beltline?</FormLabel>
+                        <RadioGroup
+                          className="flex gap-4 mt-2"
+                          value={field.value === undefined ? "" : field.value ? "yes" : "no"}
+                          onValueChange={(v) => field.onChange(v === "yes")}
+                        >
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <RadioGroupItem value="yes" /> Yes
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <RadioGroupItem value="no" /> No
+                          </label>
+                        </RadioGroup>
                         <FormMessage />
                       </FormItem>
                     )}

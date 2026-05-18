@@ -158,6 +158,8 @@ export const SubmitApplicationBody = zod.object({
   routeId: zod.string().optional(),
   offer: zod.string().min(submitApplicationBodyOfferMin),
   prizeSponsorship: zod.string().optional(),
+  nearMarta: zod.boolean().optional(),
+  nearBeltline: zod.boolean().optional(),
   notes: zod.string().optional(),
 });
 
@@ -184,6 +186,8 @@ export const ListApplicationsResponseItem = zod.object({
   routeId: zod.string().nullish(),
   offer: zod.string(),
   prizeSponsorship: zod.string().nullish(),
+  nearMarta: zod.boolean().nullish(),
+  nearBeltline: zod.boolean().nullish(),
   notes: zod.string().nullish(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),

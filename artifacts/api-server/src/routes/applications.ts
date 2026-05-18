@@ -43,6 +43,8 @@ router.post("/applications", async (req, res) => {
       routeId: data.routeId ?? null,
       offer: data.offer,
       prizeSponsorship: data.prizeSponsorship ?? null,
+      nearMarta: data.nearMarta ?? null,
+      nearBeltline: data.nearBeltline ?? null,
       notes: data.notes ?? null,
     })
     .returning();
@@ -65,6 +67,8 @@ router.post("/applications", async (req, res) => {
         ${renderRow("Instagram", data.instagram)}
         ${renderRow("Offer", data.offer)}
         ${renderRow("Prize Sponsorship", data.prizeSponsorship)}
+        ${renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
+        ${renderRow("Walk to Beltline", typeof data.nearBeltline === "boolean" ? (data.nearBeltline ? "Yes" : "No") : "")}
         ${renderRow("Notes", data.notes)}
       </table>
       <p style="margin-top:16px;font-size:12px;color:#555;">Application id: ${row!.id}</p>
@@ -87,6 +91,8 @@ router.post("/applications", async (req, res) => {
     ``,
     `Offer: ${data.offer}`,
     data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
+    typeof data.nearMarta === "boolean" ? `Walk to MARTA: ${data.nearMarta ? "Yes" : "No"}` : "",
+    typeof data.nearBeltline === "boolean" ? `Walk to Beltline: ${data.nearBeltline ? "Yes" : "No"}` : "",
     data.notes ? `Notes: ${data.notes}` : "",
     ``,
     `Application id: ${row!.id}`,

@@ -330,6 +330,8 @@ components:
         routeId: { type: string }
         offer: { type: string, minLength: 5 }
         prizeSponsorship: { type: string }
+        nearMarta: { type: boolean }
+        nearBeltline: { type: boolean }
         notes: { type: string }
       required:
         - businessName
@@ -359,6 +361,8 @@ components:
         routeId: { type: string, nullable: true }
         offer: { type: string }
         prizeSponsorship: { type: string, nullable: true }
+        nearMarta: { type: boolean, nullable: true }
+        nearBeltline: { type: boolean, nullable: true }
         notes: { type: string, nullable: true }
         emailDelivered: { type: string }
         createdAt: { type: string, format: date-time }
