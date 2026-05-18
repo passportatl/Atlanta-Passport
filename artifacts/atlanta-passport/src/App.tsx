@@ -19,7 +19,7 @@ import PassportRewards from "@/pages/passport/rewards";
 import PassportRoutes from "@/pages/passport/routes";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
-import { VisitorProvider } from "@/passport/visitor-context";
+import { VisitorProvider } from "@/passport/VisitorProvider";
 import { PassportLayout } from "@/passport/PassportLayout";
 
 const queryClient = new QueryClient();
