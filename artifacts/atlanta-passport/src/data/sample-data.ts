@@ -1,4 +1,5 @@
 import wheelhausImg from "@/assets/images/wheelhaus.png";
+import peachtreeWellnessImg from "@/assets/images/peachtree-wellness.jpeg";
 import coffeeShopImg from "@/assets/images/coffee-shop.png";
 import restaurantImg from "@/assets/images/restaurant.png";
 import neighborhoodBarImg from "@/assets/images/neighborhood-bar.png";
@@ -18,7 +19,7 @@ export const businesses = [
     offer: "10% off for Passport holders.",
     address: "585 Memorial Dr SE, Atlanta, GA 30312",
     hours: "Mon-Sun: 11am - 8pm",
-    image: sneakerShopImg,
+    image: peachtreeWellnessImg,
     website: "https://peachtreewellnessatl.com",
     featured: true,
     sponsorTier: "Founding Sponsor",
