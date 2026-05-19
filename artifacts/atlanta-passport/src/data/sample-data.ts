@@ -48,7 +48,7 @@ export const businesses = [
     name: "Atlantucky Brewing",
     category: "Food & Drink",
     neighborhood: "Castleberry Hill",
-    description: "A brewpub in the heart of Atlanta owned by the Nappy Roots.",
+    description: "Great food, local beer, dope art, and chill vibes — owned by Nappy Roots, blocks from Mercedes-Benz Stadium.",
     offer: "Passport offer coming soon.",
     address: "170 Northside Dr SW, Suite 96, Atlanta, GA 30313",
     hours: "Wed-Fri: 3pm - 11pm · Sat: 4pm - 11:30pm (subject to change for FIFA)",
@@ -56,7 +56,7 @@ export const businesses = [
     featured: true,
     sponsorTier: "Founding Sponsor",
     bikePickup: true,
-    about: "Great food, local beer, dope art, and chill vibes. Owned by Nappy Roots, the hip-hop group that's-ups! In Castleberry Hill / West End.",
+    about: "Great food, local beer, dope art, and chill vibes. Owned by Nappy Roots, a hip-hop group that's always stayed true to its roots. Not just about good beer, rather, beer that tells a story, brings people together, and honors where they came from. Passion, music, and CULTURE. Located blocks away from Mercedes Benz Stadium. Frequently hosts events and pop-ups!",
   },
   {
     id: "hartsfield-hops",
