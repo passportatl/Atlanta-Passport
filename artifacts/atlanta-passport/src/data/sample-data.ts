@@ -154,6 +154,42 @@ export const events = [
     description: "Premium viewing experience with skyline views, craft cocktails, and VIP lounges."
   },
   {
+    id: "video-game-prelims",
+    name: "Video Game Prelims + Soccer Tourney",
+    date: "June 16, 2026",
+    venue: "Atlantucky Brewing",
+    neighborhood: "Castleberry Hill",
+    category: "Tournament",
+    description: "12pm – 6pm. Kickoff of the video game prelims and a small soccer tourney. Ice cream, vendors, and vibes. IG @atlantucky · @dp.and.co_atl · @peachtreewellnessatl"
+  },
+  {
+    id: "hot-sauce-market",
+    name: "Hot Sauce Market",
+    date: "June 20, 2026",
+    venue: "Atlantucky Brewing",
+    neighborhood: "Castleberry Hill",
+    category: "Food & Culture",
+    description: "12pm – 6pm. Hot sauce vendors and spicy vibes. IG @hotsaucefest.atl · @dp.and.co_atl · @peachtreewellnessatl · @atlantucky · @passport.atl"
+  },
+  {
+    id: "post-match-atlantucky",
+    name: "Post-Match Vibes at Atlantucky",
+    date: "June 21, 2026",
+    venue: "Atlantucky Brewing",
+    neighborhood: "Castleberry Hill",
+    category: "Watch Party",
+    description: "4pm – 9pm. We'll be at Atlantucky after the game with some cool Atlanta vibes. IG @dp.and.co_atl · @atlantucky · @peachtreewellnessatl · @passport.atl"
+  },
+  {
+    id: "soccer-gaming-finals",
+    name: "Soccer Video Game Tournament + Wing Eating Comp",
+    date: "June 22–23, 2026",
+    venue: "Atlantucky Brewing",
+    neighborhood: "Castleberry Hill",
+    category: "Tournament",
+    description: "12pm – 8pm both days. Soccer video game tournament + wing eating competition. Vendors, ice cream, air-brushing, jersey making, and a soccer net activation. IG @dp.and.co_atl · @atlantucky · @peachtreewellnessatl · @passport.atl"
+  },
+  {
     id: "battle-of-the-bands",
     name: "Battle of the Bands",
     date: "June 13, 2026",
