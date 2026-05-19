@@ -333,6 +333,7 @@ components:
         nearMarta: { type: boolean }
         nearBeltline: { type: boolean }
         notes: { type: string }
+        logoUrl: { type: string }
       required:
         - businessName
         - contactName
@@ -364,6 +365,7 @@ components:
         nearMarta: { type: boolean, nullable: true }
         nearBeltline: { type: boolean, nullable: true }
         notes: { type: string, nullable: true }
+        logoUrl: { type: string, nullable: true }
         emailDelivered: { type: string }
         createdAt: { type: string, format: date-time }
       required:

@@ -46,6 +46,7 @@ router.post("/applications", async (req, res) => {
       nearMarta: data.nearMarta ?? null,
       nearBeltline: data.nearBeltline ?? null,
       notes: data.notes ?? null,
+      logoUrl: data.logoUrl ?? null,
     })
     .returning();
 
@@ -70,6 +71,7 @@ router.post("/applications", async (req, res) => {
         ${renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
         ${renderRow("Walk to Beltline", typeof data.nearBeltline === "boolean" ? (data.nearBeltline ? "Yes" : "No") : "")}
         ${renderRow("Notes", data.notes)}
+        ${data.logoUrl ? `<tr><td style="padding:6px 12px;font-weight:bold;background:#fef3c7;border:1px solid #111;">Logo</td><td style="padding:6px 12px;border:1px solid #111;"><img src="${data.logoUrl}" alt="logo" style="max-width:160px;max-height:160px;border:1px solid #111;" /></td></tr>` : ""}
       </table>
       <p style="margin-top:16px;font-size:12px;color:#555;">Application id: ${row!.id}</p>
     </div>

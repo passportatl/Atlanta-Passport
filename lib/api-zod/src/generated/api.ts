@@ -161,6 +161,7 @@ export const SubmitApplicationBody = zod.object({
   nearMarta: zod.boolean().optional(),
   nearBeltline: zod.boolean().optional(),
   notes: zod.string().optional(),
+  logoUrl: zod.string().optional(),
 });
 
 export const SubmitApplicationResponse = zod.object({
@@ -189,6 +190,7 @@ export const ListApplicationsResponseItem = zod.object({
   nearMarta: zod.boolean().nullish(),
   nearBeltline: zod.boolean().nullish(),
   notes: zod.string().nullish(),
+  logoUrl: zod.string().nullish(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),
 });

@@ -31,4 +31,5 @@ export interface SubmitApplicationInput {
   nearMarta?: boolean;
   nearBeltline?: boolean;
   notes?: string;
+  logoUrl?: string;
 }

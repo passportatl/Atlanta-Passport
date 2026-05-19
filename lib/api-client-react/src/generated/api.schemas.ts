@@ -99,6 +99,7 @@ export interface SubmitApplicationInput {
   nearMarta?: boolean;
   nearBeltline?: boolean;
   notes?: string;
+  logoUrl?: string;
 }
 
 export interface Application {
@@ -119,6 +120,7 @@ export interface Application {
   nearMarta?: boolean | null;
   nearBeltline?: boolean | null;
   notes?: string | null;
+  logoUrl?: string | null;
   emailDelivered: string;
   createdAt: string;
 }
