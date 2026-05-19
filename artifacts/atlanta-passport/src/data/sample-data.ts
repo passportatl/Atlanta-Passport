@@ -118,40 +118,13 @@ export const businesses = [
 
 export const events = [
   {
-    id: "opening-watch-party",
-    name: "Opening Weekend Watch Party",
-    date: "June 12, 2026",
-    venue: "Piedmont Park",
-    neighborhood: "Midtown",
-    category: "Watch Party",
-    description: "Join thousands of fans for the opening matches on massive outdoor screens with local food trucks and live music."
-  },
-  {
-    id: "beltline-ride",
-    name: "Beltline Ride & Food Crawl",
-    date: "June 15, 2026",
-    venue: "Atlanta Beltline Eastside Trail",
-    neighborhood: "Old Fourth Ward",
-    category: "Experience",
-    description: "A guided e-bike tour along the Beltline with stops at top local restaurants and breweries."
-  },
-  {
-    id: "atlanta-night-market",
-    name: "Atlanta Night Market",
-    date: "June 20, 2026",
-    venue: "The Pullman Yards",
-    neighborhood: "Kirkwood",
-    category: "Food & Culture",
-    description: "An evening celebrating Atlanta's diverse culinary scene with over 50 vendors, artisans, and performers."
-  },
-  {
-    id: "rooftop-match-social",
-    name: "Rooftop Match Day Social",
-    date: "June 25, 2026",
-    venue: "Ponce City Market Roof",
-    neighborhood: "Old Fourth Ward",
-    category: "Nightlife",
-    description: "Premium viewing experience with skyline views, craft cocktails, and VIP lounges."
+    id: "battle-of-the-bands",
+    name: "Battle of the Bands",
+    date: "June 13, 2026",
+    venue: "Atlantucky Brewing",
+    neighborhood: "Castleberry Hill",
+    category: "Music",
+    description: "3pm – 9pm. Music, ice cream, vendors, and vibes. IG @atlkybob · @dp.and.co_atl · @peachtreewellnessatl"
   },
   {
     id: "video-game-prelims",
