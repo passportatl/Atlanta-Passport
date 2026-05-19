@@ -100,6 +100,9 @@ export interface SubmitApplicationInput {
   nearBeltline?: boolean;
   notes?: string;
   logoUrl?: string;
+  subtitle?: string;
+  about?: string;
+  businessHours?: string;
 }
 
 export interface Application {
@@ -121,6 +124,9 @@ export interface Application {
   nearBeltline?: boolean | null;
   notes?: string | null;
   logoUrl?: string | null;
+  subtitle?: string | null;
+  about?: string | null;
+  businessHours?: string | null;
   emailDelivered: string;
   createdAt: string;
 }

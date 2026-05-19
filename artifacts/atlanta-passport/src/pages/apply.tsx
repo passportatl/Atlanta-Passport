@@ -53,6 +53,9 @@ const formSchema = z.object({
   nearBeltline: z.boolean().optional(),
   notes: z.string().optional(),
   logoUrl: z.string().optional(),
+  subtitle: z.string().optional(),
+  about: z.string().optional(),
+  businessHours: z.string().optional(),
 });
 
 type PackageOption = {
@@ -94,6 +97,9 @@ export default function Apply() {
       nearMarta: undefined,
       nearBeltline: undefined,
       logoUrl: "",
+      subtitle: "",
+      about: "",
+      businessHours: "",
     },
   });
 
@@ -343,6 +349,63 @@ export default function Apply() {
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="subtitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Short business highlight ({t("apply_page.optional")})</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="One-line tagline, e.g. ‘Premium e-bike rentals on the Beltline.’"
+                          maxLength={140}
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Up to 140 characters — appears under your business name.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="about"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>About your business ({t("apply_page.optional")})</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Tell visitors who you are, what makes you special, and what they should expect when they walk in."
+                          rows={5}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="businessHours"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Business hours ({t("apply_page.optional")})</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={"Mon–Fri 8am–6pm\nSat 9am–8pm\nSun closed"}
+                          rows={4}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="space-y-6">

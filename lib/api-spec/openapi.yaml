@@ -334,6 +334,9 @@ components:
         nearBeltline: { type: boolean }
         notes: { type: string }
         logoUrl: { type: string }
+        subtitle: { type: string }
+        about: { type: string }
+        businessHours: { type: string }
       required:
         - businessName
         - contactName
@@ -366,6 +369,9 @@ components:
         nearBeltline: { type: boolean, nullable: true }
         notes: { type: string, nullable: true }
         logoUrl: { type: string, nullable: true }
+        subtitle: { type: string, nullable: true }
+        about: { type: string, nullable: true }
+        businessHours: { type: string, nullable: true }
         emailDelivered: { type: string }
         createdAt: { type: string, format: date-time }
       required:

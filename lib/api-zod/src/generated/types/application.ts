@@ -25,6 +25,9 @@ export interface Application {
   nearBeltline?: boolean | null;
   notes?: string | null;
   logoUrl?: string | null;
+  subtitle?: string | null;
+  about?: string | null;
+  businessHours?: string | null;
   emailDelivered: string;
   createdAt: Date;
 }

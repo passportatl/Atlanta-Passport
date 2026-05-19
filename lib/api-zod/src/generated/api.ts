@@ -162,6 +162,9 @@ export const SubmitApplicationBody = zod.object({
   nearBeltline: zod.boolean().optional(),
   notes: zod.string().optional(),
   logoUrl: zod.string().optional(),
+  subtitle: zod.string().optional(),
+  about: zod.string().optional(),
+  businessHours: zod.string().optional(),
 });
 
 export const SubmitApplicationResponse = zod.object({
@@ -191,6 +194,9 @@ export const ListApplicationsResponseItem = zod.object({
   nearBeltline: zod.boolean().nullish(),
   notes: zod.string().nullish(),
   logoUrl: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  about: zod.string().nullish(),
+  businessHours: zod.string().nullish(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),
 });

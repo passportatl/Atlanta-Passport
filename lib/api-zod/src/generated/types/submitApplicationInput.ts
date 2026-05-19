@@ -32,4 +32,7 @@ export interface SubmitApplicationInput {
   nearBeltline?: boolean;
   notes?: string;
   logoUrl?: string;
+  subtitle?: string;
+  about?: string;
+  businessHours?: string;
 }

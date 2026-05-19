@@ -47,6 +47,9 @@ router.post("/applications", async (req, res) => {
       nearBeltline: data.nearBeltline ?? null,
       notes: data.notes ?? null,
       logoUrl: data.logoUrl ?? null,
+      subtitle: data.subtitle ?? null,
+      about: data.about ?? null,
+      businessHours: data.businessHours ?? null,
     })
     .returning();
 
@@ -66,6 +69,9 @@ router.post("/applications", async (req, res) => {
         ${renderRow("Phone", data.phone)}
         ${renderRow("Website", data.website)}
         ${renderRow("Instagram", data.instagram)}
+        ${renderRow("Subtitle", data.subtitle)}
+        ${renderRow("About", data.about)}
+        ${renderRow("Business Hours", data.businessHours)}
         ${renderRow("Offer", data.offer)}
         ${renderRow("Prize Sponsorship", data.prizeSponsorship)}
         ${renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
@@ -91,6 +97,9 @@ router.post("/applications", async (req, res) => {
     data.website ? `Website: ${data.website}` : "",
     data.instagram ? `Instagram: ${data.instagram}` : "",
     ``,
+    data.subtitle ? `Subtitle: ${data.subtitle}` : "",
+    data.about ? `About: ${data.about}` : "",
+    data.businessHours ? `Business Hours: ${data.businessHours}` : "",
     `Offer: ${data.offer}`,
     data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
     typeof data.nearMarta === "boolean" ? `Walk to MARTA: ${data.nearMarta ? "Yes" : "No"}` : "",

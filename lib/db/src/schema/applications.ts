@@ -19,6 +19,9 @@ export const applicationsTable = pgTable("applications", {
   nearBeltline: boolean("near_beltline"),
   notes: text("notes"),
   logoUrl: text("logo_url"),
+  subtitle: text("subtitle"),
+  about: text("about"),
+  businessHours: text("business_hours"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
