@@ -285,7 +285,7 @@ export default function Beltline() {
                   <Sparkles className="w-3.5 h-3.5" /> Founding Sponsor Spot
                 </div>
                 <h3 className="font-serif font-bold text-2xl md:text-4xl leading-[1.1] mb-3">
-                  Sponsor this route.
+                  Sponsor a route.
                 </h3>
                 <p className="text-base md:text-lg text-foreground/85 max-w-2xl mb-4">
                   Put your brand on the trail riders, walkers, and visitors actually follow. Sponsors get the route page header, logo placement on the printed Passport map, and a featured stop along the route.
@@ -298,7 +298,7 @@ export default function Beltline() {
               </div>
               <div className="flex flex-col gap-3 lg:items-end">
                 <Link href="/apply?interest=sponsor-route" className="button-pop button-pop-dark inline-flex items-center gap-2 whitespace-nowrap">
-                  Sponsor This Route <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                  Sponsor A Route <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </Link>
                 <Link href="/partners" className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1">
                   See sponsorship tiers <ArrowRight className="w-3 h-3 rtl:rotate-180" />
