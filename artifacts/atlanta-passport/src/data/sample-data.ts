@@ -24,7 +24,7 @@ export const businesses = [
     sponsorTier: "Founding Sponsor",
     about: "Great food, local beer, dope art, and chill vibes. Owned by Nappy Roots, a hip-hop group that's always stayed true to its roots. Not just about good beer, rather, beer that tells a story, brings people together, and honors where they came from. Passion, music, and CULTURE. Located blocks away from Mercedes Benz Stadium. Frequently hosts events and pop-ups!",
     transit: {
-      marta: "Nearest MARTA — GWCC/CNN Center or Vine City stations (blue & green lines).",
+      marta: "Nearest MARTA — SEC District (formerly GWCC/CNN Center) or Vine City stations (blue & green lines).",
       beltline: "Nearest Beltline access — Westside Trail or the Westside Beltline Connector.",
     },
     menu: [
@@ -222,7 +222,7 @@ export const events = [
       "Drink specials post-match",
       "DJ set + cool Atlanta vibes",
       "Stamps available for Passport holders",
-      "Walk from GWCC / CNN Center MARTA",
+      "Walk from SEC District MARTA (blue/green)",
     ],
     instagram: ["@dp.and.co_atl", "@atlantucky", "@peachtreewellnessatl", "@passport.atl"],
   },
