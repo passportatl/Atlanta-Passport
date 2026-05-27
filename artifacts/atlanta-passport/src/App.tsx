@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 import Explore from "@/pages/explore";
 import Partners from "@/pages/partners";
 import Events from "@/pages/events";
+import EventDetail from "@/pages/event-detail";
 import About from "@/pages/about";
 import Apply from "@/pages/apply";
 import Listing from "@/pages/listing";
@@ -35,6 +36,7 @@ function MarketingRoutes() {
         <Route path="/explore" component={Explore} />
         <Route path="/partners" component={Partners} />
         <Route path="/events" component={Events} />
+        <Route path="/events/:id" component={EventDetail} />
         <Route path="/about" component={About} />
         <Route path="/apply" component={Apply} />
         <Route path="/listing/:id" component={Listing} />

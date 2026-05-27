@@ -87,7 +87,10 @@ export default function Events() {
               const headerTint = headerTints[i % headerTints.length];
               return (
                 <motion.div key={event.id} variants={fadeInUp}>
-                  <div className={`card-pop h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform ${cardTints[i % cardTints.length]}`}>
+                  <Link
+                    href={`/events/${event.id}`}
+                    className={`card-pop h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform cursor-pointer ${cardTints[i % cardTints.length]}`}
+                  >
                     {/* Bold typographic date tile — replaces the shared photo */}
                     <div className={`relative border-b-[3px] border-foreground p-5 flex items-center gap-5 ${headerTint}`}>
                       <div className="bg-background text-foreground border-[3px] border-foreground shadow-pop-sm rounded-xl w-20 h-20 flex flex-col items-center justify-center flex-shrink-0">
@@ -122,7 +125,7 @@ export default function Events() {
                         ★ {t("events_page.view_event")}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </motion.div>
               );
             })}
