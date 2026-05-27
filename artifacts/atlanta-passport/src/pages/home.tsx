@@ -145,28 +145,10 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/35 via-transparent to-transparent mix-blend-multiply" />
               </div>
 
-              <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 z-20">
-                <PassportStamp size="sm" tone="red" rotate={-12}>
+              <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 z-20">
+                <PassportStamp size="lg" tone="red" rotate={-12}>
                   ATL<br />2026<br />Passport
                 </PassportStamp>
-              </div>
-
-              <div className="absolute bottom-6 left-6 z-20">
-                <Sticker color="red" icon={<MapPin className="w-3.5 h-3.5" />}>
-                  {t("hero.stamp_old_fourth_ward")}
-                </Sticker>
-              </div>
-
-              <div className="absolute top-8 right-2 sm:right-4 z-20 hidden sm:block">
-                <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>
-                  {t("hero.stamp_beltline")}
-                </Sticker>
-              </div>
-
-              <div className="absolute bottom-12 right-3 z-20">
-                <Sticker color="cream" icon={<Stamp className="w-3.5 h-3.5" />}>
-                  {t("hero.stamp_local_pick")}
-                </Sticker>
               </div>
             </motion.div>
           </div>
