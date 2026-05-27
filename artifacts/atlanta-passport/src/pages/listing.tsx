@@ -1,7 +1,7 @@
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses } from "@/data/sample-data";
-import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen, Bike } from "lucide-react";
+import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen, Bike, Utensils, Train } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Listing() {
@@ -146,6 +146,56 @@ export default function Listing() {
                 </p>
               </div>
             </div>
+
+            {business.transit && (
+              <section className="pt-6 border-t border-border">
+                <div className="flex items-center text-primary font-bold mb-4">
+                  <Train className="w-5 h-5 mr-2" /> Getting here
+                </div>
+                <ul className="space-y-3 text-muted-foreground leading-relaxed">
+                  {business.transit.marta && (
+                    <li className="flex gap-3">
+                      <span className="badge-sticker bg-brand-navy text-brand-cream text-[10px] shrink-0 self-start mt-0.5">MARTA</span>
+                      <span>{business.transit.marta}</span>
+                    </li>
+                  )}
+                  {business.transit.beltline && (
+                    <li className="flex gap-3">
+                      <span className="badge-sticker bg-brand-lime text-foreground text-[10px] shrink-0 self-start mt-0.5">BELTLINE</span>
+                      <span>{business.transit.beltline}</span>
+                    </li>
+                  )}
+                </ul>
+              </section>
+            )}
+
+            {business.menu && business.menu.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div className="flex items-center text-primary font-bold mb-5">
+                  <Utensils className="w-5 h-5 mr-2" /> Featured menu
+                </div>
+                <div className="space-y-7">
+                  {business.menu.map((group) => (
+                    <div key={group.section}>
+                      <h4 className="font-display text-xs tracking-[0.18em] uppercase text-brand-red mb-3">
+                        {group.section}
+                      </h4>
+                      <ul className="space-y-3">
+                        {group.items.map((item) => (
+                          <li key={item.name} className="border-b border-border/60 pb-3 last:border-b-0 last:pb-0">
+                            <div className="font-serif font-bold text-lg text-foreground">{item.name}</div>
+                            {item.description && (
+                              <p className="text-sm text-muted-foreground leading-relaxed mt-1">{item.description}</p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic">Menu may rotate — call ahead for daily specials.</p>
+              </section>
+            )}
 
             <div className="flex flex-col sm:flex-row gap-5 pt-6">
               <a

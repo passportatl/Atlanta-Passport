@@ -413,7 +413,7 @@ export default function Home() {
           >
             {featuredBusinesses.map((biz, idx) => {
               const badge = idx < cardBadgeKeys.length ? cardBadgeKeys[idx] : null;
-              const isFounding = biz.id === "wheelhaus-bikes";
+              const isFounding = biz.id === "atlantucky-brewing";
               return (
                 <motion.div key={biz.id} variants={fadeInUp}>
                   <Link href={`/listing/${biz.id}`}>

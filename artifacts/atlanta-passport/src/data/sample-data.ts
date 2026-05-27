@@ -28,6 +28,59 @@ export const businesses = [
     about: "Apothecary, crystals, hemp products & gift shop — plus Hot Sauce Shop ATL with Spicy Dragon Award-winning hot sauces available to try and buy. On the borders of Grant Park, Cabbagetown, and Reynoldstown.",
   },
   {
+    id: "atlantucky-brewing",
+    name: "Atlantucky Brewing",
+    category: "Food & Drink",
+    neighborhood: "Castleberry Hill",
+    description: "Great food, local beer, dope art, and chill vibes — owned by Nappy Roots, blocks from Mercedes-Benz Stadium.",
+    offer: "10% off your tab when you show your Atlanta Passport.",
+    address: "170 Northside Dr SW, Suite 96, Atlanta, GA 30313",
+    hours: "Wed-Fri: 3pm - 11pm · Sat: 4pm - 11:30pm (subject to change for FIFA)",
+    image: atlantuckyImg,
+    featured: true,
+    sponsorTier: "Founding Sponsor",
+    about: "Great food, local beer, dope art, and chill vibes. Owned by Nappy Roots, a hip-hop group that's always stayed true to its roots. Not just about good beer, rather, beer that tells a story, brings people together, and honors where they came from. Passion, music, and CULTURE. Located blocks away from Mercedes Benz Stadium. Frequently hosts events and pop-ups!",
+    transit: {
+      marta: "Nearest MARTA — GWCC/CNN Center or Vine City stations (blue & green lines).",
+      beltline: "Nearest Beltline access — Westside Trail or the Westside Beltline Connector.",
+    },
+    menu: [
+      {
+        section: "Signature Pizzas",
+        items: [
+          {
+            name: "Aww Naww Pizza",
+            description: "Red sauce, toasted fennel, pepperoni, shredded and fresh mozzarella, smoked pork belly burnt ends, red pepper.",
+          },
+          {
+            name: "Good Day Pizza (V)",
+            description: "Red sauce, sautéed garlicky collard greens, beer-marinated tomatoes, mushrooms, red onions, green & red peppers, banana peppers, fresh basil, fresh mozzarella.",
+          },
+        ],
+      },
+      {
+        section: "Roasted Chicken Wings",
+        items: [
+          { name: "Buffalo Lemon Pepper", description: "" },
+          { name: "Chef's Kiss Cajun Wings", description: "" },
+        ],
+      },
+      {
+        section: "Paninis",
+        items: [
+          {
+            name: "No Static Panini",
+            description: "Roasted jerk chicken, sautéed collards, garlic mayo, shredded parmesan, shredded mozzarella, chopped romaine, signature beer caesar dressing — served on a toasted ciabatta bun.",
+          },
+          {
+            name: "Nappy Mac Panini",
+            description: "Hops-seasoned ground beef, sautéed onions, garlic mayo, cheddar, chopped lettuce — served on toasted ciabatta.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "wheelhaus-bikes",
     name: "Wheelhaus Bikes",
     category: "Rentals",
@@ -42,21 +95,6 @@ export const businesses = [
     sponsorTier: "Founding Sponsor",
     bikePickup: true,
     about: "Premium e-bike rentals, full-service repairs, and curated city rides built for the way the city actually moves — by bike, on the Beltline, through the neighborhoods.",
-  },
-  {
-    id: "atlantucky-brewing",
-    name: "Atlantucky Brewing",
-    category: "Food & Drink",
-    neighborhood: "Castleberry Hill",
-    description: "Great food, local beer, dope art, and chill vibes — owned by Nappy Roots, blocks from Mercedes-Benz Stadium.",
-    offer: "Passport offer coming soon.",
-    address: "170 Northside Dr SW, Suite 96, Atlanta, GA 30313",
-    hours: "Wed-Fri: 3pm - 11pm · Sat: 4pm - 11:30pm (subject to change for FIFA)",
-    image: atlantuckyImg,
-    featured: true,
-    sponsorTier: "Founding Sponsor",
-    bikePickup: true,
-    about: "Great food, local beer, dope art, and chill vibes. Owned by Nappy Roots, a hip-hop group that's always stayed true to its roots. Not just about good beer, rather, beer that tells a story, brings people together, and honors where they came from. Passion, music, and CULTURE. Located blocks away from Mercedes Benz Stadium. Frequently hosts events and pop-ups!",
   },
   {
     id: "hartsfield-hops",
