@@ -288,7 +288,7 @@ export default function Home() {
       </section>
 
       {/* ROUTES & COLLECTIONS */}
-      <section className="section-tight bg-background">
+      <section id="routes" className="section-tight bg-background scroll-mt-24">
         <div className="container mx-auto px-4">
           <motion.div
             initial="hidden"
