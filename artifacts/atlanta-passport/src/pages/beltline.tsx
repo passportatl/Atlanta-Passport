@@ -16,8 +16,25 @@ import {
   ArrowRight,
   Footprints,
   Trophy,
+  Map as MapIcon,
+  Store,
+  Building2,
+  ExternalLink,
+  CheckCircle2,
 } from "lucide-react";
 import beltlineImg from "@/assets/images/beltline.png";
+import { routes } from "@/data/sample-data";
+import { cn } from "@/lib/utils";
+
+const routeColorMap: Record<string, { bg: string; text: string }> = {
+  yellow: { bg: "bg-brand-yellow", text: "text-brand-yellow-foreground" },
+  lime:   { bg: "bg-brand-lime",   text: "text-foreground" },
+  red:    { bg: "bg-brand-red",    text: "text-white" },
+  navy:   { bg: "bg-brand-navy",   text: "text-white" },
+  cream:  { bg: "bg-brand-cream",  text: "text-foreground" },
+  sky:    { bg: "bg-brand-sky",    text: "text-foreground" },
+  orange: { bg: "bg-brand-orange", text: "text-foreground" },
+};
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -78,9 +95,9 @@ export default function Beltline() {
                 {t("beltline_page.intro")}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/routes" className="button-pop">
+                <a href="#routes" className="button-pop">
                   {t("beltline_page.cta_see_stops")}
-                </Link>
+                </a>
                 <Link href="/apply" className="button-pop button-pop-yellow">
                   {t("beltline_page.cta_add_business")}
                 </Link>
@@ -107,6 +124,151 @@ export default function Beltline() {
                 </span>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ROUTES — the actual trails */}
+      <section id="routes" className="py-24 bg-background scroll-mt-24 border-t-[3px] border-foreground">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mb-12">
+            <div className="section-kicker mb-5">★ Routes &amp; Collections</div>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary leading-[1.05] mb-4">
+              The trails, end to end.
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Two open Beltline segments — neighborhoods, local spots, and shopping along the way.
+            </p>
+          </div>
+
+          {/* Quick index */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-7 mb-16">
+            {routes.map((r, i) => {
+              const c = routeColorMap[r.color] ?? routeColorMap.yellow;
+              return (
+                <a key={r.id} href={`#${r.id}`} className="card-pop p-5 md:p-6 hover:-translate-y-1 transition-transform block">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className={cn("rounded-full w-12 h-12 grid place-items-center border-2 border-foreground font-display text-sm", c.bg, c.text)}>
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
+                    <span className="badge-sticker bg-brand-lime/80 text-foreground inline-flex items-center gap-1 text-[10px]">
+                      <CheckCircle2 className="w-3 h-3" /> Open
+                    </span>
+                  </div>
+                  <h3 className="font-serif font-bold text-2xl md:text-3xl leading-tight mb-2">{r.name}</h3>
+                  <p className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/60 mb-3">{r.neighborhood}</p>
+                  <p className="text-sm text-foreground/70 mb-5">{r.vibe}</p>
+                  <div className="flex items-center gap-4 text-[11px] font-display tracking-[0.14em] uppercase text-foreground/70">
+                    <span className="inline-flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {r.stops} stops</span>
+                    <span className="inline-flex items-center gap-1.5"><MapIcon className="w-3.5 h-3.5" /> {r.miles}</span>
+                    <span className="inline-flex items-center gap-1.5"><Bike className="w-3.5 h-3.5" /> {r.pace}</span>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Detail per route */}
+          <div className="space-y-16 md:space-y-24">
+            {routes.map((r, i) => {
+              const c = routeColorMap[r.color] ?? routeColorMap.yellow;
+              const neighborhoods = "neighborhoods" in r ? r.neighborhoods : [];
+              const shopping = "shopping" in r ? r.shopping : [];
+              const status = "status" in r ? r.status : undefined;
+              return (
+                <motion.div
+                  key={r.id}
+                  id={r.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.5 }}
+                  className="scroll-mt-24"
+                >
+                  <div className={cn("card-pop p-6 md:p-10 mb-8", c.bg, c.text)}>
+                    <div className="flex flex-wrap items-center gap-3 mb-4 font-display text-[10px] tracking-[0.22em] uppercase">
+                      <span>Route {String(i + 1).padStart(2, "0")}</span>
+                      {status && (
+                        <span className="badge-sticker bg-background text-foreground inline-flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> {status}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-serif font-bold text-3xl md:text-5xl leading-[1.05] mb-3">{r.name}</h3>
+                    <p className="font-display text-xs md:text-sm tracking-[0.16em] uppercase opacity-90">{r.neighborhood}</p>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 text-xs md:text-sm font-display tracking-[0.14em] uppercase">
+                      <span className="inline-flex items-center gap-2"><MapIcon className="w-4 h-4" /> {r.miles}</span>
+                      <span className="inline-flex items-center gap-2"><Bike className="w-4 h-4" /> {r.pace}</span>
+                      <span className="inline-flex items-center gap-2"><MapPin className="w-4 h-4" /> {r.stops} neighborhoods</span>
+                    </div>
+                  </div>
+
+                  <p className="text-lg md:text-xl text-foreground/80 max-w-3xl mb-10 leading-relaxed">{r.vibe}</p>
+
+                  {neighborhoods.length > 0 && (
+                    <div className="mb-10">
+                      <div className="section-kicker mb-5">★ Neighborhoods on the Route</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {neighborhoods.map((n) => {
+                          const spots = "spots" in n ? n.spots : undefined;
+                          const link = "link" in n ? n.link : undefined;
+                          return (
+                            <div key={n.name} className="card-pop p-5 md:p-6 bg-background">
+                              <div className="flex items-center justify-between gap-3 mb-3">
+                                <h4 className="font-serif font-bold text-xl md:text-2xl">{n.name}</h4>
+                                <Building2 className="w-5 h-5 text-foreground/40 flex-shrink-0" />
+                              </div>
+                              {link && (
+                                <a href={link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-display text-[11px] tracking-[0.14em] uppercase text-brand-red mb-3 hover:underline">
+                                  Read its history <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                              {spots && spots.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {spots.map((s) => (
+                                    <span key={s} className="sticker-pill sticker-cream text-[11px]">{s}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {shopping.length > 0 && (
+                    <div>
+                      <div className="section-kicker mb-5">★ Shopping &amp; Markets</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {shopping.map((s) => {
+                          const address = "address" in s ? s.address : undefined;
+                          const notes = "notes" in s ? s.notes : undefined;
+                          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address ? `${s.name} ${address}` : `${s.name} Atlanta`)}`;
+                          return (
+                            <a key={s.name} href={mapsUrl} target="_blank" rel="noopener noreferrer" className="card-pop p-5 bg-background hover:-translate-y-0.5 transition-transform block">
+                              <div className="flex items-start gap-3">
+                                <div className="rounded-full w-10 h-10 grid place-items-center border-2 border-foreground bg-brand-yellow flex-shrink-0">
+                                  <Store className="w-4 h-4 text-brand-yellow-foreground" />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="font-serif font-bold text-lg leading-tight mb-1">{s.name}</h4>
+                                  {address && <p className="text-xs text-foreground/60 leading-snug">{address}</p>}
+                                  {notes && <p className="text-xs text-foreground/70 leading-snug mt-1">{notes}</p>}
+                                  <span className="inline-flex items-center gap-1 font-display text-[10px] tracking-[0.14em] uppercase text-brand-red mt-2">
+                                    Open in Maps <ExternalLink className="w-3 h-3" />
+                                  </span>
+                                </div>
+                              </div>
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
