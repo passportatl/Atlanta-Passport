@@ -1,4 +1,4 @@
-import wheelhausImg from "@/assets/images/wheelhaus.png";
+import wheelhausImg from "@/assets/images/wheelhaus-storefront.png";
 import peachtreeWellnessImg from "@/assets/images/peachtree-wellness-storefront.jpg";
 import atlantuckyImg from "@/assets/images/atlantucky.png";
 import hartsfieldHopsImg from "@/assets/images/hartsfield-hops.png";

@@ -90,3 +90,9 @@ id = "XAs2KJ4rUfgl9cFOAuU2V"
 uri = "file://artifacts/atlanta-passport/src/assets/images/stone-mountain-records.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "9jEGLDARV0-aPWnyhLWHQ"
+uri = "file://artifacts/atlanta-passport/src/assets/images/wheelhaus-storefront.png"
+type = "image"
+title = "wheelhaus storefront"
