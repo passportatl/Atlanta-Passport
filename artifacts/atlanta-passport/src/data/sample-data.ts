@@ -1,5 +1,5 @@
 import wheelhausImg from "@/assets/images/wheelhaus.png";
-import peachtreeWellnessImg from "@/assets/images/peachtree-wellness.jpeg";
+import peachtreeWellnessImg from "@/assets/images/peachtree-wellness-storefront.jpg";
 import atlantuckyImg from "@/assets/images/atlantucky.png";
 import hartsfieldHopsImg from "@/assets/images/hartsfield-hops.png";
 import sweetAuburnSmokehouseImg from "@/assets/images/sweet-auburn-smokehouse.png";
@@ -73,7 +73,6 @@ export const businesses = [
     address: "585 Memorial Dr SE, Atlanta, GA 30312",
     hours: "Mon-Sun: 11am - 8pm",
     image: peachtreeWellnessImg,
-    imageFit: "contain" as const,
     website: "https://peachtreewellnessatl.com",
     featured: true,
     sponsorTier: "Founding Sponsor",
