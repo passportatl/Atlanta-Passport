@@ -270,6 +270,42 @@ export default function Beltline() {
               );
             })}
           </div>
+
+          {/* Sponsor this route */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5 }}
+            className="mt-16 md:mt-24 card-pop bg-brand-yellow text-brand-yellow-foreground p-6 md:p-10"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 lg:gap-10 items-center">
+              <div>
+                <div className="badge-sticker bg-brand-red text-white inline-flex items-center gap-1.5 mb-4 -rotate-1 uppercase">
+                  <Sparkles className="w-3.5 h-3.5" /> Founding Sponsor Spot
+                </div>
+                <h3 className="font-serif font-bold text-2xl md:text-4xl leading-[1.1] mb-3">
+                  Sponsor this route.
+                </h3>
+                <p className="text-base md:text-lg text-foreground/85 max-w-2xl mb-4">
+                  Put your brand on the trail riders, walkers, and visitors actually follow. Sponsors get the route page header, logo placement on the printed Passport map, and a featured stop along the route.
+                </p>
+                <ul className="grid sm:grid-cols-3 gap-x-6 gap-y-2 text-sm font-display tracking-[0.12em] uppercase text-foreground/80">
+                  <li className="inline-flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Header logo + link</li>
+                  <li className="inline-flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Printed map placement</li>
+                  <li className="inline-flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Featured stop on route</li>
+                </ul>
+              </div>
+              <div className="flex flex-col gap-3 lg:items-end">
+                <Link href="/apply?interest=sponsor-route" className="button-pop button-pop-dark inline-flex items-center gap-2 whitespace-nowrap">
+                  Sponsor This Route <ArrowRight className="w-4 h-4 rtl:rotate-180" />
+                </Link>
+                <Link href="/partners" className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/70 hover:text-foreground inline-flex items-center gap-1">
+                  See sponsorship tiers <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
