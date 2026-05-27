@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, Bike } from "lucide-react";
+import atlMapImg from "@/assets/images/atl-neighborhoods-map.png";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,40 @@ export default function Explore() {
           </h1>
           <p className="text-xl text-muted-foreground mt-6">
             {t("explore_page.subtitle")}
+          </p>
+        </div>
+
+        {/* Orientation map */}
+        <div className="mb-12">
+          <div className="flex items-end justify-between gap-4 mb-4">
+            <div>
+              <div className="section-kicker mb-2">★ The Map</div>
+              <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary leading-tight">
+                Get your bearings.
+              </h2>
+              <p className="text-sm md:text-base text-muted-foreground mt-1 max-w-xl">
+                Neighborhoods, MARTA stations, and the Beltline — at a glance.
+              </p>
+            </div>
+          </div>
+          <div className="card-pop overflow-hidden bg-[#0b0f1a]">
+            <a
+              href={atlMapImg}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block group"
+              aria-label="Open the Atlanta neighborhoods map in a new tab"
+            >
+              <img
+                src={atlMapImg}
+                alt="Atlanta neighborhoods map with MARTA train stations and the Beltline"
+                className="w-full h-auto object-contain group-hover:opacity-95 transition-opacity"
+                loading="lazy"
+              />
+            </a>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3 italic">
+            Tap the map to open full-size.
           </p>
         </div>
 
