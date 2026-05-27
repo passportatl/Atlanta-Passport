@@ -106,6 +106,12 @@ export default function Home() {
                 <Link href="/beltline" className="button-pop button-pop-yellow w-full sm:w-auto">
                   {t("hero.cta_routes")} <Map className="w-4 h-4" />
                 </Link>
+                <Link
+                  href="/events"
+                  className="button-pop col-span-2 w-full sm:w-auto bg-brand-red text-white hover:bg-brand-red/90"
+                >
+                  <Calendar className="w-4 h-4" /> See Events
+                </Link>
               </div>
 
               <div className="-mx-4 sm:mx-0 mb-2">
