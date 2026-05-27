@@ -33,6 +33,7 @@ export default function Navbar() {
   const passportShort = hasPassport ? "My Passport" : "Get Passport";
 
   const touristLinks = [
+    { name: "Routes", path: "/routes" },
     { name: t("nav.beltline_tour"), path: "/beltline" },
     { name: t("nav.events"), path: "/events" },
     { name: t("nav.about"), path: "/about" },
@@ -40,6 +41,7 @@ export default function Navbar() {
 
   const mobileTouristLinks = [
     { name: t("nav.explore"), path: "/explore" },
+    { name: "Routes", path: "/routes" },
     { name: t("nav.beltline_tour"), path: "/beltline" },
     { name: t("nav.neighborhoods"), path: "/explore" },
     { name: t("nav.local_spots"), path: "/explore" },

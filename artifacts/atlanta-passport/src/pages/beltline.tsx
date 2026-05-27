@@ -78,7 +78,7 @@ export default function Beltline() {
                 {t("beltline_page.intro")}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/#routes" className="button-pop">
+                <Link href="/routes" className="button-pop">
                   {t("beltline_page.cta_see_stops")}
                 </Link>
                 <Link href="/apply" className="button-pop button-pop-yellow">

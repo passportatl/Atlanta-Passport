@@ -13,6 +13,7 @@ import About from "@/pages/about";
 import Apply from "@/pages/apply";
 import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
+import RoutesPage from "@/pages/routes";
 import StampPage from "@/pages/stamp";
 import PassportHome from "@/pages/passport/index";
 import PassportStamps from "@/pages/passport/stamps";
@@ -31,6 +32,7 @@ function MarketingRoutes() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/beltline" component={Beltline} />
+        <Route path="/routes" component={RoutesPage} />
         <Route path="/explore" component={Explore} />
         <Route path="/partners" component={Partners} />
         <Route path="/events" component={Events} />

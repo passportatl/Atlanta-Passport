@@ -54,7 +54,7 @@ const heroChipKeys: Array<{ key: string; href: string }> = [
   { key: "chip_food",       href: "/explore?category=food-drink" },
   { key: "chip_coffee",     href: "/explore?category=coffee" },
   { key: "chip_nightlife",  href: "/explore?category=nightlife" },
-  { key: "chip_routes",     href: "/explore" },
+  { key: "chip_routes",     href: "/routes" },
   { key: "chip_beltline",   href: "/beltline" },
   { key: "chip_events",     href: "/events" },
   { key: "chip_open_late",  href: "/explore?category=nightlife" },
@@ -317,7 +317,7 @@ export default function Home() {
               const cls = catColor[r.color] ?? catColor.yellow;
               return (
                 <motion.div key={r.id} variants={fadeInUp}>
-                  <Link href={r.href}>
+                  <Link href={`/routes#${r.id}`}>
                     <div className="card-pop p-5 md:p-6 h-full cursor-pointer hover:-translate-y-1 transition-transform">
                       <div className="flex items-start justify-between gap-3 mb-4">
                         <div className={cn(
