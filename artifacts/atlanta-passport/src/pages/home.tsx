@@ -42,8 +42,8 @@ const catColor: Record<string, { bg: string; text: string; pin: string }> = {
 };
 
 const cardBadgeKeys: Array<{ key: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = [
-  { key: "founding_spot",   color: "yellow" },
   { key: "local_pick",      color: "red" },
+  { key: "founding_spot",   color: "yellow" },
   { key: "match_day_move",  color: "sky" },
   { key: "open_late",       color: "navy" },
   { key: "good_patio",      color: "lime" },
