@@ -229,11 +229,12 @@ export default function Apply() {
                             <label
                               key={cat}
                               className={cn(
-                                "flex items-center gap-2.5 rounded-xl border-[3px] border-foreground bg-white p-3 cursor-pointer shadow-pop-sm transition-colors",
+                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground bg-white p-3 cursor-pointer shadow-pop-sm transition-colors",
                                 checked && "bg-brand-yellow text-brand-yellow-foreground",
                               )}
                             >
                               <Checkbox
+                                className="shrink-0"
                                 checked={checked}
                                 onCheckedChange={(c) => {
                                   const next = new Set(field.value ?? []);
@@ -242,7 +243,7 @@ export default function Apply() {
                                   field.onChange(Array.from(next));
                                 }}
                               />
-                              <span className="text-sm font-medium leading-tight">{cat}</span>
+                              <span className="min-w-0 break-words text-sm font-medium leading-tight">{cat}</span>
                             </label>
                           );
                         })}
