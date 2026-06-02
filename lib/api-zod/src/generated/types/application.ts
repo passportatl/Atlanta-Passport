@@ -14,7 +14,7 @@ export interface Application {
   phone: string;
   website?: string | null;
   instagram?: string | null;
-  category: string;
+  category: string[];
   neighborhood: string;
   address: string;
   package: string;

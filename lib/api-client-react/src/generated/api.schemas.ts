@@ -85,8 +85,8 @@ export interface SubmitApplicationInput {
   phone: string;
   website?: string;
   instagram?: string;
-  /** @minLength 1 */
-  category: string;
+  /** @minItems 1 */
+  category: string[];
   /** @minLength 1 */
   neighborhood: string;
   /** @minLength 5 */
@@ -113,7 +113,7 @@ export interface Application {
   phone: string;
   website?: string | null;
   instagram?: string | null;
-  category: string;
+  category: string[];
   neighborhood: string;
   address: string;
   package: string;

@@ -8,7 +8,7 @@ export const applicationsTable = pgTable("applications", {
   phone: text("phone").notNull(),
   website: text("website"),
   instagram: text("instagram"),
-  category: text("category").notNull(),
+  category: text("category").array().notNull(),
   neighborhood: text("neighborhood").notNull(),
   address: text("address").notNull(),
   package: text("package").notNull(),

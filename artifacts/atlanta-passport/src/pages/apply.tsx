@@ -24,7 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { categories, neighborhoods } from "@/data/sample-data";
+import { Checkbox } from "@/components/ui/checkbox";
+import { applicationCategories, neighborhoods } from "@/data/sample-data";
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -41,7 +42,7 @@ const formSchema = z.object({
       "Please enter a website like yoursite.com"
     ),
   instagram: z.string().optional(),
-  category: z.string().min(1, "Please select a category."),
+  category: z.array(z.string()).min(1, "Please select at least one category."),
   neighborhood: z.string().min(1, "Please select a neighborhood."),
   address: z.string().min(5, "Please enter your address."),
   package: z.enum(["starter", "featured", "premier", "route", "custom"], {
@@ -88,7 +89,7 @@ export default function Apply() {
       phone: "",
       website: "",
       instagram: "",
-      category: "",
+      category: [],
       neighborhood: "",
       address: "",
       notes: "",
@@ -132,6 +133,7 @@ export default function Apply() {
   ];
   const completed = requiredFields.filter((k) => {
     const v = watched[k];
+    if (Array.isArray(v)) return v.length > 0;
     return typeof v === "string" ? v.trim().length > 0 : Boolean(v);
   }).length;
   const progressPct = Math.round((completed / requiredFields.length) * 100);
@@ -198,43 +200,57 @@ export default function Apply() {
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
                   01 · {t("apply_page.section_about_title")}
                 </h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="businessName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("apply_page.field_name")} *</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Wheelhaus Bikes" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("apply_page.field_category")} *</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t("apply_page.select_placeholder")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {categories.map((cat) => (
-                              <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="businessName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("apply_page.field_name")} *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Wheelhaus Bikes" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("apply_page.field_category")} *{" "}
+                        <span className="font-normal normal-case text-muted-foreground">— check all that apply</span>
+                      </FormLabel>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
+                        {applicationCategories.map((cat) => {
+                          const checked = field.value?.includes(cat) ?? false;
+                          return (
+                            <label
+                              key={cat}
+                              className={cn(
+                                "flex items-center gap-2.5 rounded-xl border-[3px] border-foreground bg-white p-3 cursor-pointer shadow-pop-sm transition-colors",
+                                checked && "bg-brand-yellow text-brand-yellow-foreground",
+                              )}
+                            >
+                              <Checkbox
+                                checked={checked}
+                                onCheckedChange={(c) => {
+                                  const next = new Set(field.value ?? []);
+                                  if (c) next.add(cat);
+                                  else next.delete(cat);
+                                  field.onChange(Array.from(next));
+                                }}
+                              />
+                              <span className="text-sm font-medium leading-tight">{cat}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <FormField

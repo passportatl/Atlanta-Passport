@@ -61,7 +61,7 @@ router.post("/applications", async (req, res) => {
         ${renderRow("Business", data.businessName)}
         ${renderRow("Package", data.package.toUpperCase())}
         ${renderRow("Route", data.routeId)}
-        ${renderRow("Category", data.category)}
+        ${renderRow("Category", data.category.join(", "))}
         ${renderRow("Neighborhood", data.neighborhood)}
         ${renderRow("Address", data.address)}
         ${renderRow("Contact", data.contactName)}
@@ -87,7 +87,7 @@ router.post("/applications", async (req, res) => {
     ``,
     `Business: ${data.businessName}`,
     `Package: ${data.package.toUpperCase()}${data.routeId ? ` (route: ${data.routeId})` : ""}`,
-    `Category: ${data.category}`,
+    `Category: ${data.category.join(", ")}`,
     `Neighborhood: ${data.neighborhood}`,
     `Address: ${data.address}`,
     ``,

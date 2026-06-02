@@ -107,7 +107,7 @@ function ApplicationCard({ app }: { app: Application }) {
             {app.businessName}
           </h3>
           <div className="text-xs uppercase tracking-wider font-bold opacity-70 mt-0.5">
-            {app.category} · {app.neighborhood}
+            {app.category.join(", ")} · {app.neighborhood}
           </div>
         </div>
         <div className="flex flex-wrap gap-2 items-start">

@@ -1,0 +1,1 @@
+- [Drizzle scalar→array column migration](drizzle-array-migration.md) — `drizzle-kit push` can't auto-cast `text`→`text[]` on a populated column; run manual `ALTER ... USING ARRAY[col]` first.

@@ -321,7 +321,10 @@ components:
         phone: { type: string, minLength: 7 }
         website: { type: string }
         instagram: { type: string }
-        category: { type: string, minLength: 1 }
+        category:
+          type: array
+          items: { type: string }
+          minItems: 1
         neighborhood: { type: string, minLength: 1 }
         address: { type: string, minLength: 5 }
         package:
@@ -358,7 +361,9 @@ components:
         phone: { type: string }
         website: { type: string, nullable: true }
         instagram: { type: string, nullable: true }
-        category: { type: string }
+        category:
+          type: array
+          items: { type: string }
         neighborhood: { type: string }
         address: { type: string }
         package: { type: string }

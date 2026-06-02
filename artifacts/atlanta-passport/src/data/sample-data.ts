@@ -261,6 +261,17 @@ export const neighborhoods = [
   { id: "poncey", name: "Poncey-Highland", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow" },
 ];
 
+export const applicationCategories = [
+  "Food",
+  "Drink",
+  "Retail",
+  "Nightlife",
+  "Rentals",
+  "Events",
+  "Experiences",
+  "Games (pool/darts/arcade/etc.)",
+];
+
 export const categories = [
   "Food & Drink", "Coffee", "Retail", "Nightlife", "Rentals", "Events", "Experiences"
 ];
