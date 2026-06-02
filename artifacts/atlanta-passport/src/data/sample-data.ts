@@ -264,6 +264,7 @@ export const neighborhoods = [
 export const applicationCategories = [
   "Food",
   "Drink",
+  "Coffee",
   "Retail",
   "Nightlife",
   "Rentals",
