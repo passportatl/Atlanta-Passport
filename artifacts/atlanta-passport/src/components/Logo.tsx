@@ -26,9 +26,15 @@ export default function Logo({
     ) : variant === "compact" ? (
       <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm -rotate-1")}>PASS · ATL</span>
     ) : (
-      <span className="inline-flex items-center gap-1.5 -rotate-1">
-        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm")}>PASSPORT</span>
-        <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm rotate-[2deg]")}>ATL</span>
+      <span className="inline-flex items-center gap-1 sm:gap-1.5 -rotate-1">
+        <span className={cn(tile, "px-2 py-0.5 text-sm sm:px-2.5 sm:py-1 sm:text-base shadow-pop-sm")}>
+          PASSPORT
+        </span>
+        <span
+          className={cn(tile, "px-2 py-0.5 text-sm sm:px-2.5 sm:py-1 sm:text-base shadow-pop-sm rotate-[2deg]")}
+        >
+          ATL
+        </span>
       </span>
     );
 
