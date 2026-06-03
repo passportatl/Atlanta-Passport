@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
+import { Instagram } from "lucide-react";
 import Logo from "@/components/Logo";
 import Sticker from "@/components/Sticker";
 
@@ -21,6 +22,15 @@ export default function Footer() {
               <Sticker color="red">{t("footer.sticker_match_day")}</Sticker>
               <Sticker color="lime">{t("footer.sticker_beltline")}</Sticker>
             </div>
+            <a
+              href="https://instagram.com/passport.atl"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-background/85 hover:text-brand-yellow transition-colors font-display text-xs tracking-[0.14em] uppercase pt-1"
+            >
+              <Instagram className="w-4 h-4" />
+              @passport.atl
+            </a>
             <p className="text-background/75 max-w-sm pt-2">
               {t("footer.built_by")}
             </p>

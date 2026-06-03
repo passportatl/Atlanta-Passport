@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MoveRight, ChevronDown, BookMarked } from "lucide-react";
+import { Menu, MoveRight, ChevronDown, BookMarked, Instagram } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -115,6 +115,18 @@ export default function Navbar() {
             {hasPassport ? "My Passport" : "Passport"}
           </Link>
 
+          <a
+            href="https://instagram.com/passport.atl"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram @passport.atl"
+            title="@passport.atl"
+            className="ml-1 inline-flex items-center gap-1.5 text-foreground/70 hover:text-foreground transition-colors font-display text-[11px] tracking-[0.12em] uppercase"
+          >
+            <Instagram className="w-4 h-4" />
+            <span className="hidden lg:inline">@passport.atl</span>
+          </a>
+
           <div className="ml-3">
             <LanguageSwitcher />
           </div>
@@ -186,6 +198,16 @@ export default function Navbar() {
                   <BookMarked className="w-4 h-4" />
                   {hasPassport ? "My Passport" : "Start Passport"}
                 </Link>
+
+                <a
+                  href="https://instagram.com/passport.atl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2 text-foreground/60 hover:text-foreground"
+                >
+                  <Instagram className="w-4 h-4" />
+                  @passport.atl
+                </a>
 
                 {/* Language picker inside the menu (was cut off in header on small phones) */}
                 <div className="pt-2 border-t border-foreground/15">
