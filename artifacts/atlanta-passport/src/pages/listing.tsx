@@ -44,19 +44,8 @@ export default function Listing() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         
-        {/* Badges */}
-        <div className="absolute top-6 left-6 flex gap-2 flex-wrap max-w-[70%]">
-          <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2">
-            {business.category}
-          </div>
-          {business.bikePickup && (
-            <div className="badge-sticker bg-brand-navy text-brand-cream rotate-1 inline-flex items-center gap-1">
-              <Bike className="w-3.5 h-3.5" /> Wheelhaus Bike Pickup
-            </div>
-          )}
-        </div>
         {business.sponsorTier && (
-          <div className="absolute top-6 right-6 md:top-10 md:right-10 drop-shadow-[0_4px_0_rgba(0,0,0,0.85)]">
+          <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 drop-shadow-[0_4px_0_rgba(0,0,0,0.85)] z-10">
             <div className="passport-stamp bg-white text-brand-red ring-4 ring-foreground/10">
               <div>
                 <Sparkles className="w-4 h-4 mx-auto mb-1" />
@@ -66,11 +55,23 @@ export default function Listing() {
           </div>
         )}
 
-        {/* Hero Title Content (Desktop) */}
-        <div className="absolute bottom-8 left-6 md:left-12 lg:left-24 text-white hidden md:block">
-          <h1 className="text-5xl lg:text-7xl font-serif font-bold mb-3">{business.name}</h1>
-          <div className="flex items-center text-white/90 text-lg">
-            <MapPin className="w-5 h-5 mr-2" /> {business.neighborhood}
+        {/* Hero Bottom Content (badges + desktop title) */}
+        <div className="absolute bottom-6 md:bottom-8 left-6 md:left-12 lg:left-24 right-28 md:right-32 text-white">
+          <div className="flex gap-2 flex-wrap mb-3">
+            <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2">
+              {business.category}
+            </div>
+            {business.bikePickup && (
+              <div className="badge-sticker bg-brand-navy text-brand-cream rotate-1 inline-flex items-center gap-1">
+                <Bike className="w-3.5 h-3.5" /> Wheelhaus Bike Pickup
+              </div>
+            )}
+          </div>
+          <div className="hidden md:block">
+            <h1 className="text-5xl lg:text-7xl font-serif font-bold mb-3">{business.name}</h1>
+            <div className="flex items-center text-white/90 text-lg">
+              <MapPin className="w-5 h-5 mr-2" /> {business.neighborhood}
+            </div>
           </div>
         </div>
       </div>
