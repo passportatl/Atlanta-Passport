@@ -271,6 +271,8 @@ export const applicationCategories = [
   "Events",
   "Experiences",
   "Games (pool/darts/arcade/etc.)",
+  "Murals and Landmarks",
+  "Parks",
 ];
 
 export const categories = [
