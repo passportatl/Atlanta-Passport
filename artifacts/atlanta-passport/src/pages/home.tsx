@@ -4,7 +4,7 @@ import {
   MapPin, Stamp, Bike, Coffee, Beer, Music,
   ShoppingBag, Calendar, Sparkles, Utensils,
   MoveRight, ArrowRight, Gift, Ticket, Award, Map,
-  Quote
+  Quote, Gamepad2, Landmark, Trees
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -28,7 +28,8 @@ const staggerContainer = {
 };
 
 const iconMap = {
-  Utensils, Beer, Coffee, ShoppingBag, Music, Bike, Calendar, Sparkles
+  Utensils, Beer, Coffee, ShoppingBag, Music, Bike, Calendar, Sparkles,
+  Gamepad2, Landmark, Trees
 } as const;
 
 const catColor: Record<string, { bg: string; text: string; pin: string }> = {

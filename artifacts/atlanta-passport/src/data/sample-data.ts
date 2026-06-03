@@ -271,8 +271,6 @@ export const applicationCategories = [
   "Events",
   "Experiences",
   "Games (pool/darts/arcade/etc.)",
-  "Murals and Landmarks",
-  "Parks",
 ];
 
 export const categories = [
@@ -287,6 +285,9 @@ export const exploreCategories = [
   { id: "rides",       label: "Rides",       tagline: "Skip traffic. Move different.",        color: "sky",    icon: "Bike" },
   { id: "events",      label: "Events",      tagline: "Pop-ups, watch parties, movement.",    color: "orange", icon: "Calendar" },
   { id: "experiences", label: "Experiences", tagline: "Routes worth remembering.",            color: "red",    icon: "Sparkles" },
+  { id: "games",       label: "Games",       tagline: "Pool, darts, arcades, play.",          color: "yellow", icon: "Gamepad2" },
+  { id: "murals-landmarks", label: "Murals & Landmarks", tagline: "Street art and city icons.", color: "orange", icon: "Landmark" },
+  { id: "parks",       label: "Parks",       tagline: "Green space and Beltline air.",        color: "lime",   icon: "Trees" },
 ];
 
 export const routes = [
