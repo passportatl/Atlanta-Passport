@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { BookOpen, Globe, Map, Users, Bike } from "lucide-react";
-import wheelhausImg from "@/assets/images/wheelhaus.png";
+import wheelhausImg from "@/assets/images/wheelhaus-storefront.jpeg";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
