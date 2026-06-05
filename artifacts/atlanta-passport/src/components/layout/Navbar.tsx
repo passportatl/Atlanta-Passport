@@ -53,7 +53,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-brand-navy">
+    <header className="relative z-50 w-full border-b-[3px] border-foreground bg-brand-navy">
       <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
         <Link
           href="/"
