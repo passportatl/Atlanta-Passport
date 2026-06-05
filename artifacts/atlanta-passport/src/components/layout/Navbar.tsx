@@ -53,17 +53,13 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-brand-navy">
+    <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
       <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
         <Link
           href="/"
           aria-label="Atlanta Passport home"
           className="relative z-50 inline-flex items-center shrink-0 self-start"
         >
-          <span
-            aria-hidden
-            className="absolute -left-2 -right-3 top-8 -translate-y-1/2 h-2 rounded-full bg-gradient-to-r from-brand-red via-brand-orange to-brand-yellow z-0"
-          />
           <Logo
             asLink={false}
             className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
