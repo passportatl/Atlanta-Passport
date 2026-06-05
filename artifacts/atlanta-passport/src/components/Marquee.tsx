@@ -1,3 +1,5 @@
+import SoccerBall from "@/components/SoccerBall";
+
 type Props = {
   items: string[];
   className?: string;
@@ -13,7 +15,7 @@ export default function Marquee({ items, className = "" }: Props) {
         {loop.map((item, i) => (
           <span key={i} className="flex items-center text-sm md:text-base shrink-0">
             <span className="px-6 sm:px-8">{item}</span>
-            <span aria-hidden className="text-foreground/60">★</span>
+            <SoccerBall className="h-[15px] w-[15px] md:h-[18px] md:w-[18px] shrink-0" />
           </span>
         ))}
       </div>
