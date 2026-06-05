@@ -14,7 +14,11 @@ export default function Explore() {
   const params = typeof window !== "undefined"
     ? new URLSearchParams(window.location.search)
     : null;
-  const initialNeighborhood = params?.get("neighborhood") ?? null;
+  const neighborhoodParam = params?.get("neighborhood");
+  const initialNeighborhood =
+    neighborhoods.find((n) => n.id === neighborhoodParam)?.name ??
+    neighborhoods.find((n) => n.name === neighborhoodParam)?.name ??
+    null;
   const initialCategory =
     exploreCategories.find((c) => c.id === params?.get("category"))?.label ?? null;
 
