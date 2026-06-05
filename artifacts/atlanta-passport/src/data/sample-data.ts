@@ -3,6 +3,7 @@ import peachtreeWellnessImg from "@/assets/images/peachtree-wellness-storefront.
 import atlantuckyImg from "@/assets/images/atlantucky.png";
 import theWestwoodImg from "@/assets/images/the-westwood-real.jpg";
 import vickerysImg from "@/assets/images/vickerys-real.jpg";
+import oaklandCemeteryImg from "@/assets/images/oakland-cemetery.jpg";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
@@ -178,6 +179,25 @@ export const businesses = [
     transit: {
       marta: "Indirect access from King Memorial Station.",
       beltline: "Southeast Trail — Glenwood Park / Bill Kennedy Way area.",
+    },
+  },
+  {
+    id: "oakland-cemetery",
+    name: "Oakland Cemetery",
+    category: "Experiences",
+    neighborhood: "Grant Park",
+    description:
+      "Spanning 48 acres just east of downtown Atlanta, Oakland Cemetery is one of Atlanta's largest green spaces.",
+    address:
+      "248 Oakland Ave SE, Atlanta, GA 30312 · Visitor parking: 342 Martin Luther King Jr. Dr SE",
+    hours: "Visitor Center: 10am - 5pm · Cemetery Grounds: 6am - 8pm",
+    image: oaklandCemeteryImg,
+    featured: true,
+    about:
+      "Oakland is the final resting place of 70,000 people from all walks of life, including author Margaret Mitchell and golfing legend Bobby Jones, 27 Atlanta mayors including Maynard Jackson, six former governors, unmarked graves of paupers, and Union and Confederate soldiers. Founded in 1850 during a time when burial grounds were often placed in park-like settings, today Oakland Cemetery is an arboretum, an outdoor sculpture museum with monuments recognized by the Smithsonian, and an Audubon wildlife sanctuary.",
+    transit: {
+      marta: "Yes — King Memorial Station (blue & green lines).",
+      beltline: "Indirect access.",
     },
   },
 ];
