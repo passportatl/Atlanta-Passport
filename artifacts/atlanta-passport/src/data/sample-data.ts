@@ -1,9 +1,6 @@
 import wheelhausImg from "@/assets/images/wheelhaus-storefront.jpeg";
 import peachtreeWellnessImg from "@/assets/images/peachtree-wellness-storefront.jpg";
 import atlantuckyImg from "@/assets/images/atlantucky.png";
-import hartsfieldHopsImg from "@/assets/images/hartsfield-hops.png";
-import sweetAuburnSmokehouseImg from "@/assets/images/sweet-auburn-smokehouse.png";
-import martaLineCoffeeImg from "@/assets/images/marta-line-coffee.png";
 import stoneMountainRecordsImg from "@/assets/images/stone-mountain-records.png";
 import theWestwoodImg from "@/assets/images/the-westwood-real.jpg";
 import vickerysImg from "@/assets/images/vickerys-real.jpg";
@@ -96,48 +93,6 @@ export const businesses = [
     sponsorTier: "Founding Sponsor",
     bikePickup: true,
     about: "Premium e-bike rentals, full-service repairs, and curated city rides built for the way the city actually moves — by bike, on the Beltline, through the neighborhoods.",
-  },
-  {
-    id: "hartsfield-hops",
-    name: "Hartsfield Hops Co.",
-    category: "Food & Drink",
-    neighborhood: "West End",
-    description: "Independent craft brewery and taproom pouring small-batch ATL-inspired beers.",
-    offer: "First pour 25% off when you show your passport.",
-    address: "847 Ralph David Abernathy Blvd SW, Atlanta, GA",
-    hours: "Wed-Sun: 4pm - 12am",
-    image: hartsfieldHopsImg,
-    featured: true,
-    sponsorTier: "Featured Partner",
-    about: "A neighborhood taproom on the West End. Eight rotating taps, an open patio, and a kitchen run by a rotating cast of pop-up chefs every weekend.",
-  },
-  {
-    id: "sweet-auburn-smokehouse",
-    name: "Sweet Auburn Smokehouse",
-    category: "Food & Drink",
-    neighborhood: "Downtown",
-    description: "Low-and-slow Southern barbecue served family-style just off the historic Sweet Auburn corridor.",
-    offer: "Free side with any plate for Passport holders.",
-    address: "243 Auburn Ave NE, Atlanta, GA",
-    hours: "Tue-Sun: 11am - 9pm",
-    image: sweetAuburnSmokehouseImg,
-    featured: true,
-    sponsorTier: "Featured Partner",
-    about: "Texas-style brisket meets Georgia peach BBQ sauce. Built into a renovated 1920s storefront with patio seating that spills onto Auburn Ave on match days.",
-  },
-  {
-    id: "marta-line-coffee",
-    name: "Marta Line Coffee",
-    category: "Coffee",
-    neighborhood: "Midtown",
-    description: "A bright corner cafe a block from the North Ave MARTA station. Espresso, biscuits, and zero pretense.",
-    offer: "Free espresso shot with any pastry purchase.",
-    address: "684 Spring St NW, Atlanta, GA",
-    hours: "Mon-Sun: 7am - 5pm",
-    image: martaLineCoffeeImg,
-    featured: true,
-    sponsorTier: "Featured Partner",
-    about: "Single-origin espresso, sourdough biscuits, and a soundtrack that leans 90s ATL hip-hop. Built for commuters, visitors, and the morning regulars who've made the place a neighborhood living room.",
   },
   {
     id: "stone-mountain-records",
