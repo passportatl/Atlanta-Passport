@@ -1,1 +1,2 @@
 - [Drizzle scalar→array column migration](drizzle-array-migration.md) — `drizzle-kit push` can't auto-cast `text`→`text[]` on a populated column; run manual `ALTER ... USING ARRAY[col]` first.
+- [Sticky vs overflow clipping](sticky-vs-overflow.md) — position:sticky breaks under ancestor overflow-x:hidden; use overflow-x:clip instead.
