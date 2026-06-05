@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Logo from "@/components/Logo";
 
 const TABS = [
-  { href: "/", label: "Home", icon: Home, exact: true },
+  { href: "/", label: "Back to site", icon: Home, exact: true },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/passport/rewards", label: "Rewards", icon: Trophy },
@@ -28,12 +28,6 @@ export function PassportLayout({ children }: { children: ReactNode }) {
               variant="xl"
               className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
             />
-          </Link>
-          <Link
-            href="/"
-            className="absolute right-4 top-1/2 -translate-y-1/2 font-display text-[11px] tracking-[0.16em] uppercase text-brand-cream/75 hover:text-white transition-colors"
-          >
-            Back to site
           </Link>
         </div>
       </header>
