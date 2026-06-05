@@ -6,6 +6,7 @@ import sweetAuburnSmokehouseImg from "@/assets/images/sweet-auburn-smokehouse.pn
 import martaLineCoffeeImg from "@/assets/images/marta-line-coffee.png";
 import stoneMountainRecordsImg from "@/assets/images/stone-mountain-records.png";
 import theWestwoodImg from "@/assets/images/the-westwood.png";
+import vickerysImg from "@/assets/images/vickerys-bar-grill.png";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
@@ -218,6 +219,27 @@ export const businesses = [
       },
     ],
   },
+  {
+    id: "vickerys-bar-grill",
+    name: "Vickery's Bar & Grill",
+    category: "Food & Drink",
+    neighborhood: "Glenwood Park",
+    description: "Always a party since 1983.",
+    offer:
+      "Free dessert with each entrée purchase. Dine-in only. Offer valid through July 31, 2026.",
+    address: "933 Garrett St #101, Atlanta, GA 30316",
+    hours:
+      "Dining Room: Mon 5pm–11pm · Tue–Fri 11:30am–11pm · Sat–Sun 11am–11pm. Bar: Sun–Tue until midnight · Wed–Sat until 2am.",
+    image: vickerysImg,
+    featured: true,
+    sponsorTier: "Founding Sponsor",
+    about:
+      "Vickery's Bar & Grill opened its doors in 1983 and instantly became an Atlanta institution, known for great food, a lively atmosphere, and a friendly bar. That tradition continues just off the Beltline at Vickery's Glenwood Park. Lunch or dinner, late-night drinks or weekend brunch, Vickery's offers a coastal Southern cuisine featuring Fried Green Tomatoes, Catfish and Grits, Low Country Seafood Sauté, and classic Southern Fried Chicken. Weekend brunch favorites include Crab Cake Eggs Benedict, pancakes, lox & bagel, egg platters, and our potent champagne cocktails and spicy Bloody Marys. We have something for everyone, anytime.",
+    transit: {
+      marta: "Indirect access from King Memorial Station.",
+      beltline: "Southeast Trail — Glenwood Park / Bill Kennedy Way area.",
+    },
+  },
 ];
 
 export const events = [
@@ -326,6 +348,7 @@ export const neighborhoods = [
   { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red" },
   { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky" },
   { id: "poncey", name: "Poncey-Highland", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow" },
+  { id: "glenwood-park", name: "Glenwood Park", description: "Walkable square, Beltline Southeast Trail, patios and pubs.", color: "lime" },
 ];
 
 export const applicationCategories = [
