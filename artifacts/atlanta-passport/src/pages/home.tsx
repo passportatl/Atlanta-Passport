@@ -42,14 +42,13 @@ const catColor: Record<string, { bg: string; text: string; pin: string }> = {
   orange: { bg: "bg-brand-orange", text: "text-white",                    pin: "bg-brand-yellow text-brand-yellow-foreground" },
 };
 
-const cardBadgeKeys: Array<{ key: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = [
-  { key: "local_pick",      color: "red" },
-  { key: "founding_spot",   color: "yellow" },
-  { key: "match_day_move",  color: "sky" },
-  { key: "open_late",       color: "navy" },
-  { key: "good_patio",      color: "lime" },
-  { key: "atl_favorite",    color: "cream" },
-];
+const cardBadgeById: Record<string, { key: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = {
+  "atlantucky-brewing":  { key: "match_day_move", color: "sky" },
+  "the-westwood":        { key: "match_day_move", color: "sky" },
+  "vickerys-bar-grill":  { key: "match_day_move", color: "sky" },
+  "peachtree-wellness":  { key: "founding_spot",  color: "yellow" },
+  "wheelhaus-bikes":     { key: "local_pick",     color: "red" },
+};
 
 const heroChipKeys: Array<{ key: string; href: string }> = [
   { key: "chip_food",       href: "/explore?category=food-drink" },
@@ -394,8 +393,8 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
           >
-            {featuredBusinesses.map((biz, idx) => {
-              const badge = idx < cardBadgeKeys.length ? cardBadgeKeys[idx] : null;
+            {featuredBusinesses.map((biz) => {
+              const badge = cardBadgeById[biz.id] ?? null;
               const isFounding = biz.id === "atlantucky-brewing";
               return (
                 <motion.div key={biz.id} variants={fadeInUp}>
