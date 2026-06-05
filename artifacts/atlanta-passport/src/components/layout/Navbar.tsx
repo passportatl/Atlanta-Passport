@@ -58,13 +58,16 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label="Atlanta Passport home"
-          className="relative inline-flex items-center shrink-0"
+          className="relative z-50 inline-flex items-center shrink-0 self-start"
         >
           <span
             aria-hidden
-            className="absolute -left-2 -right-3 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-gradient-to-r from-brand-red via-brand-orange to-brand-yellow z-0"
+            className="absolute -left-2 -right-3 top-8 -translate-y-1/2 h-2 rounded-full bg-gradient-to-r from-brand-red via-brand-orange to-brand-yellow z-0"
           />
-          <Logo asLink={false} className="relative z-10" />
+          <Logo
+            asLink={false}
+            className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
+          />
         </Link>
 
         {/* Desktop Nav — tourist-first */}

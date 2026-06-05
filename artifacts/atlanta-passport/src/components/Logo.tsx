@@ -5,7 +5,7 @@ import logoSrc from "@/assets/images/passport-atl-logo.png";
 type Variant = "default" | "stacked" | "compact";
 
 const sizeByVariant: Record<Variant, string> = {
-  default: "h-12 w-12",
+  default: "h-36 w-36",
   stacked: "h-20 w-20",
   compact: "h-9 w-9",
 };
