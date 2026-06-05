@@ -102,3 +102,9 @@ id = "d91u-PxZakQejgtfFwHm3"
 uri = "file://artifacts/atlanta-passport/src/assets/images/the-westwood.png"
 type = "image"
 title = "the westwood dive bar"
+
+[[generated]]
+id = "9YmLVh2DBlR_fe2fPNAFJ"
+uri = "file://artifacts/atlanta-passport/src/assets/images/vickerys-bar-grill.png"
+type = "image"
+title = "vickerys bar grill"
