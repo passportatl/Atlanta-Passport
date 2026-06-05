@@ -1,7 +1,6 @@
 import wheelhausImg from "@/assets/images/wheelhaus-storefront.jpeg";
 import peachtreeWellnessImg from "@/assets/images/peachtree-wellness-storefront.jpg";
 import atlantuckyImg from "@/assets/images/atlantucky.png";
-import stoneMountainRecordsImg from "@/assets/images/stone-mountain-records.png";
 import theWestwoodImg from "@/assets/images/the-westwood-real.jpg";
 import vickerysImg from "@/assets/images/vickerys-real.jpg";
 import beltlineImg from "@/assets/images/beltline.png";
@@ -93,20 +92,6 @@ export const businesses = [
     sponsorTier: "Founding Sponsor",
     bikePickup: true,
     about: "Premium e-bike rentals, full-service repairs, and curated city rides built for the way the city actually moves — by bike, on the Beltline, through the neighborhoods.",
-  },
-  {
-    id: "stone-mountain-records",
-    name: "Stone Mountain Records",
-    category: "Retail",
-    neighborhood: "Little Five Points",
-    description: "Vinyl shop specializing in Southern rap, soul, jazz, and rare ATL pressings.",
-    offer: "15% off any single LP for Passport holders.",
-    address: "1129 Euclid Ave NE, Atlanta, GA",
-    hours: "Wed-Mon: 12pm - 8pm",
-    image: stoneMountainRecordsImg,
-    featured: true,
-    sponsorTier: "Starter Listing",
-    about: "A vinyl shop with a deep Southern catalog — Goodie Mob and OutKast pressings, deep crate jazz, and a wall of consigned local releases. Listening stations and a turntable repair bench in the back.",
   },
   {
     id: "the-westwood",
