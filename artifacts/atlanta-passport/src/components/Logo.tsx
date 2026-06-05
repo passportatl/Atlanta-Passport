@@ -1,10 +1,14 @@
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
+import logoSrc from "@/assets/images/passport-atl-logo.png";
 
 type Variant = "default" | "stacked" | "compact";
 
-const tile =
-  "inline-flex items-center justify-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-[10px] font-serif font-bold leading-none";
+const sizeByVariant: Record<Variant, string> = {
+  default: "h-12 w-12",
+  stacked: "h-20 w-20",
+  compact: "h-9 w-9",
+};
 
 export default function Logo({
   variant = "default",
@@ -15,36 +19,22 @@ export default function Logo({
   className?: string;
   asLink?: boolean;
 }) {
-  const content =
-    variant === "stacked" ? (
-      <span className="inline-grid gap-1.5 -rotate-1">
-        <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm")}>PASSPORT</span>
-        <span className={cn(tile, "px-3 py-1.5 text-xl shadow-pop-sm rotate-[2deg] origin-left")}>
-          ATLANTA
-        </span>
-      </span>
-    ) : variant === "compact" ? (
-      <span className={cn(tile, "px-2.5 py-1 text-base shadow-pop-sm -rotate-1")}>PASS · ATL</span>
-    ) : (
-      <span className="inline-flex items-center gap-1 sm:gap-1.5 -rotate-1">
-        <span className={cn(tile, "px-2 py-0.5 text-sm sm:px-2.5 sm:py-1 sm:text-base shadow-pop-sm")}>
-          PASSPORT
-        </span>
-        <span
-          className={cn(tile, "px-2 py-0.5 text-sm sm:px-2.5 sm:py-1 sm:text-base shadow-pop-sm rotate-[2deg]")}
-        >
-          ATL
-        </span>
-      </span>
-    );
+  const img = (
+    <img
+      src={logoSrc}
+      alt="Passport ATL"
+      className={cn(sizeByVariant[variant], "object-contain select-none")}
+      draggable={false}
+    />
+  );
 
   if (!asLink) {
-    return <span className={className}>{content}</span>;
+    return <span className={cn("inline-flex", className)}>{img}</span>;
   }
 
   return (
-    <Link href="/" className={cn("inline-block", className)} aria-label="Atlanta Passport home">
-      {content}
+    <Link href="/" className={cn("inline-flex", className)} aria-label="Atlanta Passport home">
+      {img}
     </Link>
   );
 }

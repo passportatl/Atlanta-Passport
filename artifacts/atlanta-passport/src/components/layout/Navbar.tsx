@@ -18,8 +18,8 @@ const navItemClass = (active: boolean) =>
   cn(
     "font-display text-[11px] tracking-[0.16em] uppercase transition-colors px-2 py-1 rounded-md",
     active
-      ? "text-foreground bg-brand-yellow/40"
-      : "text-foreground/70 hover:text-foreground"
+      ? "text-brand-navy bg-brand-yellow"
+      : "text-brand-cream/75 hover:text-white"
   );
 
 export default function Navbar() {
@@ -53,9 +53,19 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
+    <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-brand-navy">
       <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
-        <Logo />
+        <Link
+          href="/"
+          aria-label="Atlanta Passport home"
+          className="relative inline-flex items-center shrink-0"
+        >
+          <span
+            aria-hidden
+            className="absolute -left-2 -right-3 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-gradient-to-r from-brand-red via-brand-orange to-brand-yellow z-0"
+          />
+          <Logo asLink={false} className="relative z-10" />
+        </Link>
 
         {/* Desktop Nav — tourist-first */}
         <nav className="hidden md:flex items-center gap-1">
@@ -121,7 +131,7 @@ export default function Navbar() {
             rel="noopener noreferrer"
             aria-label="Instagram @passport.atl"
             title="@passport.atl"
-            className="ml-1 inline-flex items-center gap-1.5 text-foreground/70 hover:text-foreground transition-colors font-display text-[11px] tracking-[0.12em] uppercase"
+            className="ml-1 inline-flex items-center gap-1.5 text-brand-cream/75 hover:text-white transition-colors font-display text-[11px] tracking-[0.12em] uppercase"
           >
             <Instagram className="w-4 h-4" />
             <span className="hidden lg:inline">@passport.atl</span>
