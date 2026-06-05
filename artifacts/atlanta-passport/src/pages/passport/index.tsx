@@ -10,7 +10,44 @@ import { useVisitor } from "@/passport/visitor-context";
 import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { REWARDS, NEIGHBORHOODS, NEIGHBORHOOD_BY_NAME, neighborhoodStatus } from "@/passport/data";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Map, MapPin, Stamp as StampIcon, Award } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+function HowItWorks() {
+  const { t } = useTranslation();
+  const steps = [
+    { icon: Map, key: "how_it_works.step1_title", bg: "bg-[hsl(var(--brand-yellow))]", text: "text-[hsl(var(--brand-yellow-foreground))]" },
+    { icon: MapPin, key: "how_it_works.step2_title", bg: "bg-[hsl(var(--brand-red))]", text: "text-white" },
+    { icon: StampIcon, key: "how_it_works.step3_title", bg: "bg-[hsl(var(--brand-sky))]", text: "text-foreground" },
+    { icon: Award, key: "how_it_works.step4_title", bg: "bg-[hsl(var(--brand-lime))]", text: "text-foreground" },
+  ];
+  return (
+    <div className="card-pop bg-white p-5">
+      <h2 className="text-xl font-black mb-4" style={{ fontFamily: "Bungee, sans-serif" }}>
+        {t("how_it_works.title")}
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {steps.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <div key={i} className="text-center">
+              <div className={`w-14 h-14 mx-auto rounded-full border-[3px] border-foreground grid place-items-center mb-2 shadow-pop-sm ${s.bg} ${s.text}`}>
+                <Icon className="w-6 h-6" />
+              </div>
+              <div
+                className="text-[10px] tracking-[0.18em] uppercase text-[hsl(var(--brand-red))] mb-1"
+                style={{ fontFamily: "Bungee, sans-serif" }}
+              >
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <h3 className="text-sm font-black leading-tight">{t(s.key)}</h3>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
@@ -29,6 +66,7 @@ export default function PassportHome() {
   if (!visitorId) {
     return (
       <div className="space-y-6">
+        <HowItWorks />
         <div className="text-center">
           <div
             className="inline-block bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-3"
@@ -82,6 +120,7 @@ export default function PassportHome() {
 
   return (
     <div className="space-y-6">
+      <HowItWorks />
       <div>
         <div
           className="inline-block bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-3"

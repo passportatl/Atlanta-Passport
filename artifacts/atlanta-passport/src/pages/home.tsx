@@ -526,58 +526,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="section-tight bg-paper texture-paper">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="text-center max-w-3xl mx-auto mb-10 md:mb-12"
-          >
-            <div className="section-kicker mb-5">{t("how_it_works.kicker")}</div>
-            <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              {t("how_it_works.title")}
-            </h2>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6 max-w-5xl mx-auto"
-          >
-            {[
-              { icon: Map,    titleKey: "how_it_works.step1_title", color: "yellow" },
-              { icon: MapPin, titleKey: "how_it_works.step2_title", color: "red" },
-              { icon: Stamp,  titleKey: "how_it_works.step3_title", color: "sky" },
-              { icon: Award,  titleKey: "how_it_works.step4_title", color: "lime" },
-            ].map((step, i) => {
-              const cls = catColor[step.color];
-              const Icon = step.icon;
-              return (
-                <motion.div key={i} variants={fadeInUp} className="text-center">
-                  <div className={cn(
-                    "w-14 h-14 md:w-16 md:h-16 mx-auto rounded-full border-[3px] border-foreground grid place-items-center mb-4 shadow-pop-sm",
-                    cls.bg, cls.text
-                  )}>
-                    <Icon className="w-6 h-6 md:w-7 md:h-7" />
-                  </div>
-                  <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red mb-1.5">
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                  <h3 className="font-serif font-bold text-base md:text-lg leading-tight">
-                    {t(step.titleKey)}
-                  </h3>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
       {/* MANIFESTO */}
       <section className="section-tight bg-brand-red text-white relative overflow-hidden">
         <div className="absolute inset-0 dot-grid opacity-15 pointer-events-none" />
