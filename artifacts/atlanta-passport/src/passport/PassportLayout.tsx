@@ -17,7 +17,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] text-foreground texture-paper pb-24">
       <header className="sticky top-0 z-50 bg-[#a71930] text-[hsl(var(--brand-cream))] border-b-[3px] border-foreground">
-        <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+        <div className="relative max-w-3xl mx-auto px-4 h-16 flex items-center justify-center">
           <Link
             href="/"
             aria-label="Atlanta Passport home"
@@ -31,7 +31,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
           </Link>
           <Link
             href="/"
-            className="font-display text-[11px] tracking-[0.16em] uppercase text-brand-cream/75 hover:text-white transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 font-display text-[11px] tracking-[0.16em] uppercase text-brand-cream/75 hover:text-white transition-colors"
           >
             Back to site
           </Link>

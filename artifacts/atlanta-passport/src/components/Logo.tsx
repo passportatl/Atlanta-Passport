@@ -8,7 +8,7 @@ const sizeByVariant: Record<Variant, string> = {
   default: "h-36 w-36",
   stacked: "h-20 w-20",
   compact: "h-9 w-9",
-  xl: "h-60 w-60",
+  xl: "h-[120px] w-[120px]",
 };
 
 export default function Logo({
