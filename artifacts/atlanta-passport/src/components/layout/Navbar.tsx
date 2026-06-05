@@ -18,7 +18,7 @@ const navItemClass = (active: boolean) =>
   cn(
     "font-display text-[11px] tracking-[0.16em] uppercase transition-colors px-2 py-1 rounded-md",
     active
-      ? "text-brand-navy bg-brand-yellow"
+      ? "text-brand-cream paint-swatch"
       : "text-brand-cream/75 hover:text-white"
   );
 
