@@ -25,7 +25,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
           >
             <Logo
               asLink={false}
-              variant="stacked"
+              variant="xl"
               className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
             />
           </Link>
