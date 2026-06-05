@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Home, Stamp as StampIcon, Map, Trophy, User } from "lucide-react";
 import type { ReactNode } from "react";
+import Logo from "@/components/Logo";
 
 const TABS = [
   { href: "/", label: "Home", icon: Home, exact: true },
@@ -15,20 +16,23 @@ export function PassportLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] text-foreground texture-paper pb-24">
-      <header className="bg-[hsl(var(--brand-navy))] text-[hsl(var(--brand-cream))] border-b-4 border-foreground">
-        <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/passport" className="flex items-center gap-2">
-            <span
-              className="bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))] border-2 border-foreground px-2 py-1 font-black text-xs tracking-widest"
-              style={{ fontFamily: "Bungee, sans-serif" }}
-            >
-              PASSPORT
-            </span>
-            <span className="font-black text-xs tracking-widest" style={{ fontFamily: "Bungee, sans-serif" }}>
-              ATL
-            </span>
+      <header className="sticky top-0 z-50 bg-[#a71930] text-[hsl(var(--brand-cream))] border-b-[3px] border-foreground">
+        <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+          <Link
+            href="/"
+            aria-label="Atlanta Passport home"
+            className="relative z-50 inline-flex items-center shrink-0 self-start"
+          >
+            <Logo
+              asLink={false}
+              variant="stacked"
+              className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
+            />
           </Link>
-          <Link href="/" className="text-xs underline opacity-80 hover:opacity-100">
+          <Link
+            href="/"
+            className="font-display text-[11px] tracking-[0.16em] uppercase text-brand-cream/75 hover:text-white transition-colors"
+          >
             Back to site
           </Link>
         </div>
