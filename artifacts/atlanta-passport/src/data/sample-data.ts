@@ -5,6 +5,7 @@ import hartsfieldHopsImg from "@/assets/images/hartsfield-hops.png";
 import sweetAuburnSmokehouseImg from "@/assets/images/sweet-auburn-smokehouse.png";
 import martaLineCoffeeImg from "@/assets/images/marta-line-coffee.png";
 import stoneMountainRecordsImg from "@/assets/images/stone-mountain-records.png";
+import theWestwoodImg from "@/assets/images/the-westwood.png";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
@@ -150,6 +151,71 @@ export const businesses = [
     featured: true,
     sponsorTier: "Starter Listing",
     about: "A vinyl shop with a deep Southern catalog — Goodie Mob and OutKast pressings, deep crate jazz, and a wall of consigned local releases. Listening stations and a turntable repair bench in the back.",
+  },
+  {
+    id: "the-westwood",
+    name: "The Westwood",
+    category: "Food & Drink",
+    neighborhood: "West End",
+    description:
+      "Affordable & delicious drinks, solid comfort food with options for late-night dining, pool, and darts!",
+    offer: "A complimentary Bloody Mary when you show your Atlanta Passport.",
+    address: "1529 Ralph David Abernathy Blvd SW, Atlanta, GA 30310",
+    hours: "Sun-Thurs: 12pm - 12am · Fri-Sat: 12pm - 2am",
+    image: theWestwoodImg,
+    featured: true,
+    sponsorTier: "Founding Sponsor",
+    about:
+      "The Westwood is a unique, relaxed dive bar with late-night dining, a good beer selection, creative cocktails, a pool table, darts, TVs, and a spacious patio. A great casual night out!",
+    transit: {
+      marta: "Nearest MARTA — West End Station.",
+      beltline: "Nearest Beltline access — Westside Trail.",
+    },
+    menu: [
+      {
+        section: "Appetizer",
+        items: [
+          {
+            name: "Adult Lunchable",
+            description:
+              "Gabagool, crackers, provolone, cheddar, spicy jam, mustard, pickled this and that.",
+          },
+        ],
+      },
+      {
+        section: "Main",
+        items: [
+          {
+            name: "Pot Roast",
+            description:
+              "Third o'day premium chuck served over mashed potatoes, dressed in veggies.",
+          },
+        ],
+      },
+      {
+        section: "Sandwich",
+        items: [
+          {
+            name: "Fried Chicken Sammie",
+            description:
+              "Hand-battered, deep-fried chicken thigh, topped with pickles, pimento cheese, spicy jam.",
+          },
+        ],
+      },
+      {
+        section: "Cocktails",
+        items: [
+          {
+            name: "B.W.'s Rapturita",
+            description: "Rapturous, Espolon, smoked sea salt.",
+          },
+          {
+            name: "Spaghettio",
+            description: "High Life pony, Aperol brim fill.",
+          },
+        ],
+      },
+    ],
   },
 ];
 
