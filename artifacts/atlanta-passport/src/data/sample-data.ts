@@ -156,6 +156,7 @@ export const businesses = [
     id: "the-westwood",
     name: "The Westwood",
     category: "Food & Drink",
+    categories: ["Food & Drink", "Nightlife", "Games"],
     neighborhood: "West End",
     description:
       "Affordable & delicious drinks, solid comfort food with options for late-night dining, pool, and darts!",
@@ -340,7 +341,7 @@ export const applicationCategories = [
 ];
 
 export const categories = [
-  "Food & Drink", "Coffee", "Retail", "Nightlife", "Rentals", "Events", "Experiences"
+  "Food & Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences"
 ];
 
 export const exploreCategories = [

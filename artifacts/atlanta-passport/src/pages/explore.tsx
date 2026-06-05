@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, categories, neighborhoods } from "@/data/sample-data";
+import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, Bike } from "lucide-react";
 import atlMapImg from "@/assets/images/atl-neighborhoods-map.png";
@@ -11,11 +11,16 @@ import { Input } from "@/components/ui/input";
 
 export default function Explore() {
   const { t } = useTranslation();
-  const initialNeighborhood = typeof window !== "undefined"
-    ? new URLSearchParams(window.location.search).get("neighborhood")
+  const params = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search)
     : null;
+  const initialNeighborhood = params?.get("neighborhood") ?? null;
+  const initialCategory =
+    exploreCategories.find((c) => c.id === params?.get("category"))?.label ?? null;
 
-  const [activeCategories, setActiveCategories] = useState<string[]>([]);
+  const [activeCategories, setActiveCategories] = useState<string[]>(
+    initialCategory ? [initialCategory] : [],
+  );
   const [activeNeighborhood, setActiveNeighborhood] = useState<string>(initialNeighborhood ?? "All");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -27,8 +32,13 @@ export default function Explore() {
 
   const filteredBusinesses = useMemo(() => {
     return businesses.filter((biz) => {
+      const bizCategories = [
+        biz.category,
+        ...(((biz as { categories?: string[] }).categories) ?? []),
+      ];
       const matchCategory =
-        activeCategories.length === 0 || activeCategories.includes(biz.category);
+        activeCategories.length === 0 ||
+        activeCategories.some((c) => bizCategories.includes(c));
       const matchNeighborhood = activeNeighborhood === "All" || 
         // Simple mapping for demo purposes since neighborhood IDs might not exactly match the string
         biz.neighborhood.toLowerCase().includes(activeNeighborhood.toLowerCase());
