@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type Variant = "default" | "stacked" | "compact";
 
 const tile =
-  "inline-flex items-center justify-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-[10px] font-display leading-none";
+  "inline-flex items-center justify-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-[10px] font-serif font-bold leading-none";
 
 export default function Logo({
   variant = "default",

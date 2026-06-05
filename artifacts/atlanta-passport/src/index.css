@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: 'Etna';
+  src: url('./assets/fonts/etna.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -140,7 +148,7 @@
   --sidebar-ring: 154 44% 18%;
 
   --app-font-sans: 'Outfit', sans-serif;
-  --app-font-serif: 'Archivo', 'Outfit', sans-serif;
+  --app-font-serif: 'Etna', 'Archivo', 'Outfit', sans-serif;
   --app-font-mono: 'Space Mono', monospace;
   --app-font-display: 'Bungee', 'Outfit', sans-serif;
 
