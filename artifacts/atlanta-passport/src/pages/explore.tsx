@@ -98,7 +98,7 @@ export default function Explore() {
             <Input
               type="text"
               placeholder="Explore..."
-              className="pl-9 h-11 py-2 text-base leading-relaxed bg-white font-serif placeholder:font-serif"
+              className="pl-9 h-12 text-base leading-[1.8] bg-white font-serif placeholder:font-serif"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
