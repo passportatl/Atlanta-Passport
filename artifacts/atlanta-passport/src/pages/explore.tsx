@@ -70,9 +70,9 @@ export default function Explore() {
     <div className="w-full pb-24">
       <div className="container mx-auto px-4">
         {/* Orientation map */}
-        <div className="mb-12">
+        <div className="sticky top-0 z-30 pt-4 pb-6 bg-background">
           <div ref={mapRef} className="card-pop overflow-hidden bg-[#0b0f1a]">
-            <div className="aspect-[4/3] sm:aspect-[16/10] lg:h-[600px] lg:aspect-auto">
+            <div className="h-[50vh]">
               <BusinessMap
                 businesses={filteredBusinesses}
                 selectedId={selectedBizId}
