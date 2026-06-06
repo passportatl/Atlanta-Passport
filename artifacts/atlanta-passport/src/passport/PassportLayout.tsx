@@ -70,7 +70,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
             <Logo
               asLink={false}
               variant="nav"
-              className="absolute bottom-1 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
             />
           </Link>
           {TABS.slice(3).map((tab) => renderTab(tab, location))}
