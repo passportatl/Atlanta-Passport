@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, Stamp as StampIcon, Map, Trophy, User } from "lucide-react";
+import { Home, Stamp as StampIcon, Map, Trophy, User, Calendar } from "lucide-react";
 import type { ReactNode } from "react";
 import Logo from "@/components/Logo";
 
@@ -8,6 +8,7 @@ const TABS = [
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/passport/rewards", label: "Rewards", icon: Trophy },
+  { href: "/events", label: "Events", icon: Calendar },
   { href: "/passport", label: "Profile", icon: User, exact: true },
 ];
 
@@ -35,7 +36,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
       <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
 
       <nav className="fixed bottom-0 inset-x-0 bg-[hsl(var(--brand-cream))] border-t-4 border-foreground shadow-pop z-40">
-        <div className="max-w-3xl mx-auto grid grid-cols-5">
+        <div className="max-w-3xl mx-auto grid grid-cols-6">
           {TABS.map((tab) => {
             const active = tab.exact
               ? location === tab.href
