@@ -1,12 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { MapPin, Calendar, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, Clock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses } from "@/data/sample-data";
 
 const GROUP_SIZE = 3;
 const AUTOPLAY_MS = 9000;
+
+const MONTHS = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
 
 const headerTints = [
   "bg-brand-yellow text-brand-yellow-foreground",
@@ -34,15 +49,37 @@ function parseDateTile(dateStr: string): { month: string; day: string } {
   return { month: "ATL", day: "★" };
 }
 
+// Parse "June 22–23, 2026" into the calendar month/year + the list of day
+// numbers the event spans (ranges expand into each day).
+function parseEventDays(dateStr: string): {
+  month: number;
+  year: number;
+  days: number[];
+} | null {
+  const cleaned = dateStr.replace(/[–—]/g, "-").trim();
+  const match = cleaned.match(/^([A-Za-z]+)\s+(\d+)(?:\s*-\s*(\d+))?,\s*(\d+)/);
+  if (!match) return null;
+  const month = MONTHS.indexOf(match[1].toLowerCase());
+  if (month < 0) return null;
+  const start = parseInt(match[2], 10);
+  const end = match[3] ? parseInt(match[3], 10) : start;
+  const year = parseInt(match[4], 10);
+  const days: number[] = [];
+  for (let d = start; d <= end; d += 1) days.push(d);
+  return { month, year, days };
+}
+
+type EventItem = (typeof events)[number];
+
 type EventsFeedProps = {
   onSelectBusiness: (id: string) => void;
 };
 
 export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [page, setPage] = useState(0);
 
-  const groups: (typeof events)[number][][] = [];
+  const groups: EventItem[][] = [];
   for (let i = 0; i < events.length; i += GROUP_SIZE) {
     groups.push(events.slice(i, i + GROUP_SIZE));
   }
@@ -57,6 +94,72 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   }, [page, count]);
 
   const current = groups[page] ?? [];
+
+  // Build the calendar from the event dates: pick the month/year of the first
+  // event and map each day-of-month to the events happening that day.
+  const calendar = useMemo(() => {
+    const byDay = new Map<number, EventItem[]>();
+    let month = new Date().getMonth();
+    let year = new Date().getFullYear();
+    let seeded = false;
+    for (const ev of events) {
+      const parsed = parseEventDays(ev.date);
+      if (!parsed) continue;
+      if (!seeded) {
+        month = parsed.month;
+        year = parsed.year;
+        seeded = true;
+      }
+      if (parsed.month !== month || parsed.year !== year) continue;
+      for (const day of parsed.days) {
+        const list = byDay.get(day) ?? [];
+        list.push(ev);
+        byDay.set(day, list);
+      }
+    }
+    const eventDays = [...byDay.keys()].sort((a, b) => a - b);
+    return { byDay, month, year, eventDays };
+  }, []);
+
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  useEffect(() => {
+    setSelectedDay(calendar.eventDays[0] ?? null);
+  }, [calendar.eventDays]);
+
+  const lang = i18n.language || "en";
+  const monthLabel = useMemo(
+    () =>
+      new Intl.DateTimeFormat(lang, { month: "long", year: "numeric" }).format(
+        new Date(calendar.year, calendar.month, 1),
+      ),
+    [lang, calendar.month, calendar.year],
+  );
+  const weekdayLabels = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) =>
+        new Intl.DateTimeFormat(lang, { weekday: "narrow" }).format(
+          new Date(2023, 0, 1 + i),
+        ),
+      ),
+    [lang],
+  );
+
+  const firstWeekday = new Date(calendar.year, calendar.month, 1).getDay();
+  const daysInMonth = new Date(calendar.year, calendar.month + 1, 0).getDate();
+  const cells: (number | null)[] = [
+    ...Array.from({ length: firstWeekday }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+
+  const selectedEvents = selectedDay ? calendar.byDay.get(selectedDay) ?? [] : [];
+  const selectedLabel =
+    selectedDay != null
+      ? new Intl.DateTimeFormat(lang, {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        }).format(new Date(calendar.year, calendar.month, selectedDay))
+      : "";
 
   return (
     <div className="flex-1 min-h-0 flex flex-col px-4 pt-3 pb-[calc(8rem+env(safe-area-inset-bottom))] overflow-hidden">
@@ -83,7 +186,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
           )}
         </div>
 
-        <div className="relative flex-1 min-h-0">
+        {/* Auto-playing event card carousel */}
+        <div className="relative flex-[1.05] min-h-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
@@ -163,6 +267,113 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
               })}
             </motion.div>
           </AnimatePresence>
+        </div>
+
+        {/* Interactive calendar (left) + selected-day events (right) */}
+        <div className="flex-1 min-h-0 mt-3 flex flex-row gap-2.5">
+          {/* Calendar — half the map width */}
+          <div className="w-1/2 shrink-0 card-pop bg-card flex flex-col overflow-hidden">
+            <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 text-center font-display text-[10px] tracking-[0.1em] uppercase">
+              {monthLabel}
+            </div>
+            <div className="flex-1 min-h-0 p-1.5 flex flex-col">
+              <div className="grid grid-cols-7 gap-0.5 mb-0.5 shrink-0">
+                {weekdayLabels.map((w, i) => (
+                  <div
+                    key={i}
+                    className="text-center text-[8px] font-display tracking-wider text-foreground/50"
+                  >
+                    {w}
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 gap-0.5 flex-1 min-h-0 content-start">
+                {cells.map((day, i) => {
+                  if (day == null) return <div key={`b-${i}`} aria-hidden />;
+                  const hasEvents = calendar.byDay.has(day);
+                  const isSelected = day === selectedDay;
+                  if (!hasEvents) {
+                    return (
+                      <div
+                        key={day}
+                        className="flex items-center justify-center text-[10px] text-foreground/30 aspect-square"
+                      >
+                        {day}
+                      </div>
+                    );
+                  }
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => setSelectedDay(day)}
+                      aria-pressed={isSelected}
+                      aria-label={`${day} — ${calendar.byDay.get(day)?.length} events`}
+                      className={`flex items-center justify-center aspect-square rounded-md text-[10px] font-bold border-2 border-foreground transition-transform hover:-translate-y-0.5 ${
+                        isSelected
+                          ? "bg-brand-red text-white"
+                          : "bg-brand-lime text-foreground"
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Selected-day event list — right side */}
+          <div className="flex-1 min-w-0 flex flex-col min-h-0">
+            <div className="shrink-0 mb-1.5 flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-brand-red shrink-0" />
+              <span className="font-display text-[11px] tracking-wide text-foreground truncate">
+                {selectedLabel}
+              </span>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-0.5">
+              {selectedEvents.map((event) => {
+                const venueBiz = businesses.find((b) => b.name === event.venue);
+                return (
+                  <div
+                    key={event.id}
+                    onClick={() => venueBiz && onSelectBusiness(venueBiz.id)}
+                    onKeyDown={(e) => {
+                      if ((e.key === "Enter" || e.key === " ") && venueBiz) {
+                        e.preventDefault();
+                        onSelectBusiness(venueBiz.id);
+                      }
+                    }}
+                    role={venueBiz ? "button" : undefined}
+                    tabIndex={venueBiz ? 0 : undefined}
+                    aria-label={venueBiz ? `Show ${event.venue} on the map` : undefined}
+                    className="card-pop bg-card p-2 cursor-pointer hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
+                  >
+                    <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight line-clamp-2">
+                      {event.name}
+                    </h4>
+                    <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0 mt-0.5">
+                      <Clock className="w-3 h-3 text-brand-red shrink-0" />
+                      <span className="truncate">{event.time}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                      <MapPin className="w-3 h-3 text-brand-red shrink-0" />
+                      <span className="truncate">{event.venue}</span>
+                    </div>
+                    <Link
+                      href={`/events/${event.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label={`${t("events_page.view_event")}: ${event.name}`}
+                      className="mt-1 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
+                    >
+                      {t("events_page.view_event")}
+                      <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </div>
