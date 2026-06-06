@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useClerk, useUser } from "@clerk/react";
 import {
   useListVisitorStamps,
   useListBusinesses,
@@ -7,6 +8,7 @@ import {
   type Business,
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
+import { basePath } from "@/auth/clerk";
 import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { REWARDS, NEIGHBORHOODS, NEIGHBORHOOD_BY_NAME, neighborhoodStatus } from "@/passport/data";
@@ -51,6 +53,8 @@ function HowItWorks() {
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
+  const { isSignedIn } = useUser();
+  const { signOut } = useClerk();
 
   const { data: stampsRaw } = useListVisitorStamps(visitorId ?? "", {
     query: {
@@ -128,9 +132,20 @@ export default function PassportHome() {
         >
           YOUR PASSPORT
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-          Hey, {visitor?.firstName ?? "Explorer"}.
-        </h1>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <h1 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
+            Hey, {visitor?.firstName ?? "Explorer"}.
+          </h1>
+          {isSignedIn && (
+            <button
+              type="button"
+              onClick={() => signOut({ redirectUrl: `${basePath}/` })}
+              className="text-sm font-bold text-[hsl(var(--brand-red))] underline underline-offset-2 hover:text-[hsl(var(--brand-red))]/80"
+            >
+              Not you? Sign out
+            </button>
+          )}
+        </div>
         <p className="text-sm text-foreground/70 mt-1">
           {total === 0
             ? "Your passport is ready. Scan a QR at any participating spot to start."
