@@ -65,7 +65,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
           <Link
             href="/passport"
             aria-label="Atlanta Passport profile"
-            className="relative flex items-center justify-center"
+            className="relative flex items-center justify-center self-stretch"
           >
             <Logo
               asLink={false}
