@@ -23,6 +23,7 @@ import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
 import { PassportLayout } from "@/passport/PassportLayout";
+import { PassportBottomNav } from "@/passport/PassportBottomNav";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,6 @@ function MarketingRoutes() {
         <Route path="/" component={Home} />
         <Route path="/beltline" component={Beltline} />
         <Route path="/routes" component={Beltline} />
-        <Route path="/explore" component={Explore} />
         <Route path="/partners" component={Partners} />
         <Route path="/events" component={Events} />
         <Route path="/events/:id" component={EventDetail} />
@@ -43,6 +43,15 @@ function MarketingRoutes() {
         <Route component={NotFound} />
       </Switch>
     </Layout>
+  );
+}
+
+function ExploreGroup() {
+  return (
+    <div className="min-h-screen pb-24">
+      <Explore />
+      <PassportBottomNav />
+    </div>
   );
 }
 
@@ -85,6 +94,9 @@ function Router() {
   }
   if (location === "/passport" || location.startsWith("/passport/")) {
     return <PassportRoutesGroup />;
+  }
+  if (location === "/explore") {
+    return <ExploreGroup />;
   }
   return <MarketingRoutes />;
 }
