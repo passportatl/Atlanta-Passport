@@ -67,13 +67,18 @@ export default function Explore() {
     }
   }, [filteredBusinesses, selectedBizId]);
 
+  const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
+  const neighborhoodPalette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
+  const chipBase = "shrink-0 px-3 py-1.5 rounded-full text-xs font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
+  const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
+
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden">
-      {/* Orientation map — pinned to the top half */}
+      {/* Orientation map — pinned to the top */}
       <div className="shrink-0 px-4 pt-3 pb-2">
         <div className="container mx-auto px-0">
           <div ref={mapRef} className="card-pop overflow-hidden bg-[#0b0f1a]">
-            <div className="h-[46dvh]">
+            <div className="h-[40dvh]">
               <BusinessMap
                 businesses={filteredBusinesses}
                 selectedId={selectedBizId}
@@ -84,86 +89,90 @@ export default function Explore() {
         </div>
       </div>
 
-      {/* Scrollable list — fills the space between the map and the nav bar */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="container mx-auto px-4 pt-5 pb-28">
-          {/* Filters */}
-          <div className="mb-10 space-y-8">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-            <Input 
+      {/* Compact filter panel — fixed between the map and the nav bar */}
+      <div className="shrink-0 px-4 pb-2.5 border-b-2 border-foreground/10">
+        <div className="container mx-auto px-0 space-y-2">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
               type="text"
               placeholder={t("common.search_placeholder", { defaultValue: "Search..." })}
-              className="pl-10 py-6 text-base bg-white"
+              className="pl-9 h-10 text-sm bg-white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
-          <div>
-            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4 uppercase">{t("explore_page.filter_category")}</h3>
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setActiveCategories([])}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
-                  activeCategories.length === 0
-                    ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
-                    : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
-                )}
-              >
-                {t("explore_page.all")}
-              </button>
-              {categories.map((cat, i) => {
-                const palette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
-                const active = activeCategories.includes(cat);
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => toggleCategory(cat)}
-                    aria-pressed={active}
-                    className={cn(
-                      "px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
-                      active
-                        ? `${palette[i % palette.length]} shadow-pop-sm -translate-y-0.5`
-                        : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
-                    )}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
+          {/* Category row */}
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 w-12 text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground leading-tight">
+              {t("explore_page.category_short", { defaultValue: "Type" })}
+            </span>
+            <div className="-mr-4 flex-1 min-w-0">
+              <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r pr-8">
+                <button
+                  onClick={() => setActiveCategories([])}
+                  className={cn(
+                    chipBase,
+                    activeCategories.length === 0
+                      ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
+                      : chipIdle,
+                  )}
+                >
+                  {t("explore_page.all")}
+                </button>
+                {categories.map((cat, i) => {
+                  const active = activeCategories.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => toggleCategory(cat)}
+                      aria-pressed={active}
+                      className={cn(
+                        chipBase,
+                        active
+                          ? `${categoryPalette[i % categoryPalette.length]} shadow-pop-sm -translate-y-0.5`
+                          : chipIdle,
+                      )}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
-          <div>
-            <h3 className="font-display text-xs tracking-[0.18em] text-foreground mb-4 uppercase">{t("explore_page.filter_neighborhood")}</h3>
-            {/* Mobile: single-row horizontal scroller. Desktop: wrap. */}
-            <div className="-mx-4 sm:mx-0">
-              <div className="flex sm:flex-wrap gap-3 overflow-x-auto scrollbar-none scroll-fade-r sm:no-fade px-4 sm:px-0 pb-1 pr-8 sm:pr-0">
+          {/* Neighborhood row */}
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 w-12 text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground leading-tight">
+              {t("explore_page.area_short", { defaultValue: "Area" })}
+            </span>
+            <div className="-mr-4 flex-1 min-w-0">
+              <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r pr-8">
                 <button
                   onClick={() => setActiveNeighborhood("All")}
                   className={cn(
-                    "shrink-0 px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                    chipBase,
                     activeNeighborhood === "All"
                       ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
-                      : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
+                      : chipIdle,
                   )}
                 >
                   {t("explore_page.all")}
                 </button>
                 {neighborhoods.map((n, i) => {
-                  const palette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
                   const active = activeNeighborhood === n.name;
                   return (
                     <button
                       key={n.id}
                       onClick={() => setActiveNeighborhood(n.name)}
                       className={cn(
-                        "shrink-0 px-4 py-2 rounded-full text-sm font-display tracking-wider uppercase border-[2px] border-foreground transition-all",
+                        chipBase,
                         active
-                          ? `${palette[i % palette.length]} shadow-pop-sm -translate-y-0.5`
-                          : "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm"
+                          ? `${neighborhoodPalette[i % neighborhoodPalette.length]} shadow-pop-sm -translate-y-0.5`
+                          : chipIdle,
                       )}
                     >
                       {n.name}
@@ -174,7 +183,11 @@ export default function Explore() {
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Scrollable results — fills the space between the filters and the nav bar */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className="container mx-auto px-4 pt-3 pb-28">
         {/* Results */}
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredBusinesses.length > 0 ? (
