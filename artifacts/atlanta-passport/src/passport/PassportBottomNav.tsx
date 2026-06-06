@@ -6,10 +6,10 @@ import { SocialLinks } from "@/components/SocialLinks";
 
 const TABS = [
   { href: "/explore", label: "Explore", icon: Compass, exact: true },
-  { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/routes", label: "Routes", icon: Map },
-  { href: "/passport/rewards", label: "Rewards", icon: Trophy },
   { href: "/explore/events", label: "Events", icon: Calendar },
+  { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
+  { href: "/passport/rewards", label: "Rewards", icon: Trophy },
   { href: "/passport", label: "Profile", icon: User, exact: true },
 ];
 
