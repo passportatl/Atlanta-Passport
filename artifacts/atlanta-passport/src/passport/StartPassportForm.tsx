@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Facebook, Instagram } from "lucide-react";
 import { useCreateVisitor, type Visitor } from "@workspace/api-client-react";
 import { useVisitor } from "./visitor-context";
 
@@ -19,6 +20,7 @@ export function StartPassportForm({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -81,6 +83,36 @@ export function StartPassportForm({
           {isPending ? "Creating…" : "Create my passport"}
         </button>
       </form>
+
+      <div className="flex items-center gap-3 my-4">
+        <span className="h-0.5 flex-1 bg-foreground/15" />
+        <span className="text-xs font-black uppercase tracking-wider text-foreground/50">or</span>
+        <span className="h-0.5 flex-1 bg-foreground/15" />
+      </div>
+
+      <div className="space-y-3">
+        <button
+          type="button"
+          onClick={() => setNotice("Social sign-up is coming soon — use the form above for now.")}
+          className="button-pop w-full flex items-center justify-center gap-2 text-white"
+          style={{ backgroundColor: "#1877F2" }}
+        >
+          <Facebook className="h-5 w-5" fill="currentColor" stroke="none" />
+          Register with Facebook
+        </button>
+        <button
+          type="button"
+          onClick={() => setNotice("Social sign-up is coming soon — use the form above for now.")}
+          className="button-pop w-full flex items-center justify-center gap-2 text-white"
+          style={{ background: "linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888)" }}
+        >
+          <Instagram className="h-5 w-5" />
+          Register with Instagram
+        </button>
+        {notice && (
+          <div className="text-sm text-foreground/70 font-bold text-center">{notice}</div>
+        )}
+      </div>
     </div>
   );
 }
