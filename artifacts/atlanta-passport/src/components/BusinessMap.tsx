@@ -11,39 +11,49 @@ import {
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 
-// Retro Americana palette to match the rest of the site:
-// cream land, navy water, muted lime parks, red road accents, simplified labels.
+// Dark navy base (#0f2942) with gold roads/labels and red accents to match the
+// passport nav bar scheme (red #a71930 + gold #f9c629).
 const MAP_STYLES: google.maps.MapTypeStyle[] = [
-  { elementType: "geometry", stylers: [{ color: "#f3e8cb" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#1d2a47" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#f7efd8" }, { weight: 3 }] },
+  { elementType: "geometry", stylers: [{ color: "#0f2942" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#e8d9a8" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#0a1c2e" }, { weight: 3 }] },
   { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "poi.business", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
   {
-    featureType: "poi.park",
+    featureType: "landscape",
     elementType: "geometry",
-    stylers: [{ color: "#cfe0a6" }],
-  },
-  {
-    featureType: "poi.park",
-    elementType: "labels.text.fill",
-    stylers: [{ color: "#5d7032" }],
+    stylers: [{ color: "#0f2942" }],
   },
   {
     featureType: "landscape.man_made",
     elementType: "geometry",
-    stylers: [{ color: "#efe2bf" }],
+    stylers: [{ color: "#15314f" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: "#163a4a" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#7fae9a" }],
   },
   {
     featureType: "road",
     elementType: "geometry",
-    stylers: [{ color: "#ffffff" }],
+    stylers: [{ color: "#23456b" }],
   },
   {
     featureType: "road",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#e3d4ac" }],
+    stylers: [{ color: "#0a1c2e" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#cdb98f" }],
   },
   {
     featureType: "road.highway",
@@ -53,32 +63,36 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   {
     featureType: "road.highway",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#c9971e" }],
-  },
-  {
-    featureType: "road.arterial",
-    elementType: "geometry",
-    stylers: [{ color: "#f6ddb0" }],
+    stylers: [{ color: "#a71930" }],
   },
   {
     featureType: "road.highway",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#7a5a12" }],
+    stylers: [{ color: "#f9c629" }],
+  },
+  {
+    featureType: "road.arterial",
+    elementType: "geometry",
+    stylers: [{ color: "#2d527c" }],
   },
   {
     featureType: "water",
     elementType: "geometry",
-    stylers: [{ color: "#1d2a47" }],
+    stylers: [{ color: "#0a1c2e" }],
   },
   {
     featureType: "water",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#8fa1c4" }],
+    stylers: [{ color: "#5d7da6" }],
   },
   {
     featureType: "administrative",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#c9b888" }],
+    stylers: [{ color: "#a71930" }],
+  },
+  {
+    featureType: "administrative.land_parcel",
+    stylers: [{ visibility: "off" }],
   },
 ];
 
