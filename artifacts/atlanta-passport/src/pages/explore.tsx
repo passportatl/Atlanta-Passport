@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, Bike } from "lucide-react";
-import atlMapImg from "@/assets/images/atl-neighborhoods-map.png";
+import InteractiveMap from "@/components/InteractiveMap";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -80,24 +80,10 @@ export default function Explore() {
             </div>
           </div>
           <div className="card-pop overflow-hidden bg-[#0b0f1a]">
-            <a
-              href={atlMapImg}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block group"
-              aria-label="Open the Atlanta neighborhoods map in a new tab"
-            >
-              <img
-                src={atlMapImg}
-                alt="Atlanta neighborhoods map with MARTA train stations and the Beltline"
-                className="w-full h-auto object-contain group-hover:opacity-95 transition-opacity"
-                loading="lazy"
-              />
-            </a>
+            <div className="aspect-[4/3] sm:aspect-[16/10] lg:h-[600px] lg:aspect-auto">
+              <InteractiveMap title="Atlanta neighborhoods, MARTA, and the Beltline map" />
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-3 italic">
-            Tap the map to open full-size.
-          </p>
         </div>
 
         {/* Filters */}
