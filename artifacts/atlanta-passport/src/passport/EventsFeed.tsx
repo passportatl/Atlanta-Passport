@@ -93,7 +93,10 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
               transition={{ duration: 0.45 }}
               className="absolute inset-0 flex flex-row gap-2.5"
             >
-              {current.map((event, j) => {
+              {Array.from({ length: GROUP_SIZE }, (_, j) => current[j] ?? null).map((event, j) => {
+                if (!event) {
+                  return <div key={`empty-${j}`} className="flex-1 min-w-0" aria-hidden />;
+                }
                 const absIndex = page * GROUP_SIZE + j;
                 const tile = parseDateTile(event.date);
                 const headerTint = headerTints[absIndex % headerTints.length];
