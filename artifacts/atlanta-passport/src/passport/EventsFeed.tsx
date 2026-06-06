@@ -187,7 +187,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         </div>
 
         {/* Auto-playing event card carousel */}
-        <div className="relative flex-[1.05] min-h-0">
+        <div className="relative flex-[2.4] min-h-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
@@ -287,7 +287,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-7 gap-0.5 flex-1 min-h-0 content-start">
+              <div className="grid grid-cols-7 gap-0.5 flex-1 min-h-0 auto-rows-fr">
                 {cells.map((day, i) => {
                   if (day == null) return <div key={`b-${i}`} aria-hidden />;
                   const hasEvents = calendar.byDay.has(day);
@@ -296,7 +296,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     return (
                       <div
                         key={day}
-                        className="flex items-center justify-center text-[10px] text-foreground/30 aspect-square"
+                        className="flex items-center justify-center text-[10px] text-foreground/30 min-h-0"
                       >
                         {day}
                       </div>
@@ -309,7 +309,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                       onClick={() => setSelectedDay(day)}
                       aria-pressed={isSelected}
                       aria-label={`${day} — ${calendar.byDay.get(day)?.length} events`}
-                      className={`flex items-center justify-center aspect-square rounded-md text-[10px] font-bold border-2 border-foreground transition-transform hover:-translate-y-0.5 ${
+                      className={`flex items-center justify-center min-h-0 rounded-md text-[10px] font-bold border-2 border-foreground transition-transform hover:-translate-y-0.5 ${
                         isSelected
                           ? "bg-brand-red text-white"
                           : "bg-brand-lime text-foreground"
