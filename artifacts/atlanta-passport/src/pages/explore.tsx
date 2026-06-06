@@ -67,31 +67,10 @@ export default function Explore() {
   }, [filteredBusinesses, selectedBizId]);
 
   return (
-    <div className="w-full pt-10 pb-24">
+    <div className="w-full pb-24">
       <div className="container mx-auto px-4">
-        <div className="mb-12 max-w-3xl">
-          <div className="section-kicker mb-5">{t("explore_page.kicker")}</div>
-          <h1 className="hero-title text-primary mb-4">
-            {t("explore_page.title")}
-          </h1>
-          <p className="text-xl text-muted-foreground mt-6">
-            {t("explore_page.subtitle")}
-          </p>
-        </div>
-
         {/* Orientation map */}
         <div className="mb-12">
-          <div className="flex items-end justify-between gap-4 mb-4">
-            <div>
-              <div className="section-kicker mb-2">★ The Map</div>
-              <h2 className="font-serif text-2xl md:text-3xl font-bold text-primary leading-tight">
-                Get your bearings.
-              </h2>
-              <p className="text-sm md:text-base text-muted-foreground mt-1 max-w-xl">
-                Neighborhoods, MARTA stations, and the Beltline — at a glance.
-              </p>
-            </div>
-          </div>
           <div ref={mapRef} className="card-pop overflow-hidden bg-[#0b0f1a]">
             <div className="aspect-[4/3] sm:aspect-[16/10] lg:h-[600px] lg:aspect-auto">
               <BusinessMap
