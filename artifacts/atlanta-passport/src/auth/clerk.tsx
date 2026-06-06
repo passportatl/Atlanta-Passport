@@ -252,10 +252,15 @@ function ClerkVisitorBridge() {
 function SignedInHomeRedirect() {
   const { isLoaded, isSignedIn } = useUser();
   const [location, setLocation] = useLocation();
+  // Only the first load counts as "visiting the site" — after Clerk resolves
+  // once we stop auto-redirecting, so a signed-in user can click the logo to
+  // intentionally return to the marketing home without being bounced back.
+  const evaluated = useRef(false);
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
-    if (location === "/") {
+    if (!isLoaded || evaluated.current) return;
+    evaluated.current = true;
+    if (isSignedIn && location === "/") {
       setLocation("/explore", { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
