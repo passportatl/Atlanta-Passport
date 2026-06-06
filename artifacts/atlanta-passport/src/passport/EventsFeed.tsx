@@ -186,8 +186,9 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
           )}
         </div>
 
-        {/* Auto-playing event card carousel */}
-        <div className="relative h-[58dvh] shrink-0">
+        {/* Auto-playing event card carousel — sized to the visible gap between
+            the pinned map (40dvh + padding) and the fixed bottom nav (~110px). */}
+        <div className="relative h-[calc(60dvh-180px)] min-h-[220px] shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
