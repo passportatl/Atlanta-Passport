@@ -27,11 +27,20 @@ router.post("/visitors/link", async (req, res) => {
     user.primaryEmailAddress?.emailAddress ??
     user.emailAddresses[0]?.emailAddress ??
     `${userId}@passport.local`;
-  const firstName = user.firstName?.trim() || "Friend";
+  const meta = user.unsafeMetadata as
+    | { firstName?: unknown; phone?: unknown }
+    | undefined;
+  const metaFirstName =
+    typeof meta?.firstName === "string" ? meta.firstName.trim() : "";
+  const metaPhone =
+    typeof meta?.phone === "string" && meta.phone.trim()
+      ? meta.phone.trim()
+      : null;
+  const firstName = user.firstName?.trim() || metaFirstName || "Friend";
 
   const [created] = await db
     .insert(visitorsTable)
-    .values({ firstName, email, clerkUserId: userId })
+    .values({ firstName, email, phone: metaPhone, clerkUserId: userId })
     .onConflictDoNothing({ target: visitorsTable.clerkUserId })
     .returning();
 

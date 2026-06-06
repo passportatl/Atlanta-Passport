@@ -193,6 +193,8 @@ function ClerkVisitorBridge() {
   const { mutateAsync } = useLinkVisitor();
   const linkedForUserId = useRef<string | null>(null);
   const linking = useRef(false);
+  const attempts = useRef(0);
+  const [retryTick, setRetryTick] = useState(0);
 
   const userId = user?.id ?? null;
 
@@ -205,13 +207,17 @@ function ClerkVisitorBridge() {
         linkedForUserId.current = null;
         setVisitorId(null);
       }
+      attempts.current = 0;
       return;
     }
 
     if (linkedForUserId.current === userId || linking.current) return;
 
     // Account switch: drop the prior account's visitor before relinking.
-    if (linkedForUserId.current !== null) setVisitorId(null);
+    if (linkedForUserId.current !== null) {
+      setVisitorId(null);
+      attempts.current = 0;
+    }
 
     linking.current = true;
     (async () => {
@@ -219,15 +225,23 @@ function ClerkVisitorBridge() {
         const v = (await mutateAsync()) as Visitor;
         if (v?.id) {
           linkedForUserId.current = userId;
+          attempts.current = 0;
           setVisitorId(v.id);
         }
       } catch {
-        // Leave unlinked; a later state change will retry.
+        // Retry with backoff so a transient /visitors/link failure doesn't
+        // leave a just-signed-in user without a passport. Auth state is
+        // stable here, so deps won't change on their own — bump retryTick.
+        if (attempts.current < 5) {
+          const delay = Math.min(1000 * 2 ** attempts.current, 15000);
+          attempts.current += 1;
+          setTimeout(() => setRetryTick((t) => t + 1), delay);
+        }
       } finally {
         linking.current = false;
       }
     })();
-  }, [isLoaded, isSignedIn, userId, setVisitorId, mutateAsync]);
+  }, [isLoaded, isSignedIn, userId, retryTick, setVisitorId, mutateAsync]);
 
   return null;
 }
