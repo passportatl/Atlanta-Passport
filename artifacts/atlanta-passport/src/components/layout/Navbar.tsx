@@ -33,19 +33,10 @@ export default function Navbar() {
     : "Start Your Passport";
   const passportShort = hasPassport ? "My Passport" : "Get Passport";
 
-  const touristLinks = [
-    { name: t("nav.beltline_tour"), path: "/beltline" },
-    { name: t("nav.events"), path: "/events" },
-    { name: t("nav.about"), path: "/about" },
-  ];
-
   const mobileTouristLinks = [
     { name: t("nav.explore"), path: "/explore" },
-    { name: t("nav.beltline_tour"), path: "/beltline" },
     { name: t("nav.neighborhoods"), path: "/explore" },
     { name: t("nav.local_spots"), path: "/explore" },
-    { name: t("nav.events"), path: "/events" },
-    { name: t("nav.about"), path: "/about" },
   ];
 
   const businessLinks = [
@@ -73,17 +64,6 @@ export default function Navbar() {
 
         {/* Desktop Nav — tourist-first */}
         <nav className="hidden md:flex items-center gap-1">
-          <Link href="/" className={navItemClass(location === "/")}>{t("nav.home")}</Link>
-          {touristLinks.map((link) => (
-            <Link
-              key={link.path}
-              href={link.path}
-              className={navItemClass(location === link.path)}
-            >
-              {link.name}
-            </Link>
-          ))}
-
           {/* For Businesses dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -167,15 +147,6 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="flex flex-col bg-paper p-0">
               <div className="flex flex-col gap-5 px-6 pt-10 pb-6">
-                <Link
-                  href="/"
-                  className={cn(
-                    "font-display text-base tracking-[0.16em] uppercase",
-                    location === "/" ? "text-foreground" : "text-foreground/60"
-                  )}
-                >
-                  {t("nav.home")}
-                </Link>
                 {mobileTouristLinks.map((link, i) => (
                   <Link
                     key={`${link.path}-${i}`}
