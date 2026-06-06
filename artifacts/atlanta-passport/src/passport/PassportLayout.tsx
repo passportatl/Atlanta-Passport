@@ -25,8 +25,8 @@ function renderTab(tab: Tab, location: string) {
       href={tab.href}
       className={`flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider ${
         active
-          ? "text-[hsl(var(--brand-red))]"
-          : "text-foreground/70 hover:text-foreground"
+          ? "text-[#f9c629]"
+          : "text-[#f9c629]/70 hover:text-[#f9c629]"
       }`}
       style={{ fontFamily: "Bungee, sans-serif" }}
     >
@@ -59,7 +59,7 @@ export function PassportLayout({ children }: { children: ReactNode }) {
 
       <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
 
-      <nav className="fixed bottom-0 inset-x-0 bg-[hsl(var(--brand-cream))] border-t-4 border-foreground shadow-pop z-40">
+      <nav className="fixed bottom-0 inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop z-40">
         <div className="max-w-3xl mx-auto grid grid-cols-7 items-center">
           {TABS.slice(0, 3).map((tab) => renderTab(tab, location))}
           <Link
