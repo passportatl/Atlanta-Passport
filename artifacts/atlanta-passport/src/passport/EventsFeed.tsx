@@ -162,8 +162,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
       : "";
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col px-4 pt-3 pb-[calc(8rem+env(safe-area-inset-bottom))] overflow-hidden">
-      <div className="container mx-auto px-0 flex flex-col flex-1 min-h-0">
+    <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-3 pb-[calc(8rem+env(safe-area-inset-bottom))]">
+      <div className="container mx-auto px-0 flex flex-col">
         <div className="flex items-center justify-between mb-2 shrink-0">
           <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
             {t("events_page.kicker")}
@@ -187,7 +187,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         </div>
 
         {/* Auto-playing event card carousel */}
-        <div className="relative flex-[2.4] min-h-0">
+        <div className="relative h-[58dvh] shrink-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
@@ -270,7 +270,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         </div>
 
         {/* Interactive calendar (left) + selected-day events (right) */}
-        <div className="flex-1 min-h-0 mt-3 flex flex-row gap-2.5">
+        <div className="h-[44dvh] shrink-0 mt-3 flex flex-row gap-2.5">
           {/* Calendar — half the map width */}
           <div className="w-1/2 shrink-0 card-pop bg-card flex flex-col overflow-hidden">
             <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 text-center font-display text-[10px] tracking-[0.1em] uppercase">
@@ -287,7 +287,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                   </div>
                 ))}
               </div>
-              <div className="grid grid-cols-7 gap-0.5 flex-1 min-h-0 auto-rows-fr">
+              <div className="grid grid-cols-7 gap-0.5 flex-1 min-h-0 content-start">
                 {cells.map((day, i) => {
                   if (day == null) return <div key={`b-${i}`} aria-hidden />;
                   const hasEvents = calendar.byDay.has(day);
@@ -296,7 +296,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     return (
                       <div
                         key={day}
-                        className="flex items-center justify-center text-[10px] text-foreground/30 min-h-0"
+                        className="flex items-center justify-center text-[10px] text-foreground/30 aspect-square"
                       >
                         {day}
                       </div>
@@ -309,7 +309,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                       onClick={() => setSelectedDay(day)}
                       aria-pressed={isSelected}
                       aria-label={`${day} — ${calendar.byDay.get(day)?.length} events`}
-                      className={`flex items-center justify-center min-h-0 rounded-md text-[10px] font-bold border-2 border-foreground transition-transform hover:-translate-y-0.5 ${
+                      className={`flex items-center justify-center aspect-square rounded-md text-[10px] font-bold border-2 border-foreground transition-transform hover:-translate-y-0.5 ${
                         isSelected
                           ? "bg-brand-red text-white"
                           : "bg-brand-lime text-foreground"
