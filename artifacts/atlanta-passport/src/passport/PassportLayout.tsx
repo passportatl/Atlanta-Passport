@@ -41,22 +41,6 @@ export function PassportLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] text-foreground texture-paper pb-24">
-      <header className="sticky top-0 z-50 bg-[#a71930] text-[hsl(var(--brand-cream))] border-b-[3px] border-foreground">
-        <div className="relative max-w-3xl mx-auto px-4 h-16 flex items-center justify-center">
-          <Link
-            href="/"
-            aria-label="Atlanta Passport home"
-            className="relative z-50 inline-flex items-center shrink-0 self-start"
-          >
-            <Logo
-              asLink={false}
-              variant="xl"
-              className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
-            />
-          </Link>
-        </div>
-      </header>
-
       <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
 
       <nav className="fixed bottom-0 inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop z-40">
