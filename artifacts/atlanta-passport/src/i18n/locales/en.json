@@ -145,7 +145,7 @@
     "results_count_other": "{{count}} spots"
   },
   "events_page": {
-    "kicker": "★ Events",
+    "kicker": "★ Featured Events",
     "title": "What's on in Atlanta.",
     "subtitle": "Match-week pop-ups, neighborhood festivals, and one-off Atlanta moments. Curated by locals.",
     "view_event": "View event",
