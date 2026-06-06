@@ -1,8 +1,9 @@
+import type { ComponentType } from "react";
 import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MoveRight, ChevronDown, BookMarked, Instagram } from "lucide-react";
+import { Menu, MoveRight, ChevronDown, BookMarked, Instagram, Facebook } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -21,6 +22,44 @@ const navItemClass = (active: boolean) =>
       ? "text-brand-cream paint-swatch"
       : "text-brand-cream/75 hover:text-white"
   );
+
+function XGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+const SOCIALS: {
+  name: string;
+  href: string;
+  Icon: ComponentType<{ className?: string }>;
+}[] = [
+  { name: "Instagram", href: "https://instagram.com/passport.atl", Icon: Instagram },
+  { name: "Facebook", href: "https://facebook.com/passport.atl", Icon: Facebook },
+  { name: "X", href: "https://x.com/passport.atl", Icon: XGlyph },
+];
+
+function SocialLinks({ className }: { className?: string }) {
+  return (
+    <div className={cn("flex items-center gap-1", className)}>
+      {SOCIALS.map(({ name, href, Icon }) => (
+        <a
+          key={name}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={name}
+          title={name}
+          className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-brand-cream/75 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <Icon className="w-4 h-4" />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const [location] = useLocation();
@@ -55,16 +94,20 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
       <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
-        <Link
-          href="/"
-          aria-label="Atlanta Passport home"
-          className="relative z-50 inline-flex items-center shrink-0 self-start"
-        >
-          <Logo
-            asLink={false}
-            className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
-          />
-        </Link>
+        {/* Far left: language selector + logo */}
+        <div className="flex items-center gap-2 md:gap-3 shrink-0">
+          <LanguageSwitcher align="start" />
+          <Link
+            href="/"
+            aria-label="Atlanta Passport home"
+            className="relative z-50 inline-flex items-center shrink-0 self-start"
+          >
+            <Logo
+              asLink={false}
+              className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
+            />
+          </Link>
+        </div>
 
         {/* Desktop Nav — tourist-first */}
         <nav className="hidden md:flex items-center gap-1">
@@ -124,21 +167,6 @@ export default function Navbar() {
             {hasPassport ? "My Passport" : "Passport"}
           </Link>
 
-          <a
-            href="https://instagram.com/passport.atl"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram @passport.atl"
-            title="@passport.atl"
-            className="ml-1 inline-flex items-center gap-1.5 text-brand-cream/75 hover:text-white transition-colors font-display text-[11px] tracking-[0.12em] uppercase"
-          >
-            <Instagram className="w-4 h-4" />
-            <span className="hidden lg:inline">@passport.atl</span>
-          </a>
-
-          <div className="ml-3">
-            <LanguageSwitcher />
-          </div>
           <Link
             href={hasPassport ? "/passport" : "/explore"}
             className="button-pop button-pop-yellow ml-3 text-xs px-5 py-2.5"
@@ -147,6 +175,9 @@ export default function Navbar() {
             {hasPassport ? passportLabel : t("nav.start_exploring")}{" "}
             <MoveRight className="w-4 h-4 rtl:rotate-180" />
           </Link>
+
+          {/* Far right: social media icons */}
+          <SocialLinks className="ml-3 pl-3 border-l border-brand-cream/25" />
         </nav>
 
         {/* Mobile Nav — tourist CTA + menu */}
@@ -161,7 +192,6 @@ export default function Navbar() {
             <BookMarked className="h-4 w-4" />
             <span>Pass</span>
           </Link>
-          <LanguageSwitcher />
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -208,17 +238,29 @@ export default function Navbar() {
                   {hasPassport ? "My Passport" : "Start Passport"}
                 </Link>
 
-                <a
-                  href="https://instagram.com/passport.atl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2 text-foreground/60 hover:text-foreground"
-                >
-                  <Instagram className="w-4 h-4" />
-                  @passport.atl
-                </a>
+                {/* Social links */}
+                <div className="pt-2 border-t border-foreground/15">
+                  <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/50 mb-3">
+                    {t("nav.follow_us")}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {SOCIALS.map(({ name, href, Icon }) => (
+                      <a
+                        key={name}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={name}
+                        title={name}
+                        className="inline-flex items-center justify-center h-11 w-11 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:bg-white transition-colors"
+                      >
+                        <Icon className="w-5 h-5" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
 
-                {/* Language picker inside the menu (was cut off in header on small phones) */}
+                {/* Language picker inside the menu */}
                 <div className="pt-2 border-t border-foreground/15">
                   <LanguageSwitcher variant="menu" />
                 </div>

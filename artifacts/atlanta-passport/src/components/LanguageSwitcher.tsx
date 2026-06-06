@@ -16,6 +16,7 @@ type Variant = "navbar" | "menu";
 interface Props {
   variant?: Variant;
   className?: string;
+  align?: "start" | "end";
 }
 
 const PICK_LABELS: Record<string, string> = {
@@ -30,7 +31,7 @@ const PICK_LABELS: Record<string, string> = {
   ar: "اختر لغتك",
 };
 
-export default function LanguageSwitcher({ variant = "navbar", className }: Props) {
+export default function LanguageSwitcher({ variant = "navbar", className, align = "end" }: Props) {
   const { i18n } = useTranslation();
   const current =
     SUPPORTED_LANGUAGES.find((l) => l.code === i18n.language) ??
@@ -66,7 +67,7 @@ export default function LanguageSwitcher({ variant = "navbar", className }: Prop
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align="end"
+        align={align}
         className="border-2 border-foreground bg-background shadow-pop-sm rounded-xl min-w-[220px] p-1"
       >
         <DropdownMenuLabel className="font-display text-[10px] tracking-[0.18em] uppercase text-foreground/70 px-3 pt-2 pb-1">
