@@ -2,12 +2,13 @@ import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import logoSrc from "@/assets/images/passport-atl-logo.png";
 
-type Variant = "default" | "stacked" | "compact" | "xl";
+type Variant = "default" | "stacked" | "compact" | "nav" | "xl";
 
 const sizeByVariant: Record<Variant, string> = {
   default: "h-36 w-36",
   stacked: "h-20 w-20",
   compact: "h-9 w-9",
+  nav: "h-[108px] w-[108px]",
   xl: "h-[136px] w-[136px]",
 };
 
@@ -24,7 +25,7 @@ export default function Logo({
     <img
       src={logoSrc}
       alt="Passport ATL"
-      className={cn(sizeByVariant[variant], "object-contain select-none")}
+      className={cn(sizeByVariant[variant], "max-w-none object-contain select-none")}
       draggable={false}
     />
   );

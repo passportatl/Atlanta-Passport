@@ -65,9 +65,13 @@ export function PassportLayout({ children }: { children: ReactNode }) {
           <Link
             href="/passport"
             aria-label="Atlanta Passport profile"
-            className="flex items-center justify-center"
+            className="relative flex items-center justify-center"
           >
-            <Logo asLink={false} variant="compact" className="-mt-3 drop-shadow-[0_3px_5px_rgba(0,0,0,0.3)]" />
+            <Logo
+              asLink={false}
+              variant="nav"
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
+            />
           </Link>
           {TABS.slice(3).map((tab) => renderTab(tab, location))}
         </div>
