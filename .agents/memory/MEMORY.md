@@ -1,2 +1,1 @@
-- [Drizzle scalar→array column migration](drizzle-array-migration.md) — `drizzle-kit push` can't auto-cast `text`→`text[]` on a populated column; run manual `ALTER ... USING ARRAY[col]` first.
-- [Sticky vs overflow clipping](sticky-vs-overflow.md) — position:sticky breaks under ancestor overflow-x:hidden; use overflow-x:clip instead.
+- [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).

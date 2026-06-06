@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
@@ -59,6 +59,12 @@ export default function Explore() {
       return matchCategory && matchNeighborhood && matchSearch;
     });
   }, [activeCategories, activeNeighborhood, searchQuery]);
+
+  useEffect(() => {
+    if (selectedBizId && !filteredBusinesses.some((b) => b.id === selectedBizId)) {
+      setSelectedBizId(undefined);
+    }
+  }, [filteredBusinesses, selectedBizId]);
 
   return (
     <div className="w-full pt-10 pb-24">
@@ -199,7 +205,16 @@ export default function Explore() {
               >
                 <div
                   onClick={() => focusOnMap(biz.id)}
-                  className="block h-full group cursor-pointer"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      focusOnMap(biz.id);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Show ${biz.name} on the map`}
+                  className="block h-full group cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
                 >
                   <div className="card-pop bg-card h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform">
                     <div className="aspect-[4/3] overflow-hidden relative border-b-[3px] border-foreground">
