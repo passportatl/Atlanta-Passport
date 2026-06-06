@@ -97,8 +97,8 @@ export default function Explore() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="text"
-              placeholder={t("common.search_placeholder", { defaultValue: "Search..." })}
-              className="pl-9 h-10 text-sm bg-white"
+              placeholder="Explore..."
+              className="pl-9 h-10 text-base bg-white font-serif placeholder:font-serif"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
