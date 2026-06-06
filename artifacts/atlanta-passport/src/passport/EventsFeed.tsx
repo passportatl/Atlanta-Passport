@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses } from "@/data/sample-data";
 
 const GROUP_SIZE = 3;
-const AUTOPLAY_MS = 5000;
+const AUTOPLAY_MS = 9000;
 
 const headerTints = [
   "bg-brand-yellow text-brand-yellow-foreground",
@@ -59,7 +59,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const current = groups[page] ?? [];
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col px-4 pt-3 pb-3 overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col px-4 pt-3 pb-[calc(8rem+env(safe-area-inset-bottom))] overflow-hidden">
       <div className="container mx-auto px-0 flex flex-col flex-1 min-h-0">
         <div className="flex items-center justify-between mb-2 shrink-0">
           <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
@@ -91,7 +91,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.45 }}
-              className="absolute inset-0 flex flex-col gap-2.5"
+              className="absolute inset-0 flex flex-row gap-2.5"
             >
               {current.map((event, j) => {
                 const absIndex = page * GROUP_SIZE + j;
@@ -112,55 +112,48 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     role={venueBiz ? "button" : undefined}
                     tabIndex={venueBiz ? 0 : undefined}
                     aria-label={venueBiz ? `Show ${event.venue} on the map` : undefined}
-                    className="flex-1 min-h-0 cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
+                    className="flex-1 min-w-0 cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
                   >
-                    <div className="card-pop bg-card h-full flex items-stretch overflow-hidden hover:-translate-y-0.5 transition-transform">
+                    <div className="card-pop bg-card h-full flex flex-col overflow-hidden hover:-translate-y-0.5 transition-transform">
                       {/* Bold typographic date tile */}
                       <div
-                        className={`shrink-0 w-[68px] border-r-[3px] border-foreground flex flex-col items-center justify-center ${headerTint}`}
+                        className={`shrink-0 border-b-[3px] border-foreground px-2 py-2 flex flex-col items-center ${headerTint}`}
                       >
-                        <div className="font-display text-[9px] tracking-[0.16em] leading-none">
+                        <div className="font-display text-[8px] tracking-[0.16em] leading-none">
                           {tile.month}
                         </div>
-                        <div className="font-serif text-2xl font-bold leading-none mt-1">
+                        <div className="font-serif text-2xl font-bold leading-none mt-0.5">
                           {tile.day}
                         </div>
                       </div>
 
-                      <div className="flex-1 min-w-0 p-2.5 flex flex-col justify-center gap-1">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span
-                            className={`badge-sticker shrink-0 text-[9px] px-1.5 py-0.5 ${badgeTint}`}
-                          >
-                            {event.category}
-                          </span>
-                          <span className="font-display text-[9px] tracking-[0.14em] uppercase truncate text-foreground/60">
-                            {event.neighborhood}
-                          </span>
-                        </div>
-                        <h3 className="text-base font-serif font-bold text-foreground leading-tight line-clamp-1">
+                      <div className="flex-1 min-h-0 p-2 flex flex-col gap-1 overflow-hidden">
+                        <span
+                          className={`badge-sticker self-start text-[8px] px-1.5 py-0.5 ${badgeTint}`}
+                        >
+                          {event.category}
+                        </span>
+                        <h3 className="text-[13px] font-serif font-bold text-foreground leading-tight line-clamp-2">
                           {event.name}
                         </h3>
-                        <div className="flex items-center gap-3 text-[11px] text-foreground/80 min-w-0">
-                          <span className="flex items-center gap-1 shrink-0">
-                            <Calendar className="w-3 h-3 text-brand-red" />
-                            {event.date}
-                          </span>
-                          <span className="flex items-center gap-1 min-w-0">
-                            <MapPin className="w-3 h-3 text-brand-red shrink-0" />
-                            <span className="truncate">{event.venue}</span>
-                          </span>
+                        <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                          <Calendar className="w-3 h-3 text-brand-red shrink-0" />
+                          <span className="truncate">{event.date}</span>
                         </div>
+                        <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                          <MapPin className="w-3 h-3 text-brand-red shrink-0" />
+                          <span className="truncate">{event.venue}</span>
+                        </div>
+                        <Link
+                          href={`/events/${event.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          aria-label={`${t("events_page.view_event")}: ${event.name}`}
+                          className="mt-auto inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
+                        >
+                          {t("events_page.view_event")}
+                          <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                        </Link>
                       </div>
-
-                      <Link
-                        href={`/events/${event.id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        aria-label={`${t("events_page.view_event")}: ${event.name}`}
-                        className="shrink-0 self-stretch px-3 flex items-center border-l-[3px] border-foreground bg-background text-brand-red hover:bg-brand-cream transition-colors"
-                      >
-                        <ArrowRight className="w-4 h-4 rtl:rotate-180" />
-                      </Link>
                     </div>
                   </div>
                 );
