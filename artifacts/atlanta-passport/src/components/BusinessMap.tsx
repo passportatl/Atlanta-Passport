@@ -57,8 +57,10 @@ export default function BusinessMap({
       <Map
         defaultCenter={ATLANTA_CENTER}
         defaultZoom={12}
-        gestureHandling="greedy"
-        disableDefaultUI={false}
+        gestureHandling="cooperative"
+        scrollwheel={false}
+        disableDefaultUI={true}
+        zoomControl={true}
         clickableIcons={false}
         className="h-full w-full"
         style={{ width: "100%", height: "100%" }}
