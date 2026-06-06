@@ -48,10 +48,10 @@ function MarketingRoutes() {
 
 function ExploreGroup() {
   return (
-    <div className="min-h-screen pb-24">
+    <>
       <Explore />
       <PassportBottomNav />
-    </div>
+    </>
   );
 }
 

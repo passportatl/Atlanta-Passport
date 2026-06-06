@@ -67,12 +67,12 @@ export default function Explore() {
   }, [filteredBusinesses, selectedBizId]);
 
   return (
-    <div className="w-full pb-24">
-      <div className="container mx-auto px-4">
-        {/* Orientation map */}
-        <div className="sticky top-0 z-30 pt-4 pb-6 bg-background">
+    <div className="h-[100dvh] flex flex-col overflow-hidden">
+      {/* Orientation map — pinned to the top half */}
+      <div className="shrink-0 px-4 pt-3 pb-2">
+        <div className="container mx-auto px-0">
           <div ref={mapRef} className="card-pop overflow-hidden bg-[#0b0f1a]">
-            <div className="h-[50vh]">
+            <div className="h-[46dvh]">
               <BusinessMap
                 businesses={filteredBusinesses}
                 selectedId={selectedBizId}
@@ -81,9 +81,13 @@ export default function Explore() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Filters */}
-        <div className="mb-12 space-y-8">
+      {/* Scrollable list — fills the space between the map and the nav bar */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className="container mx-auto px-4 pt-5 pb-28">
+          {/* Filters */}
+          <div className="mb-10 space-y-8">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input 
@@ -271,6 +275,7 @@ export default function Explore() {
             </div>
           )}
         </motion.div>
+        </div>
       </div>
     </div>
   );
