@@ -1,6 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { Home, Stamp as StampIcon, Map, Trophy, User, Calendar } from "lucide-react";
 import Logo from "@/components/Logo";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { SocialLinks } from "@/components/SocialLinks";
 
 const TABS = [
   { href: "/", label: "Back to site", icon: Home, exact: true },
@@ -40,6 +42,14 @@ export function PassportBottomNav() {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop z-40">
+      {/* Utility strip: language (left) + socials (right) */}
+      <div className="border-b border-[#f9c629]/20">
+        <div className="max-w-3xl mx-auto flex items-center justify-between px-3 py-1.5">
+          <LanguageSwitcher align="start" />
+          <SocialLinks linkClassName="text-[#f9c629]/80 hover:text-[#f9c629] hover:bg-white/10" />
+        </div>
+      </div>
+
       <div className="max-w-3xl mx-auto grid grid-cols-7 items-center">
         {TABS.slice(0, 3).map((tab) => renderTab(tab, location))}
         <Link

@@ -1,12 +1,12 @@
-import type { ComponentType } from "react";
 import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MoveRight, ChevronDown, BookMarked, Instagram, Facebook } from "lucide-react";
+import { Menu, MoveRight, ChevronDown, BookMarked } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { SocialLinks, SOCIALS } from "@/components/SocialLinks";
 import { useVisitor } from "@/passport/visitor-context";
 import {
   DropdownMenu,
@@ -22,44 +22,6 @@ const navItemClass = (active: boolean) =>
       ? "text-brand-cream paint-swatch"
       : "text-brand-cream/75 hover:text-white"
   );
-
-function XGlyph({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-const SOCIALS: {
-  name: string;
-  href: string;
-  Icon: ComponentType<{ className?: string }>;
-}[] = [
-  { name: "Instagram", href: "https://instagram.com/passport.atl", Icon: Instagram },
-  { name: "Facebook", href: "https://facebook.com/passport.atl", Icon: Facebook },
-  { name: "X", href: "https://x.com/passport.atl", Icon: XGlyph },
-];
-
-function SocialLinks({ className }: { className?: string }) {
-  return (
-    <div className={cn("flex items-center gap-1", className)}>
-      {SOCIALS.map(({ name, href, Icon }) => (
-        <a
-          key={name}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={name}
-          title={name}
-          className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-brand-cream/75 hover:text-white hover:bg-white/10 transition-colors"
-        >
-          <Icon className="w-4 h-4" />
-        </a>
-      ))}
-    </div>
-  );
-}
 
 export default function Navbar() {
   const [location] = useLocation();

@@ -44,7 +44,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto">
-      <div className="container mx-auto px-4 pt-3 pb-28">
+      <div className="container mx-auto px-4 pt-3 pb-36">
         <div className="flex items-center gap-2 mb-3">
           <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
             {t("events_page.kicker")}
