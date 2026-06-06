@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "wouter";
 import {
   useListVisitorStamps,
@@ -9,9 +9,7 @@ import {
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import { StampGraphic } from "@/passport/StampGraphic";
-import { CATEGORY_LABEL } from "@/passport/data";
-
-type FilterMode = "all" | "neighborhoods" | "categories";
+import { CATEGORY_LABEL, businessDiscount } from "@/passport/data";
 
 export default function PassportStamps() {
   const { visitorId } = useVisitor();
@@ -21,116 +19,140 @@ export default function PassportStamps() {
       enabled: !!visitorId,
     },
   });
-  const { data: businessesRaw } = useListBusinesses();
+  const { data: businessesRaw, isLoading: businessesLoading } = useListBusinesses();
   const stamps = (stampsRaw as Stamp[] | undefined) ?? [];
   const businesses = (businessesRaw as Business[] | undefined) ?? [];
 
-  const [mode, setMode] = useState<FilterMode>("all");
-  const [active, setActive] = useState<string | null>(null);
+  const stampBySlug = useMemo(() => {
+    const m = new Map<string, Stamp>();
+    for (const s of stamps) m.set(s.businessSlug, s);
+    return m;
+  }, [stamps]);
 
-  const groups = useMemo(() => {
-    if (mode === "all") return null;
-    const key = mode === "neighborhoods" ? "neighborhood" : "category";
-    const set = new Set(stamps.map((s) => s[key as "neighborhood" | "category"]));
-    return Array.from(set);
-  }, [mode, stamps]);
+  // Group participating businesses into passport "pages" by neighborhood.
+  const sections = useMemo(() => {
+    const map = new Map<string, Business[]>();
+    for (const b of businesses) {
+      const arr = map.get(b.neighborhood) ?? [];
+      arr.push(b);
+      map.set(b.neighborhood, arr);
+    }
+    return Array.from(map.entries())
+      .map(([neighborhood, list]) => ({
+        neighborhood,
+        list: list.slice().sort((a, b) => a.name.localeCompare(b.name)),
+      }))
+      .sort((a, b) => a.neighborhood.localeCompare(b.neighborhood));
+  }, [businesses]);
 
-  const visible = useMemo(() => {
-    if (mode === "all" || !active) return stamps;
-    const key = mode === "neighborhoods" ? "neighborhood" : "category";
-    return stamps.filter((s) => s[key as "neighborhood" | "category"] === active);
-  }, [stamps, mode, active]);
-
-  if (!visitorId) {
-    return (
-      <div className="text-center py-10">
-        <p className="mb-4 font-bold">Start your passport to collect stamps.</p>
-        <Link href="/passport" className="button-pop button-pop-yellow">
-          Get started
-        </Link>
-      </div>
-    );
-  }
+  const total = businesses.length;
+  const collected = useMemo(
+    () => businesses.filter((b) => stampBySlug.has(b.slug)).length,
+    [businesses, stampBySlug],
+  );
+  const pct = total > 0 ? Math.round((collected / total) * 100) : 0;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div>
         <div
           className="inline-block bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-2"
           style={{ fontFamily: "Bungee, sans-serif" }}
         >
-          MY STAMPS
+          MY PASSPORT
         </div>
         <h1 className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-          {stamps.length} Stamp{stamps.length === 1 ? "" : "s"}
+          Stamp Book
         </h1>
+        <p className="text-sm font-bold text-foreground/70 mt-1">
+          {collected} of {total} spots stamped · show your Passport to claim each perk
+        </p>
+        <div className="progress-track mt-3">
+          <div className="progress-fill" style={{ width: `${pct}%` }} />
+        </div>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        {(["all", "neighborhoods", "categories"] as FilterMode[]).map((m) => (
-          <button
-            key={m}
-            onClick={() => {
-              setMode(m);
-              setActive(null);
-            }}
-            className={`px-3 py-1.5 border-2 border-foreground rounded-full text-xs font-black uppercase tracking-wider ${
-              mode === m
-                ? "bg-foreground text-[hsl(var(--brand-cream))]"
-                : "bg-white"
-            }`}
-            style={{ fontFamily: "Bungee, sans-serif" }}
-          >
-            {m}
-          </button>
-        ))}
-      </div>
-
-      {groups && (
-        <div className="flex gap-2 flex-wrap">
-          {groups.map((g) => (
-            <button
-              key={g}
-              onClick={() => setActive(active === g ? null : g)}
-              className={`px-3 py-1 border-2 border-foreground rounded-full text-xs font-bold ${
-                active === g ? "bg-[hsl(var(--brand-yellow))]" : "bg-white"
-              }`}
-            >
-              {mode === "categories" ? CATEGORY_LABEL[g] ?? g : g}
-            </button>
-          ))}
+      {!visitorId && (
+        <div className="card-pop bg-[hsl(var(--brand-yellow))] p-4 flex items-center justify-between gap-3">
+          <p className="font-bold text-sm text-[hsl(var(--brand-yellow-foreground))]">
+            Start your passport to begin collecting stamps.
+          </p>
+          <Link href="/passport" className="button-pop button-pop-dark shrink-0">
+            Get started
+          </Link>
         </div>
       )}
 
-      {visible.length === 0 ? (
+      {sections.length === 0 ? (
         <div className="card-pop bg-white p-8 text-center">
-          <p className="font-bold mb-1">No stamps yet.</p>
-          <p className="text-sm text-foreground/70">
-            Find a participating spot and scan their QR to collect your first stamp.
-          </p>
+          {businessesLoading ? (
+            <p className="font-bold text-foreground/70">Loading participating spots…</p>
+          ) : (
+            <>
+              <p className="font-bold mb-1">No participating spots yet.</p>
+              <p className="text-sm text-foreground/70">Check back soon — the guide is filling up.</p>
+            </>
+          )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {visible.map((s, i) => {
-            const biz = businesses.find((b) => b.slug === s.businessSlug);
-            return (
-              <div key={s.id} className="card-pop bg-white p-4 flex flex-col items-center text-center">
-                <StampGraphic
-                  neighborhood={s.neighborhood}
-                  iconName={biz?.icon ?? "coffee"}
-                  color={biz?.stampColor ?? "yellow"}
-                  collectedAt={s.collectedAt as unknown as string}
-                  size={130}
-                  rotate={i % 2 === 0 ? -4 : 3}
-                />
-                <div className="mt-3 font-black text-sm">{s.stampName}</div>
-                <div className="text-[11px] uppercase tracking-wider opacity-70 font-bold">
-                  {s.neighborhood} • {CATEGORY_LABEL[s.category] ?? s.category}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        sections.map(({ neighborhood, list }) => {
+          const sectionCollected = list.filter((b) => stampBySlug.has(b.slug)).length;
+          return (
+            <section key={neighborhood} className="card-pop bg-white overflow-hidden">
+              <header className="flex items-center justify-between px-4 py-2.5 bg-foreground text-[hsl(var(--brand-cream))]">
+                <span
+                  className="font-black text-xs tracking-widest uppercase"
+                  style={{ fontFamily: "Bungee, sans-serif" }}
+                >
+                  {neighborhood}
+                </span>
+                <span className="text-[10px] font-black opacity-80">
+                  {sectionCollected}/{list.length}
+                </span>
+              </header>
+              <ul>
+                {list.map((biz) => {
+                  const stamp = stampBySlug.get(biz.slug);
+                  return (
+                    <li
+                      key={biz.slug}
+                      className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="font-black text-sm leading-tight">{biz.name}</div>
+                        <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
+                          {CATEGORY_LABEL[biz.category] ?? biz.category}
+                        </div>
+                        <div className="text-xs font-semibold text-foreground/80 mt-0.5">
+                          {businessDiscount(biz.category)}
+                        </div>
+                      </div>
+                      <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-[hsl(var(--brand-cream))]/40 flex items-center justify-center">
+                        {stamp ? (
+                          <StampGraphic
+                            neighborhood={stamp.neighborhood}
+                            iconName={biz.icon ?? "coffee"}
+                            color={biz.stampColor ?? "yellow"}
+                            collectedAt={stamp.collectedAt as unknown as string}
+                            size={74}
+                            rotate={-8}
+                          />
+                        ) : (
+                          <span
+                            className="text-[8px] font-black uppercase tracking-widest text-foreground/35"
+                            style={{ fontFamily: "Bungee, sans-serif" }}
+                          >
+                            Stamp
+                          </span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })
       )}
     </div>
   );

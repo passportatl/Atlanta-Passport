@@ -219,6 +219,23 @@ export const CATEGORY_LABEL: Record<string, string> = {
   events: "Events",
 };
 
+// Passport-holder perk shown on each business line in the stamp book.
+// Keyed by category with a friendly fallback for anything unmapped.
+export const CATEGORY_DISCOUNT: Record<string, string> = {
+  food: "10% off your meal",
+  drinks: "$2 off your first round",
+  coffee: "Free pastry with any drink",
+  rides: "Free helmet rental + 10% off",
+  wellness: "15% off your first visit",
+  arts: "Free gift with admission",
+  retail: "10% off your purchase",
+  nightlife: "No cover before 11pm",
+};
+
+export function businessDiscount(category: string): string {
+  return CATEGORY_DISCOUNT[category] ?? "Show your Passport for a perk";
+}
+
 /** Compute neighborhood unlock threshold given how many businesses it has. */
 export function neighborhoodUnlockThreshold(totalBusinesses: number): number {
   if (totalBusinesses <= 0) return NEIGHBORHOOD_SECRET;
