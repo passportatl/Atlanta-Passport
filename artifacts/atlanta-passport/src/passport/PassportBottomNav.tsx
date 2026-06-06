@@ -1,11 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { Home, Stamp as StampIcon, Map, Trophy, User, Calendar } from "lucide-react";
+import { Compass, Stamp as StampIcon, Map, Trophy, User, Calendar } from "lucide-react";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SocialLinks } from "@/components/SocialLinks";
 
 const TABS = [
-  { href: "/", label: "Back to site", icon: Home, exact: true },
+  { href: "/explore", label: "Explore", icon: Compass, exact: true },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/passport/rewards", label: "Rewards", icon: Trophy },
