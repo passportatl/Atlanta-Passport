@@ -11,7 +11,7 @@ import {
   businesses, neighborhoods, exploreCategories, routes, beltlineStops
 } from "@/data/sample-data";
 import heroHomeImg from "@/assets/images/hero-home.png";
-import beltlineImg from "@/assets/images/beltline.png";
+import InteractiveMap from "@/components/InteractiveMap";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
 import PassportStamp from "@/components/PassportStamp";
@@ -223,17 +223,12 @@ export default function Home() {
           >
             <div className="relative">
               <div className="rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop aspect-[4/3]">
-                <img
-                  src={beltlineImg}
-                  alt="Beltline"
-                  className="object-cover w-full h-full"
-                  loading="lazy"
-                />
+                <InteractiveMap />
               </div>
-              <div className="absolute -top-3 -left-3 z-10">
+              <div className="absolute -top-3 -left-3 z-10 pointer-events-none">
                 <Sticker color="red">{t("featured.kicker")}</Sticker>
               </div>
-              <div className="absolute -bottom-4 -right-3 z-10 hidden sm:block">
+              <div className="absolute -bottom-4 -right-3 z-10 hidden sm:block pointer-events-none">
                 <PassportStamp size="sm" tone="navy" rotate={9}>
                   Stop
                 </PassportStamp>

@@ -22,7 +22,7 @@ import {
   ExternalLink,
   CheckCircle2,
 } from "lucide-react";
-import beltlineImg from "@/assets/images/beltline.png";
+import InteractiveMap from "@/components/InteractiveMap";
 import { routes } from "@/data/sample-data";
 import { cn } from "@/lib/utils";
 
@@ -110,9 +110,8 @@ export default function Beltline() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] lg:aspect-auto lg:h-[560px]"
             >
-              <img src={beltlineImg} alt="Atlanta Beltline" className="object-cover w-full h-full" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-transparent mix-blend-multiply" />
-              <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2">
+              <InteractiveMap />
+              <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2 pointer-events-none">
                 <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2 inline-flex items-center gap-1.5 text-[10px]">
                   <Bike className="w-3.5 h-3.5" /> BIKE-FRIENDLY
                 </span>
