@@ -69,7 +69,7 @@ export default function Explore() {
 
   const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
   const neighborhoodPalette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
-  const chipBase = "shrink-0 px-3 py-1.5 rounded-full text-xs font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
+  const chipBase = "shrink-0 px-3 py-1.5 rounded-lg text-xs font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
 
   return (
