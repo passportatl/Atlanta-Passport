@@ -8,7 +8,7 @@ import {
   useMap,
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
-import { SOCCER_BALL_SVG } from "@/components/SoccerBall";
+import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -108,7 +108,7 @@ export type MapBusiness = {
   sponsorTier?: string;
 };
 
-const BALL_ICON_URL = `data:image/svg+xml,${encodeURIComponent(SOCCER_BALL_SVG)}`;
+const BALL_ICON_URL = SOCCER_BALL_SRC;
 
 function BusinessMarkers({
   businesses,
