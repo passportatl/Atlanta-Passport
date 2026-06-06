@@ -51,6 +51,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/Visitor"
 
+  /visitors/link:
+    post:
+      operationId: linkVisitor
+      tags: [visitors]
+      summary: Get or create the passport visitor for the signed-in account
+      description: >
+        Resolves the visitor linked to the authenticated Clerk session. Creates
+        one from the account's profile on first sign-in. Requires a valid session.
+      responses:
+        "200":
+          description: Linked visitor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Visitor"
+        "401":
+          description: Not authenticated
+
   /visitors/{id}:
     get:
       operationId: getVisitor

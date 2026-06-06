@@ -1,5 +1,7 @@
+@layer theme, base, clerk, components, utilities;
 @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Bungee&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
+@import "@clerk/themes/shadcn.css";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
@@ -547,3 +549,8 @@
     transition: width .35s ease;
   }
 }
+
+/* Clerk auth UI — pseudo-states (cannot be expressed via appearance objects) */
+.cl-formFieldInput::placeholder { color: #9a9a9a; opacity: 1; }
+.cl-formFieldInput:focus { outline: none; box-shadow: 3px 3px 0 0 hsl(var(--foreground)); }
+.cl-socialButtonsBlockButton:hover { background-color: hsl(var(--brand-cream)); }

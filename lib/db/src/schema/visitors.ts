@@ -7,6 +7,7 @@ export const visitorsTable = pgTable("visitors", {
   firstName: text("first_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
+  clerkUserId: text("clerk_user_id").unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

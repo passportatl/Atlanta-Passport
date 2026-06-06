@@ -33,6 +33,19 @@ export const CreateVisitorResponse = zod.object({
 });
 
 /**
+ * Resolves the visitor linked to the authenticated Clerk session. Creates one from the account's profile on first sign-in. Requires a valid session.
+
+ * @summary Get or create the passport visitor for the signed-in account
+ */
+export const LinkVisitorResponse = zod.object({
+  id: zod.string(),
+  firstName: zod.string(),
+  email: zod.string(),
+  phone: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
  * @summary Get a visitor
  */
 export const GetVisitorParams = zod.object({

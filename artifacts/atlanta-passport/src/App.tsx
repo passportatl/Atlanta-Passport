@@ -20,6 +20,7 @@ import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
 import { PassportLayout } from "@/passport/PassportLayout";
 import MapShell from "@/passport/MapShell";
+import { ClerkProviders, SignInPage, SignUpPage } from "@/auth/clerk";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,14 @@ function ScrollToTop() {
 
 function Router() {
   const [location] = useLocation();
+  if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
+    return (
+      <Switch>
+        <Route path="/sign-in/*?" component={SignInPage} />
+        <Route path="/sign-up/*?" component={SignUpPage} />
+      </Switch>
+    );
+  }
   if (location.startsWith("/stamp/")) {
     return (
       <Switch>
@@ -124,9 +133,11 @@ function App() {
       <TooltipProvider>
         <VisitorProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <ScrollToTop />
-            <Router />
-            <PersistentMapShell />
+            <ClerkProviders>
+              <ScrollToTop />
+              <Router />
+              <PersistentMapShell />
+            </ClerkProviders>
           </WouterRouter>
           <Toaster />
         </VisitorProvider>

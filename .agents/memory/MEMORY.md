@@ -1,1 +1,2 @@
 - [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).
+- [Clerk React v6 custom OAuth](clerk-react-v6-custom-oauth.md) — for custom social buttons (authenticateWithRedirect), import useSignUp/useSignIn from `@clerk/react/legacy`, not `@clerk/react`.

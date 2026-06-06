@@ -201,6 +201,87 @@ export const useCreateVisitor = <
 };
 
 /**
+ * Resolves the visitor linked to the authenticated Clerk session. Creates one from the account's profile on first sign-in. Requires a valid session.
+
+ * @summary Get or create the passport visitor for the signed-in account
+ */
+export const getLinkVisitorUrl = () => {
+  return `/api/visitors/link`;
+};
+
+export const linkVisitor = async (options?: RequestInit): Promise<Visitor> => {
+  return customFetch<Visitor>(getLinkVisitorUrl(), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getLinkVisitorMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof linkVisitor>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof linkVisitor>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["linkVisitor"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof linkVisitor>>,
+    void
+  > = () => {
+    return linkVisitor(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type LinkVisitorMutationResult = NonNullable<
+  Awaited<ReturnType<typeof linkVisitor>>
+>;
+
+export type LinkVisitorMutationError = ErrorType<void>;
+
+/**
+ * @summary Get or create the passport visitor for the signed-in account
+ */
+export const useLinkVisitor = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof linkVisitor>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof linkVisitor>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getLinkVisitorMutationOptions(options));
+};
+
+/**
  * @summary Get a visitor
  */
 export const getGetVisitorUrl = (id: string) => {
