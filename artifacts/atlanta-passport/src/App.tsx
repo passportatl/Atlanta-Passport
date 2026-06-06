@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { useUser } from "@clerk/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,6 +44,29 @@ function MarketingRoutes() {
   );
 }
 
+// The signed-in app (Explore guide + Passport) requires a registered account.
+// Marketing home, sign-in/up, the /stamp QR landing, and admin stay public.
+function isProtectedRoute(location: string) {
+  return ["/explore", "/passport"].some(
+    (base) => location === base || location.startsWith(`${base}/`),
+  );
+}
+
+// Send signed-out visitors who hit a protected route back to the marketing home.
+// Unlike SignedInHomeRedirect this fires on every navigation so a signed-out
+// user can never linger on a gated page.
+function ProtectedRouteRedirect() {
+  const { isLoaded, isSignedIn } = useUser();
+  const [location, setLocation] = useLocation();
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn && isProtectedRoute(location)) {
+      setLocation("/", { replace: true });
+    }
+  }, [isLoaded, isSignedIn, location, setLocation]);
+  return null;
+}
+
 // Routes that share the persistent, never-reloading map shell.
 function isMapShellRoute(location: string) {
   return (
@@ -59,7 +83,10 @@ function isMapShellRoute(location: string) {
 // recenters when the user navigates between Explore, Events, and other pages.
 function PersistentMapShell() {
   const [location] = useLocation();
-  const isShell = isMapShellRoute(location);
+  const { isLoaded, isSignedIn } = useUser();
+  // Never mount the map (or its Google map) for a signed-out visitor — they're
+  // being redirected to the marketing home.
+  const isShell = isMapShellRoute(location) && isLoaded && isSignedIn;
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     if (isShell) setMounted(true);
@@ -97,6 +124,7 @@ function ScrollToTop() {
 
 function Router() {
   const [location] = useLocation();
+  const { isLoaded, isSignedIn } = useUser();
   if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
     return (
       <Switch>
@@ -118,11 +146,18 @@ function Router() {
   if (location === "/admin/applications") {
     return <AdminApplications />;
   }
-  if (isMapShellRoute(location)) {
-    return null;
-  }
-  if (location === "/passport" || location.startsWith("/passport/")) {
-    return <PassportRoutesGroup />;
+  if (isProtectedRoute(location)) {
+    // Render nothing while Clerk resolves or while a signed-out user is being
+    // redirected to the marketing home — never flash gated content.
+    if (!isLoaded || !isSignedIn) {
+      return null;
+    }
+    if (isMapShellRoute(location)) {
+      return null;
+    }
+    if (location === "/passport" || location.startsWith("/passport/")) {
+      return <PassportRoutesGroup />;
+    }
   }
   return <MarketingRoutes />;
 }
@@ -135,6 +170,7 @@ function App() {
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <ClerkProviders>
               <ScrollToTop />
+              <ProtectedRouteRedirect />
               <Router />
               <PersistentMapShell />
             </ClerkProviders>
