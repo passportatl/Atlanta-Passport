@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useSearch } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,21 @@ export default function Explore() {
       setSelectedBizId(undefined);
     }
   }, [filteredBusinesses, selectedBizId]);
+
+  // The Explore view stays mounted across navigation (so the map never reloads),
+  // so re-apply category/neighborhood filters whenever a deep link's query changes.
+  const search = useSearch();
+  useEffect(() => {
+    const sp = new URLSearchParams(search);
+    const cat = exploreCategories.find((c) => c.id === sp.get("category"))?.label ?? null;
+    const nbhdParam = sp.get("neighborhood");
+    const nbhd =
+      neighborhoods.find((n) => n.id === nbhdParam)?.name ??
+      neighborhoods.find((n) => n.name === nbhdParam)?.name ??
+      null;
+    if (cat) setActiveCategories([cat]);
+    if (nbhd) setActiveNeighborhood(nbhd);
+  }, [search]);
 
   const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
   const neighborhoodPalette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];

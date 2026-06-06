@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -55,6 +55,28 @@ function ExploreGroup() {
   );
 }
 
+// Keeps the Explore view (and its map) mounted once it's first visited, toggling
+// visibility instead of unmounting — so the Google map never reloads or recenters
+// when the user navigates to other pages and back.
+function PersistentExplore() {
+  const [location] = useLocation();
+  const isExplore = location === "/explore";
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    if (isExplore) setMounted(true);
+  }, [isExplore]);
+  if (!mounted) return null;
+  return (
+    <div
+      aria-hidden={!isExplore}
+      className="fixed inset-0 z-30"
+      style={{ visibility: isExplore ? "visible" : "hidden" }}
+    >
+      <ExploreGroup />
+    </div>
+  );
+}
+
 function PassportRoutesGroup() {
   return (
     <PassportLayout>
@@ -96,7 +118,7 @@ function Router() {
     return <PassportRoutesGroup />;
   }
   if (location === "/explore") {
-    return <ExploreGroup />;
+    return null;
   }
   return <MarketingRoutes />;
 }
@@ -109,6 +131,7 @@ function App() {
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <ScrollToTop />
             <Router />
+            <PersistentExplore />
           </WouterRouter>
           <Toaster />
         </VisitorProvider>
