@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
 import Home from "@/pages/home";
-import Explore from "@/pages/explore";
 import Partners from "@/pages/partners";
 import Events from "@/pages/events";
 import EventDetail from "@/pages/event-detail";
@@ -23,7 +22,7 @@ import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
 import { PassportLayout } from "@/passport/PassportLayout";
-import { PassportBottomNav } from "@/passport/PassportBottomNav";
+import MapShell from "@/passport/MapShell";
 
 const queryClient = new QueryClient();
 
@@ -46,33 +45,29 @@ function MarketingRoutes() {
   );
 }
 
-function ExploreGroup() {
-  return (
-    <>
-      <Explore />
-      <PassportBottomNav />
-    </>
-  );
+// Routes that share the persistent, never-reloading map shell.
+function isMapShellRoute(location: string) {
+  return location === "/explore" || location === "/explore/events";
 }
 
-// Keeps the Explore view (and its map) mounted once it's first visited, toggling
-// visibility instead of unmounting — so the Google map never reloads or recenters
-// when the user navigates to other pages and back.
-function PersistentExplore() {
+// Keeps the map shell (and its Google map) mounted once it's first visited,
+// toggling visibility instead of unmounting — so the map never reloads or
+// recenters when the user navigates between Explore, Events, and other pages.
+function PersistentMapShell() {
   const [location] = useLocation();
-  const isExplore = location === "/explore";
+  const isShell = isMapShellRoute(location);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    if (isExplore) setMounted(true);
-  }, [isExplore]);
+    if (isShell) setMounted(true);
+  }, [isShell]);
   if (!mounted) return null;
   return (
     <div
-      aria-hidden={!isExplore}
+      aria-hidden={!isShell}
       className="fixed inset-0 z-30"
-      style={{ visibility: isExplore ? "visible" : "hidden" }}
+      style={{ visibility: isShell ? "visible" : "hidden" }}
     >
-      <ExploreGroup />
+      <MapShell />
     </div>
   );
 }
@@ -117,7 +112,7 @@ function Router() {
   if (location === "/passport" || location.startsWith("/passport/")) {
     return <PassportRoutesGroup />;
   }
-  if (location === "/explore") {
+  if (isMapShellRoute(location)) {
     return null;
   }
   return <MarketingRoutes />;
@@ -131,7 +126,7 @@ function App() {
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <ScrollToTop />
             <Router />
-            <PersistentExplore />
+            <PersistentMapShell />
           </WouterRouter>
           <Toaster />
         </VisitorProvider>

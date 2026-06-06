@@ -1,86 +1,39 @@
-import { useState, useMemo, useRef, useEffect } from "react";
-import { Link, useSearch } from "wouter";
+import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
+import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search } from "lucide-react";
-import BusinessMap from "@/components/BusinessMap";
 import SoccerBall from "@/components/SoccerBall";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
-export default function Explore() {
+type Biz = (typeof businesses)[number];
+
+type ExploreContentProps = {
+  filteredBusinesses: Biz[];
+  activeCategories: string[];
+  activeNeighborhood: string;
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+  setActiveCategories: (value: string[]) => void;
+  toggleCategory: (cat: string) => void;
+  setActiveNeighborhood: (value: string) => void;
+  onSelectBusiness: (id: string) => void;
+};
+
+export default function ExploreContent({
+  filteredBusinesses,
+  activeCategories,
+  activeNeighborhood,
+  searchQuery,
+  setSearchQuery,
+  setActiveCategories,
+  toggleCategory,
+  setActiveNeighborhood,
+  onSelectBusiness,
+}: ExploreContentProps) {
   const { t } = useTranslation();
-  const params = typeof window !== "undefined"
-    ? new URLSearchParams(window.location.search)
-    : null;
-  const neighborhoodParam = params?.get("neighborhood");
-  const initialNeighborhood =
-    neighborhoods.find((n) => n.id === neighborhoodParam)?.name ??
-    neighborhoods.find((n) => n.name === neighborhoodParam)?.name ??
-    null;
-  const initialCategory =
-    exploreCategories.find((c) => c.id === params?.get("category"))?.label ?? null;
-
-  const [activeCategories, setActiveCategories] = useState<string[]>(
-    initialCategory ? [initialCategory] : [],
-  );
-  const [activeNeighborhood, setActiveNeighborhood] = useState<string>(initialNeighborhood ?? "All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBizId, setSelectedBizId] = useState<string | undefined>(undefined);
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  const focusOnMap = (id: string) => {
-    setSelectedBizId(id);
-    mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
-  const toggleCategory = (cat: string) => {
-    setActiveCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-    );
-  };
-
-  const filteredBusinesses = useMemo(() => {
-    return businesses.filter((biz) => {
-      const bizCategories = [
-        biz.category,
-        ...(((biz as { categories?: string[] }).categories) ?? []),
-      ];
-      const matchCategory =
-        activeCategories.length === 0 ||
-        activeCategories.some((c) => bizCategories.includes(c));
-      const matchNeighborhood = activeNeighborhood === "All" || 
-        // Simple mapping for demo purposes since neighborhood IDs might not exactly match the string
-        biz.neighborhood.toLowerCase().includes(activeNeighborhood.toLowerCase());
-      const matchSearch = biz.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         biz.description.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      return matchCategory && matchNeighborhood && matchSearch;
-    });
-  }, [activeCategories, activeNeighborhood, searchQuery]);
-
-  useEffect(() => {
-    if (selectedBizId && !filteredBusinesses.some((b) => b.id === selectedBizId)) {
-      setSelectedBizId(undefined);
-    }
-  }, [filteredBusinesses, selectedBizId]);
-
-  // The Explore view stays mounted across navigation (so the map never reloads),
-  // so re-apply category/neighborhood filters whenever a deep link's query changes.
-  const search = useSearch();
-  useEffect(() => {
-    const sp = new URLSearchParams(search);
-    const cat = exploreCategories.find((c) => c.id === sp.get("category"))?.label ?? null;
-    const nbhdParam = sp.get("neighborhood");
-    const nbhd =
-      neighborhoods.find((n) => n.id === nbhdParam)?.name ??
-      neighborhoods.find((n) => n.name === nbhdParam)?.name ??
-      null;
-    if (cat) setActiveCategories([cat]);
-    if (nbhd) setActiveNeighborhood(nbhd);
-  }, [search]);
 
   const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
   const neighborhoodPalette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
@@ -88,22 +41,7 @@ export default function Explore() {
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden">
-      {/* Orientation map — pinned to the top */}
-      <div className="shrink-0 px-4 pt-3 pb-2">
-        <div className="container mx-auto px-0">
-          <div ref={mapRef} className="card-pop shadow-none overflow-hidden bg-[#0b0f1a]">
-            <div className="h-[40dvh]">
-              <BusinessMap
-                businesses={filteredBusinesses}
-                selectedId={selectedBizId}
-                onSelect={setSelectedBizId}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <>
       {/* Compact filter panel — fixed between the map and the nav bar */}
       <div className="shrink-0 px-4 pb-2.5 border-b-2 border-foreground/10">
         <div className="container mx-auto px-0 space-y-2">
@@ -207,7 +145,7 @@ export default function Explore() {
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredBusinesses.length > 0 ? (
             filteredBusinesses.map((biz) => (
-              <motion.div 
+              <motion.div
                 key={biz.id}
                 layout
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -216,11 +154,11 @@ export default function Explore() {
                 transition={{ duration: 0.3 }}
               >
                 <div
-                  onClick={() => focusOnMap(biz.id)}
+                  onClick={() => onSelectBusiness(biz.id)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      focusOnMap(biz.id);
+                      onSelectBusiness(biz.id);
                     }
                   }}
                   role="button"
@@ -284,8 +222,8 @@ export default function Explore() {
             <div className="col-span-full py-20 text-center">
               <h3 className="text-2xl font-serif font-bold text-muted-foreground mb-2">{t("explore_page.no_results_title")}</h3>
               <p className="text-muted-foreground">{t("explore_page.no_results_subtitle")}</p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="mt-6"
                 onClick={() => {
                   setActiveCategories([]);
@@ -300,6 +238,6 @@ export default function Explore() {
         </motion.div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

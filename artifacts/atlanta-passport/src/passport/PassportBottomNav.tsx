@@ -7,7 +7,7 @@ const TABS = [
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/passport/rewards", label: "Rewards", icon: Trophy },
-  { href: "/events", label: "Events", icon: Calendar },
+  { href: "/explore/events", label: "Events", icon: Calendar },
   { href: "/passport", label: "Profile", icon: User, exact: true },
 ];
 
