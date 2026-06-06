@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, type ReactNode } from "react";
 import { useLocation, useSearch } from "wouter";
 import {
   businesses,
@@ -8,14 +8,34 @@ import {
 import BusinessMap from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
+import PassportStamps from "@/pages/passport/stamps";
+import PassportRewards from "@/pages/passport/rewards";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 
+// Scroll container for passport pages that live inside the shell — mirrors the
+// cream/texture background and centered padding that PassportLayout provides.
+function PassportPanel({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex-1 min-h-0 overflow-y-auto bg-[hsl(var(--brand-cream))] texture-paper">
+      <div className="max-w-3xl mx-auto px-4 py-6 pb-28">{children}</div>
+    </div>
+  );
+}
+
 // MapShell keeps the orientation map mounted across the map-backed routes
-// (Explore + Events). Only the content below the map swaps based on the route,
-// so the Google map never reloads or recenters when moving between them.
+// (Explore, Events, Stamps, Rewards). Only the content below the map swaps based
+// on the route, so the Google map never reloads or recenters when moving between
+// them.
 export default function MapShell() {
   const [location] = useLocation();
-  const isEvents = location === "/explore/events";
+  const view =
+    location === "/explore/events"
+      ? "events"
+      : location === "/passport/stamps"
+        ? "stamps"
+        : location === "/passport/rewards"
+          ? "rewards"
+          : "explore";
 
   const params =
     typeof window !== "undefined"
@@ -110,9 +130,18 @@ export default function MapShell() {
         </div>
       </div>
 
-      {isEvents ? (
-        <EventsFeed onSelectBusiness={setSelectedBizId} />
-      ) : (
+      {view === "events" && <EventsFeed onSelectBusiness={setSelectedBizId} />}
+      {view === "stamps" && (
+        <PassportPanel>
+          <PassportStamps />
+        </PassportPanel>
+      )}
+      {view === "rewards" && (
+        <PassportPanel>
+          <PassportRewards />
+        </PassportPanel>
+      )}
+      {view === "explore" && (
         <ExploreContent
           filteredBusinesses={filteredBusinesses}
           activeCategories={activeCategories}

@@ -15,8 +15,6 @@ import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
 import StampPage from "@/pages/stamp";
 import PassportHome from "@/pages/passport/index";
-import PassportStamps from "@/pages/passport/stamps";
-import PassportRewards from "@/pages/passport/rewards";
 import PassportRoutes from "@/pages/passport/routes";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
@@ -47,7 +45,12 @@ function MarketingRoutes() {
 
 // Routes that share the persistent, never-reloading map shell.
 function isMapShellRoute(location: string) {
-  return location === "/explore" || location === "/explore/events";
+  return (
+    location === "/explore" ||
+    location === "/explore/events" ||
+    location === "/passport/stamps" ||
+    location === "/passport/rewards"
+  );
 }
 
 // Keeps the map shell (and its Google map) mounted once it's first visited,
@@ -77,8 +80,6 @@ function PassportRoutesGroup() {
     <PassportLayout>
       <Switch>
         <Route path="/passport" component={PassportHome} />
-        <Route path="/passport/stamps" component={PassportStamps} />
-        <Route path="/passport/rewards" component={PassportRewards} />
         <Route path="/passport/routes" component={PassportRoutes} />
         <Route component={NotFound} />
       </Switch>
@@ -109,11 +110,11 @@ function Router() {
   if (location === "/admin/applications") {
     return <AdminApplications />;
   }
-  if (location === "/passport" || location.startsWith("/passport/")) {
-    return <PassportRoutesGroup />;
-  }
   if (isMapShellRoute(location)) {
     return null;
+  }
+  if (location === "/passport" || location.startsWith("/passport/")) {
+    return <PassportRoutesGroup />;
   }
   return <MarketingRoutes />;
 }
