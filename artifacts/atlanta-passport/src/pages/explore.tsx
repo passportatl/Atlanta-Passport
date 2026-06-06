@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, Bike } from "lucide-react";
-import InteractiveMap from "@/components/InteractiveMap";
+import BusinessMap from "@/components/BusinessMap";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,13 @@ export default function Explore() {
   );
   const [activeNeighborhood, setActiveNeighborhood] = useState<string>(initialNeighborhood ?? "All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBizId, setSelectedBizId] = useState<string | undefined>(undefined);
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  const focusOnMap = (id: string) => {
+    setSelectedBizId(id);
+    mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   const toggleCategory = (cat: string) => {
     setActiveCategories((prev) =>
@@ -79,9 +86,13 @@ export default function Explore() {
               </p>
             </div>
           </div>
-          <div className="card-pop overflow-hidden bg-[#0b0f1a]">
+          <div ref={mapRef} className="card-pop overflow-hidden bg-[#0b0f1a]">
             <div className="aspect-[4/3] sm:aspect-[16/10] lg:h-[600px] lg:aspect-auto">
-              <InteractiveMap title="Atlanta neighborhoods, MARTA, and the Beltline map" />
+              <BusinessMap
+                businesses={filteredBusinesses}
+                selectedId={selectedBizId}
+                onSelect={setSelectedBizId}
+              />
             </div>
           </div>
         </div>
@@ -186,7 +197,10 @@ export default function Explore() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
               >
-                <Link href={`/listing/${biz.id}`} className="block h-full group">
+                <div
+                  onClick={() => focusOnMap(biz.id)}
+                  className="block h-full group cursor-pointer"
+                >
                   <div className="card-pop bg-card h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform">
                     <div className="aspect-[4/3] overflow-hidden relative border-b-[3px] border-foreground">
                       <img
@@ -228,9 +242,21 @@ export default function Explore() {
                           </p>
                         </div>
                       )}
+                      <div className={cn("flex items-center justify-between gap-2", biz.offer ? "mt-4" : "mt-auto pt-4")}>
+                        <span className="text-xs font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5" /> Show on map
+                        </span>
+                        <Link
+                          href={`/listing/${biz.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs font-semibold text-foreground hover:underline"
+                        >
+                          View details →
+                        </Link>
+                      </div>
                     </div>
                   </div>
-                </Link>
+                </div>
               </motion.div>
             ))
           ) : (
