@@ -6,7 +6,9 @@ import {
   Marker,
   InfoWindow,
   useMap,
+  useMapsLibrary,
 } from "@vis.gl/react-google-maps";
+import { SOCCER_BALL_SVG } from "@/components/SoccerBall";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -103,7 +105,42 @@ export type MapBusiness = {
   category: string;
   lat: number;
   lng: number;
+  sponsorTier?: string;
 };
+
+const BALL_ICON_URL = `data:image/svg+xml,${encodeURIComponent(SOCCER_BALL_SVG)}`;
+
+function BusinessMarkers({
+  businesses,
+  onSelect,
+}: {
+  businesses: MapBusiness[];
+  onSelect: (id?: string) => void;
+}) {
+  const coreLib = useMapsLibrary("core");
+
+  const ballIcon = coreLib
+    ? {
+        url: BALL_ICON_URL,
+        scaledSize: new coreLib.Size(30, 30),
+        anchor: new coreLib.Point(15, 15),
+      }
+    : undefined;
+
+  return (
+    <>
+      {businesses.map((b) => (
+        <Marker
+          key={b.id}
+          position={{ lat: b.lat, lng: b.lng }}
+          title={b.name}
+          onClick={() => onSelect(b.id)}
+          icon={b.sponsorTier === "Founding Sponsor" ? ballIcon : undefined}
+        />
+      ))}
+    </>
+  );
+}
 
 function PanToSelected({ selected }: { selected?: MapBusiness }) {
   const map = useMap();
@@ -152,14 +189,7 @@ export default function BusinessMap({
         style={{ width: "100%", height: "100%" }}
         onClick={() => onSelect(undefined)}
       >
-        {businesses.map((b) => (
-          <Marker
-            key={b.id}
-            position={{ lat: b.lat, lng: b.lng }}
-            title={b.name}
-            onClick={() => onSelect(b.id)}
-          />
-        ))}
+        <BusinessMarkers businesses={businesses} onSelect={onSelect} />
 
         {selected && (
           <InfoWindow

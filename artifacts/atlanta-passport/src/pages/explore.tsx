@@ -3,8 +3,9 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, exploreCategories } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, Bike } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import BusinessMap from "@/components/BusinessMap";
+import SoccerBall from "@/components/SoccerBall";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -207,8 +208,8 @@ export default function Explore() {
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                       />
                       {biz.sponsorTier === "Founding Sponsor" && (
-                        <div className="absolute top-1.5 left-1.5 badge-sticker bg-brand-red text-white -rotate-2 text-[9px] px-1.5 py-0.5">
-                          ★
+                        <div className="absolute top-1.5 left-1.5">
+                          <SoccerBall className="w-5 h-5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                         </div>
                       )}
                     </div>
@@ -231,7 +232,7 @@ export default function Explore() {
                       <div className="mt-auto flex items-center justify-between gap-2">
                         {biz.offer ? (
                           <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1 truncate">
-                            ★ {t("listing_page.passport_offer_label")}
+                            <SoccerBall className="w-3 h-3 shrink-0" /> {t("listing_page.passport_offer_label")}
                           </span>
                         ) : (
                           <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1">
