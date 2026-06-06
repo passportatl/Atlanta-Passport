@@ -98,9 +98,9 @@ export default function Navbar() {
           </DropdownMenu>
 
           <Link
-            href="/passport"
+            href="/explore"
             className={cn(
-              navItemClass(location.startsWith("/passport")),
+              navItemClass(location.startsWith("/passport") || location.startsWith("/explore")),
               "inline-flex items-center gap-1.5 ml-1",
             )}
             data-testid="link-nav-passport"
@@ -125,7 +125,7 @@ export default function Navbar() {
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-1.5">
           <Link
-            href="/passport"
+            href="/explore"
             aria-label={passportShort}
             title={passportShort}
             className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
@@ -160,10 +160,10 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <Link
-                  href="/passport"
+                  href="/explore"
                   className={cn(
                     "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                    location.startsWith("/passport") ? "text-foreground" : "text-foreground/60",
+                    location.startsWith("/passport") || location.startsWith("/explore") ? "text-foreground" : "text-foreground/60",
                   )}
                   data-testid="link-mobile-menu-passport"
                 >
