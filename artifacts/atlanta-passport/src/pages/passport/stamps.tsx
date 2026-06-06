@@ -70,27 +70,18 @@ export default function PassportStamps() {
   const pct = total > 0 ? Math.round((collected / total) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div>
-        <div
-          className="inline-block bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-2"
-          style={{ fontFamily: "Bungee, sans-serif" }}
-        >
-          MY PASSPORT
-        </div>
-        <h1 className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-          Stamp Book
-        </h1>
-        <p className="text-sm font-bold text-foreground/70 mt-1">
+        <p className="text-sm font-bold text-foreground/70">
           {collected} of {total} spots stamped · show your Passport to claim each offer
         </p>
-        <div className="progress-track mt-3">
+        <div className="progress-track mt-2">
           <div className="progress-fill" style={{ width: `${pct}%` }} />
         </div>
       </div>
 
       {!visitorId && (
-        <div className="card-pop bg-[hsl(var(--brand-yellow))] p-4 flex items-center justify-between gap-3">
+        <div className="card-pop bg-[hsl(var(--brand-yellow))] p-3 flex items-center justify-between gap-3">
           <p className="font-bold text-sm text-[hsl(var(--brand-yellow-foreground))]">
             Start your passport to begin collecting stamps.
           </p>

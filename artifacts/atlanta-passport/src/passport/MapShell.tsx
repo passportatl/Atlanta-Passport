@@ -20,7 +20,7 @@ import LegalDisclaimer from "@/components/LegalDisclaimer";
 function PassportPanel({ children }: { children: ReactNode }) {
   return (
     <div className="flex-1 min-h-0 overflow-y-auto bg-[hsl(var(--brand-cream))] texture-paper">
-      <div className="max-w-3xl mx-auto px-4 py-6 pb-8">{children}</div>
+      <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">{children}</div>
       <LegalDisclaimer />
     </div>
   );
