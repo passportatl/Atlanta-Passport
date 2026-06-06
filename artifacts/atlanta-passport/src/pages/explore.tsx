@@ -77,7 +77,7 @@ export default function Explore() {
       {/* Orientation map — pinned to the top */}
       <div className="shrink-0 px-4 pt-3 pb-2">
         <div className="container mx-auto px-0">
-          <div ref={mapRef} className="card-pop overflow-hidden bg-[#0b0f1a]">
+          <div ref={mapRef} className="border-[3px] border-foreground rounded-[20px] overflow-hidden bg-[#0b0f1a]">
             <div className="h-[40dvh]">
               <BusinessMap
                 businesses={filteredBusinesses}
