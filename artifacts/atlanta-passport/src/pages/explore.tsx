@@ -175,7 +175,7 @@ export default function Explore() {
         </div>
 
         {/* Results */}
-        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredBusinesses.length > 0 ? (
             filteredBusinesses.map((biz) => (
               <motion.div 
@@ -199,55 +199,49 @@ export default function Explore() {
                   aria-label={`Show ${biz.name} on the map`}
                   className="block h-full group cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
                 >
-                  <div className="card-pop bg-card h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform">
-                    <div className="aspect-[4/3] overflow-hidden relative border-b-[3px] border-foreground">
+                  <div className="card-pop bg-card h-full flex overflow-hidden hover:-translate-y-0.5 transition-transform">
+                    <div className="relative w-24 sm:w-28 shrink-0 overflow-hidden border-r-[3px] border-foreground">
                       <img
                         src={biz.image}
                         alt={biz.name}
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-3 left-3 badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-2 text-[10px]">
-                        {biz.category}
-                      </div>
                       {biz.sponsorTier === "Founding Sponsor" && (
-                        <div className="absolute top-3 right-3 badge-sticker bg-brand-red text-white rotate-2 text-[10px]">
-                          ★ {t("listing_page.founding_badge")}
-                        </div>
-                      )}
-                      {biz.bikePickup && (
-                        <div className="absolute bottom-3 left-3 badge-sticker bg-brand-navy text-brand-cream -rotate-2 text-[10px] inline-flex items-center gap-1">
-                          <Bike className="w-3 h-3" /> Wheelhaus Bike Pickup
+                        <div className="absolute top-1.5 left-1.5 badge-sticker bg-brand-red text-white -rotate-2 text-[9px] px-1.5 py-0.5">
+                          ★
                         </div>
                       )}
                     </div>
-                    <div className="p-5 flex-grow flex flex-col">
-                      <h3 className="text-2xl font-serif font-bold text-foreground leading-tight mb-1">
-                        {biz.name}
-                      </h3>
-                      <div className="flex items-center text-muted-foreground text-sm mb-3">
-                        <MapPin className="w-3.5 h-3.5 mr-1" /> {biz.neighborhood}
+                    <div className="p-3 flex-1 min-w-0 flex flex-col">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="text-base font-serif font-bold text-foreground leading-tight truncate">
+                          {biz.name}
+                        </h3>
+                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 shrink-0">
+                          {biz.category}
+                        </span>
                       </div>
-                      <p className="text-muted-foreground line-clamp-3 text-sm mb-4 flex-grow">
+                      <div className="flex items-center text-muted-foreground text-xs mb-1">
+                        <MapPin className="w-3 h-3 mr-1 shrink-0" />
+                        <span className="truncate">{biz.neighborhood}</span>
+                      </div>
+                      <p className="text-muted-foreground line-clamp-2 text-xs mb-2">
                         {biz.description}
                       </p>
-                      {biz.offer && (
-                        <div className="border-[2px] border-foreground bg-brand-cream rounded-lg p-3 mt-auto">
-                          <div className="font-display text-[10px] tracking-[0.16em] text-brand-red mb-1 uppercase">
+                      <div className="mt-auto flex items-center justify-between gap-2">
+                        {biz.offer ? (
+                          <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1 truncate">
                             ★ {t("listing_page.passport_offer_label")}
-                          </div>
-                          <p className="text-sm font-medium text-foreground leading-snug">
-                            {biz.offer}
-                          </p>
-                        </div>
-                      )}
-                      <div className={cn("flex items-center justify-between gap-2", biz.offer ? "mt-4" : "mt-auto pt-4")}>
-                        <span className="text-xs font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5" /> Show on map
-                        </span>
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1">
+                            <MapPin className="w-3 h-3" /> Show on map
+                          </span>
+                        )}
                         <Link
                           href={`/listing/${biz.id}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="text-xs font-semibold text-foreground hover:underline"
+                          className="text-[10px] font-semibold text-foreground hover:underline shrink-0"
                         >
                           View details →
                         </Link>
