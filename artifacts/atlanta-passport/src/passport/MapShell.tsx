@@ -4,10 +4,12 @@ import {
   businesses,
   neighborhoods,
   exploreCategories,
+  mapRoutes,
 } from "@/data/sample-data";
 import BusinessMap from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
+import RoutesFeed from "@/passport/RoutesFeed";
 import PassportStamps from "@/pages/passport/stamps";
 import PassportRewards from "@/pages/passport/rewards";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
@@ -35,7 +37,9 @@ export default function MapShell() {
         ? "stamps"
         : location === "/passport/rewards"
           ? "rewards"
-          : "explore";
+          : location === "/passport/routes"
+            ? "routes"
+            : "explore";
 
   const params =
     typeof window !== "undefined"
@@ -58,6 +62,9 @@ export default function MapShell() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBizId, setSelectedBizId] = useState<string | undefined>(
+    undefined,
+  );
+  const [selectedRouteId, setSelectedRouteId] = useState<string | undefined>(
     undefined,
   );
 
@@ -87,11 +94,43 @@ export default function MapShell() {
     });
   }, [activeCategories, activeNeighborhood, searchQuery]);
 
+  // The Routes view highlights one curated route at a time: the map shows only
+  // that route's stops (in order) and draws a connecting line. With no route
+  // picked, fall back to showing every spot so the map is never empty.
+  const selectedRoute = mapRoutes.find((r) => r.id === selectedRouteId);
+  const routeBusinesses = useMemo(() => {
+    if (!selectedRoute) return [];
+    return selectedRoute.businessIds
+      .map((id) => businesses.find((b) => b.id === id))
+      .filter((b): b is (typeof businesses)[number] => Boolean(b));
+  }, [selectedRoute]);
+
+  // The dataset actually rendered on the map: route stops on the routes view,
+  // otherwise the explore-filtered list.
+  const mapBusinesses = useMemo(
+    () =>
+      view === "routes"
+        ? selectedRoute
+          ? routeBusinesses
+          : businesses
+        : filteredBusinesses,
+    [view, selectedRoute, routeBusinesses, filteredBusinesses],
+  );
+
+  // Drop a stale selection/InfoWindow only when the selected spot is no longer
+  // on the map — validate against what's actually rendered (mapBusinesses), not
+  // just the explore filters, so clicking a route stop doesn't immediately
+  // deselect itself in routes view.
   useEffect(() => {
-    if (selectedBizId && !filteredBusinesses.some((b) => b.id === selectedBizId)) {
+    if (selectedBizId && !mapBusinesses.some((b) => b.id === selectedBizId)) {
       setSelectedBizId(undefined);
     }
-  }, [filteredBusinesses, selectedBizId]);
+  }, [mapBusinesses, selectedBizId]);
+
+  const routePath = useMemo(() => {
+    if (view !== "routes" || routeBusinesses.length === 0) return undefined;
+    return routeBusinesses.map((b) => ({ lat: b.lat, lng: b.lng }));
+  }, [view, routeBusinesses]);
 
   // The shell stays mounted across navigation, so re-apply category/neighborhood
   // filters whenever a deep link's query string changes — but only while a
@@ -121,9 +160,10 @@ export default function MapShell() {
           <div className="card-pop shadow-none overflow-hidden bg-[#0b0f1a]">
             <div className="h-[40dvh]">
               <BusinessMap
-                businesses={filteredBusinesses}
+                businesses={mapBusinesses}
                 selectedId={selectedBizId}
                 onSelect={setSelectedBizId}
+                routePath={routePath}
               />
             </div>
           </div>
@@ -131,6 +171,15 @@ export default function MapShell() {
       </div>
 
       {view === "events" && <EventsFeed onSelectBusiness={setSelectedBizId} />}
+      {view === "routes" && (
+        <RoutesFeed
+          selectedRouteId={selectedRouteId}
+          onSelectRoute={(id) => {
+            setSelectedRouteId(id);
+            setSelectedBizId(undefined);
+          }}
+        />
+      )}
       {view === "stamps" && (
         <PassportPanel>
           <PassportStamps />

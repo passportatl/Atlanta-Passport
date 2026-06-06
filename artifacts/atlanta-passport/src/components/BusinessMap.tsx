@@ -152,14 +152,51 @@ function PanToSelected({ selected }: { selected?: MapBusiness }) {
   return null;
 }
 
+// Draws the highlighted route line connecting its stops in order and fits the
+// map to it. Rendered only when a route is selected; cleans the line up on
+// deselection or route change.
+function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
+  const map = useMap();
+  const mapsLib = useMapsLibrary("maps");
+
+  useEffect(() => {
+    if (!map || !mapsLib || path.length < 1) return;
+
+    const polyline =
+      path.length >= 2
+        ? new mapsLib.Polyline({
+            path,
+            geodesic: true,
+            strokeColor: "#f9c629",
+            strokeOpacity: 0.95,
+            strokeWeight: 4,
+            map,
+          })
+        : null;
+
+    const bounds = new google.maps.LatLngBounds();
+    path.forEach((p) => bounds.extend(p));
+    map.fitBounds(bounds, 64);
+    if (path.length === 1 && (map.getZoom() ?? 0) > 15) map.setZoom(15);
+
+    return () => {
+      polyline?.setMap(null);
+    };
+  }, [map, mapsLib, path]);
+
+  return null;
+}
+
 export default function BusinessMap({
   businesses,
   selectedId,
   onSelect,
+  routePath,
 }: {
   businesses: MapBusiness[];
   selectedId?: string;
   onSelect: (id?: string) => void;
+  routePath?: { lat: number; lng: number }[];
 }) {
   if (!API_KEY) {
     return (
@@ -213,6 +250,8 @@ export default function BusinessMap({
             </div>
           </InfoWindow>
         )}
+
+        {routePath && routePath.length > 0 && <RoutePath path={routePath} />}
 
         <PanToSelected selected={selected} />
       </Map>

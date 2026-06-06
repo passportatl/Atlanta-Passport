@@ -15,7 +15,6 @@ import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
 import StampPage from "@/pages/stamp";
 import PassportHome from "@/pages/passport/index";
-import PassportRoutes from "@/pages/passport/routes";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
@@ -49,7 +48,8 @@ function isMapShellRoute(location: string) {
     location === "/explore" ||
     location === "/explore/events" ||
     location === "/passport/stamps" ||
-    location === "/passport/rewards"
+    location === "/passport/rewards" ||
+    location === "/passport/routes"
   );
 }
 
@@ -80,7 +80,6 @@ function PassportRoutesGroup() {
     <PassportLayout>
       <Switch>
         <Route path="/passport" component={PassportHome} />
-        <Route path="/passport/routes" component={PassportRoutes} />
         <Route component={NotFound} />
       </Switch>
     </PassportLayout>

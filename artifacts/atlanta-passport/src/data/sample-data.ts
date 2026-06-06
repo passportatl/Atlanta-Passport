@@ -422,3 +422,45 @@ export const beltlineStops = [
   { n: 4, name: "Krog Street Market",    category: "Retail",       note: "Local makers & artisan goods." },
   { n: 5, name: "Atlantucky Brewing",    category: "Food & Drink", note: "Closing brews from the Nappy Roots." },
 ] as const;
+
+// Curated map routes — each strings together real listed spots (by business id,
+// in walking/riding order) so the Routes page can highlight one route on the
+// shared map. Keep businessIds in visiting order; the map draws the line in
+// that sequence.
+export const mapRoutes = [
+  {
+    id: "eastside-beltline-ride",
+    name: "Eastside Beltline Ride",
+    area: "East Atlanta → Grant Park",
+    miles: "3.1 mi",
+    pace: "Bike Friendly",
+    color: "yellow",
+    vibe: "Grab an e-bike and roll west: village patios, Glenwood Park plates, Memorial wellness, and a loop past Oakland Cemetery.",
+    businessIds: [
+      "wheelhaus-bikes",
+      "vickerys-bar-grill",
+      "peachtree-wellness",
+      "oakland-cemetery",
+    ],
+  },
+  {
+    id: "westside-stadium-crawl",
+    name: "Westside Stadium Crawl",
+    area: "West End → Castleberry Hill",
+    miles: "1.9 mi",
+    pace: "Walkable",
+    color: "red",
+    vibe: "A pre-match wander near Mercedes-Benz Stadium — dive-bar drinks at The Westwood, then local brews and art at Atlantucky.",
+    businessIds: ["the-westwood", "atlantucky-brewing"],
+  },
+  {
+    id: "grant-park-memorial",
+    name: "Grant Park & Memorial",
+    area: "Grant Park → Glenwood Park",
+    miles: "1.4 mi",
+    pace: "Walkable",
+    color: "lime",
+    vibe: "An easy stroll: historic Oakland Cemetery, crystals and hot sauce on Memorial, and a patio finish in Glenwood Park.",
+    businessIds: ["oakland-cemetery", "peachtree-wellness", "vickerys-bar-grill"],
+  },
+] as const;
