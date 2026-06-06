@@ -246,6 +246,23 @@ function ClerkVisitorBridge() {
   return null;
 }
 
+// When a signed-in account lands on the marketing home route, send them
+// straight to Explore — the home page is the public marketing site, signed-in
+// visitors want their guide. Uses replace so the back button doesn't bounce.
+function SignedInHomeRedirect() {
+  const { isLoaded, isSignedIn } = useUser();
+  const [location, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+    if (location === "/") {
+      setLocation("/explore", { replace: true });
+    }
+  }, [isLoaded, isSignedIn, location, setLocation]);
+
+  return null;
+}
+
 export function ClerkProviders({ children }: { children: ReactNode }) {
   const [, setLocation] = useLocation();
 
@@ -262,6 +279,7 @@ export function ClerkProviders({ children }: { children: ReactNode }) {
     >
       <ClerkQueryClientCacheInvalidator />
       <ClerkVisitorBridge />
+      <SignedInHomeRedirect />
       {children}
     </ClerkProvider>
   );
