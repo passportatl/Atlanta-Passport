@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Bike, Footprints, Check } from "lucide-react";
 import { mapRoutes, businesses } from "@/data/sample-data";
+import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
@@ -26,7 +27,7 @@ export default function RoutesFeed({
 }: RoutesFeedProps) {
   return (
     <div className="flex-1 min-h-0 overflow-y-auto">
-      <div className="container mx-auto px-4 pt-3 pb-36">
+      <div className="container mx-auto px-4 pt-3 pb-8">
         <div className="flex items-center gap-2 mb-1">
           <span className="badge-sticker bg-brand-lime text-foreground text-[10px] -rotate-1">
             Routes
@@ -131,6 +132,7 @@ export default function RoutesFeed({
           })}
         </motion.div>
       </div>
+      <LegalDisclaimer />
     </div>
   );
 }

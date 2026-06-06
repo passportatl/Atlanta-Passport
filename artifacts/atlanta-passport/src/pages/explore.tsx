@@ -7,6 +7,7 @@ import SoccerBall from "@/components/SoccerBall";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 type Biz = (typeof businesses)[number];
 
@@ -140,7 +141,7 @@ export default function ExploreContent({
 
       {/* Scrollable results — fills the space between the filters and the nav bar */}
       <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="container mx-auto px-4 pt-3 pb-36">
+        <div className="container mx-auto px-4 pt-3 pb-8">
         {/* Results */}
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredBusinesses.length > 0 ? (
@@ -237,6 +238,7 @@ export default function ExploreContent({
           )}
         </motion.div>
         </div>
+        <LegalDisclaimer />
       </div>
     </>
   );

@@ -13,13 +13,15 @@ import RoutesFeed from "@/passport/RoutesFeed";
 import PassportStamps from "@/pages/passport/stamps";
 import PassportRewards from "@/pages/passport/rewards";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
+import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 // Scroll container for passport pages that live inside the shell — mirrors the
 // cream/texture background and centered padding that PassportLayout provides.
 function PassportPanel({ children }: { children: ReactNode }) {
   return (
     <div className="flex-1 min-h-0 overflow-y-auto bg-[hsl(var(--brand-cream))] texture-paper">
-      <div className="max-w-3xl mx-auto px-4 py-6 pb-36">{children}</div>
+      <div className="max-w-3xl mx-auto px-4 py-6 pb-8">{children}</div>
+      <LegalDisclaimer />
     </div>
   );
 }

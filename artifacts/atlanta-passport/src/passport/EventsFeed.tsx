@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MapPin, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { events, businesses } from "@/data/sample-data";
+import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
@@ -44,7 +45,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto">
-      <div className="container mx-auto px-4 pt-3 pb-36">
+      <div className="container mx-auto px-4 pt-3 pb-8">
         <div className="flex items-center gap-2 mb-3">
           <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
             {t("events_page.kicker")}
@@ -133,6 +134,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
           })}
         </motion.div>
       </div>
+      <LegalDisclaimer />
     </div>
   );
 }
