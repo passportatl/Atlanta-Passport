@@ -436,6 +436,10 @@ export const mapRoutes = [
     pace: "Bike Friendly",
     color: "yellow",
     vibe: "Grab an e-bike and roll west: village patios, Glenwood Park plates, Memorial wellness, and a loop past Oakland Cemetery.",
+    starts: {
+      marta: { name: "Inman Park Station", lat: 33.7574, lng: -84.3526 },
+      parking: { name: "Glenwood Park Lot", lat: 33.7445, lng: -84.3505 },
+    },
     businessIds: [
       "wheelhaus-bikes",
       "vickerys-bar-grill",
@@ -451,6 +455,10 @@ export const mapRoutes = [
     pace: "Walkable",
     color: "red",
     vibe: "A pre-match wander near Mercedes-Benz Stadium — dive-bar drinks at The Westwood, then local brews and art at Atlantucky.",
+    starts: {
+      marta: { name: "Vine City Station", lat: 33.7565, lng: -84.4035 },
+      parking: { name: "Castleberry Hill Lot", lat: 33.7445, lng: -84.401 },
+    },
     businessIds: ["the-westwood", "atlantucky-brewing"],
   },
   {
@@ -461,6 +469,86 @@ export const mapRoutes = [
     pace: "Walkable",
     color: "lime",
     vibe: "An easy stroll: historic Oakland Cemetery, crystals and hot sauce on Memorial, and a patio finish in Glenwood Park.",
+    starts: {
+      marta: { name: "King Memorial Station", lat: 33.7493, lng: -84.3722 },
+      parking: { name: "Oakland Cemetery Lot", lat: 33.7475, lng: -84.3705 },
+    },
     businessIds: ["oakland-cemetery", "peachtree-wellness", "vickerys-bar-grill"],
   },
 ] as const;
+
+// Each route can be tailored at view time by two selectors: where you start
+// (a nearby MARTA station vs. a parking lot — flips the visiting order) and the
+// time of day (morning = a lighter first half, noon = the full route, night =
+// the later half). These change the stop set, order, distance, and duration.
+export type RouteStart = "marta" | "parking";
+export type RouteTime = "morning" | "noon" | "night";
+export type RouteStop = (typeof businesses)[number];
+
+export const ROUTE_STARTS: { value: RouteStart; label: string }[] = [
+  { value: "marta", label: "Start: MARTA" },
+  { value: "parking", label: "Start: Parking" },
+];
+export const ROUTE_TIMES: { value: RouteTime; label: string }[] = [
+  { value: "morning", label: "Morning" },
+  { value: "noon", label: "Noon" },
+  { value: "night", label: "Night" },
+];
+
+export type ResolvedRoute = {
+  startAnchor: { name: string; lat: number; lng: number };
+  stops: RouteStop[];
+  stopCount: number;
+  miles: string;
+  duration: string;
+  pace: string;
+};
+
+function formatRouteDuration(totalMinutes: number): string {
+  if (totalMinutes < 60) return `${totalMinutes} min`;
+  const hours = Math.round((totalMinutes / 60) * 10) / 10;
+  return `${hours} hr${hours >= 2 ? "s" : ""}`;
+}
+
+export function resolveRoute(
+  route: (typeof mapRoutes)[number],
+  start: RouteStart,
+  time: RouteTime,
+): ResolvedRoute {
+  const full = route.businessIds
+    .map((id) => businesses.find((b) => b.id === id))
+    .filter((b): b is RouteStop => Boolean(b));
+  // Defensive: if a route maps to no real businesses, return zeroed metrics
+  // rather than misleading non-zero distance/duration.
+  if (full.length === 0) {
+    return {
+      startAnchor: route.starts[start],
+      stops: [],
+      stopCount: 0,
+      miles: "0.0 mi",
+      duration: "0 min",
+      pace: route.pace,
+    };
+  }
+  const n = Math.max(1, full.length);
+  const half = Math.max(1, Math.ceil(n / 2));
+  const subset =
+    time === "morning"
+      ? full.slice(0, half)
+      : time === "night"
+        ? full.slice(full.length - half)
+        : full;
+  const stops = start === "parking" ? [...subset].reverse() : subset;
+  const baseMiles = parseFloat(route.miles) || 1;
+  const miles = `${(((subset.length || 1) / n) * baseMiles).toFixed(1)} mi`;
+  const durationMinutes =
+    subset.length * 35 + (time === "night" ? 25 : time === "noon" ? 15 : 0);
+  return {
+    startAnchor: route.starts[start],
+    stops,
+    stopCount: stops.length,
+    miles,
+    duration: formatRouteDuration(durationMinutes),
+    pace: route.pace,
+  };
+}

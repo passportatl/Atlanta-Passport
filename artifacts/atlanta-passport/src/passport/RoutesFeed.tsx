@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
-import { MapPin, Bike, Footprints, Check } from "lucide-react";
-import { mapRoutes, businesses } from "@/data/sample-data";
+import { MapPin, Bike, Footprints, Check, Clock, Navigation } from "lucide-react";
+import {
+  mapRoutes,
+  resolveRoute,
+  ROUTE_STARTS,
+  ROUTE_TIMES,
+  type RouteStart,
+  type RouteTime,
+} from "@/data/sample-data";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 const fadeInUp = {
@@ -16,14 +23,61 @@ const headerTints: Record<string, string> = {
   orange: "bg-brand-orange text-white",
 };
 
+type RouteOptions = { start: RouteStart; time: RouteTime };
+
 type RoutesFeedProps = {
   selectedRouteId?: string;
   onSelectRoute: (id?: string) => void;
+  getRouteOptions: (id: string) => RouteOptions;
+  onChangeRouteOption: (id: string, patch: Partial<RouteOptions>) => void;
 };
+
+// A compact labeled dropdown used for the per-route Start / Time selectors. Kept
+// outside the card's "trace on map" button so changing options never toggles the
+// route on the map.
+function RouteSelect<T extends string>({
+  value,
+  options,
+  onChange,
+  icon,
+  ariaLabel,
+}: {
+  value: T;
+  options: { value: T; label: string }[];
+  onChange: (value: T) => void;
+  icon: React.ReactNode;
+  ariaLabel: string;
+}) {
+  return (
+    <label className="relative flex-1 min-w-0">
+      <span className="sr-only">{ariaLabel}</span>
+      <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-foreground/70">
+        {icon}
+      </span>
+      <select
+        value={value}
+        aria-label={ariaLabel}
+        onChange={(e) => onChange(e.target.value as T)}
+        className="w-full appearance-none rounded-md border-2 border-foreground bg-background py-1.5 pl-7 pr-6 text-[11px] font-display uppercase tracking-wider text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red cursor-pointer"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-foreground/50 text-[9px]">
+        ▼
+      </span>
+    </label>
+  );
+}
 
 export default function RoutesFeed({
   selectedRouteId,
   onSelectRoute,
+  getRouteOptions,
+  onChangeRouteOption,
 }: RoutesFeedProps) {
   return (
     <div className="flex-1 min-h-0 overflow-y-auto">
@@ -34,8 +88,8 @@ export default function RoutesFeed({
           </span>
         </div>
         <p className="text-sm text-foreground/70 mb-3">
-          Tap a route to trace it across the map — each one strings together
-          spots worth leaving the hotel for.
+          Pick where you start and the time of day — the stops, order, and
+          timing adjust. Tap a route to trace it across the map.
         </p>
 
         <motion.div
@@ -47,30 +101,55 @@ export default function RoutesFeed({
           {mapRoutes.map((route) => {
             const isSelected = route.id === selectedRouteId;
             const headerTint = headerTints[route.color] ?? headerTints.yellow;
-            const stops = route.businessIds
-              .map((id) => businesses.find((b) => b.id === id))
-              .filter((b): b is (typeof businesses)[number] => Boolean(b));
-            const PaceIcon = route.pace === "Bike Friendly" ? Bike : Footprints;
+            const options = getRouteOptions(route.id);
+            const resolved = resolveRoute(route, options.start, options.time);
+            const stops = resolved.stops;
+            const PaceIcon =
+              resolved.pace === "Bike Friendly" ? Bike : Footprints;
 
             return (
               <motion.div key={route.id} variants={fadeInUp}>
-                <button
-                  type="button"
-                  onClick={() => onSelectRoute(isSelected ? undefined : route.id)}
-                  aria-pressed={isSelected}
-                  aria-label={
+                <div
+                  className={`card-pop bg-card h-full flex flex-col overflow-hidden transition-transform ${
                     isSelected
-                      ? `Hide ${route.name} on the map`
-                      : `Show ${route.name} on the map`
-                  }
-                  className="block w-full text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
+                      ? "ring-4 ring-brand-red -translate-y-0.5"
+                      : "hover:-translate-y-0.5"
+                  }`}
                 >
-                  <div
-                    className={`card-pop bg-card h-full flex flex-col overflow-hidden transition-transform ${
+                  {/* Selectors — outside the toggle button so they don't trace the route */}
+                  <div className="flex gap-2 border-b-[3px] border-foreground bg-background p-2">
+                    <RouteSelect
+                      value={options.start}
+                      options={ROUTE_STARTS}
+                      onChange={(start) =>
+                        onChangeRouteOption(route.id, { start })
+                      }
+                      icon={<Navigation className="w-3 h-3" />}
+                      ariaLabel={`Starting point for ${route.name}`}
+                    />
+                    <RouteSelect
+                      value={options.time}
+                      options={ROUTE_TIMES}
+                      onChange={(time) =>
+                        onChangeRouteOption(route.id, { time })
+                      }
+                      icon={<Clock className="w-3 h-3" />}
+                      ariaLabel={`Time of day for ${route.name}`}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onSelectRoute(isSelected ? undefined : route.id)
+                    }
+                    aria-pressed={isSelected}
+                    aria-label={
                       isSelected
-                        ? "ring-4 ring-brand-red -translate-y-0.5"
-                        : "hover:-translate-y-0.5"
-                    }`}
+                        ? `Hide ${route.name} on the map`
+                        : `Show ${route.name} on the map`
+                    }
+                    className="flex flex-1 flex-col text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-inset"
                   >
                     <div
                       className={`relative border-b-[3px] border-foreground p-3 ${headerTint}`}
@@ -93,11 +172,15 @@ export default function RoutesFeed({
                     <div className="p-3 flex flex-col flex-grow">
                       <div className="flex flex-wrap gap-3 text-[11px] font-black uppercase tracking-wider opacity-80 mb-2">
                         <span className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" /> {stops.length} stops
+                          <MapPin className="w-3 h-3" /> {resolved.stopCount}{" "}
+                          stops
                         </span>
-                        <span>{route.miles}</span>
+                        <span>{resolved.miles}</span>
                         <span className="flex items-center gap-1">
-                          <PaceIcon className="w-3 h-3" /> {route.pace}
+                          <Clock className="w-3 h-3" /> {resolved.duration}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <PaceIcon className="w-3 h-3" /> {resolved.pace}
                         </span>
                       </div>
                       <p className="text-muted-foreground text-xs line-clamp-3 mb-3">
@@ -105,6 +188,17 @@ export default function RoutesFeed({
                       </p>
 
                       <ol className="mt-auto space-y-1.5">
+                        <li className="flex items-center gap-2 text-xs text-foreground/85">
+                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-red text-white font-black text-[9px] flex items-center justify-center uppercase">
+                            ●
+                          </span>
+                          <span className="font-semibold truncate">
+                            {resolved.startAnchor.name}
+                          </span>
+                          <span className="text-foreground/50 truncate">
+                            · Start
+                          </span>
+                        </li>
                         {stops.map((b, idx) => (
                           <li
                             key={b.id}
@@ -113,7 +207,9 @@ export default function RoutesFeed({
                             <span className="flex-shrink-0 w-5 h-5 rounded-full bg-foreground text-brand-yellow font-black text-[10px] flex items-center justify-center">
                               {idx + 1}
                             </span>
-                            <span className="font-semibold truncate">{b.name}</span>
+                            <span className="font-semibold truncate">
+                              {b.name}
+                            </span>
                             <span className="text-foreground/50 truncate">
                               · {b.neighborhood}
                             </span>
@@ -125,8 +221,8 @@ export default function RoutesFeed({
                         {isSelected ? "★ Tap to clear" : "★ Tap to trace on map"}
                       </span>
                     </div>
-                  </div>
-                </button>
+                  </button>
+                </div>
               </motion.div>
             );
           })}

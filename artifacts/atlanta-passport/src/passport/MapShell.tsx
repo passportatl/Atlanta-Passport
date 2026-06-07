@@ -5,6 +5,9 @@ import {
   neighborhoods,
   exploreCategories,
   mapRoutes,
+  resolveRoute,
+  type RouteStart,
+  type RouteTime,
 } from "@/data/sample-data";
 import BusinessMap from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
@@ -14,6 +17,9 @@ import PassportStamps from "@/pages/passport/stamps";
 import PassportRewards from "@/pages/passport/rewards";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
+
+export type RouteOptions = { start: RouteStart; time: RouteTime };
+const DEFAULT_ROUTE_OPTIONS: RouteOptions = { start: "marta", time: "noon" };
 
 // Scroll container for passport pages that live inside the shell — mirrors the
 // cream/texture background and centered padding that PassportLayout provides.
@@ -69,6 +75,18 @@ export default function MapShell() {
   const [selectedRouteId, setSelectedRouteId] = useState<string | undefined>(
     undefined,
   );
+  const [routeOptions, setRouteOptions] = useState<
+    Record<string, RouteOptions>
+  >({});
+
+  const getRouteOptions = (id: string): RouteOptions =>
+    routeOptions[id] ?? DEFAULT_ROUTE_OPTIONS;
+
+  const setRouteOption = (id: string, patch: Partial<RouteOptions>) =>
+    setRouteOptions((prev) => ({
+      ...prev,
+      [id]: { ...(prev[id] ?? DEFAULT_ROUTE_OPTIONS), ...patch },
+    }));
 
   const toggleCategory = (cat: string) => {
     setActiveCategories((prev) =>
@@ -108,12 +126,21 @@ export default function MapShell() {
   // that route's stops (in order) and draws a connecting line. With no route
   // picked, fall back to showing every spot so the map is never empty.
   const selectedRoute = mapRoutes.find((r) => r.id === selectedRouteId);
-  const routeBusinesses = useMemo(() => {
-    if (!selectedRoute) return [];
-    return selectedRoute.businessIds
-      .map((id) => businesses.find((b) => b.id === id))
-      .filter((b): b is (typeof businesses)[number] => Boolean(b));
-  }, [selectedRoute]);
+  const selectedRouteOptions = selectedRouteId
+    ? getRouteOptions(selectedRouteId)
+    : DEFAULT_ROUTE_OPTIONS;
+  const resolvedSelectedRoute = useMemo(
+    () =>
+      selectedRoute
+        ? resolveRoute(
+            selectedRoute,
+            selectedRouteOptions.start,
+            selectedRouteOptions.time,
+          )
+        : null,
+    [selectedRoute, selectedRouteOptions.start, selectedRouteOptions.time],
+  );
+  const routeBusinesses = resolvedSelectedRoute?.stops ?? [];
 
   // The dataset actually rendered on the map: route stops on the routes view,
   // otherwise the explore-filtered list.
@@ -138,9 +165,16 @@ export default function MapShell() {
   }, [mapBusinesses, selectedBizId]);
 
   const routePath = useMemo(() => {
-    if (view !== "routes" || routeBusinesses.length === 0) return undefined;
-    return routeBusinesses.map((b) => ({ lat: b.lat, lng: b.lng }));
-  }, [view, routeBusinesses]);
+    if (view !== "routes" || !resolvedSelectedRoute) return undefined;
+    const { startAnchor, stops } = resolvedSelectedRoute;
+    if (stops.length === 0) return undefined;
+    // Begin the drawn line at the chosen start (MARTA station or parking lot)
+    // so the path visibly originates from the selected entry point.
+    return [
+      { lat: startAnchor.lat, lng: startAnchor.lng },
+      ...stops.map((b) => ({ lat: b.lat, lng: b.lng })),
+    ];
+  }, [view, resolvedSelectedRoute]);
 
   // The shell stays mounted across navigation, so re-apply category/neighborhood
   // filters whenever a deep link's query string changes — but only while a
@@ -188,6 +222,8 @@ export default function MapShell() {
             setSelectedRouteId(id);
             setSelectedBizId(undefined);
           }}
+          getRouteOptions={getRouteOptions}
+          onChangeRouteOption={setRouteOption}
         />
       )}
       {view === "stamps" && (
