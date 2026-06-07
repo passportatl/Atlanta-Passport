@@ -365,43 +365,52 @@ function MartaRailLines() {
       );
     };
 
-    // Blue + Green full lines (Green overlaps Blue on the shared E-W trunk).
-    for (const name of ["Blue", "Green"]) {
-      const line = MARTA_LINES.find((l) => l.name === name);
-      if (line) draw(line.path, line.color, MARTA_LINE_WEIGHT, 3);
-    }
+    // A shared trunk drawn as a lengthwise two-tone stripe: two half-width lines
+    // offset to opposite sides of the centerline so they sit flush, with the seam
+    // running through the station centers. Tracked so the zoom listener can keep
+    // them flush at any zoom.
+    const trunkHalves: {
+      line: google.maps.Polyline;
+      path: { lat: number; lng: number }[];
+      sign: 1 | -1;
+    }[] = [];
+    const splitTrunk = (
+      trunk: { lat: number; lng: number }[],
+      colorA: string,
+      colorB: string,
+      zIndex: number,
+    ) => {
+      const z = map.getZoom() ?? 12;
+      ([
+        [colorA, -1],
+        [colorB, 1],
+      ] as [string, 1 | -1][]).forEach(([color, sign]) => {
+        const line = new mapsLib.Polyline({
+          path: offsetPathPerpendicular(trunk, sign, z),
+          geodesic: false,
+          strokeColor: color,
+          strokeOpacity: 0.95,
+          strokeWeight: MARTA_LINE_WEIGHT / 2,
+          zIndex,
+          map,
+        });
+        lines.push(line);
+        trunkHalves.push({ line, path: trunk, sign });
+      });
+    };
 
-    // Red/Gold shared N-S trunk as a lengthwise two-tone stripe: two half-width
-    // lines offset to opposite sides of the centerline so they sit flush, with the
-    // seam running through the station centers. Recomputed on zoom to stay flush.
-    const zoom0 = map.getZoom() ?? 12;
-    const redTrunkLine = new mapsLib.Polyline({
-      path: offsetPathPerpendicular(MARTA_TRUNK_NS, -1, zoom0),
-      geodesic: false,
-      strokeColor: MARTA_LINE_COLORS.Red,
-      strokeOpacity: 0.95,
-      strokeWeight: MARTA_LINE_WEIGHT / 2,
-      zIndex: 5,
-      map,
-    });
-    const goldTrunkLine = new mapsLib.Polyline({
-      path: offsetPathPerpendicular(MARTA_TRUNK_NS, 1, zoom0),
-      geodesic: false,
-      strokeColor: MARTA_LINE_COLORS.Gold,
-      strokeOpacity: 0.95,
-      strokeWeight: MARTA_LINE_WEIGHT / 2,
-      zIndex: 5,
-      map,
-    });
-    lines.push(redTrunkLine, goldTrunkLine);
+    // Green/Blue shared E-W trunk and Red/Gold shared N-S trunk, each two-tone.
+    splitTrunk(MARTA_TRUNK_EW, MARTA_LINE_COLORS.Green, MARTA_LINE_COLORS.Blue, 3);
+    splitTrunk(MARTA_TRUNK_NS, MARTA_LINE_COLORS.Red, MARTA_LINE_COLORS.Gold, 5);
 
     const zoomListener = map.addListener("zoom_changed", () => {
       const z = map.getZoom() ?? 12;
-      redTrunkLine.setPath(offsetPathPerpendicular(MARTA_TRUNK_NS, -1, z));
-      goldTrunkLine.setPath(offsetPathPerpendicular(MARTA_TRUNK_NS, 1, z));
+      for (const t of trunkHalves) {
+        t.line.setPath(offsetPathPerpendicular(t.path, t.sign, z));
+      }
     });
 
-    // Solid branches north of Lindbergh (prepend Lindbergh so they join the trunk).
+    // Solid Red/Gold branches north of Lindbergh (prepend Lindbergh to join trunk).
     const lindbergh = MARTA_TRUNK_NS[MARTA_TRUNK_NS.length - 1];
     const redLine = MARTA_LINES.find((l) => l.name === "Red");
     const goldLine = MARTA_LINES.find((l) => l.name === "Gold");
@@ -420,6 +429,45 @@ function MartaRailLines() {
         MARTA_LINE_WEIGHT,
         5,
       );
+    }
+
+    // Solid Green/Blue branches off the E-W trunk (the trunk objects are the same
+    // references spread into each path, so indexOf locates the shared segment).
+    const ewStart = MARTA_TRUNK_EW[0];
+    const ewEnd = MARTA_TRUNK_EW[MARTA_TRUNK_EW.length - 1];
+    const greenLine = MARTA_LINES.find((l) => l.name === "Green");
+    const blueLine = MARTA_LINES.find((l) => l.name === "Blue");
+    if (greenLine) {
+      // Green only extends west of the trunk (Bankhead → Ashby).
+      const start = greenLine.path.indexOf(ewStart);
+      if (start > 0) {
+        draw(
+          [...greenLine.path.slice(0, start), ewStart],
+          greenLine.color,
+          MARTA_LINE_WEIGHT,
+          3,
+        );
+      }
+    }
+    if (blueLine) {
+      const start = blueLine.path.indexOf(ewStart);
+      const end = blueLine.path.indexOf(ewEnd);
+      if (start > 0) {
+        draw(
+          [...blueLine.path.slice(0, start), ewStart],
+          blueLine.color,
+          MARTA_LINE_WEIGHT,
+          3,
+        );
+      }
+      if (end >= 0 && end < blueLine.path.length - 1) {
+        draw(
+          [ewEnd, ...blueLine.path.slice(end + 1)],
+          blueLine.color,
+          MARTA_LINE_WEIGHT,
+          3,
+        );
+      }
     }
 
     return () => {
