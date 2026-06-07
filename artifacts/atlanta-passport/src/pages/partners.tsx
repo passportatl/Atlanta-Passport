@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Route } from "lucide-react";
+import { Check, Route } from "lucide-react";
 import { motion } from "framer-motion";
 import Marquee from "@/components/Marquee";
 
@@ -12,14 +12,6 @@ const marqueeKeys = [
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
 };
 
 export default function Partners() {
@@ -67,84 +59,6 @@ export default function Partners() {
         </div>
       </section>
 
-      {/* Scarcity / Limited Placements */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-12">
-              <div className="text-secondary font-bold tracking-[0.2em] uppercase text-xs mb-4">{t("partners_page.limited_kicker")}</div>
-              <h2 className="text-3xl md:text-5xl font-serif font-bold mb-4 leading-tight">
-                {t("partners_page.limited_title")}
-              </h2>
-              <p className="text-primary-foreground/75 text-lg max-w-2xl mx-auto">
-                {t("partners_page.limited_subtitle")}
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {[
-                { label: "Restaurants", claimed: 3, total: 8 },
-                { label: "Coffee shops", claimed: 2, total: 5 },
-                { label: "Bike & rentals", claimed: 1, total: 3 },
-                { label: "Bars & nightlife", claimed: 2, total: 6 },
-                { label: "Retail & boutiques", claimed: 1, total: 5 },
-                { label: "Experiences", claimed: 1, total: 4 },
-              ].map((row) => {
-                const pct = Math.round((row.claimed / row.total) * 100);
-                return (
-                  <div key={row.label} className="bg-background text-foreground border-[3px] border-foreground rounded-2xl p-5 shadow-pop-sm">
-                    <div className="flex justify-between items-baseline mb-3">
-                      <span className="font-display text-sm tracking-wider uppercase">{row.label}</span>
-                      <span className="font-display text-xs tracking-wider text-brand-red">{row.claimed}/{row.total}</span>
-                    </div>
-                    <div className="progress-track">
-                      <div className="progress-fill transition-all" style={{ width: `${pct}%` }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What You Get */}
-      <section className="py-24 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-4">{t("beltline_page.what_you_get_title")}</h2>
-          </div>
-          <motion.div 
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {[
-              { icon: BookOpen, title: "Physical Passport Placement", desc: "Featured in the printed guide distributed across the city.", cls: "bg-brand-yellow text-brand-yellow-foreground", iconCls: "bg-foreground text-brand-yellow" },
-              { icon: Smartphone, title: "Digital Business Listing", desc: "A dedicated page on the Atlanta Passport web app.", cls: "bg-brand-red text-white", iconCls: "bg-brand-yellow text-foreground" },
-              { icon: QrCode, title: "QR Code Integration", desc: "Custom signage to connect physical visitors to digital rewards.", cls: "bg-brand-sky text-foreground", iconCls: "bg-foreground text-brand-sky" },
-              { icon: Map, title: "Neighborhood Map Placement", desc: "Pinpointed on our curated local neighborhood maps.", cls: "bg-brand-cream text-foreground", iconCls: "bg-brand-red text-white" },
-              { icon: Gift, title: "Offer / Reward Feature", desc: "Highlight a special discount or experience for passport holders.", cls: "bg-brand-lime text-foreground", iconCls: "bg-foreground text-brand-lime" },
-              { icon: BarChart, title: "Analytics Snapshot", desc: "Insights on how many visitors viewed and engaged with your listing.", cls: "bg-brand-navy text-white", iconCls: "bg-brand-gold text-brand-navy" },
-            ].map((feature, i) => (
-              <motion.div key={i} variants={fadeInUp}>
-                <div className={`card-pop h-full p-7 hover:-translate-y-1 transition-transform ${feature.cls}`}>
-                  <div className={`w-14 h-14 rounded-2xl border-[3px] border-foreground shadow-pop-sm flex items-center justify-center mb-5 ${feature.iconCls}`}>
-                    <feature.icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-display text-base tracking-wide uppercase mb-3 leading-snug">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed opacity-90">{feature.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* Choose Your Package */}
       <section className="py-24">
         <div className="container mx-auto px-4">
@@ -171,7 +85,7 @@ export default function Partners() {
                 <div className="font-display text-5xl mb-4">{t("partners_page.tier_starter_price")}</div>
                 <p className="text-sm mb-5 opacity-80 leading-snug">{t("partners_page.tier_starter_desc")}</p>
                 <ul className="space-y-2 mb-5">
-                  {["Official Passport stamp location", "Placement on neighborhood route map", "Business listing on Passport website/app", "Name in participating business directory", "Inclusion in visitor exploration experience"].map((item, i) => (
+                  {["Official Passport stamp location on physical & digital Passport", "Placement on neighborhood route map", "Business info listed on site"].map((item, i) => (
                     <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
@@ -199,7 +113,7 @@ export default function Partners() {
                 <div className="font-display text-5xl mb-4">{t("partners_page.tier_featured_price")}</div>
                 <p className="text-sm mb-5 opacity-90 leading-snug">{t("partners_page.tier_featured_desc")}</p>
                 <ul className="space-y-2 mb-5">
-                  {["Everything in Local Spot", "Featured business highlight on social media", "Instagram collaboration post", "Priority placement on digital listings", "\"Recommended stop\" designation on route map"].map((item, i) => (
+                  {["Everything in Local Spot", "Instagram collaboration post", "Enhanced digital visibility"].map((item, i) => (
                     <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
@@ -224,7 +138,7 @@ export default function Partners() {
                 <div className="font-display text-5xl mb-4 text-brand-gold">{t("partners_page.tier_premier_price")}</div>
                 <p className="text-sm mb-5 opacity-90 leading-snug">{t("partners_page.tier_premier_desc")}</p>
                 <ul className="space-y-2 mb-5">
-                  {["Everything in Featured", "Full-page feature in printed & digital Passport", "Dedicated business spotlight section", "Instagram Reel collaboration", "Expanded description, photos & branding", "Priority visibility to route explorers"].map((item, i) => (
+                  {["Everything in Featured", "Full-page feature in printed & digital Passport", "Instagram Reel collaboration"].map((item, i) => (
                     <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-brand-gold" />
                       <span>{item}</span>
@@ -254,7 +168,7 @@ export default function Partners() {
                 <div className="font-display text-5xl mb-4">{t("partners_page.tier_route_price")}</div>
                 <p className="text-sm mb-5 opacity-80 leading-snug">{t("partners_page.tier_route_desc")}</p>
                 <ul className="space-y-2 mb-5">
-                  {["Everything in Premier", "Official sponsor of a neighborhood route", "Featured placement on route intro page", "Brand/logo on route maps", "Homepage feature on website/app", "Social mentions throughout campaign", "Include branded swag, coupons, or prizes for completed Passports"].map((item, i) => (
+                  {["Everything in Premier", "Official sponsor of a neighborhood route with naming rights", "Social mentions throughout campaign", "Can include branded swag, coupons, or prizes for completed Passports"].map((item, i) => (
                     <li key={i} className="flex items-start text-sm leading-snug">
                       <Check className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-brand-red" />
                       <span>{item}</span>
