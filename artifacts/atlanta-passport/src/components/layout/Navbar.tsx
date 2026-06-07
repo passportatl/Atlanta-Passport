@@ -42,9 +42,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
-      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4 relative">
+      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:grid md:grid-cols-3 md:gap-4 relative">
         {/* Far left: language selector + (desktop) business dropdown + (mobile) logo */}
-        <div className="flex items-center gap-2 md:gap-3 shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 shrink-0 md:justify-end">
           <LanguageSwitcher align="start" />
 
           {/* "Get on the map" (For Businesses) — desktop, left of the centered logo */}
@@ -97,7 +97,7 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label="Atlanta Passport home"
-          className="hidden md:inline-flex absolute left-1/2 top-0 -translate-x-1/2 z-50 items-center"
+          className="hidden md:flex justify-center items-center z-50"
         >
           <Logo
             asLink={false}
@@ -106,7 +106,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav — Passport auth + socials (right of the centered logo) */}
-        <nav className="hidden md:flex items-center gap-2">
+        <nav className="hidden md:flex items-center gap-2 justify-start">
           {isSignedIn ? (
             <Link
               href="/passport"
