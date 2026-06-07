@@ -48,28 +48,24 @@ export function PassportBottomNav() {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop z-40">
-      {/* Utility strip: language (left) + socials (right) */}
-      <div className="border-b border-[#f9c629]/20">
-        <div className="max-w-3xl mx-auto flex items-center justify-between px-3 py-1.5">
-          <LanguageSwitcher align="start" />
-          <SocialLinks linkClassName="text-[#f9c629]/80 hover:text-[#f9c629] hover:bg-white/10" />
+      <div className="max-w-3xl mx-auto flex items-center gap-1 px-2">
+        <LanguageSwitcher align="start" />
+        <div className="grid grid-cols-7 items-center flex-1 min-w-0">
+          {TABS.slice(0, 3).map((tab) => renderTab(tab, location))}
+          <Link
+            href="/passport"
+            aria-label="Atlanta Passport profile"
+            className="relative flex items-center justify-center self-stretch"
+          >
+            <Logo
+              asLink={false}
+              variant="nav"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
+            />
+          </Link>
+          {TABS.slice(3).map((tab) => renderTab(tab, location))}
         </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto grid grid-cols-7 items-center">
-        {TABS.slice(0, 3).map((tab) => renderTab(tab, location))}
-        <Link
-          href="/passport"
-          aria-label="Atlanta Passport profile"
-          className="relative flex items-center justify-center self-stretch"
-        >
-          <Logo
-            asLink={false}
-            variant="nav"
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
-          />
-        </Link>
-        {TABS.slice(3).map((tab) => renderTab(tab, location))}
+        <SocialLinks linkClassName="text-[#f9c629]/80 hover:text-[#f9c629] hover:bg-white/10" />
       </div>
     </nav>
   );
