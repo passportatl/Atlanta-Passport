@@ -17,6 +17,7 @@ import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
 import StampPage from "@/pages/stamp";
 import PassportHome from "@/pages/passport/index";
+import PassportContact from "@/pages/passport/contact";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
@@ -110,6 +111,7 @@ function PassportRoutesGroup() {
     <PassportLayout>
       <Switch>
         <Route path="/passport" component={PassportHome} />
+        <Route path="/passport/contact" component={PassportContact} />
         <Route component={NotFound} />
       </Switch>
     </PassportLayout>
