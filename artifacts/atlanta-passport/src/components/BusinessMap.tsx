@@ -296,14 +296,43 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
 }
 
 const MARTA_LINE_WEIGHT = 4;
-// Half-line perpendicular offset (degrees lng) for the shared Red/Gold trunk,
-// tuned so the two half-width lines sit flush at the map's default zoom — together
-// they read as one full-width line that's red on one side, gold on the other.
-const MARTA_SPLIT_OFFSET = 0.00035;
 
 const MARTA_LINE_COLORS = Object.fromEntries(
   MARTA_LINES.map((l) => [l.name, l.color]),
 ) as Record<string, string>;
+
+// Returns a copy of `path` shifted perpendicular to its own direction by half a
+// line-width, so two opposite-sign copies form one full-width line split
+// lengthwise down the centerline (the seam runs exactly through the stations).
+// The shift is computed in screen pixels at the given zoom, then converted to
+// lat/lng, so the two halves stay flush regardless of zoom or how the track bends.
+function offsetPathPerpendicular(
+  path: { lat: number; lng: number }[],
+  sign: 1 | -1,
+  zoom: number,
+) {
+  const METERS_PER_DEG_LAT = 111320;
+  const offsetPx = MARTA_LINE_WEIGHT / 4; // half of a half-width line
+  return path.map((p, i) => {
+    const prev = path[Math.max(0, i - 1)];
+    const next = path[Math.min(path.length - 1, i + 1)];
+    const phi = (p.lat * Math.PI) / 180;
+    const cosPhi = Math.cos(phi) || 1e-6;
+    // Local tangent in meters (east, north).
+    const dEast = (next.lng - prev.lng) * cosPhi * METERS_PER_DEG_LAT;
+    const dNorth = (next.lat - prev.lat) * METERS_PER_DEG_LAT;
+    const len = Math.hypot(dEast, dNorth) || 1;
+    // Perpendicular unit vector (east, north).
+    const px = (-dNorth / len) * sign;
+    const py = (dEast / len) * sign;
+    const metersPerPixel = (156543.03392 * cosPhi) / Math.pow(2, zoom);
+    const offMeters = offsetPx * metersPerPixel;
+    return {
+      lat: p.lat + (offMeters * py) / METERS_PER_DEG_LAT,
+      lng: p.lng + (offMeters * px) / (METERS_PER_DEG_LAT * cosPhi),
+    };
+  });
+}
 
 // Draws the four MARTA heavy-rail lines in their official colors. The Red and Gold
 // lines share the N-S trunk (Airport→Lindbergh): there it's drawn as a lengthwise
@@ -343,17 +372,34 @@ function MartaRailLines() {
     }
 
     // Red/Gold shared N-S trunk as a lengthwise two-tone stripe: two half-width
-    // lines nudged to opposite sides of the centerline.
-    const redTrunk = MARTA_TRUNK_NS.map((p) => ({
-      lat: p.lat,
-      lng: p.lng - MARTA_SPLIT_OFFSET,
-    }));
-    const goldTrunk = MARTA_TRUNK_NS.map((p) => ({
-      lat: p.lat,
-      lng: p.lng + MARTA_SPLIT_OFFSET,
-    }));
-    draw(redTrunk, MARTA_LINE_COLORS.Red, MARTA_LINE_WEIGHT / 2, 5);
-    draw(goldTrunk, MARTA_LINE_COLORS.Gold, MARTA_LINE_WEIGHT / 2, 5);
+    // lines offset to opposite sides of the centerline so they sit flush, with the
+    // seam running through the station centers. Recomputed on zoom to stay flush.
+    const zoom0 = map.getZoom() ?? 12;
+    const redTrunkLine = new mapsLib.Polyline({
+      path: offsetPathPerpendicular(MARTA_TRUNK_NS, -1, zoom0),
+      geodesic: false,
+      strokeColor: MARTA_LINE_COLORS.Red,
+      strokeOpacity: 0.95,
+      strokeWeight: MARTA_LINE_WEIGHT / 2,
+      zIndex: 5,
+      map,
+    });
+    const goldTrunkLine = new mapsLib.Polyline({
+      path: offsetPathPerpendicular(MARTA_TRUNK_NS, 1, zoom0),
+      geodesic: false,
+      strokeColor: MARTA_LINE_COLORS.Gold,
+      strokeOpacity: 0.95,
+      strokeWeight: MARTA_LINE_WEIGHT / 2,
+      zIndex: 5,
+      map,
+    });
+    lines.push(redTrunkLine, goldTrunkLine);
+
+    const zoomListener = map.addListener("zoom_changed", () => {
+      const z = map.getZoom() ?? 12;
+      redTrunkLine.setPath(offsetPathPerpendicular(MARTA_TRUNK_NS, -1, z));
+      goldTrunkLine.setPath(offsetPathPerpendicular(MARTA_TRUNK_NS, 1, z));
+    });
 
     // Solid branches north of Lindbergh (prepend Lindbergh so they join the trunk).
     const lindbergh = MARTA_TRUNK_NS[MARTA_TRUNK_NS.length - 1];
@@ -376,7 +422,10 @@ function MartaRailLines() {
       );
     }
 
-    return () => lines.forEach((l) => l.setMap(null));
+    return () => {
+      zoomListener.remove();
+      lines.forEach((l) => l.setMap(null));
+    };
   }, [map, mapsLib]);
 
   return null;
