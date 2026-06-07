@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { TrainFront, Spline, Layers } from "lucide-react";
 import {
   APIProvider,
   Map,
@@ -757,6 +758,10 @@ export default function BusinessMap({
   onSelect: (id?: string) => void;
   routePath?: { lat: number; lng: number }[];
 }) {
+  const [showMarta, setShowMarta] = useState(true);
+  const [showBeltline, setShowBeltline] = useState(true);
+  const [showAreas, setShowAreas] = useState(true);
+
   if (!API_KEY) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-[#0b0f1a] p-6 text-center">
@@ -771,54 +776,109 @@ export default function BusinessMap({
   const selected = businesses.find((b) => b.id === selectedId);
 
   return (
-    <APIProvider apiKey={API_KEY}>
-      <Map
-        defaultCenter={ATLANTA_CENTER}
-        defaultZoom={12}
-        gestureHandling="cooperative"
-        scrollwheel={false}
-        disableDefaultUI={true}
-        zoomControl={true}
-        clickableIcons={false}
-        styles={MAP_STYLES}
-        className="h-full w-full"
-        style={{ width: "100%", height: "100%" }}
-        onClick={() => onSelect(undefined)}
-      >
-        <NeighborhoodOverlays />
-        <MartaRailLines />
-        <MartaStationMarkers />
-        <BeltlineLoop />
-
-        <BusinessMarkers businesses={businesses} onSelect={onSelect} />
-
-        {selected && (
-          <InfoWindow
-            position={{ lat: selected.lat, lng: selected.lng }}
-            pixelOffset={[0, -34]}
-            onCloseClick={() => onSelect(undefined)}
+    <div className="flex h-full w-full flex-col">
+      <div className="relative min-h-0 flex-1">
+        <APIProvider apiKey={API_KEY}>
+          <Map
+            defaultCenter={ATLANTA_CENTER}
+            defaultZoom={12}
+            gestureHandling="cooperative"
+            scrollwheel={false}
+            disableDefaultUI={true}
+            zoomControl={true}
+            clickableIcons={false}
+            styles={MAP_STYLES}
+            className="h-full w-full"
+            style={{ width: "100%", height: "100%" }}
+            onClick={() => onSelect(undefined)}
           >
-            <div className="min-w-[170px] p-1">
-              <div className="text-sm font-bold text-[#15171c]">
-                {selected.name}
-              </div>
-              <div className="mb-1.5 text-xs text-gray-500">
-                {selected.neighborhood} · {selected.category}
-              </div>
-              <Link
-                href={`/listing/${selected.id}`}
-                className="text-xs font-semibold text-[#a71930] hover:underline"
+            {showAreas && <NeighborhoodOverlays />}
+            {showMarta && <MartaRailLines />}
+            {showMarta && <MartaStationMarkers />}
+            {showBeltline && <BeltlineLoop />}
+
+            <BusinessMarkers businesses={businesses} onSelect={onSelect} />
+
+            {selected && (
+              <InfoWindow
+                position={{ lat: selected.lat, lng: selected.lng }}
+                pixelOffset={[0, -34]}
+                onCloseClick={() => onSelect(undefined)}
               >
-                View details →
-              </Link>
-            </div>
-          </InfoWindow>
-        )}
+                <div className="min-w-[170px] p-1">
+                  <div className="text-sm font-bold text-[#15171c]">
+                    {selected.name}
+                  </div>
+                  <div className="mb-1.5 text-xs text-gray-500">
+                    {selected.neighborhood} · {selected.category}
+                  </div>
+                  <Link
+                    href={`/listing/${selected.id}`}
+                    className="text-xs font-semibold text-[#a71930] hover:underline"
+                  >
+                    View details →
+                  </Link>
+                </div>
+              </InfoWindow>
+            )}
 
-        {routePath && routePath.length > 0 && <RoutePath path={routePath} />}
+            {routePath && routePath.length > 0 && <RoutePath path={routePath} />}
 
-        <PanToSelected selected={selected} />
-      </Map>
-    </APIProvider>
+            <PanToSelected selected={selected} />
+          </Map>
+        </APIProvider>
+      </div>
+
+      <div className="flex shrink-0 items-center justify-center gap-1.5 border-t-2 border-foreground bg-[#0b0f1a] px-2 py-2">
+        <MapLayerToggle
+          active={showMarta}
+          onClick={() => setShowMarta((v) => !v)}
+          icon={<TrainFront className="h-3.5 w-3.5" />}
+          label="MARTA"
+        />
+        <MapLayerToggle
+          active={showBeltline}
+          onClick={() => setShowBeltline((v) => !v)}
+          icon={<Spline className="h-3.5 w-3.5" />}
+          label="Beltline"
+        />
+        <MapLayerToggle
+          active={showAreas}
+          onClick={() => setShowAreas((v) => !v)}
+          icon={<Layers className="h-3.5 w-3.5" />}
+          label="Areas"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Small pill toggle for showing/hiding a map layer. Lives on the dark map card,
+// so it uses a filled brand-yellow "on" state and a dimmed outline "off" state.
+function MapLayerToggle({
+  active,
+  onClick,
+  icon,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`inline-flex items-center gap-1.5 rounded-md border-2 px-2.5 py-1 text-[11px] font-display uppercase tracking-wider transition-all ${
+        active
+          ? "border-foreground bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm"
+          : "border-brand-cream/30 bg-transparent text-brand-cream/55 hover:text-brand-cream/80"
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }
