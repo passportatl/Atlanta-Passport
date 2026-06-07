@@ -278,7 +278,12 @@ export default function ExploreContent({
                         <h3 className="text-base font-serif font-bold text-foreground leading-tight min-w-0">
                           {biz.name}
                         </h3>
-                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 shrink-0 mt-0.5">
+                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 shrink-0 mt-0.5 hidden sm:inline-block">
+                          {biz.category}
+                        </span>
+                      </div>
+                      <div className="mb-1 sm:hidden">
+                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 inline-block">
                           {biz.category}
                         </span>
                       </div>
