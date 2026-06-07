@@ -22,7 +22,7 @@ export default function Partners() {
       <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
 
       {/* Top bubble CTA */}
-      <div className="container mx-auto px-4 pt-10 flex justify-center">
+      <div className="container mx-auto px-4 pt-10 pb-4 flex justify-center">
         <Link
           href="/apply"
           className="inline-block text-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-2xl px-8 py-5 sm:px-12 sm:py-6 font-display text-base sm:text-xl tracking-[0.06em] uppercase shadow-pop hover:-translate-y-0.5 active:translate-y-0 transition-transform"
