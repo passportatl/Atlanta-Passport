@@ -301,14 +301,10 @@ export default function Apply() {
                           return (
                             <label
                               key={cat}
-                              style={
-                                checked
-                                  ? { backgroundColor: hex, color: isDarkColor(hex) ? "#FFFFFF" : "#15171c" }
-                                  : undefined
-                              }
+                              style={{ backgroundColor: hex, color: isDarkColor(hex) ? "#FFFFFF" : "#15171c" }}
                               className={cn(
-                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground p-3 cursor-pointer shadow-pop-sm transition-colors",
-                                !checked && "bg-white",
+                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground p-3 cursor-pointer shadow-pop-sm transition-all",
+                                checked ? "-translate-y-0.5 shadow-pop" : "opacity-80 hover:opacity-100",
                               )}
                             >
                               <Checkbox
