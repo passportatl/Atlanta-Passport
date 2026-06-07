@@ -28,6 +28,55 @@ const PARTICIPATING = Object.keys(STAMP_SLUG)
   .map((id) => exploreBusinesses.find((b) => b.id === id))
   .filter((b): b is (typeof exploreBusinesses)[number] => Boolean(b));
 
+function StampListItem({
+  name,
+  meta,
+  detail,
+  stamp,
+  iconName,
+  color,
+}: {
+  name: string;
+  meta: string;
+  detail?: string;
+  stamp?: Stamp;
+  iconName: string;
+  color: string;
+}) {
+  return (
+    <li className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0">
+      <div className="flex-1 min-w-0">
+        <div className="font-black text-sm leading-tight">{name}</div>
+        <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
+          {meta}
+        </div>
+        {detail && (
+          <div className="text-xs font-semibold text-foreground/80 mt-1">{detail}</div>
+        )}
+      </div>
+      <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-[hsl(var(--brand-cream))]/40 flex items-center justify-center">
+        {stamp ? (
+          <StampGraphic
+            neighborhood={stamp.neighborhood}
+            iconName={iconName}
+            color={color}
+            collectedAt={stamp.collectedAt as unknown as string}
+            size={74}
+            rotate={-8}
+          />
+        ) : (
+          <span
+            className="text-[8px] font-black uppercase tracking-widest text-foreground/35"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
+            Stamp
+          </span>
+        )}
+      </div>
+    </li>
+  );
+}
+
 export default function PassportStamps() {
   const { visitorId } = useVisitor();
   const { data: stampsRaw } = useListVisitorStamps(visitorId ?? "", {
@@ -65,15 +114,29 @@ export default function PassportStamps() {
     [stampBySlug, apiBySlug],
   );
 
-  const total = rows.length;
-  const collected = rows.filter((r) => r.stamp).length;
+  // Featured events are seeded as DB businesses (category "events") and are
+  // scannable bonus stamps — list them below the participating spots and fold
+  // them into the running stamp total.
+  const eventRows = useMemo(
+    () =>
+      apiBusinesses
+        .filter((b) => b.category === "events")
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((api) => ({ api, stamp: stampBySlug.get(api.slug) })),
+    [apiBusinesses, stampBySlug],
+  );
+
+  const spotsCollected = rows.filter((r) => r.stamp).length;
+  const eventsCollected = eventRows.filter((r) => r.stamp).length;
+  const total = rows.length + eventRows.length;
+  const collected = spotsCollected + eventsCollected;
   const pct = total > 0 ? Math.round((collected / total) * 100) : 0;
 
   return (
     <div className="space-y-3">
       <div>
         <p className="text-sm font-bold text-foreground/70">
-          {collected} of {total} spots stamped · show your Passport to claim each offer
+          {collected} of {total} stamps collected · show your Passport to claim each offer
         </p>
         <div className="progress-track mt-2">
           <div className="progress-fill" style={{ width: `${pct}%` }} />
@@ -100,45 +163,52 @@ export default function PassportStamps() {
             Participating Spots
           </span>
           <span className="text-[10px] font-black opacity-80">
-            {collected}/{total}
+            {spotsCollected}/{rows.length}
           </span>
         </header>
         <ul>
           {rows.map(({ biz, stamp, api }) => (
-            <li
+            <StampListItem
               key={biz.id}
-              className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="font-black text-sm leading-tight">{biz.name}</div>
-                <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
-                  {biz.neighborhood} · {biz.category}
-                </div>
-                <div className="text-xs font-semibold text-foreground/80 mt-1">{biz.offer}</div>
-              </div>
-              <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-[hsl(var(--brand-cream))]/40 flex items-center justify-center">
-                {stamp ? (
-                  <StampGraphic
-                    neighborhood={stamp.neighborhood}
-                    iconName={api?.icon ?? "coffee"}
-                    color={api?.stampColor ?? "yellow"}
-                    collectedAt={stamp.collectedAt as unknown as string}
-                    size={74}
-                    rotate={-8}
-                  />
-                ) : (
-                  <span
-                    className="text-[8px] font-black uppercase tracking-widest text-foreground/35"
-                    style={{ fontFamily: "Bungee, sans-serif" }}
-                  >
-                    Stamp
-                  </span>
-                )}
-              </div>
-            </li>
+              name={biz.name}
+              meta={`${biz.neighborhood} · ${biz.category}`}
+              detail={biz.offer}
+              stamp={stamp}
+              iconName={api?.icon ?? "coffee"}
+              color={api?.stampColor ?? "yellow"}
+            />
           ))}
         </ul>
       </section>
+
+      {eventRows.length > 0 && (
+        <section className="card-pop bg-white overflow-hidden">
+          <header className="flex items-center justify-between px-4 py-2.5 bg-[hsl(var(--brand-orange))] text-[hsl(var(--brand-yellow-foreground))]">
+            <span
+              className="font-black text-xs tracking-widest uppercase"
+              style={{ fontFamily: "Bungee, sans-serif" }}
+            >
+              Featured Events · Bonus Stamps
+            </span>
+            <span className="text-[10px] font-black opacity-80">
+              {eventsCollected}/{eventRows.length}
+            </span>
+          </header>
+          <ul>
+            {eventRows.map(({ api, stamp }) => (
+              <StampListItem
+                key={api.id}
+                name={api.name}
+                meta="Featured Event"
+                detail={api.description ?? undefined}
+                stamp={stamp}
+                iconName={api.icon ?? "star"}
+                color={api.stampColor ?? "orange"}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
