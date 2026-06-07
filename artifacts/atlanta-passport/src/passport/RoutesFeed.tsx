@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { MapPin, Bike, Footprints, Check, Clock, Navigation } from "lucide-react";
 import {
@@ -178,7 +179,7 @@ export default function RoutesFeed({
                         ? `Hide ${route.name} on the map`
                         : `Show ${route.name} on the map`
                     }
-                    className="flex flex-1 flex-col text-left p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-inset"
+                    className="flex flex-col text-left px-3 pt-3 pb-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-inset"
                   >
                       <div className="flex flex-wrap gap-3 text-[11px] font-black uppercase tracking-wider opacity-80 mb-2">
                         <span className="flex items-center gap-1">
@@ -193,10 +194,15 @@ export default function RoutesFeed({
                           <PaceIcon className="w-3 h-3" /> {resolved.pace}
                         </span>
                       </div>
-                      <p className="text-muted-foreground text-xs line-clamp-3 mb-3">
+                      <p className="text-muted-foreground text-xs line-clamp-3">
                         {route.vibe}
                       </p>
+                      <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-2 uppercase">
+                        {isSelected ? "★ Tap to clear" : "★ Tap to trace on map"}
+                      </span>
+                  </button>
 
+                  <div className="flex flex-1 flex-col px-3 pb-3">
                       <ol className="mt-auto space-y-1.5">
                         <li className="flex items-center gap-2 text-xs text-foreground/85">
                           <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-red text-white font-black text-[9px] flex items-center justify-center uppercase">
@@ -224,9 +230,12 @@ export default function RoutesFeed({
                               <span className="flex-shrink-0 w-5 h-5 rounded-full bg-foreground text-brand-yellow font-black text-[10px] flex items-center justify-center">
                                 {idx + 1}
                               </span>
-                              <span className="font-semibold truncate">
+                              <Link
+                                href={`/listing/${b.id}`}
+                                className="font-semibold truncate text-foreground hover:text-brand-red hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded-sm"
+                              >
                                 {b.name}
-                              </span>
+                              </Link>
                               <span className="text-foreground/50 truncate">
                                 · {b.neighborhood}
                               </span>
@@ -234,11 +243,7 @@ export default function RoutesFeed({
                           </Fragment>
                         ))}
                       </ol>
-
-                      <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-3 uppercase">
-                        {isSelected ? "★ Tap to clear" : "★ Tap to trace on map"}
-                      </span>
-                  </button>
+                  </div>
                 </div>
               </motion.div>
             );
