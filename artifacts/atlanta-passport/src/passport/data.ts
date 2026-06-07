@@ -148,11 +148,11 @@ export const NEIGHBORHOODS: NeighborhoodDef[] = [
     secretRouteDescription: "A quick BeltLine-adjacent ride hitting the spots that made Reynoldstown.",
   },
   {
-    name: "Poncey-Highland",
-    short: "PONCEY-HIGHLAND",
+    name: "Virginia Highlands",
+    short: "VIRGINIA HIGHLANDS",
     stampColor: "cream-black",
     stampIcon: "disc",
-    secretRouteName: "Poncey-Highland Classic Crawl",
+    secretRouteName: "Virginia Highlands Classic Crawl",
     secretRouteDescription: "Old Atlanta done right: marquee venues, dive booths, and a couple of secret shots.",
   },
   {

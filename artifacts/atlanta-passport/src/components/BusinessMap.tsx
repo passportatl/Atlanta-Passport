@@ -455,7 +455,7 @@ const NEIGHBORHOOD_AREAS: {
     ],
   },
   {
-    name: "Poncey-Highland",
+    name: "Virginia Highlands",
     color: NB_COLOR.yellow,
     path: [
       { lat: 33.7785, lng: -84.36 },

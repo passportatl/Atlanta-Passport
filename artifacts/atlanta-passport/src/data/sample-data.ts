@@ -319,7 +319,7 @@ export const neighborhoods = [
   { id: "downtown", name: "Downtown", description: "Stadium energy, history, city in motion.", color: "yellow", hex: "#E84C8A" },
   { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red", hex: "#14B8A6" },
   { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky", hex: "#1D3461" },
-  { id: "poncey", name: "Poncey-Highland", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow", hex: "#A0522D" },
+  { id: "poncey", name: "Virginia Highlands", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow", hex: "#A0522D" },
   { id: "glenwood-park", name: "Glenwood Park", description: "Walkable square, Beltline Southeast Trail, patios and pubs.", color: "lime", hex: "#C2D500" },
 ];
 
@@ -378,7 +378,7 @@ export const routes = [
     stops: 4,
     miles: "2.4 mi",
     pace: "Bike Friendly",
-    vibe: "Completed & open. Beltline classic — passes Inman Park, Old Fourth Ward, Poncey-Highland, and Virginia Highland.",
+    vibe: "Completed & open. Beltline classic — passes Inman Park, Old Fourth Ward, and Virginia Highland.",
     tags: ["Beltline", "Open", "Bike Friendly"],
     color: "yellow",
     href: "/beltline",
@@ -386,7 +386,6 @@ export const routes = [
     neighborhoods: [
       { name: "Inman Park" },
       { name: "Old Fourth Ward" },
-      { name: "Poncey-Highland" },
       { name: "Virginia Highland" },
     ],
     shopping: [
