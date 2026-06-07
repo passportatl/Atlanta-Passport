@@ -903,7 +903,7 @@ export default function BusinessMap({
         </APIProvider>
       </div>
 
-      <div className="flex shrink-0 items-center justify-center gap-1.5 border-t-2 border-foreground bg-[#0b0f1a] px-2 py-2">
+      <div className="flex shrink-0 items-center justify-center gap-1.5 border-t-2 border-foreground bg-[#a71930] px-2 py-2">
         <MapLayerToggle
           active={showMarta}
           onClick={() => setShowMarta((v) => !v)}
