@@ -274,11 +274,11 @@ export default function ExploreContent({
                       )}
                     </div>
                     <div className="p-3 flex-1 min-w-0 flex flex-col">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <h3 className="text-base font-serif font-bold text-foreground leading-tight truncate">
+                      <div className="flex items-start gap-2 mb-0.5">
+                        <h3 className="text-base font-serif font-bold text-foreground leading-tight min-w-0">
                           {biz.name}
                         </h3>
-                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 shrink-0">
+                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 shrink-0 mt-0.5">
                           {biz.category}
                         </span>
                       </div>
