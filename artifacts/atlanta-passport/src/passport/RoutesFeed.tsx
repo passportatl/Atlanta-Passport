@@ -237,7 +237,11 @@ export default function RoutesFeed({
                                 {b.name}
                               </Link>
                               <span className="text-foreground/50 truncate">
-                                · {b.neighborhood}
+                                · {b.neighborhood} ·{" "}
+                                {("categories" in b && b.categories
+                                  ? b.categories
+                                  : [b.category]
+                                ).join(", ")}
                               </span>
                             </li>
                           </Fragment>
