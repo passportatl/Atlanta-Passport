@@ -301,6 +301,37 @@ const MARTA_LINE_COLORS = Object.fromEntries(
   MARTA_LINES.map((l) => [l.name, l.color]),
 ) as Record<string, string>;
 
+// Approximate Atlanta Beltline loop (intown 22-mile corridor), traced clockwise
+// from Ponce City Market down the Eastside Trail, around the Southside, up the
+// Westside, and back across the north. A stylized highlight, not a survey line.
+const BELTLINE_PATH = [
+  { lat: 33.7726, lng: -84.3656 }, // Ponce City Market
+  { lat: 33.767, lng: -84.364 }, // Old Fourth Ward
+  { lat: 33.76, lng: -84.3625 }, // Inman Park
+  { lat: 33.7545, lng: -84.3637 }, // Krog Street Market
+  { lat: 33.749, lng: -84.362 }, // Reynoldstown
+  { lat: 33.743, lng: -84.356 }, // Glenwood Park
+  { lat: 33.735, lng: -84.359 }, // Boulevard Crossing
+  { lat: 33.725, lng: -84.368 }, // Toward Chosewood
+  { lat: 33.718, lng: -84.376 }, // Chosewood Park
+  { lat: 33.717, lng: -84.388 }, // Southside Trail
+  { lat: 33.722, lng: -84.399 }, // Pittsburgh
+  { lat: 33.73, lng: -84.413 }, // Adair Park
+  { lat: 33.738, lng: -84.418 }, // West End
+  { lat: 33.747, lng: -84.42 }, // Washington Park
+  { lat: 33.756, lng: -84.418 }, // Ashby
+  { lat: 33.768, lng: -84.415 }, // Westside / Bankhead
+  { lat: 33.778, lng: -84.412 }, // Huff Rd
+  { lat: 33.788, lng: -84.406 }, // Northwest
+  { lat: 33.798, lng: -84.398 }, // Tanyard Creek
+  { lat: 33.805, lng: -84.387 }, // Atlanta Memorial Park
+  { lat: 33.803, lng: -84.376 }, // Toward Piedmont
+  { lat: 33.792, lng: -84.37 }, // Piedmont Park (north)
+  { lat: 33.786, lng: -84.369 }, // Piedmont Park
+  { lat: 33.78, lng: -84.367 }, // Park Drive
+  { lat: 33.7726, lng: -84.3656 }, // Close loop at Ponce City Market
+];
+
 // Returns a copy of `path` shifted perpendicular to its own direction by half a
 // line-width, so two opposite-sign copies form one full-width line split
 // lengthwise down the centerline (the seam runs exactly through the stations).
@@ -332,6 +363,41 @@ function offsetPathPerpendicular(
       lng: p.lng + (offMeters * px) / (METERS_PER_DEG_LAT * cosPhi),
     };
   });
+}
+
+// Highlights the Atlanta Beltline loop as a dashed lime-green line. Dashes are
+// drawn via a repeated dash symbol over a transparent stroke. Mounted once with
+// the map; cleans up on unmount.
+function BeltlineLoop() {
+  const map = useMap();
+  const mapsLib = useMapsLibrary("maps");
+
+  useEffect(() => {
+    if (!map || !mapsLib) return;
+    const polyline = new mapsLib.Polyline({
+      path: BELTLINE_PATH,
+      geodesic: true,
+      strokeOpacity: 0,
+      zIndex: 6,
+      icons: [
+        {
+          icon: {
+            path: "M 0,-1 0,1",
+            strokeColor: "#BCF000",
+            strokeOpacity: 1,
+            strokeWeight: 4,
+            scale: 3,
+          },
+          offset: "0",
+          repeat: "16px",
+        },
+      ],
+      map,
+    });
+    return () => polyline.setMap(null);
+  }, [map, mapsLib]);
+
+  return null;
 }
 
 // Draws the four MARTA heavy-rail lines in their official colors. The Red and Gold
@@ -550,6 +616,7 @@ export default function BusinessMap({
       >
         <MartaRailLines />
         <MartaStationMarkers />
+        <BeltlineLoop />
 
         <BusinessMarkers businesses={businesses} onSelect={onSelect} />
 
