@@ -270,10 +270,11 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
           </AnimatePresence>
         </div>
 
-        {/* Interactive calendar (left) + selected-day events (right) */}
-        <div className="h-[44dvh] shrink-0 mt-3 flex flex-row gap-2.5">
-          {/* Calendar — half the map width */}
-          <div className="w-1/2 shrink-0 self-start card-pop bg-card flex flex-col overflow-hidden">
+        {/* Interactive calendar + selected-day events. Mobile: calendar full
+            width with results stacked below. md+: side by side. */}
+        <div className="shrink-0 mt-3 flex flex-col md:flex-row gap-2.5 md:h-[44dvh]">
+          {/* Calendar — full width on mobile, half the map width on md+ */}
+          <div className="w-full md:w-1/2 shrink-0 self-start card-pop bg-card flex flex-col overflow-hidden">
             <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 text-center font-display text-[10px] tracking-[0.1em] uppercase">
               {monthLabel}
             </div>
@@ -324,7 +325,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
             </div>
           </div>
 
-          {/* Selected-day event list — right side */}
+          {/* Selected-day event list — below the calendar on mobile, right on md+ */}
           <div className="flex-1 min-w-0 flex flex-col min-h-0">
             <div className="shrink-0 mb-1.5 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-brand-red shrink-0" />
@@ -332,7 +333,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                 {selectedLabel}
               </span>
             </div>
-            <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-0.5">
+            <div className="flex-1 md:min-h-0 md:overflow-y-auto space-y-1.5 pr-0.5">
               {selectedEvents.map((event) => {
                 const venueBiz = businesses.find((b) => b.name === event.venue);
                 return (
