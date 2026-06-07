@@ -2,11 +2,18 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search } from "lucide-react";
+import { MapPin, Search, X } from "lucide-react";
 import SoccerBall from "@/components/SoccerBall";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 type Biz = (typeof businesses)[number];
@@ -41,6 +48,19 @@ export default function ExploreContent({
   const chipBase = "px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
 
+  const hasActiveFilters =
+    activeCategories.length > 0 ||
+    activeNeighborhood !== "All" ||
+    searchQuery.trim() !== "";
+
+  const clearFilters = () => {
+    setActiveCategories([]);
+    setActiveNeighborhood("All");
+    setSearchQuery("");
+  };
+
+  const ALL = "__all__";
+
   return (
     <>
       {/* Scrollable area — filters scroll together with the results */}
@@ -60,8 +80,71 @@ export default function ExploreContent({
             />
           </div>
 
-          {/* Category chips — wrap so they all show without scrolling */}
-          <div>
+          {/* Mobile: two dropdowns side by side + a clear-filters button */}
+          <div className="md:hidden space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <Select
+                value={activeCategories[0] ?? ALL}
+                onValueChange={(v) =>
+                  setActiveCategories(v === ALL ? [] : [v])
+                }
+              >
+                <SelectTrigger className="h-10 bg-white border-2 border-foreground font-display text-[11px] tracking-wider uppercase">
+                  <SelectValue
+                    placeholder={t("explore_page.category_short", {
+                      defaultValue: "Type",
+                    })}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>
+                    {t("explore_page.category_short", { defaultValue: "Type" })}
+                  </SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={activeNeighborhood}
+                onValueChange={setActiveNeighborhood}
+              >
+                <SelectTrigger className="h-10 bg-white border-2 border-foreground font-display text-[11px] tracking-wider uppercase">
+                  <SelectValue
+                    placeholder={t("explore_page.area_short", {
+                      defaultValue: "Area",
+                    })}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">
+                    {t("explore_page.area_short", { defaultValue: "Area" })}
+                  </SelectItem>
+                  {neighborhoods.map((n) => (
+                    <SelectItem key={n.id} value={n.name}>
+                      {n.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground bg-brand-red text-white transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
+              >
+                <X className="w-3 h-3" />
+                {t("explore_page.clear_filters")}
+              </button>
+            )}
+          </div>
+
+          {/* Desktop: category chips — wrap so they all show without scrolling */}
+          <div className="hidden md:block">
             <span className="block text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground mb-1">
               {t("explore_page.category_short", { defaultValue: "Type" })}
             </span>
@@ -98,8 +181,8 @@ export default function ExploreContent({
             </div>
           </div>
 
-          {/* Neighborhood chips — wrap so they all show without scrolling */}
-          <div>
+          {/* Desktop: neighborhood chips — wrap so they all show without scrolling */}
+          <div className="hidden md:block">
             <span className="block text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground mb-1">
               {t("explore_page.area_short", { defaultValue: "Area" })}
             </span>
