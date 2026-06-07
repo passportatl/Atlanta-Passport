@@ -47,6 +47,10 @@ function MarketingRoutes() {
   );
 }
 
+// TEMP: while we design, allow signed-out access to every page. Set back to
+// false (or remove the bypass usages) to re-enable account gating.
+const ALLOW_PUBLIC_ACCESS = true;
+
 // Almost everything requires a registered account. Only the marketing home (`/`),
 // contact, partners, and apply pages stay open to signed-out visitors. Sign-in/up,
 // the /stamp QR landing, and admin are functional routes that must also stay reachable.
@@ -68,7 +72,7 @@ function ProtectedRouteRedirect() {
   const [location, setLocation] = useLocation();
   useEffect(() => {
     if (!isLoaded) return;
-    if (!isSignedIn && isProtectedRoute(location)) {
+    if (!ALLOW_PUBLIC_ACCESS && !isSignedIn && isProtectedRoute(location)) {
       setLocation("/", { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
@@ -94,7 +98,10 @@ function PersistentMapShell() {
   const { isLoaded, isSignedIn } = useUser();
   // Never mount the map (or its Google map) for a signed-out visitor — they're
   // being redirected to the marketing home.
-  const isShell = isMapShellRoute(location) && isLoaded && isSignedIn;
+  const isShell =
+    isMapShellRoute(location) &&
+    isLoaded &&
+    (isSignedIn || ALLOW_PUBLIC_ACCESS);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     if (isShell) setMounted(true);
@@ -158,7 +165,7 @@ function Router() {
   if (isProtectedRoute(location)) {
     // Render nothing while Clerk resolves or while a signed-out user is being
     // redirected to the marketing home — never flash gated content.
-    if (!isLoaded || !isSignedIn) {
+    if (!isLoaded || (!isSignedIn && !ALLOW_PUBLIC_ACCESS)) {
       return null;
     }
     if (isMapShellRoute(location)) {
