@@ -60,7 +60,7 @@ export default function ExploreContent({
   };
 
   const catLabel = t("explore_page.category_short", { defaultValue: "Type" });
-  const areaLabel = t("explore_page.area_short", { defaultValue: "Area" });
+  const areaLabel = t("explore_page.area_short", { defaultValue: "Neighborhood" });
 
   return (
     <>
@@ -205,7 +205,7 @@ export default function ExploreContent({
           {/* Desktop: neighborhood chips — wrap so they all show without scrolling */}
           <div className="hidden md:block">
             <span className="block text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground mb-1">
-              {t("explore_page.area_short", { defaultValue: "Area" })}
+              {t("explore_page.area_short", { defaultValue: "Neighborhood" })}
             </span>
             <div className="flex flex-wrap gap-1.5">
               <button
