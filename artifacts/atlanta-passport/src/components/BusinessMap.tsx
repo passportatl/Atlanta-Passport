@@ -295,13 +295,10 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
   return null;
 }
 
-// Small parallel offset (in degrees) so a line sharing a trunk with another
-// renders beside it instead of hidden underneath. Green shifts north of Blue on
-// the E-W trunk. Gold is intentionally left unoffset so it sits directly on the
-// Red line along their shared N-S trunk (they merge), only diverging at Lindbergh.
-const MARTA_OFFSETS: Record<string, { lat: number; lng: number }> = {
-  Green: { lat: 0.0011, lng: 0 },
-};
+// No parallel offsets: lines that share a trunk sit directly on top of one
+// another so they visibly merge (Gold on Red along the N-S trunk, Green on Blue
+// along the E-W trunk), each diverging only where the real lines split.
+const MARTA_OFFSETS: Record<string, { lat: number; lng: number }> = {};
 
 // Draws the four MARTA heavy-rail lines in their official colors. Mounted once
 // with the map; cleans its polylines up on unmount.
