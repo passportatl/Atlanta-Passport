@@ -295,34 +295,87 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
   return null;
 }
 
-// No parallel offsets: lines that share a trunk sit directly on top of one
-// another so they visibly merge (Gold on Red along the N-S trunk, Green on Blue
-// along the E-W trunk), each diverging only where the real lines split.
-const MARTA_OFFSETS: Record<string, { lat: number; lng: number }> = {};
+const MARTA_LINE_WEIGHT = 4;
+// Half-line perpendicular offset (degrees lng) for the shared Red/Gold trunk,
+// tuned so the two half-width lines sit flush at the map's default zoom — together
+// they read as one full-width line that's red on one side, gold on the other.
+const MARTA_SPLIT_OFFSET = 0.00035;
 
-// Draws the four MARTA heavy-rail lines in their official colors. Mounted once
-// with the map; cleans its polylines up on unmount.
+const MARTA_LINE_COLORS = Object.fromEntries(
+  MARTA_LINES.map((l) => [l.name, l.color]),
+) as Record<string, string>;
+
+// Draws the four MARTA heavy-rail lines in their official colors. The Red and Gold
+// lines share the N-S trunk (Airport→Lindbergh): there it's drawn as a lengthwise
+// two-tone stripe (red half + gold half), splitting into solid branches north of
+// Lindbergh. Mounted once with the map; cleans its polylines up on unmount.
 function MartaRailLines() {
   const map = useMap();
   const mapsLib = useMapsLibrary("maps");
 
   useEffect(() => {
     if (!map || !mapsLib) return;
-    const lines = MARTA_LINES.map(({ name, color, path }) => {
-      const off = MARTA_OFFSETS[name];
-      const shifted = off
-        ? path.map((p) => ({ lat: p.lat + off.lat, lng: p.lng + off.lng }))
-        : path;
-      return new mapsLib.Polyline({
-        path: shifted,
-        geodesic: true,
-        strokeColor: color,
-        strokeOpacity: 0.95,
-        strokeWeight: 4,
-        zIndex: 4,
-        map,
-      });
-    });
+
+    const lines: google.maps.Polyline[] = [];
+    const draw = (
+      path: { lat: number; lng: number }[],
+      color: string,
+      weight: number,
+      zIndex: number,
+    ) => {
+      lines.push(
+        new mapsLib.Polyline({
+          path,
+          geodesic: true,
+          strokeColor: color,
+          strokeOpacity: 0.95,
+          strokeWeight: weight,
+          zIndex,
+          map,
+        }),
+      );
+    };
+
+    // Blue + Green full lines (Green overlaps Blue on the shared E-W trunk).
+    for (const name of ["Blue", "Green"]) {
+      const line = MARTA_LINES.find((l) => l.name === name);
+      if (line) draw(line.path, line.color, MARTA_LINE_WEIGHT, 3);
+    }
+
+    // Red/Gold shared N-S trunk as a lengthwise two-tone stripe: two half-width
+    // lines nudged to opposite sides of the centerline.
+    const redTrunk = MARTA_TRUNK_NS.map((p) => ({
+      lat: p.lat,
+      lng: p.lng - MARTA_SPLIT_OFFSET,
+    }));
+    const goldTrunk = MARTA_TRUNK_NS.map((p) => ({
+      lat: p.lat,
+      lng: p.lng + MARTA_SPLIT_OFFSET,
+    }));
+    draw(redTrunk, MARTA_LINE_COLORS.Red, MARTA_LINE_WEIGHT / 2, 5);
+    draw(goldTrunk, MARTA_LINE_COLORS.Gold, MARTA_LINE_WEIGHT / 2, 5);
+
+    // Solid branches north of Lindbergh (prepend Lindbergh so they join the trunk).
+    const lindbergh = MARTA_TRUNK_NS[MARTA_TRUNK_NS.length - 1];
+    const redLine = MARTA_LINES.find((l) => l.name === "Red");
+    const goldLine = MARTA_LINES.find((l) => l.name === "Gold");
+    if (redLine) {
+      draw(
+        [lindbergh, ...redLine.path.slice(MARTA_TRUNK_NS.length)],
+        redLine.color,
+        MARTA_LINE_WEIGHT,
+        5,
+      );
+    }
+    if (goldLine) {
+      draw(
+        [lindbergh, ...goldLine.path.slice(MARTA_TRUNK_NS.length)],
+        goldLine.color,
+        MARTA_LINE_WEIGHT,
+        5,
+      );
+    }
+
     return () => lines.forEach((l) => l.setMap(null));
   }, [map, mapsLib]);
 
