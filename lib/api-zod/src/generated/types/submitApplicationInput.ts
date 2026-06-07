@@ -37,6 +37,8 @@ export interface SubmitApplicationInput {
   subtitle?: string;
   about?: string;
   businessHours?: string;
+  upcomingEvents?: string;
+  featuredMenuItems?: string;
   eventDate?: string;
   eventTime?: string;
   eventVenue?: string;

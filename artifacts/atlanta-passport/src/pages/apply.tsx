@@ -62,6 +62,8 @@ const formSchema = z
     subtitle: z.string().optional(),
     about: z.string().optional(),
     businessHours: z.string().optional(),
+    upcomingEvents: z.string().optional(),
+    featuredMenuItems: z.string().optional(),
     eventDate: z.string().optional().default(""),
     eventTime: z.string().optional(),
     eventVenue: z.string().optional().default(""),
@@ -130,6 +132,8 @@ export default function Apply() {
       subtitle: "",
       about: "",
       businessHours: "",
+      upcomingEvents: "",
+      featuredMenuItems: "",
       eventDate: "",
       eventTime: "",
       eventVenue: "",
@@ -569,6 +573,48 @@ export default function Apply() {
                           {...field}
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="upcomingEvents"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Upcoming events ({t("apply_page.optional")})</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={"Group rides every Saturday 9am\nTrivia night first Thursday of the month\nWorld Cup watch party — June 2026"}
+                          rows={4}
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        List any happenings visitors should know about — one per line.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="featuredMenuItems"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Featured or new menu items ({t("apply_page.optional")})</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={"Peach cold brew — new for summer\nHouse smash burger\nSeasonal beltline bowl"}
+                          rows={4}
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Highlight standout dishes, drinks, or products — one per line.
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}

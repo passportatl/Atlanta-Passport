@@ -113,6 +113,8 @@ export interface SubmitApplicationInput {
   subtitle?: string;
   about?: string;
   businessHours?: string;
+  upcomingEvents?: string;
+  featuredMenuItems?: string;
   eventDate?: string;
   eventTime?: string;
   eventVenue?: string;
@@ -143,6 +145,8 @@ export interface Application {
   subtitle?: string | null;
   about?: string | null;
   businessHours?: string | null;
+  upcomingEvents?: string | null;
+  featuredMenuItems?: string | null;
   eventDate?: string | null;
   eventTime?: string | null;
   eventVenue?: string | null;

@@ -66,6 +66,8 @@ router.post("/applications", async (req, res) => {
       subtitle: isEvent ? null : data.subtitle ?? null,
       about: isEvent ? null : data.about ?? null,
       businessHours: isEvent ? null : data.businessHours ?? null,
+      upcomingEvents: isEvent ? null : data.upcomingEvents ?? null,
+      featuredMenuItems: isEvent ? null : data.featuredMenuItems ?? null,
       eventDate: isEvent ? data.eventDate ?? null : null,
       eventTime: isEvent ? data.eventTime ?? null : null,
       eventVenue: isEvent ? data.eventVenue ?? null : null,
@@ -100,6 +102,8 @@ router.post("/applications", async (req, res) => {
         ${isEvent ? "" : renderRow("Subtitle", data.subtitle)}
         ${isEvent ? "" : renderRow("About", data.about)}
         ${isEvent ? "" : renderRow("Business Hours", data.businessHours)}
+        ${isEvent ? "" : renderRow("Upcoming Events", data.upcomingEvents)}
+        ${isEvent ? "" : renderRow("Featured / New Menu Items", data.featuredMenuItems)}
         ${renderRow(isEvent ? "Description" : "Offer", data.offer)}
         ${isEvent ? "" : renderRow("Prize Sponsorship", data.prizeSponsorship)}
         ${isEvent ? "" : renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
@@ -133,6 +137,8 @@ router.post("/applications", async (req, res) => {
     !isEvent && data.subtitle ? `Subtitle: ${data.subtitle}` : "",
     !isEvent && data.about ? `About: ${data.about}` : "",
     !isEvent && data.businessHours ? `Business Hours: ${data.businessHours}` : "",
+    !isEvent && data.upcomingEvents ? `Upcoming Events: ${data.upcomingEvents}` : "",
+    !isEvent && data.featuredMenuItems ? `Featured / New Menu Items: ${data.featuredMenuItems}` : "",
     `${isEvent ? "Description" : "Offer"}: ${data.offer}`,
     !isEvent && data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
     !isEvent && typeof data.nearMarta === "boolean" ? `Walk to MARTA: ${data.nearMarta ? "Yes" : "No"}` : "",

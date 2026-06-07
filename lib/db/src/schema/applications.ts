@@ -23,6 +23,8 @@ export const applicationsTable = pgTable("applications", {
   subtitle: text("subtitle"),
   about: text("about"),
   businessHours: text("business_hours"),
+  upcomingEvents: text("upcoming_events"),
+  featuredMenuItems: text("featured_menu_items"),
   eventDate: text("event_date"),
   eventTime: text("event_time"),
   eventVenue: text("event_venue"),

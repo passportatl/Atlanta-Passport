@@ -380,6 +380,8 @@ components:
         subtitle: { type: string }
         about: { type: string }
         businessHours: { type: string }
+        upcomingEvents: { type: string }
+        featuredMenuItems: { type: string }
         eventDate: { type: string }
         eventTime: { type: string }
         eventVenue: { type: string }
@@ -423,6 +425,8 @@ components:
         subtitle: { type: string, nullable: true }
         about: { type: string, nullable: true }
         businessHours: { type: string, nullable: true }
+        upcomingEvents: { type: string, nullable: true }
+        featuredMenuItems: { type: string, nullable: true }
         eventDate: { type: string, nullable: true }
         eventTime: { type: string, nullable: true }
         eventVenue: { type: string, nullable: true }
