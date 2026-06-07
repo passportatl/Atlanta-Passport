@@ -105,8 +105,21 @@ export function PassportBottomNav() {
           </div>
         )}
 
-        <div className="max-w-3xl mx-auto flex items-center gap-1 px-2">
+        <div className="relative max-w-3xl mx-auto flex items-center gap-1 px-2">
           <LanguageSwitcher align="start" />
+
+          {/* Mobile: logo centered against the whole bar (not the flex region) */}
+          <Link
+            href="/passport"
+            aria-label="Atlanta Passport profile"
+            className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2"
+          >
+            <Logo
+              asLink={false}
+              variant="nav"
+              className="drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
+            />
+          </Link>
 
           {/* Desktop: full tab bar + social bubble */}
           <div className="hidden md:grid grid-cols-7 items-center flex-1 min-w-0">
@@ -128,18 +141,8 @@ export function PassportBottomNav() {
             <SocialLinks linkClassName="h-7 w-7 text-foreground/80 hover:text-brand-red hover:bg-foreground/10" />
           </div>
 
-          {/* Mobile: centered logo, bottom-aligned with the two buttons */}
-          <Link
-            href="/passport"
-            aria-label="Atlanta Passport profile"
-            className="flex md:hidden flex-1 relative self-stretch"
-          >
-            <Logo
-              asLink={false}
-              variant="nav"
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
-            />
-          </Link>
+          {/* Mobile: spacer pushes the hamburger to the right edge */}
+          <div className="flex-1 md:hidden" />
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
