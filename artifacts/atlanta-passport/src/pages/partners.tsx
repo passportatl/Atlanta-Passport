@@ -49,12 +49,9 @@ export default function Partners() {
               <span className="highlight-yellow text-foreground">{t("partners_page.title_highlight")}</span>{" "}
               {t("partners_page.title_line3")}
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10 leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
               {t("partners_page.subtitle")}
             </p>
-            <Link href="/apply" className="button-pop">
-              {t("partners_page.cta_apply")}
-            </Link>
           </motion.div>
         </div>
       </section>
