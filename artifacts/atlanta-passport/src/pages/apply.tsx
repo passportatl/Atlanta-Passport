@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { applicationCategories, neighborhoods } from "@/data/sample-data";
+import { categories, categoryColor, isDarkColor, neighborhoods } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import { cn } from "@/lib/utils";
 
@@ -295,14 +295,20 @@ export default function Apply() {
                         <span className="font-normal normal-case text-muted-foreground">— check all that apply</span>
                       </FormLabel>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
-                        {applicationCategories.map((cat) => {
+                        {categories.map((cat) => {
                           const checked = field.value?.includes(cat) ?? false;
+                          const hex = categoryColor(cat);
                           return (
                             <label
                               key={cat}
+                              style={
+                                checked
+                                  ? { backgroundColor: hex, color: isDarkColor(hex) ? "#FFFFFF" : "#15171c" }
+                                  : undefined
+                              }
                               className={cn(
-                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground bg-white p-3 cursor-pointer shadow-pop-sm transition-colors",
-                                checked && "bg-brand-yellow text-brand-yellow-foreground",
+                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground p-3 cursor-pointer shadow-pop-sm transition-colors",
+                                !checked && "bg-white",
                               )}
                             >
                               <Checkbox
