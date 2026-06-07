@@ -104,43 +104,47 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
 // Edgewood/Candler Park); Green branches to Bankhead and ends at Edgewood, Blue
 // continues east to Indian Creek and west to Hamilton E. Holmes.
 const MARTA_TRUNK_NS = [
-  { lat: 33.6407, lng: -84.4444 }, // Airport
-  { lat: 33.6519, lng: -84.4486 }, // College Park
-  { lat: 33.6766, lng: -84.4404 }, // East Point
-  { lat: 33.7012, lng: -84.429 }, // Lakewood/Ft. McPherson
-  { lat: 33.7177, lng: -84.4254 }, // Oakland City
-  { lat: 33.7356, lng: -84.4136 }, // West End
-  { lat: 33.7478, lng: -84.3924 }, // Garnett
-  { lat: 33.7539, lng: -84.3915 }, // Five Points
-  { lat: 33.7592, lng: -84.3875 }, // Peachtree Center
-  { lat: 33.7669, lng: -84.3874 }, // Civic Center
-  { lat: 33.7716, lng: -84.3866 }, // North Avenue
-  { lat: 33.7813, lng: -84.3862 }, // Midtown
-  { lat: 33.7892, lng: -84.3872 }, // Arts Center
-  { lat: 33.8231, lng: -84.3692 }, // Lindbergh Center
+  { lat: 33.6407, lng: -84.4444, name: "Airport" },
+  { lat: 33.6519, lng: -84.4486, name: "College Park" },
+  { lat: 33.6766, lng: -84.4404, name: "East Point" },
+  { lat: 33.7012, lng: -84.429, name: "Lakewood/Ft. McPherson" },
+  { lat: 33.7177, lng: -84.4254, name: "Oakland City" },
+  { lat: 33.7356, lng: -84.4136, name: "West End" },
+  { lat: 33.7478, lng: -84.3924, name: "Garnett" },
+  { lat: 33.7539, lng: -84.3915, name: "Five Points" },
+  { lat: 33.7592, lng: -84.3875, name: "Peachtree Center" },
+  { lat: 33.7669, lng: -84.3874, name: "Civic Center" },
+  { lat: 33.7716, lng: -84.3866, name: "North Avenue" },
+  { lat: 33.7813, lng: -84.3862, name: "Midtown" },
+  { lat: 33.7892, lng: -84.3872, name: "Arts Center" },
+  { lat: 33.8231, lng: -84.3692, name: "Lindbergh Center" },
 ];
 
 const MARTA_TRUNK_EW = [
-  { lat: 33.7564, lng: -84.4176 }, // Ashby
-  { lat: 33.7565, lng: -84.4054 }, // Vine City
-  { lat: 33.757, lng: -84.396 }, // GWCC/CNN Center
-  { lat: 33.7539, lng: -84.3915 }, // Five Points
-  { lat: 33.7503, lng: -84.3858 }, // Georgia State
-  { lat: 33.7501, lng: -84.3766 }, // King Memorial
-  { lat: 33.757, lng: -84.3526 }, // Inman Park/Reynoldstown
-  { lat: 33.7617, lng: -84.3393 }, // Edgewood/Candler Park
+  { lat: 33.7564, lng: -84.4176, name: "Ashby" },
+  { lat: 33.7565, lng: -84.4054, name: "Vine City" },
+  { lat: 33.757, lng: -84.396, name: "GWCC/CNN Center" },
+  { lat: 33.7539, lng: -84.3915, name: "Five Points" },
+  { lat: 33.7503, lng: -84.3858, name: "Georgia State" },
+  { lat: 33.7501, lng: -84.3766, name: "King Memorial" },
+  { lat: 33.757, lng: -84.3526, name: "Inman Park/Reynoldstown" },
+  { lat: 33.7617, lng: -84.3393, name: "Edgewood/Candler Park" },
 ];
 
-const MARTA_LINES: { name: string; color: string; path: { lat: number; lng: number }[] }[] = [
+const MARTA_LINES: {
+  name: string;
+  color: string;
+  path: { lat: number; lng: number; name?: string }[];
+}[] = [
   {
     name: "Gold",
     color: "#FDB913",
     path: [
       ...MARTA_TRUNK_NS,
-      { lat: 33.8459, lng: -84.358 }, // Lenox
-      { lat: 33.8602, lng: -84.3393 }, // Brookhaven/Oglethorpe
-      { lat: 33.8877, lng: -84.3057 }, // Chamblee
-      { lat: 33.9028, lng: -84.2802 }, // Doraville
+      { lat: 33.8459, lng: -84.358, name: "Lenox" },
+      { lat: 33.8602, lng: -84.3393, name: "Brookhaven/Oglethorpe" },
+      { lat: 33.8877, lng: -84.3057, name: "Chamblee" },
+      { lat: 33.9028, lng: -84.2802, name: "Doraville" },
     ],
   },
   {
@@ -148,18 +152,18 @@ const MARTA_LINES: { name: string; color: string; path: { lat: number; lng: numb
     color: "#E0001B",
     path: [
       ...MARTA_TRUNK_NS,
-      { lat: 33.8479, lng: -84.3674 }, // Buckhead
-      { lat: 33.9123, lng: -84.3516 }, // Medical Center
-      { lat: 33.9214, lng: -84.3447 }, // Dunwoody
-      { lat: 33.9319, lng: -84.3516 }, // Sandy Springs
-      { lat: 33.9453, lng: -84.3573 }, // North Springs
+      { lat: 33.8479, lng: -84.3674, name: "Buckhead" },
+      { lat: 33.9123, lng: -84.3516, name: "Medical Center" },
+      { lat: 33.9214, lng: -84.3447, name: "Dunwoody" },
+      { lat: 33.9319, lng: -84.3516, name: "Sandy Springs" },
+      { lat: 33.9453, lng: -84.3573, name: "North Springs" },
     ],
   },
   {
     name: "Green",
     color: "#00A94F",
     path: [
-      { lat: 33.772, lng: -84.4258 }, // Bankhead
+      { lat: 33.772, lng: -84.4258, name: "Bankhead" },
       ...MARTA_TRUNK_EW,
     ],
   },
@@ -167,22 +171,22 @@ const MARTA_LINES: { name: string; color: string; path: { lat: number; lng: numb
     name: "Blue",
     color: "#0067B1",
     path: [
-      { lat: 33.7547, lng: -84.4694 }, // Hamilton E. Holmes
-      { lat: 33.753, lng: -84.4459 }, // West Lake
+      { lat: 33.7547, lng: -84.4694, name: "Hamilton E. Holmes" },
+      { lat: 33.753, lng: -84.4459, name: "West Lake" },
       ...MARTA_TRUNK_EW,
-      { lat: 33.7651, lng: -84.3132 }, // East Lake
-      { lat: 33.7748, lng: -84.2963 }, // Decatur
-      { lat: 33.7752, lng: -84.2799 }, // Avondale
-      { lat: 33.7723, lng: -84.2496 }, // Kensington
-      { lat: 33.769, lng: -84.2295 }, // Indian Creek
+      { lat: 33.7651, lng: -84.3132, name: "East Lake" },
+      { lat: 33.7748, lng: -84.2963, name: "Decatur" },
+      { lat: 33.7752, lng: -84.2799, name: "Avondale" },
+      { lat: 33.7723, lng: -84.2496, name: "Kensington" },
+      { lat: 33.769, lng: -84.2295, name: "Indian Creek" },
     ],
   },
 ];
 
 // Unique MARTA stations (deduped across all lines; true coordinates, no line offset).
-const MARTA_STATIONS: { lat: number; lng: number }[] = (() => {
+const MARTA_STATIONS: { lat: number; lng: number; name?: string }[] = (() => {
   const seen = new Set<string>();
-  const out: { lat: number; lng: number }[] = [];
+  const out: { lat: number; lng: number; name?: string }[] = [];
   for (const line of MARTA_LINES) {
     for (const p of line.path) {
       const key = `${p.lat},${p.lng}`;
@@ -545,8 +549,8 @@ function MartaRailLines() {
   return null;
 }
 
-// Places a small MARTA roundel at every station. Non-interactive so it never
-// steals clicks from business pins or the map's deselect handler.
+// Places a small MARTA roundel at every station. Interactive (no onClick) so the
+// native title tooltip surfaces the station name on hover.
 function MartaStationMarkers() {
   const coreLib = useMapsLibrary("core");
 
@@ -565,9 +569,9 @@ function MartaStationMarkers() {
       {MARTA_STATIONS.map((s) => (
         <Marker
           key={`marta-${s.lat}-${s.lng}`}
-          position={s}
+          position={{ lat: s.lat, lng: s.lng }}
+          title={s.name ? `${s.name} Station` : undefined}
           icon={icon}
-          clickable={false}
           zIndex={2}
         />
       ))}
