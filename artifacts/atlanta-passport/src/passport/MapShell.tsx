@@ -59,8 +59,8 @@ export default function MapShell() {
   const [activeCategories, setActiveCategories] = useState<string[]>(
     initialCategory ? [initialCategory] : [],
   );
-  const [activeNeighborhood, setActiveNeighborhood] = useState<string>(
-    initialNeighborhood ?? "All",
+  const [activeNeighborhoods, setActiveNeighborhoods] = useState<string[]>(
+    initialNeighborhood ? [initialNeighborhood] : [],
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBizId, setSelectedBizId] = useState<string | undefined>(
@@ -76,6 +76,12 @@ export default function MapShell() {
     );
   };
 
+  const toggleNeighborhood = (n: string) => {
+    setActiveNeighborhoods((prev) =>
+      prev.includes(n) ? prev.filter((x) => x !== n) : [...prev, n],
+    );
+  };
+
   const filteredBusinesses = useMemo(() => {
     return businesses.filter((biz) => {
       const bizCategories = [
@@ -86,15 +92,17 @@ export default function MapShell() {
         activeCategories.length === 0 ||
         activeCategories.some((c) => bizCategories.includes(c));
       const matchNeighborhood =
-        activeNeighborhood === "All" ||
-        biz.neighborhood.toLowerCase().includes(activeNeighborhood.toLowerCase());
+        activeNeighborhoods.length === 0 ||
+        activeNeighborhoods.some((n) =>
+          biz.neighborhood.toLowerCase().includes(n.toLowerCase()),
+        );
       const matchSearch =
         biz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         biz.description.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchCategory && matchNeighborhood && matchSearch;
     });
-  }, [activeCategories, activeNeighborhood, searchQuery]);
+  }, [activeCategories, activeNeighborhoods, searchQuery]);
 
   // The Routes view highlights one curated route at a time: the map shows only
   // that route's stops (in order) and draws a connecting line. With no route
@@ -151,7 +159,7 @@ export default function MapShell() {
       neighborhoods.find((n) => n.name === nbhdParam)?.name ??
       null;
     if (cat) setActiveCategories([cat]);
-    if (nbhd) setActiveNeighborhood(nbhd);
+    if (nbhd) setActiveNeighborhoods([nbhd]);
   }, [search, location]);
 
   return (
@@ -196,12 +204,13 @@ export default function MapShell() {
         <ExploreContent
           filteredBusinesses={filteredBusinesses}
           activeCategories={activeCategories}
-          activeNeighborhood={activeNeighborhood}
+          activeNeighborhoods={activeNeighborhoods}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           setActiveCategories={setActiveCategories}
           toggleCategory={toggleCategory}
-          setActiveNeighborhood={setActiveNeighborhood}
+          setActiveNeighborhoods={setActiveNeighborhoods}
+          toggleNeighborhood={toggleNeighborhood}
           onSelectBusiness={setSelectedBizId}
         />
       )}

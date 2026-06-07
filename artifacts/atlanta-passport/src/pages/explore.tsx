@@ -2,18 +2,17 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, X } from "lucide-react";
+import { MapPin, Search, X, ChevronDown } from "lucide-react";
 import SoccerBall from "@/components/SoccerBall";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
 type Biz = (typeof businesses)[number];
@@ -21,24 +20,26 @@ type Biz = (typeof businesses)[number];
 type ExploreContentProps = {
   filteredBusinesses: Biz[];
   activeCategories: string[];
-  activeNeighborhood: string;
+  activeNeighborhoods: string[];
   searchQuery: string;
   setSearchQuery: (value: string) => void;
   setActiveCategories: (value: string[]) => void;
   toggleCategory: (cat: string) => void;
-  setActiveNeighborhood: (value: string) => void;
+  setActiveNeighborhoods: (value: string[]) => void;
+  toggleNeighborhood: (n: string) => void;
   onSelectBusiness: (id: string) => void;
 };
 
 export default function ExploreContent({
   filteredBusinesses,
   activeCategories,
-  activeNeighborhood,
+  activeNeighborhoods,
   searchQuery,
   setSearchQuery,
   setActiveCategories,
   toggleCategory,
-  setActiveNeighborhood,
+  setActiveNeighborhoods,
+  toggleNeighborhood,
   onSelectBusiness,
 }: ExploreContentProps) {
   const { t } = useTranslation();
@@ -50,16 +51,17 @@ export default function ExploreContent({
 
   const hasActiveFilters =
     activeCategories.length > 0 ||
-    activeNeighborhood !== "All" ||
+    activeNeighborhoods.length > 0 ||
     searchQuery.trim() !== "";
 
   const clearFilters = () => {
     setActiveCategories([]);
-    setActiveNeighborhood("All");
+    setActiveNeighborhoods([]);
     setSearchQuery("");
   };
 
-  const ALL = "__all__";
+  const catLabel = t("explore_page.category_short", { defaultValue: "Type" });
+  const areaLabel = t("explore_page.area_short", { defaultValue: "Area" });
 
   return (
     <>
@@ -80,56 +82,70 @@ export default function ExploreContent({
             />
           </div>
 
-          {/* Mobile: two dropdowns side by side + a clear-filters button */}
+          {/* Mobile: two multi-select dropdowns side by side + a clear button */}
           <div className="md:hidden space-y-2">
             <div className="grid grid-cols-2 gap-2">
-              <Select
-                value={activeCategories[0] ?? ALL}
-                onValueChange={(v) =>
-                  setActiveCategories(v === ALL ? [] : [v])
-                }
-              >
-                <SelectTrigger className="h-10 bg-white border-2 border-foreground font-display text-[11px] tracking-wider uppercase">
-                  <SelectValue
-                    placeholder={t("explore_page.category_short", {
-                      defaultValue: "Type",
-                    })}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL}>
-                    {t("explore_page.category_short", { defaultValue: "Type" })}
-                  </SelectItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex h-10 w-full items-center justify-between gap-1 rounded-md border-2 border-foreground bg-white px-3 font-display text-[11px] tracking-wider uppercase"
+                  >
+                    <span className="truncate">
+                      {activeCategories.length > 0
+                        ? `${catLabel} (${activeCategories.length})`
+                        : catLabel}
+                    </span>
+                    <ChevronDown className="w-4 h-4 opacity-50 shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="max-h-72 w-[var(--radix-dropdown-menu-trigger-width)]"
+                >
                   {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
+                    <DropdownMenuCheckboxItem
+                      key={cat}
+                      checked={activeCategories.includes(cat)}
+                      onCheckedChange={() => toggleCategory(cat)}
+                      onSelect={(e) => e.preventDefault()}
+                    >
                       {cat}
-                    </SelectItem>
+                    </DropdownMenuCheckboxItem>
                   ))}
-                </SelectContent>
-              </Select>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-              <Select
-                value={activeNeighborhood}
-                onValueChange={setActiveNeighborhood}
-              >
-                <SelectTrigger className="h-10 bg-white border-2 border-foreground font-display text-[11px] tracking-wider uppercase">
-                  <SelectValue
-                    placeholder={t("explore_page.area_short", {
-                      defaultValue: "Area",
-                    })}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">
-                    {t("explore_page.area_short", { defaultValue: "Area" })}
-                  </SelectItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex h-10 w-full items-center justify-between gap-1 rounded-md border-2 border-foreground bg-white px-3 font-display text-[11px] tracking-wider uppercase"
+                  >
+                    <span className="truncate">
+                      {activeNeighborhoods.length > 0
+                        ? `${areaLabel} (${activeNeighborhoods.length})`
+                        : areaLabel}
+                    </span>
+                    <ChevronDown className="w-4 h-4 opacity-50 shrink-0" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="max-h-72 w-[var(--radix-dropdown-menu-trigger-width)]"
+                >
                   {neighborhoods.map((n) => (
-                    <SelectItem key={n.id} value={n.name}>
+                    <DropdownMenuCheckboxItem
+                      key={n.id}
+                      checked={activeNeighborhoods.includes(n.name)}
+                      onCheckedChange={() => toggleNeighborhood(n.name)}
+                      onSelect={(e) => e.preventDefault()}
+                    >
                       {n.name}
-                    </SelectItem>
+                    </DropdownMenuCheckboxItem>
                   ))}
-                </SelectContent>
-              </Select>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             {hasActiveFilters && (
               <button
@@ -188,10 +204,10 @@ export default function ExploreContent({
             </span>
             <div className="flex flex-wrap gap-1.5">
               <button
-                onClick={() => setActiveNeighborhood("All")}
+                onClick={() => setActiveNeighborhoods([])}
                 className={cn(
                   chipBase,
-                  activeNeighborhood === "All"
+                  activeNeighborhoods.length === 0
                     ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
                     : chipIdle,
                 )}
@@ -199,11 +215,11 @@ export default function ExploreContent({
                 {t("explore_page.all")}
               </button>
               {neighborhoods.map((n, i) => {
-                const active = activeNeighborhood === n.name;
+                const active = activeNeighborhoods.includes(n.name);
                 return (
                   <button
                     key={n.id}
-                    onClick={() => setActiveNeighborhood(n.name)}
+                    onClick={() => toggleNeighborhood(n.name)}
                     className={cn(
                       chipBase,
                       active
@@ -303,11 +319,7 @@ export default function ExploreContent({
               <Button
                 variant="outline"
                 className="mt-6"
-                onClick={() => {
-                  setActiveCategories([]);
-                  setActiveNeighborhood("All");
-                  setSearchQuery("");
-                }}
+                onClick={clearFilters}
               >
                 {t("explore_page.clear_filters")}
               </Button>
