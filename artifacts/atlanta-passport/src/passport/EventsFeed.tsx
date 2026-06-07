@@ -241,14 +241,12 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                         >
                           {event.category}
                         </span>
-                        <h3 className="text-[13px] font-serif font-bold text-foreground leading-tight line-clamp-2">
+                        <h3 className="text-[13px] font-serif font-bold text-foreground leading-tight">
                           {event.name}
                         </h3>
                         <div className="flex items-start gap-1 text-[10px] text-foreground/80 min-w-0">
-                          <Calendar className="w-3 h-3 text-brand-red shrink-0 mt-[1px]" />
-                          <span>
-                            {event.date} · {event.time}
-                          </span>
+                          <Clock className="w-3 h-3 text-brand-red shrink-0 mt-[1px]" />
+                          <span>{event.time}</span>
                         </div>
                         <div className="flex items-start gap-1 text-[10px] text-foreground/80 min-w-0">
                           <MapPin className="w-3 h-3 text-brand-red shrink-0 mt-[1px]" />
