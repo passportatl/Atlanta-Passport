@@ -208,6 +208,9 @@ export default function MapShell() {
                 selectedId={selectedBizId}
                 onSelect={setSelectedBizId}
                 routePath={routePath}
+                highlightNeighborhoods={
+                  view === "explore" ? activeNeighborhoods : []
+                }
               />
             </div>
           </div>

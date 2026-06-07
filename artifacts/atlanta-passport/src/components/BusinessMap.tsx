@@ -511,28 +511,49 @@ function offsetPathPerpendicular(
 // Draws a semi-transparent color overlay for each Explore "Area" neighborhood, for
 // orientation. Non-interactive so it never steals map clicks. Sits below the rail
 // lines and markers (low zIndex). Mounted once with the map; cleans up on unmount.
-function NeighborhoodOverlays() {
+function NeighborhoodOverlays({
+  names,
+  emphasize = false,
+}: {
+  // When provided, only these neighborhoods are drawn (matched case-insensitively).
+  // When omitted, every area is drawn.
+  names?: string[];
+  // Draw the (selected) areas with a stronger fill so they read as "active".
+  emphasize?: boolean;
+}) {
   const map = useMap();
   const mapsLib = useMapsLibrary("maps");
+  const key = (names ?? []).join("|");
 
   useEffect(() => {
     if (!map || !mapsLib) return;
-    const polygons = NEIGHBORHOOD_AREAS.map(
+    const wanted = names
+      ? NEIGHBORHOOD_AREAS.filter((area) =>
+          names.some(
+            (n) =>
+              area.name.toLowerCase().includes(n.toLowerCase()) ||
+              n.toLowerCase().includes(area.name.toLowerCase()),
+          ),
+        )
+      : NEIGHBORHOOD_AREAS;
+    const polygons = wanted.map(
       (area) =>
         new mapsLib.Polygon({
           paths: area.path,
           strokeColor: area.color,
-          strokeOpacity: 0.7,
-          strokeWeight: 1.5,
+          strokeOpacity: emphasize ? 0.95 : 0.7,
+          strokeWeight: emphasize ? 2.5 : 1.5,
           fillColor: area.color,
-          fillOpacity: 0.18,
+          fillOpacity: emphasize ? 0.32 : 0.18,
           clickable: false,
-          zIndex: 1,
+          zIndex: emphasize ? 2 : 1,
           map,
         }),
     );
     return () => polygons.forEach((p) => p.setMap(null));
-  }, [map, mapsLib]);
+    // `key` re-runs the effect when the selected-name set changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, mapsLib, key, emphasize]);
 
   return null;
 }
@@ -752,11 +773,13 @@ export default function BusinessMap({
   selectedId,
   onSelect,
   routePath,
+  highlightNeighborhoods,
 }: {
   businesses: MapBusiness[];
   selectedId?: string;
   onSelect: (id?: string) => void;
   routePath?: { lat: number; lng: number }[];
+  highlightNeighborhoods?: string[];
 }) {
   const [showMarta, setShowMarta] = useState(true);
   const [showBeltline, setShowBeltline] = useState(true);
@@ -793,6 +816,14 @@ export default function BusinessMap({
             onClick={() => onSelect(undefined)}
           >
             {showAreas && <NeighborhoodOverlays />}
+            {!showAreas &&
+              highlightNeighborhoods &&
+              highlightNeighborhoods.length > 0 && (
+                <NeighborhoodOverlays
+                  names={highlightNeighborhoods}
+                  emphasize
+                />
+              )}
             {showMarta && <MartaRailLines />}
             {showMarta && <MartaStationMarkers />}
             {showBeltline && <BeltlineLoop />}
