@@ -137,7 +137,7 @@ export function SignInPage() {
         routing="path"
         path={`${basePath}/sign-in`}
         signUpUrl={`${basePath}/sign-up`}
-        fallbackRedirectUrl={`${basePath}/passport`}
+        fallbackRedirectUrl={`${basePath}/passport/stamps`}
       />
     </div>
   );
@@ -150,7 +150,7 @@ export function SignUpPage() {
         routing="path"
         path={`${basePath}/sign-up`}
         signInUrl={`${basePath}/sign-in`}
-        fallbackRedirectUrl={`${basePath}/passport`}
+        fallbackRedirectUrl={`${basePath}/passport/stamps`}
       />
     </div>
   );
@@ -364,7 +364,7 @@ export function SocialAuthButtons() {
       await signUp.authenticateWithRedirect({
         strategy: provider,
         redirectUrl: `${basePath}/sign-up/sso-callback`,
-        redirectUrlComplete: `${basePath}/passport`,
+        redirectUrlComplete: `${basePath}/passport/stamps`,
       });
     } catch {
       setError(`Couldn't start ${LABELS[provider]} sign-up. Please try again.`);
