@@ -158,7 +158,7 @@ export default function MapShell() {
     <div className="h-[100dvh] flex flex-col overflow-hidden">
       {/* Orientation map — pinned to the top across Explore + Events */}
       <div className="shrink-0 px-4 pt-3 pb-2">
-        <div className="container mx-auto px-0">
+        <div className="max-w-3xl mx-auto px-0">
           <div className="card-pop shadow-none overflow-hidden bg-[#0b0f1a]">
             <div className="h-[40dvh]">
               <BusinessMap
