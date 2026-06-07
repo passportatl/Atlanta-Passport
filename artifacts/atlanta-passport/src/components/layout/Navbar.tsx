@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, MoveRight, ChevronDown, BookMarked } from "lucide-react";
+import { Menu, ChevronDown, BookMarked } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -26,11 +26,8 @@ const navItemClass = (active: boolean) =>
 export default function Navbar() {
   const [location] = useLocation();
   const { t } = useTranslation();
-  const { visitorId, visitor } = useVisitor();
+  const { visitorId } = useVisitor();
   const hasPassport = !!visitorId;
-  const passportLabel = hasPassport
-    ? `${visitor?.firstName ? `${visitor.firstName}'s` : "My"} Passport`
-    : "Start Your Passport";
   const passportShort = hasPassport ? "My Passport" : "Get Passport";
 
   const mobileTouristLinks = [
@@ -46,32 +43,19 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
-      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4">
-        {/* Far left: language selector + logo */}
+      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:gap-4 relative">
+        {/* Far left: language selector + (desktop) business dropdown + (mobile) logo */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           <LanguageSwitcher align="start" />
-          <Link
-            href="/"
-            aria-label="Atlanta Passport home"
-            className="relative z-50 inline-flex items-center shrink-0 self-start"
-          >
-            <Logo
-              asLink={false}
-              className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
-            />
-          </Link>
-        </div>
 
-        {/* Desktop Nav — tourist-first */}
-        <nav className="hidden md:flex items-center gap-1">
-          {/* For Businesses dropdown */}
+          {/* "Get on the map" (For Businesses) — desktop, left of the centered logo */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
                 className={cn(
                   navItemClass(location === "/partners" || location === "/apply"),
-                  "inline-flex items-center gap-1 cursor-pointer"
+                  "hidden md:inline-flex items-center gap-1 cursor-pointer"
                 )}
                 data-testid="button-business-menu"
               >
@@ -80,7 +64,7 @@ export default function Navbar() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              align="end"
+              align="start"
               className="border-2 border-foreground bg-background shadow-pop-sm rounded-xl min-w-[220px] p-1"
             >
               {businessLinks.map((link) => (
@@ -97,25 +81,43 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Mobile logo (stays on the left) */}
+          <Link
+            href="/"
+            aria-label="Atlanta Passport home"
+            className="md:hidden relative z-50 inline-flex items-center shrink-0 self-start"
+          >
+            <Logo
+              asLink={false}
+              className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
+            />
+          </Link>
+        </div>
+
+        {/* Centered logo — desktop only, sits between "Get on the map" and "Passport" */}
+        <Link
+          href="/"
+          aria-label="Atlanta Passport home"
+          className="hidden md:inline-flex absolute left-1/2 top-0 -translate-x-1/2 z-50 items-center"
+        >
+          <Logo
+            asLink={false}
+            className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
+          />
+        </Link>
+
+        {/* Desktop Nav — Passport + socials (right of the centered logo) */}
+        <nav className="hidden md:flex items-center gap-1">
           <Link
             href="/explore"
             className={cn(
               navItemClass(location.startsWith("/passport") || location.startsWith("/explore")),
-              "inline-flex items-center gap-1.5 ml-1",
+              "inline-flex items-center gap-1.5",
             )}
             data-testid="link-nav-passport"
           >
             <BookMarked className="w-3.5 h-3.5" />
             {hasPassport ? "My Passport" : "Passport"}
-          </Link>
-
-          <Link
-            href={hasPassport ? "/passport" : "/explore"}
-            className="button-pop button-pop-yellow ml-3 text-xs px-5 py-2.5"
-            data-testid="button-nav-cta"
-          >
-            {hasPassport ? passportLabel : t("nav.start_exploring")}{" "}
-            <MoveRight className="w-4 h-4 rtl:rotate-180" />
           </Link>
 
           {/* Far right: social media icons */}
