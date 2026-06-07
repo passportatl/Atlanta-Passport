@@ -47,11 +47,11 @@ function MarketingRoutes() {
   );
 }
 
-// Almost everything requires a registered account. Only the marketing home (`/`)
-// and the contact page stay open to signed-out visitors. Sign-in/up, the /stamp
-// QR landing, and admin are functional routes that must also stay reachable.
+// Almost everything requires a registered account. Only the marketing home (`/`),
+// contact, partners, and apply pages stay open to signed-out visitors. Sign-in/up,
+// the /stamp QR landing, and admin are functional routes that must also stay reachable.
 function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/contact"];
+  const publicExact = ["/", "/contact", "/partners", "/apply"];
   if (publicExact.includes(location)) return false;
   const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/admin/"];
   if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
