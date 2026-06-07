@@ -60,6 +60,8 @@ export default function PassportHome() {
   const totalRewards = [...REWARDS]
     .filter((r) => r.type === "total")
     .sort((a, b) => a.threshold - b.threshold);
+  // Completed passports = total-reward milestones the visitor has reached
+  const completedPassports = totalRewards.filter((r) => total >= r.threshold).length;
   // Next reward = lowest total threshold not yet hit
   const nextReward = totalRewards.find((r) => total < r.threshold);
   const nextThreshold = nextReward?.threshold ?? 20;
@@ -105,9 +107,9 @@ export default function PassportHome() {
           </div>
         </div>
         <div className="card-pop bg-white p-4">
-          <div className="text-xs font-black uppercase tracking-wider opacity-60">Neighborhoods</div>
+          <div className="text-xs font-black uppercase tracking-wider opacity-60">Completed Passports</div>
           <div className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-            {neighborhoods.size}
+            {completedPassports}
           </div>
         </div>
       </div>
