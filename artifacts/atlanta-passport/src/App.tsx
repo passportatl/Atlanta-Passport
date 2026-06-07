@@ -47,12 +47,17 @@ function MarketingRoutes() {
   );
 }
 
-// The signed-in app (Explore guide + Passport) requires a registered account.
-// Marketing home, sign-in/up, the /stamp QR landing, and admin stay public.
+// Almost everything requires a registered account. Only the marketing home (`/`)
+// and the contact page stay open to signed-out visitors. Sign-in/up, the /stamp
+// QR landing, and admin are functional routes that must also stay reachable.
 function isProtectedRoute(location: string) {
-  return ["/explore", "/passport"].some(
-    (base) => location === base || location.startsWith(`${base}/`),
-  );
+  const publicExact = ["/", "/contact"];
+  if (publicExact.includes(location)) return false;
+  const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/admin/"];
+  if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
+    return false;
+  }
+  return true;
 }
 
 // Send signed-out visitors who hit a protected route back to the marketing home.
