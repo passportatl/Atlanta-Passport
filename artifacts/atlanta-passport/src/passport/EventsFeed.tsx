@@ -273,7 +273,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         {/* Interactive calendar (left) + selected-day events (right) */}
         <div className="h-[44dvh] shrink-0 mt-3 flex flex-row gap-2.5">
           {/* Calendar — half the map width */}
-          <div className="w-1/2 shrink-0 card-pop bg-card flex flex-col overflow-hidden">
+          <div className="w-1/2 shrink-0 self-start card-pop bg-card flex flex-col overflow-hidden">
             <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 text-center font-display text-[10px] tracking-[0.1em] uppercase">
               {monthLabel}
             </div>
