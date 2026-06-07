@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MapPin, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { events } from "@/data/sample-data";
+import CategoryBadge from "@/components/CategoryBadge";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -18,13 +19,6 @@ const cardTints = [
   "bg-card",
   "bg-brand-cream",
   "bg-card",
-];
-
-const badgeTints = [
-  "bg-brand-yellow text-brand-yellow-foreground",
-  "bg-brand-red text-white",
-  "bg-brand-sky text-foreground",
-  "bg-brand-lime text-foreground",
 ];
 
 const headerTints = [
@@ -98,9 +92,10 @@ export default function Events() {
                         <div className="font-serif text-3xl font-bold leading-none mt-1">{tile.day}</div>
                       </div>
                       <div className="flex flex-col gap-2 min-w-0">
-                        <div className={`badge-sticker self-start text-[10px] ${badgeTints[i % badgeTints.length]}`}>
-                          {event.category}
-                        </div>
+                        <CategoryBadge
+                          category={event.category}
+                          className="self-start text-[10px]"
+                        />
                         <div className="font-display text-[11px] tracking-[0.16em] uppercase truncate">
                           {event.neighborhood}
                         </div>

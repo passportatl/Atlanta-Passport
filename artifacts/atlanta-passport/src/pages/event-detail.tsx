@@ -13,6 +13,7 @@ import {
   Ticket,
 } from "lucide-react";
 import { events } from "@/data/sample-data";
+import CategoryBadge from "@/components/CategoryBadge";
 import NotFound from "@/pages/not-found";
 
 function parseDateTile(dateStr: string): { month: string; day: string } {
@@ -57,9 +58,10 @@ export default function EventDetail() {
               <div className="font-serif text-4xl font-bold leading-none mt-1">{tile.day}</div>
             </div>
             <div className="min-w-0 flex-1">
-              <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground inline-block mb-3 -rotate-1 uppercase text-[10px]">
-                {event.category}
-              </div>
+              <CategoryBadge
+                category={event.category}
+                className="inline-block mb-3 -rotate-1 uppercase text-[10px]"
+              />
               <h1 className="font-serif font-bold text-3xl md:text-5xl leading-[1.05] mb-3">
                 {event.name}
               </h1>

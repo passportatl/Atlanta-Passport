@@ -1,9 +1,10 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, categories, neighborhoods, isDarkColor } from "@/data/sample-data";
+import { businesses, categories, neighborhoods, isDarkColor, categoryColor } from "@/data/sample-data";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, X, ChevronDown } from "lucide-react";
 import SoccerBall from "@/components/SoccerBall";
+import CategoryBadge from "@/components/CategoryBadge";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -44,7 +45,6 @@ export default function ExploreContent({
 }: ExploreContentProps) {
   const { t } = useTranslation();
 
-  const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
   const chipBase = "px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
 
@@ -109,7 +109,13 @@ export default function ExploreContent({
                       onCheckedChange={() => toggleCategory(cat)}
                       onSelect={(e) => e.preventDefault()}
                     >
-                      {cat}
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-3 w-3 rounded-full border border-foreground/40"
+                          style={{ backgroundColor: categoryColor(cat) }}
+                        />
+                        {cat}
+                      </span>
                     </DropdownMenuCheckboxItem>
                   ))}
                 </DropdownMenuContent>
@@ -181,18 +187,23 @@ export default function ExploreContent({
               >
                 {t("explore_page.all")}
               </button>
-              {categories.map((cat, i) => {
+              {categories.map((cat) => {
                 const active = activeCategories.includes(cat);
+                const hex = categoryColor(cat);
                 return (
                   <button
                     key={cat}
                     onClick={() => toggleCategory(cat)}
                     aria-pressed={active}
+                    style={{
+                      backgroundColor: hex,
+                      color: isDarkColor(hex) ? "#FFFFFF" : "#15171c",
+                    }}
                     className={cn(
                       chipBase,
                       active
-                        ? `${categoryPalette[i % categoryPalette.length]} shadow-pop-sm -translate-y-0.5`
-                        : chipIdle,
+                        ? "shadow-pop-sm -translate-y-0.5"
+                        : "opacity-80 hover:opacity-100 hover:-translate-y-0.5 hover:shadow-pop-sm",
                     )}
                   >
                     {cat}
@@ -287,14 +298,16 @@ export default function ExploreContent({
                         <h3 className="text-base font-serif font-bold text-foreground leading-tight min-w-0">
                           {biz.name}
                         </h3>
-                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 shrink-0 mt-0.5 hidden sm:inline-block">
-                          {biz.category}
-                        </span>
+                        <CategoryBadge
+                          category={biz.category}
+                          className="text-[9px] px-1.5 py-0.5 shrink-0 mt-0.5 hidden sm:inline-block"
+                        />
                       </div>
                       <div className="mb-1 sm:hidden">
-                        <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] px-1.5 py-0.5 inline-block">
-                          {biz.category}
-                        </span>
+                        <CategoryBadge
+                          category={biz.category}
+                          className="text-[9px] px-1.5 py-0.5 inline-block"
+                        />
                       </div>
                       <div className="flex items-center text-muted-foreground text-xs mb-1">
                         <MapPin className="w-3 h-3 mr-1 shrink-0" />

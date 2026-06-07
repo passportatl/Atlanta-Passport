@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { MapPin, Calendar, Clock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses } from "@/data/sample-data";
+import CategoryBadge from "@/components/CategoryBadge";
 
 const GROUP_SIZE = 2;
 const AUTOPLAY_MS = 9000;
@@ -30,13 +31,6 @@ const headerTints = [
   "bg-brand-lime text-foreground",
   "bg-brand-orange text-white",
   "bg-foreground text-brand-yellow",
-];
-
-const badgeTints = [
-  "bg-brand-yellow text-brand-yellow-foreground",
-  "bg-brand-red text-white",
-  "bg-brand-sky text-foreground",
-  "bg-brand-lime text-foreground",
 ];
 
 // Parse a "Month Day" or "Month Day-Day" style date into a big-display tile.
@@ -205,7 +199,6 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                 const absIndex = page * GROUP_SIZE + j;
                 const tile = parseDateTile(event.date);
                 const headerTint = headerTints[absIndex % headerTints.length];
-                const badgeTint = badgeTints[absIndex % badgeTints.length];
                 const venueBiz = businesses.find((b) => b.name === event.venue);
                 return (
                   <div
@@ -236,11 +229,10 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                       </div>
 
                       <div className="flex-1 min-h-0 p-2 flex flex-col gap-1 overflow-hidden">
-                        <span
-                          className={`badge-sticker self-start text-[8px] px-1.5 py-0.5 ${badgeTint}`}
-                        >
-                          {event.category}
-                        </span>
+                        <CategoryBadge
+                          category={event.category}
+                          className="self-start text-[8px] px-1.5 py-0.5"
+                        />
                         <h3 className="text-[13px] font-serif font-bold text-foreground leading-tight">
                           {event.name}
                         </h3>

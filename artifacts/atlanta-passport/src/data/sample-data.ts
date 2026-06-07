@@ -361,6 +361,35 @@ export const categories = [
   "Food & Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences", "Public Art", "Parks", "Landmarks"
 ];
 
+// Single source of truth: each Type/category's display color (name → hex). Used
+// everywhere a category is shown — Explore filter chips, business & event badges,
+// map info windows, home cards — so a category always reads the same color across
+// the whole site. Includes event-only categories (Music, Tournament, …) that
+// appear in the data but aren't in the Explore Type filter.
+export const categoryColors: Record<string, string> = {
+  "Food & Drink": "#DC2626",
+  Coffee: "#92400E",
+  Retail: "#65A30D",
+  Nightlife: "#7C3AED",
+  Games: "#EA580C",
+  Rentals: "#0EA5E9",
+  Events: "#DB2777",
+  Experiences: "#0D9488",
+  "Public Art": "#C026D3",
+  Parks: "#16A34A",
+  Landmarks: "#475569",
+  Music: "#9333EA",
+  Tournament: "#B91C1C",
+  "Food & Culture": "#C2410C",
+  "Watch Party": "#2563EB",
+};
+
+// Resolve a category's color, falling back to a neutral slate for any unmapped
+// value so badges never render colorless.
+export function categoryColor(name: string): string {
+  return categoryColors[name] ?? "#475569";
+}
+
 export const exploreCategories = [
   { id: "food-drink",  label: "Food & Drink", tagline: "Good plates, patios, last calls.",   color: "red",    icon: "Utensils" },
   { id: "coffee",      label: "Coffee",      tagline: "Slow mornings. Strong espresso.",      color: "cream",  icon: "Coffee" },

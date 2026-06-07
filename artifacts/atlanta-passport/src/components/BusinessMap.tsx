@@ -10,7 +10,7 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
-import { neighborhoodColors } from "@/data/sample-data";
+import { neighborhoodColors, categoryColor } from "@/data/sample-data";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -883,8 +883,16 @@ export default function BusinessMap({
                   <div className="text-sm font-bold text-[#15171c]">
                     {selected.name}
                   </div>
-                  <div className="mb-1.5 text-xs text-gray-500">
-                    {selected.neighborhood} · {selected.category}
+                  <div className="mb-1.5 flex items-center gap-1.5 text-xs text-gray-500">
+                    <span>{selected.neighborhood}</span>
+                    <span aria-hidden>·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <span
+                        className="inline-block h-2 w-2 rounded-full"
+                        style={{ backgroundColor: categoryColor(selected.category) }}
+                      />
+                      {selected.category}
+                    </span>
                   </div>
                   <Link
                     href={`/listing/${selected.id}`}

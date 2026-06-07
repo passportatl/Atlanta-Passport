@@ -14,6 +14,7 @@ import heroHomeImg from "@/assets/images/hero-home.png";
 import InteractiveMap from "@/components/InteractiveMap";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
+import CategoryBadge from "@/components/CategoryBadge";
 import PassportStamp from "@/components/PassportStamp";
 import { cn } from "@/lib/utils";
 
@@ -268,7 +269,7 @@ export default function Home() {
                       <div className="text-xs text-foreground/60 truncate">{stop.note}</div>
                     </div>
                     <div className="hidden sm:block">
-                      <Sticker color="cream">{stop.category}</Sticker>
+                      <CategoryBadge category={stop.category} />
                     </div>
                   </div>
                 ))}
@@ -403,7 +404,7 @@ export default function Home() {
                           loading="lazy"
                         />
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
-                          <Sticker color="cream">{biz.category}</Sticker>
+                          <CategoryBadge category={biz.category} />
                           {isFounding && (
                             <Sticker color="yellow">{t("card_badges.founding_spot")}</Sticker>
                           )}
