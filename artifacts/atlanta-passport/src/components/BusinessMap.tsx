@@ -9,7 +9,6 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
-import { MARTA_LINES } from "@/data/marta-rail";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -188,41 +187,6 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
   return null;
 }
 
-// Draws the four MARTA heavy-rail lines, each in its official color. Overlapping
-// trunk segments stay legible because the Gold/Green lines carry a small
-// parallel offset (see marta-rail.ts). Sits beneath markers and route paths.
-function MartaRail() {
-  const map = useMap();
-  const mapsLib = useMapsLibrary("maps");
-
-  useEffect(() => {
-    if (!map || !mapsLib) return;
-
-    const polylines = MARTA_LINES.map((line) => {
-      const path = line.path.map((p) => ({
-        lat: p.lat + (line.offset?.lat ?? 0),
-        lng: p.lng + (line.offset?.lng ?? 0),
-      }));
-      return new mapsLib.Polyline({
-        path,
-        geodesic: true,
-        strokeColor: line.color,
-        strokeOpacity: 0.9,
-        strokeWeight: 3.5,
-        zIndex: 1,
-        clickable: false,
-        map,
-      });
-    });
-
-    return () => {
-      polylines.forEach((p) => p.setMap(null));
-    };
-  }, [map, mapsLib]);
-
-  return null;
-}
-
 export default function BusinessMap({
   businesses,
   selectedId,
@@ -262,8 +226,6 @@ export default function BusinessMap({
         style={{ width: "100%", height: "100%" }}
         onClick={() => onSelect(undefined)}
       >
-        <MartaRail />
-
         <BusinessMarkers businesses={businesses} onSelect={onSelect} />
 
         {selected && (
