@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { cn } from "@/lib/utils";
 import logoSrc from "@/assets/images/passport-atl-logo.png";
 
-type Variant = "default" | "stacked" | "compact" | "nav" | "xl";
+type Variant = "default" | "stacked" | "compact" | "nav" | "xl" | "hero";
 
 const sizeByVariant: Record<Variant, string> = {
   default: "h-44 w-44",
@@ -10,6 +10,7 @@ const sizeByVariant: Record<Variant, string> = {
   compact: "h-9 w-9",
   nav: "h-[124px] w-[124px]",
   xl: "h-[136px] w-[136px]",
+  hero: "h-[352px] w-[352px]",
 };
 
 export default function Logo({

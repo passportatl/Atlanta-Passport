@@ -97,10 +97,11 @@ export default function Navbar() {
         <Link
           href="/"
           aria-label="Atlanta Passport home"
-          className="hidden md:flex justify-center items-center z-50"
+          className="hidden md:flex justify-center items-start z-50"
         >
           <Logo
             asLink={false}
+            variant="hero"
             className="relative z-10 drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)]"
           />
         </Link>
