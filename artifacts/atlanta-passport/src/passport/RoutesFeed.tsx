@@ -116,7 +116,35 @@ export default function RoutesFeed({
                       : "hover:-translate-y-0.5"
                   }`}
                 >
-                  {/* Selectors — outside the toggle button so they don't trace the route */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onSelectRoute(isSelected ? undefined : route.id)
+                    }
+                    aria-pressed={isSelected}
+                    aria-label={
+                      isSelected
+                        ? `Hide ${route.name} on the map`
+                        : `Show ${route.name} on the map`
+                    }
+                    className={`relative block w-full text-left border-b-[3px] border-foreground p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-inset ${headerTint}`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-display text-[10px] tracking-[0.14em] uppercase">
+                        {route.area}
+                      </span>
+                      {isSelected && (
+                        <span className="inline-flex items-center gap-1 bg-foreground text-brand-yellow text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded">
+                          <Check className="w-3 h-3" /> On map
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-serif text-xl font-bold leading-tight mt-1">
+                      {route.name}
+                    </h3>
+                  </button>
+
+                  {/* Selectors — below the color line, outside the toggle buttons so they don't trace the route */}
                   <div className="flex gap-2 border-b-[3px] border-foreground bg-background p-2">
                     <RouteSelect
                       value={options.start}
@@ -149,27 +177,8 @@ export default function RoutesFeed({
                         ? `Hide ${route.name} on the map`
                         : `Show ${route.name} on the map`
                     }
-                    className="flex flex-1 flex-col text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-inset"
+                    className="flex flex-1 flex-col text-left p-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-inset"
                   >
-                    <div
-                      className={`relative border-b-[3px] border-foreground p-3 ${headerTint}`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-display text-[10px] tracking-[0.14em] uppercase">
-                          {route.area}
-                        </span>
-                        {isSelected && (
-                          <span className="inline-flex items-center gap-1 bg-foreground text-brand-yellow text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded">
-                            <Check className="w-3 h-3" /> On map
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-serif text-xl font-bold leading-tight mt-1">
-                        {route.name}
-                      </h3>
-                    </div>
-
-                    <div className="p-3 flex flex-col flex-grow">
                       <div className="flex flex-wrap gap-3 text-[11px] font-black uppercase tracking-wider opacity-80 mb-2">
                         <span className="flex items-center gap-1">
                           <MapPin className="w-3 h-3" /> {resolved.stopCount}{" "}
@@ -220,7 +229,6 @@ export default function RoutesFeed({
                       <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-3 uppercase">
                         {isSelected ? "★ Tap to clear" : "★ Tap to trace on map"}
                       </span>
-                    </div>
                   </button>
                 </div>
               </motion.div>
