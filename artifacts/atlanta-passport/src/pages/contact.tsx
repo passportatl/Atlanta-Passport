@@ -31,6 +31,16 @@ export default function Contact() {
           <p className="text-lg text-muted-foreground mt-4">
             Questions, ideas, or a spot we should add? Send us a note — we'd love to hear from you.
           </p>
+          <p className="text-lg text-muted-foreground mt-6">
+            If you're interested in having your event or venue featured, or advertising with us, please visit our partners page.
+          </p>
+          <Link
+            href="/partners"
+            className="button-pop button-pop-yellow inline-flex items-center gap-2 mt-6"
+          >
+            Partners Page
+            <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+          </Link>
         </div>
 
         <ContactForm doneHref="/" doneLabel="Back to home" />
