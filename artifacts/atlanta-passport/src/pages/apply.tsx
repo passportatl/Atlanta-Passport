@@ -26,7 +26,13 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { applicationCategories, neighborhoods } from "@/data/sample-data";
+import Marquee from "@/components/Marquee";
 import { cn } from "@/lib/utils";
+
+const marqueeKeys = [
+  "real_atl", "local_picks", "no_tourist_traps",
+  "food_drinks_routes", "collect_stamps", "unlock_perks", "summer_2026",
+];
 
 const formSchema = z.object({
   businessName: z.string().min(2, "Business name must be at least 2 characters."),
@@ -161,8 +167,11 @@ export default function Apply() {
   }
 
   return (
-    <div className="w-full py-16 px-4 bg-paper">
-      <div className="container mx-auto max-w-3xl">
+    <div className="w-full bg-paper">
+      {/* Marquee */}
+      <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
+
+      <div className="container mx-auto max-w-3xl py-16 px-4">
         <div className="mb-12 text-center">
           <div className="inline-block badge-sticker bg-brand-yellow text-brand-yellow-foreground -rotate-1 mb-6">
             {t("apply_page.kicker")}

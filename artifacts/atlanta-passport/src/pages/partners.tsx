@@ -2,6 +2,12 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { BookOpen, Smartphone, QrCode, Map, Gift, BarChart, Check, Route } from "lucide-react";
 import { motion } from "framer-motion";
+import Marquee from "@/components/Marquee";
+
+const marqueeKeys = [
+  "real_atl", "local_picks", "no_tourist_traps",
+  "food_drinks_routes", "collect_stamps", "unlock_perks", "summer_2026",
+];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -20,6 +26,9 @@ export default function Partners() {
   const { t } = useTranslation();
   return (
     <div className="w-full">
+      {/* Marquee */}
+      <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
+
       {/* Hero Section */}
       <section className="relative pt-20 pb-24 overflow-hidden bg-background">
         <div className="container mx-auto px-4">
