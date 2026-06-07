@@ -45,7 +45,16 @@ export default function ExploreContent({
   const { t } = useTranslation();
 
   const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
-  const neighborhoodPalette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
+  // Maps each neighborhood's brand color token to a chip background so the Area
+  // filter buttons match their semi-transparent overlay on the map.
+  const neighborhoodColorClass: Record<string, string> = {
+    red: "bg-brand-red text-white",
+    sky: "bg-brand-sky text-foreground",
+    yellow: "bg-brand-yellow text-brand-yellow-foreground",
+    lime: "bg-brand-lime text-foreground",
+    orange: "bg-brand-orange text-white",
+    navy: "bg-brand-navy text-white",
+  };
   const chipBase = "px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
 
@@ -214,7 +223,7 @@ export default function ExploreContent({
               >
                 {t("explore_page.all")}
               </button>
-              {neighborhoods.map((n, i) => {
+              {neighborhoods.map((n) => {
                 const active = activeNeighborhoods.includes(n.name);
                 return (
                   <button
@@ -222,9 +231,10 @@ export default function ExploreContent({
                     onClick={() => toggleNeighborhood(n.name)}
                     className={cn(
                       chipBase,
+                      neighborhoodColorClass[n.color] ?? "bg-background text-foreground",
                       active
-                        ? `${neighborhoodPalette[i % neighborhoodPalette.length]} shadow-pop-sm -translate-y-0.5`
-                        : chipIdle,
+                        ? "shadow-pop-sm -translate-y-0.5"
+                        : "opacity-80 hover:opacity-100 hover:-translate-y-0.5 hover:shadow-pop-sm",
                     )}
                   >
                     {n.name}
