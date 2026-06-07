@@ -321,6 +321,10 @@ export const neighborhoods = [
   { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky", hex: "#1D3461" },
   { id: "poncey", name: "Virginia Highlands", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow", hex: "#A0522D" },
   { id: "glenwood-park", name: "Glenwood Park", description: "Walkable square, Beltline Southeast Trail, patios and pubs.", color: "lime", hex: "#C2D500" },
+  { id: "buckhead", name: "Buckhead", description: "Upscale dining, galleries, nightlife, and leafy streets.", color: "navy", hex: "#475569" },
+  { id: "inman-park", name: "Inman Park", description: "Victorian homes, festival energy, patios, and Beltline access.", color: "red", hex: "#DB2777" },
+  { id: "piedmont-heights", name: "Piedmont Heights", description: "Tucked-away eats, creek trails, and easy park access.", color: "orange", hex: "#CA8A04" },
+  { id: "cabbagetown", name: "Cabbagetown", description: "Mill-village cottages, murals, and Krog Street energy.", color: "lime", hex: "#15803D" },
 ];
 
 // Single source of truth: each neighborhood's display color (name → hex). Used by

@@ -474,6 +474,46 @@ const NEIGHBORHOOD_AREAS: {
       { lat: 33.7335, lng: -84.356 },
     ],
   },
+  {
+    name: "Buckhead",
+    color: "#475569",
+    path: [
+      { lat: 33.862, lng: -84.4 },
+      { lat: 33.864, lng: -84.358 },
+      { lat: 33.832, lng: -84.358 },
+      { lat: 33.83, lng: -84.4 },
+    ],
+  },
+  {
+    name: "Inman Park",
+    color: "#DB2777",
+    path: [
+      { lat: 33.7665, lng: -84.362 },
+      { lat: 33.767, lng: -84.348 },
+      { lat: 33.7575, lng: -84.348 },
+      { lat: 33.757, lng: -84.362 },
+    ],
+  },
+  {
+    name: "Piedmont Heights",
+    color: "#CA8A04",
+    path: [
+      { lat: 33.814, lng: -84.378 },
+      { lat: 33.8145, lng: -84.362 },
+      { lat: 33.8, lng: -84.362 },
+      { lat: 33.7995, lng: -84.378 },
+    ],
+  },
+  {
+    name: "Cabbagetown",
+    color: "#15803D",
+    path: [
+      { lat: 33.755, lng: -84.367 },
+      { lat: 33.7555, lng: -84.356 },
+      { lat: 33.7455, lng: -84.356 },
+      { lat: 33.745, lng: -84.367 },
+    ],
+  },
 ];
 
 // Returns a copy of `path` shifted perpendicular to its own direction by half a
