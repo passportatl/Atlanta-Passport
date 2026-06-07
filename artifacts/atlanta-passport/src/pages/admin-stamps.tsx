@@ -4,7 +4,7 @@ import {
   getListBusinessesQueryKey,
   type Business,
 } from "@workspace/api-client-react";
-import { Copy, ExternalLink, Lock, QrCode } from "lucide-react";
+import { Copy, ExternalLink, Lock, QrCode, Star } from "lucide-react";
 import { NEIGHBORHOODS } from "@/passport/data";
 import AdminNav from "@/components/AdminNav";
 
@@ -136,9 +136,21 @@ export default function AdminStamps() {
   const businesses = (businessesRaw as Business[] | undefined) ?? [];
   const [copied, setCopied] = useState<string | null>(null);
 
+  const locationBusinesses = useMemo(
+    () => businesses.filter((b) => b.category !== "events"),
+    [businesses],
+  );
+  const eventBusinesses = useMemo(
+    () =>
+      businesses
+        .filter((b) => b.category === "events")
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [businesses],
+  );
+
   const grouped = useMemo(() => {
     const buckets: Record<string, Business[]> = {};
-    businesses.forEach((b) => {
+    locationBusinesses.forEach((b) => {
       (buckets[b.neighborhood] ??= []).push(b);
     });
     Object.values(buckets).forEach((list) => list.sort((a, b) => a.name.localeCompare(b.name)));
@@ -151,7 +163,7 @@ export default function AdminStamps() {
       .sort()
       .map((n) => ({ neighborhood: n, list: buckets[n]! }));
     return [...ordered, ...extras];
-  }, [businesses]);
+  }, [locationBusinesses]);
 
   const copy = async (slug: string, url: string) => {
     try {
@@ -174,7 +186,7 @@ export default function AdminStamps() {
             Stamp QR Codes
           </h1>
           <p className="text-sm text-foreground/70 mt-1">
-            {businesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
+            {locationBusinesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
           </p>
         </div>
 
@@ -198,6 +210,33 @@ export default function AdminStamps() {
             </div>
           </section>
         ))}
+
+        {eventBusinesses.length > 0 && (
+          <section className="mb-8">
+            <div className="border-t-2 border-foreground/15 pt-6">
+              <div className="flex items-baseline justify-between mb-1">
+                <h2
+                  className="text-xl font-black inline-flex items-center gap-2"
+                  style={{ fontFamily: "Bungee, sans-serif" }}
+                >
+                  <Star className="w-5 h-5 fill-[hsl(var(--brand-yellow))]" />
+                  Featured Events — Bonus Stamps
+                </h2>
+                <div className="text-[11px] font-black uppercase tracking-wider opacity-60">
+                  {eventBusinesses.length} event{eventBusinesses.length === 1 ? "" : "s"}
+                </div>
+              </div>
+              <p className="text-sm text-foreground/70 mb-3">
+                Scanned at the event, these add a bonus stamp to the visitor's passport and count toward their rewards total.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {eventBusinesses.map((b) => (
+                  <BusinessCard key={b.id} business={b} copied={copied} onCopy={copy} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {businesses.length === 0 && (
           <div className="card-pop bg-white p-8 text-center">

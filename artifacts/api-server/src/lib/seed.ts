@@ -133,6 +133,47 @@ const SEED_BUSINESSES: InsertBusiness[] = [
   { slug: "that-art-gallery-we-went-to-last-week", name: "That Art Gallery We Went To Last Week", category: "arts", neighborhood: "Outliers", stampColor: "black-lime", icon: "palette" },
 ].map(build);
 
+// Featured events — scannable BONUS stamps. These are stored as businesses in
+// the "Featured Events" pseudo-neighborhood with category "events" so they reuse
+// the existing /stamp/:slug collection flow and count toward the rewards total,
+// while staying off the explore map (the map renders the static sample dataset,
+// not the DB businesses). The admin QR page lists them in their own section.
+interface EventInput {
+  slug: string;
+  name: string;
+  icon: string;
+  date: string;
+  venue: string;
+  address: string;
+}
+
+function buildEvent(e: EventInput): InsertBusiness {
+  return {
+    slug: e.slug,
+    name: e.name,
+    category: "events",
+    neighborhood: "Featured Events",
+    description: `Bonus stamp — scan at ${e.venue} during ${e.name} (${e.date}).`,
+    address: e.address,
+    image: null,
+    contactName: null,
+    stampName: e.name,
+    stampColor: "orange",
+    icon: e.icon,
+    isActive: true,
+  };
+}
+
+const SEED_EVENTS: InsertBusiness[] = [
+  { slug: "event-battle-of-the-bands", name: "Battle of the Bands", icon: "music", date: "June 13, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
+  { slug: "event-video-game-prelims", name: "Video Game Prelims + Soccer Tourney", icon: "gamepad", date: "June 16, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
+  { slug: "event-hot-sauce-market", name: "Hot Sauce Market", icon: "flame", date: "June 20, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
+  { slug: "event-post-match-atlantucky", name: "Post-Match Vibes at Atlantucky", icon: "wine", date: "June 21, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
+  { slug: "event-soccer-gaming-finals", name: "Soccer Video Game Tournament + Wing Eating Comp", icon: "gamepad", date: "June 22–23, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
+].map(buildEvent);
+
+const SEED_ALL: InsertBusiness[] = [...SEED_BUSINESSES, ...SEED_EVENTS];
+
 export async function seedBusinesses(): Promise<void> {
   try {
     // Retire v1 demo businesses non-destructively: just deactivate them so
@@ -147,11 +188,16 @@ export async function seedBusinesses(): Promise<void> {
 
     await db
       .insert(businessesTable)
-      .values(SEED_BUSINESSES)
+      .values(SEED_ALL)
       .onConflictDoNothing({ target: businessesTable.slug });
 
     logger.info(
-      { count: SEED_BUSINESSES.length, retired: RETIRED_SLUGS.length },
+      {
+        count: SEED_ALL.length,
+        businesses: SEED_BUSINESSES.length,
+        events: SEED_EVENTS.length,
+        retired: RETIRED_SLUGS.length,
+      },
       "Seeded businesses (idempotent)",
     );
   } catch (err) {
