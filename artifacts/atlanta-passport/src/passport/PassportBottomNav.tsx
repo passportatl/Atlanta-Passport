@@ -106,7 +106,10 @@ export function PassportBottomNav() {
         )}
 
         <div className="relative max-w-3xl mx-auto flex items-center gap-1 px-2">
-          <LanguageSwitcher align="start" />
+          <LanguageSwitcher
+            align="start"
+            className="w-16 justify-center md:w-auto md:justify-start"
+          />
 
           {/* Mobile: logo centered against the whole bar (not the flex region) */}
           <Link
@@ -148,7 +151,7 @@ export function PassportBottomNav() {
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            className="md:hidden h-10 w-10 shrink-0 inline-flex items-center justify-center border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"
+            className="md:hidden h-10 w-16 shrink-0 inline-flex items-center justify-center border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"
           >
             {menuOpen ? <X className="w-5 h-5" strokeWidth={2.5} /> : <Menu className="w-5 h-5" strokeWidth={2.5} />}
           </button>
