@@ -24,7 +24,7 @@ function renderTab(tab: Tab, location: string) {
     <Link
       key={tab.href}
       href={tab.href}
-      className={`flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider ${
+      className={`group flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider ${
         active
           ? "text-[#f9c629]"
           : "text-[#f9c629]/70 hover:text-[#f9c629]"
@@ -32,7 +32,13 @@ function renderTab(tab: Tab, location: string) {
       style={{ fontFamily: "Bungee, sans-serif" }}
     >
       <Icon className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
-      {tab.label.toUpperCase()}
+      <span
+        className={`transition-opacity duration-150 ${
+          active ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
+        }`}
+      >
+        {tab.label.toUpperCase()}
+      </span>
     </Link>
   );
 }
