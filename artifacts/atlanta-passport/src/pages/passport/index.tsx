@@ -12,7 +12,7 @@ import { basePath } from "@/auth/clerk";
 import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { REWARDS, NEIGHBORHOODS, NEIGHBORHOOD_BY_NAME, neighborhoodStatus } from "@/passport/data";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, Lock } from "lucide-react";
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
@@ -56,11 +56,12 @@ export default function PassportHome() {
   const neighborhoods = new Set(stamps.map((s) => s.neighborhood));
   const collectedSlugs = new Set(stamps.map((s) => s.businessSlug));
 
-  // Next reward = lowest total threshold not yet hit
-  const nextReward = [...REWARDS]
+  // All total-stamp reward levels, lowest threshold first
+  const totalRewards = [...REWARDS]
     .filter((r) => r.type === "total")
-    .sort((a, b) => a.threshold - b.threshold)
-    .find((r) => total < r.threshold);
+    .sort((a, b) => a.threshold - b.threshold);
+  // Next reward = lowest total threshold not yet hit
+  const nextReward = totalRewards.find((r) => total < r.threshold);
   const nextThreshold = nextReward?.threshold ?? 20;
   const progress = Math.min(100, Math.round((total / nextThreshold) * 100));
 
@@ -141,6 +142,42 @@ export default function PassportHome() {
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${progress}%` }} />
           </div>
+
+          <ul className="mt-4 space-y-2.5 border-t-2 border-foreground/10 pt-3">
+            {totalRewards.map((r) => {
+              const earned = total >= r.threshold;
+              const isNext = nextReward.id === r.id;
+              return (
+                <li key={r.id} className="flex items-start gap-2.5">
+                  <span
+                    className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-foreground text-[11px] font-black ${
+                      earned
+                        ? "bg-[hsl(var(--brand-lime))] text-foreground"
+                        : isNext
+                          ? "bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))]"
+                          : "bg-white text-foreground/60"
+                    }`}
+                    style={{ fontFamily: "Bungee, sans-serif" }}
+                  >
+                    {r.threshold}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className={`font-black text-sm leading-tight ${earned ? "" : "text-foreground/80"}`}>
+                        {r.name}
+                      </span>
+                      {earned ? (
+                        <Check className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--brand-red))]" />
+                      ) : (
+                        <Lock className="h-3 w-3 shrink-0 opacity-40" />
+                      )}
+                    </div>
+                    <p className="text-xs text-foreground/60 leading-snug mt-0.5">{r.description}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       )}
 
