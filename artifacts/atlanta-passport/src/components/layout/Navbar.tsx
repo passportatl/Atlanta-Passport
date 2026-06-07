@@ -109,9 +109,9 @@ export default function Navbar() {
         {/* Desktop Nav — Passport + socials (right of the centered logo) */}
         <nav className="hidden md:flex items-center gap-1">
           <Link
-            href="/explore"
+            href={hasPassport ? "/passport" : "/sign-in"}
             className={cn(
-              navItemClass(location.startsWith("/passport") || location.startsWith("/explore")),
+              navItemClass(location.startsWith("/passport") || location.startsWith("/sign-in")),
               "inline-flex items-center gap-1.5",
             )}
             data-testid="link-nav-passport"
@@ -127,7 +127,7 @@ export default function Navbar() {
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-1.5">
           <Link
-            href="/explore"
+            href={hasPassport ? "/passport" : "/sign-in"}
             aria-label={passportShort}
             title={passportShort}
             className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
@@ -162,10 +162,10 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <Link
-                  href="/explore"
+                  href={hasPassport ? "/passport" : "/sign-in"}
                   className={cn(
                     "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                    location.startsWith("/passport") || location.startsWith("/explore") ? "text-foreground" : "text-foreground/60",
+                    location.startsWith("/passport") || location.startsWith("/sign-in") ? "text-foreground" : "text-foreground/60",
                   )}
                   data-testid="link-mobile-menu-passport"
                 >
