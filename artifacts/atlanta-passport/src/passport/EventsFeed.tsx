@@ -5,7 +5,7 @@ import { MapPin, Calendar, Clock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses } from "@/data/sample-data";
 
-const GROUP_SIZE = 3;
+const GROUP_SIZE = 2;
 const AUTOPLAY_MS = 9000;
 
 const MONTHS = [
