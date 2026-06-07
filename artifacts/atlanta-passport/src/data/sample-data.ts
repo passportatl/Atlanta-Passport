@@ -430,7 +430,7 @@ export const beltlineStops = [
 export const mapRoutes = [
   {
     id: "eastside-beltline-ride",
-    name: "Eastside Beltline Ride",
+    name: "Atlanta Trap Museum Route",
     area: "East Atlanta → Grant Park",
     miles: "3.1 mi",
     pace: "Bike Friendly",
