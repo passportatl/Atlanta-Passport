@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { TrainFront, Spline, Layers } from "lucide-react";
+import { TrainFront, Spline, Layers, MapPin } from "lucide-react";
 import {
   APIProvider,
   Map,
@@ -825,6 +825,7 @@ export default function BusinessMap({
   const [showMarta, setShowMarta] = useState(true);
   const [showBeltline, setShowBeltline] = useState(true);
   const [showAreas, setShowAreas] = useState(true);
+  const [showPins, setShowPins] = useState(true);
 
   if (!API_KEY) {
     return (
@@ -869,7 +870,9 @@ export default function BusinessMap({
             {showMarta && <MartaStationMarkers />}
             {showBeltline && <BeltlineLoop />}
 
-            <BusinessMarkers businesses={businesses} onSelect={onSelect} />
+            {showPins && (
+              <BusinessMarkers businesses={businesses} onSelect={onSelect} />
+            )}
 
             {selected && (
               <InfoWindow
@@ -919,6 +922,12 @@ export default function BusinessMap({
           onClick={() => setShowAreas((v) => !v)}
           icon={<Layers className="h-3.5 w-3.5" />}
           label="Areas"
+        />
+        <MapLayerToggle
+          active={showPins}
+          onClick={() => setShowPins((v) => !v)}
+          icon={<MapPin className="h-3.5 w-3.5" />}
+          label="Pins"
         />
       </div>
     </div>
