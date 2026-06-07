@@ -358,7 +358,7 @@ export const applicationCategories = [
 ];
 
 export const categories = [
-  "Food & Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences"
+  "Food & Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences", "Public Art", "Parks", "Landmarks"
 ];
 
 export const exploreCategories = [
