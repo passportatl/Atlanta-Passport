@@ -57,7 +57,7 @@ export default function Partners() {
       </section>
 
       {/* Choose Your Package */}
-      <section className="py-24">
+      <section className="py-24 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-5">
@@ -189,7 +189,7 @@ export default function Partners() {
       </section>
 
       {/* Why businesses are joining */}
-      <section className="py-24 bg-muted/50">
+      <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="section-kicker mb-5">Why businesses are joining</div>
@@ -217,7 +217,7 @@ export default function Partners() {
       </section>
 
       {/* How It Works */}
-      <section className="py-24">
+      <section className="py-24 bg-muted/50">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-primary mb-16">{t("partners_page.process_title")}</h2>
           <div className="flex flex-col md:flex-row justify-between items-center gap-8 relative">
