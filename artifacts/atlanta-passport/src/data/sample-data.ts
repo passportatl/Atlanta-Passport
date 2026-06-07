@@ -463,7 +463,7 @@ export const mapRoutes = [
   },
   {
     id: "grant-park-memorial",
-    name: "Grant Park & Memorial",
+    name: "Veresanos Route",
     area: "Grant Park → Glenwood Park",
     miles: "1.4 mi",
     pace: "Walkable",
