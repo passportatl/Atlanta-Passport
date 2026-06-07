@@ -2,6 +2,7 @@ import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const applicationsTable = pgTable("applications", {
   id: uuid("id").primaryKey().defaultRandom(),
+  submissionType: text("submission_type").notNull().default("business"),
   businessName: text("business_name").notNull(),
   contactName: text("contact_name").notNull(),
   email: text("email").notNull(),
@@ -22,6 +23,11 @@ export const applicationsTable = pgTable("applications", {
   subtitle: text("subtitle"),
   about: text("about"),
   businessHours: text("business_hours"),
+  eventDate: text("event_date"),
+  eventTime: text("event_time"),
+  eventVenue: text("event_venue"),
+  eventCost: text("event_cost"),
+  eventUrl: text("event_url"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

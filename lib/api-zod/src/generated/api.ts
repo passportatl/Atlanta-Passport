@@ -158,6 +158,7 @@ export const submitApplicationBodyAddressMin = 5;
 export const submitApplicationBodyOfferMin = 5;
 
 export const SubmitApplicationBody = zod.object({
+  submissionType: zod.enum(["business", "event"]),
   businessName: zod.string().min(submitApplicationBodyBusinessNameMin),
   contactName: zod.string().min(submitApplicationBodyContactNameMin),
   email: zod.string().email(),
@@ -167,7 +168,9 @@ export const SubmitApplicationBody = zod.object({
   category: zod.array(zod.string()).min(1),
   neighborhood: zod.string().min(1),
   address: zod.string().min(submitApplicationBodyAddressMin),
-  package: zod.enum(["starter", "featured", "premier", "route", "custom"]),
+  package: zod
+    .enum(["starter", "featured", "premier", "route", "custom", "event"])
+    .optional(),
   routeId: zod.string().optional(),
   offer: zod.string().min(submitApplicationBodyOfferMin),
   prizeSponsorship: zod.string().optional(),
@@ -178,6 +181,11 @@ export const SubmitApplicationBody = zod.object({
   subtitle: zod.string().optional(),
   about: zod.string().optional(),
   businessHours: zod.string().optional(),
+  eventDate: zod.string().optional(),
+  eventTime: zod.string().optional(),
+  eventVenue: zod.string().optional(),
+  eventCost: zod.string().optional(),
+  eventUrl: zod.string().optional(),
 });
 
 export const SubmitApplicationResponse = zod.object({
@@ -190,6 +198,7 @@ export const SubmitApplicationResponse = zod.object({
  */
 export const ListApplicationsResponseItem = zod.object({
   id: zod.string(),
+  submissionType: zod.string(),
   businessName: zod.string(),
   contactName: zod.string(),
   email: zod.string(),
@@ -210,6 +219,11 @@ export const ListApplicationsResponseItem = zod.object({
   subtitle: zod.string().nullish(),
   about: zod.string().nullish(),
   businessHours: zod.string().nullish(),
+  eventDate: zod.string().nullish(),
+  eventTime: zod.string().nullish(),
+  eventVenue: zod.string().nullish(),
+  eventCost: zod.string().nullish(),
+  eventUrl: zod.string().nullish(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),
 });

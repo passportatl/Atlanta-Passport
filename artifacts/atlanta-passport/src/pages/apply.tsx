@@ -34,35 +34,59 @@ const marqueeKeys = [
   "food_drinks_routes", "collect_stamps", "unlock_perks", "summer_2026",
 ];
 
-const formSchema = z.object({
-  businessName: z.string().min(2, "Business name must be at least 2 characters."),
-  contactName: z.string().min(2, "Contact name must be at least 2 characters."),
-  email: z.string().email("Please enter a valid email address."),
-  phone: z.string().min(10, "Please enter a valid phone number."),
-  website: z
-    .string()
-    .optional()
-    .transform((v) => (v ?? "").trim())
-    .refine(
-      (v) => v === "" || /^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(v.replace(/^https?:\/\//i, "")),
-      "Please enter a website like yoursite.com"
-    ),
-  instagram: z.string().optional(),
-  category: z.array(z.string()).min(1, "Please select at least one category."),
-  neighborhood: z.string().min(1, "Please select a neighborhood."),
-  address: z.string().min(5, "Please enter your address."),
-  package: z.enum(["starter", "featured", "premier", "route", "custom"], {
-    required_error: "Please select a package.",
-  }),
-  offer: z.string().min(10, "Please describe your offer or experience."),
-  prizeSponsorship: z.string().optional(),
-  nearMarta: z.boolean().optional(),
-  nearBeltline: z.boolean().optional(),
-  notes: z.string().optional(),
-  subtitle: z.string().optional(),
-  about: z.string().optional(),
-  businessHours: z.string().optional(),
-});
+const formSchema = z
+  .object({
+    submissionType: z.enum(["business", "event"]),
+    businessName: z.string().optional().default(""),
+    contactName: z.string().min(2, "Contact name must be at least 2 characters."),
+    email: z.string().email("Please enter a valid email address."),
+    phone: z.string().min(10, "Please enter a valid phone number."),
+    website: z
+      .string()
+      .optional()
+      .transform((v) => (v ?? "").trim())
+      .refine(
+        (v) => v === "" || /^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(v.replace(/^https?:\/\//i, "")),
+        "Please enter a website like yoursite.com"
+      ),
+    instagram: z.string().optional(),
+    category: z.array(z.string()).min(1, "Please select at least one category."),
+    neighborhood: z.string().min(1, "Please select a neighborhood."),
+    address: z.string().min(5, "Please enter the address."),
+    package: z.enum(["starter", "featured", "premier", "route", "custom", "event"]).optional(),
+    offer: z.string().optional().default(""),
+    prizeSponsorship: z.string().optional(),
+    nearMarta: z.boolean().optional(),
+    nearBeltline: z.boolean().optional(),
+    notes: z.string().optional(),
+    subtitle: z.string().optional(),
+    about: z.string().optional(),
+    businessHours: z.string().optional(),
+    eventDate: z.string().optional().default(""),
+    eventTime: z.string().optional(),
+    eventVenue: z.string().optional().default(""),
+    eventCost: z.string().optional(),
+    eventUrl: z.string().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.submissionType === "event") {
+      if (!val.businessName || val.businessName.trim().length < 2)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["businessName"], message: "Event name must be at least 2 characters." });
+      if (!val.eventDate || val.eventDate.trim().length < 1)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventDate"], message: "Please enter the event date." });
+      if (!val.eventVenue || val.eventVenue.trim().length < 2)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventVenue"], message: "Please enter the venue." });
+      if (!val.offer || val.offer.trim().length < 10)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["offer"], message: "Please describe your event." });
+    } else {
+      if (!val.businessName || val.businessName.trim().length < 2)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["businessName"], message: "Business name must be at least 2 characters." });
+      if (!val.package)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["package"], message: "Please select a package." });
+      if (!val.offer || val.offer.trim().length < 10)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["offer"], message: "Please describe your offer or experience." });
+    }
+  });
 
 type PackageOption = {
   value: "starter" | "featured" | "premier" | "route" | "custom";
@@ -88,6 +112,7 @@ export default function Apply() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      submissionType: "business",
       businessName: "",
       contactName: "",
       email: "",
@@ -105,6 +130,11 @@ export default function Apply() {
       subtitle: "",
       about: "",
       businessHours: "",
+      eventDate: "",
+      eventTime: "",
+      eventVenue: "",
+      eventCost: "",
+      eventUrl: "",
     },
   });
 
@@ -120,8 +150,12 @@ export default function Apply() {
   const submitMutation = useSubmitApplication();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const payload =
+      values.submissionType === "event"
+        ? { ...values, package: "event" as const }
+        : values;
     submitMutation.mutate(
-      { data: values },
+      { data: payload },
       {
         onSuccess: () => setSubmitted(true),
       },
@@ -130,11 +164,17 @@ export default function Apply() {
 
   // Live progress: count of required fields with valid (non-empty) values
   const watched = form.watch();
-  const requiredFields: Array<keyof z.infer<typeof formSchema>> = [
-    "businessName", "category", "neighborhood", "address",
-    "contactName", "phone", "email",
-    "package", "offer",
-  ];
+  const isEvent = watched.submissionType === "event";
+  const requiredFields: Array<keyof z.infer<typeof formSchema>> = isEvent
+    ? [
+        "businessName", "category", "eventDate", "eventVenue", "neighborhood",
+        "address", "contactName", "phone", "email", "offer",
+      ]
+    : [
+        "businessName", "category", "neighborhood", "address",
+        "contactName", "phone", "email",
+        "package", "offer",
+      ];
   const completed = requiredFields.filter((k) => {
     const v = watched[k];
     if (Array.isArray(v)) return v.length > 0;
@@ -203,18 +243,43 @@ export default function Apply() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
 
+              <FormField
+                control={form.control}
+                name="submissionType"
+                render={({ field }) => (
+                  <FormItem className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-5 shadow-pop-sm">
+                    <FormLabel className="text-base">What are you submitting? *</FormLabel>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Pick one — the form updates with the right questions.
+                    </p>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="business">A business / partner listing</SelectItem>
+                        <SelectItem value="event">An event</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="space-y-6">
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
-                  01 · {t("apply_page.section_about_title")}
+                  01 · {isEvent ? "Event details" : t("apply_page.section_about_title")}
                 </h3>
                 <FormField
                   control={form.control}
                   name="businessName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("apply_page.field_name")} *</FormLabel>
+                      <FormLabel>{isEvent ? "Event name" : t("apply_page.field_name")} *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Wheelhaus Bikes" {...field} />
+                        <Input placeholder={isEvent ? "Castleberry Hill Art Stroll" : "Wheelhaus Bikes"} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -226,7 +291,7 @@ export default function Apply() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {t("apply_page.field_category")} *{" "}
+                        {isEvent ? "Event type" : t("apply_page.field_category")} *{" "}
                         <span className="font-normal normal-case text-muted-foreground">— check all that apply</span>
                       </FormLabel>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
@@ -327,6 +392,82 @@ export default function Apply() {
                   />
                 </div>
 
+                {isEvent && (
+                  <>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="eventDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Date *</FormLabel>
+                            <FormControl>
+                              <Input type="date" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="eventTime"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Time ({t("apply_page.optional")})</FormLabel>
+                            <FormControl>
+                              <Input type="time" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={form.control}
+                      name="eventVenue"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Venue *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Ponce City Market, Mercedes-Benz Stadium" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="eventUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tickets / info link ({t("apply_page.optional")})</FormLabel>
+                            <FormControl>
+                              <Input placeholder="https://…" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="eventCost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cost ({t("apply_page.optional")})</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Free · $15 · $20–$40" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {!isEvent && (
+                <>
                 <div className="grid md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -430,6 +571,8 @@ export default function Apply() {
                     </FormItem>
                   )}
                 />
+                </>
+                )}
               </div>
 
               <div className="space-y-6">
@@ -494,6 +637,7 @@ export default function Apply() {
                 </div>
               </div>
 
+              {!isEvent && (
               <div className="space-y-6">
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
                   03 · {t("apply_page.section_package_title")}
@@ -564,17 +708,18 @@ export default function Apply() {
                 />
 
               </div>
+              )}
 
               <div className="space-y-6">
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
-                  04 · {t("apply_page.section_offer_title")}
+                  {isEvent ? "03" : "04"} · {isEvent ? "Event description" : t("apply_page.section_offer_title")}
                 </h3>
                 <FormField
                   control={form.control}
                   name="offer"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("apply_page.field_offer_desc")} *</FormLabel>
+                      <FormLabel>{isEvent ? "Describe your event" : t("apply_page.field_offer_desc")} *</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder={t("apply_page.field_offer_placeholder")}
@@ -587,6 +732,7 @@ export default function Apply() {
                   )}
                 />
 
+                {!isEvent && (
                 <FormField
                   control={form.control}
                   name="prizeSponsorship"
@@ -607,6 +753,7 @@ export default function Apply() {
                     </FormItem>
                   )}
                 />
+                )}
 
                 <FormField
                   control={form.control}

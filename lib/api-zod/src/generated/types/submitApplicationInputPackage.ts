@@ -15,4 +15,5 @@ export const SubmitApplicationInputPackage = {
   premier: "premier",
   route: "route",
   custom: "custom",
+  event: "event",
 } as const;

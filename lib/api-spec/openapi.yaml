@@ -352,6 +352,9 @@ components:
     SubmitApplicationInput:
       type: object
       properties:
+        submissionType:
+          type: string
+          enum: [business, event]
         businessName: { type: string, minLength: 2 }
         contactName: { type: string, minLength: 2 }
         email: { type: string, format: email }
@@ -366,7 +369,7 @@ components:
         address: { type: string, minLength: 5 }
         package:
           type: string
-          enum: [starter, featured, premier, route, custom]
+          enum: [starter, featured, premier, route, custom, event]
         routeId: { type: string }
         offer: { type: string, minLength: 5 }
         prizeSponsorship: { type: string }
@@ -377,7 +380,13 @@ components:
         subtitle: { type: string }
         about: { type: string }
         businessHours: { type: string }
+        eventDate: { type: string }
+        eventTime: { type: string }
+        eventVenue: { type: string }
+        eventCost: { type: string }
+        eventUrl: { type: string }
       required:
+        - submissionType
         - businessName
         - contactName
         - email
@@ -385,13 +394,13 @@ components:
         - category
         - neighborhood
         - address
-        - package
         - offer
 
     Application:
       type: object
       properties:
         id: { type: string }
+        submissionType: { type: string }
         businessName: { type: string }
         contactName: { type: string }
         email: { type: string }
@@ -414,10 +423,16 @@ components:
         subtitle: { type: string, nullable: true }
         about: { type: string, nullable: true }
         businessHours: { type: string, nullable: true }
+        eventDate: { type: string, nullable: true }
+        eventTime: { type: string, nullable: true }
+        eventVenue: { type: string, nullable: true }
+        eventCost: { type: string, nullable: true }
+        eventUrl: { type: string, nullable: true }
         emailDelivered: { type: string }
         createdAt: { type: string, format: date-time }
       required:
         - id
+        - submissionType
         - businessName
         - contactName
         - email

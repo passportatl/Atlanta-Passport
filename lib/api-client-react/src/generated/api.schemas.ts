@@ -64,6 +64,14 @@ export interface StampCollection {
   alreadyCollected: boolean;
 }
 
+export type SubmitApplicationInputSubmissionType =
+  (typeof SubmitApplicationInputSubmissionType)[keyof typeof SubmitApplicationInputSubmissionType];
+
+export const SubmitApplicationInputSubmissionType = {
+  business: "business",
+  event: "event",
+} as const;
+
 export type SubmitApplicationInputPackage =
   (typeof SubmitApplicationInputPackage)[keyof typeof SubmitApplicationInputPackage];
 
@@ -73,9 +81,11 @@ export const SubmitApplicationInputPackage = {
   premier: "premier",
   route: "route",
   custom: "custom",
+  event: "event",
 } as const;
 
 export interface SubmitApplicationInput {
+  submissionType: SubmitApplicationInputSubmissionType;
   /** @minLength 2 */
   businessName: string;
   /** @minLength 2 */
@@ -91,7 +101,7 @@ export interface SubmitApplicationInput {
   neighborhood: string;
   /** @minLength 5 */
   address: string;
-  package: SubmitApplicationInputPackage;
+  package?: SubmitApplicationInputPackage;
   routeId?: string;
   /** @minLength 5 */
   offer: string;
@@ -103,10 +113,16 @@ export interface SubmitApplicationInput {
   subtitle?: string;
   about?: string;
   businessHours?: string;
+  eventDate?: string;
+  eventTime?: string;
+  eventVenue?: string;
+  eventCost?: string;
+  eventUrl?: string;
 }
 
 export interface Application {
   id: string;
+  submissionType: string;
   businessName: string;
   contactName: string;
   email: string;
@@ -127,6 +143,11 @@ export interface Application {
   subtitle?: string | null;
   about?: string | null;
   businessHours?: string | null;
+  eventDate?: string | null;
+  eventTime?: string | null;
+  eventVenue?: string | null;
+  eventCost?: string | null;
+  eventUrl?: string | null;
   emailDelivered: string;
   createdAt: string;
 }

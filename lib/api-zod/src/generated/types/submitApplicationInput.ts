@@ -6,8 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { SubmitApplicationInputPackage } from "./submitApplicationInputPackage";
+import type { SubmitApplicationInputSubmissionType } from "./submitApplicationInputSubmissionType";
 
 export interface SubmitApplicationInput {
+  submissionType: SubmitApplicationInputSubmissionType;
   /** @minLength 2 */
   businessName: string;
   /** @minLength 2 */
@@ -23,7 +25,7 @@ export interface SubmitApplicationInput {
   neighborhood: string;
   /** @minLength 5 */
   address: string;
-  package: SubmitApplicationInputPackage;
+  package?: SubmitApplicationInputPackage;
   routeId?: string;
   /** @minLength 5 */
   offer: string;
@@ -35,4 +37,9 @@ export interface SubmitApplicationInput {
   subtitle?: string;
   about?: string;
   businessHours?: string;
+  eventDate?: string;
+  eventTime?: string;
+  eventVenue?: string;
+  eventCost?: string;
+  eventUrl?: string;
 }

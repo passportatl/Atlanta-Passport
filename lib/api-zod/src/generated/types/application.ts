@@ -8,6 +8,7 @@
 
 export interface Application {
   id: string;
+  submissionType: string;
   businessName: string;
   contactName: string;
   email: string;
@@ -28,6 +29,11 @@ export interface Application {
   subtitle?: string | null;
   about?: string | null;
   businessHours?: string | null;
+  eventDate?: string | null;
+  eventTime?: string | null;
+  eventVenue?: string | null;
+  eventCost?: string | null;
+  eventUrl?: string | null;
   emailDelivered: string;
   createdAt: Date;
 }

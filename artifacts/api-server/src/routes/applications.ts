@@ -27,9 +27,25 @@ router.post("/applications", async (req, res) => {
   }
   const data = parsed.data;
 
+  const submissionType = data.submissionType ?? "business";
+  const isEvent = submissionType === "event";
+
+  if (isEvent) {
+    if (!data.eventDate?.trim() || !data.eventVenue?.trim()) {
+      res.status(400).json({ error: "Event submissions require eventDate and eventVenue." });
+      return;
+    }
+  } else if (!data.package) {
+    res.status(400).json({ error: "Business submissions require a package." });
+    return;
+  }
+
+  const packageValue = data.package ?? "event";
+
   const [row] = await db
     .insert(applicationsTable)
     .values({
+      submissionType,
       businessName: data.businessName,
       contactName: data.contactName,
       email: data.email,
@@ -39,43 +55,55 @@ router.post("/applications", async (req, res) => {
       category: data.category,
       neighborhood: data.neighborhood,
       address: data.address,
-      package: data.package,
-      routeId: data.routeId ?? null,
+      package: packageValue,
+      routeId: isEvent ? null : data.routeId ?? null,
       offer: data.offer,
-      prizeSponsorship: data.prizeSponsorship ?? null,
-      nearMarta: data.nearMarta ?? null,
-      nearBeltline: data.nearBeltline ?? null,
+      prizeSponsorship: isEvent ? null : data.prizeSponsorship ?? null,
+      nearMarta: isEvent ? null : data.nearMarta ?? null,
+      nearBeltline: isEvent ? null : data.nearBeltline ?? null,
       notes: data.notes ?? null,
-      logoUrl: data.logoUrl ?? null,
-      subtitle: data.subtitle ?? null,
-      about: data.about ?? null,
-      businessHours: data.businessHours ?? null,
+      logoUrl: isEvent ? null : data.logoUrl ?? null,
+      subtitle: isEvent ? null : data.subtitle ?? null,
+      about: isEvent ? null : data.about ?? null,
+      businessHours: isEvent ? null : data.businessHours ?? null,
+      eventDate: isEvent ? data.eventDate ?? null : null,
+      eventTime: isEvent ? data.eventTime ?? null : null,
+      eventVenue: isEvent ? data.eventVenue ?? null : null,
+      eventCost: isEvent ? data.eventCost ?? null : null,
+      eventUrl: isEvent ? data.eventUrl ?? null : null,
     })
     .returning();
 
-  const subject = `New Atlanta Passport application — ${data.businessName} (${data.package.toUpperCase()})`;
+  const subject = isEvent
+    ? `New Atlanta Passport event — ${data.businessName}`
+    : `New Atlanta Passport application — ${data.businessName} (${packageValue.toUpperCase()})`;
   const html = `
     <div style="font-family:system-ui,sans-serif;max-width:640px;">
-      <h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;margin:0 0 16px;">New Partner Application</h2>
+      <h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;margin:0 0 16px;">${isEvent ? "New Event Submission" : "New Partner Application"}</h2>
       <table style="border-collapse:collapse;width:100%;font-size:14px;">
-        ${renderRow("Business", data.businessName)}
-        ${renderRow("Package", data.package.toUpperCase())}
-        ${renderRow("Route", data.routeId)}
-        ${renderRow("Category", data.category.join(", "))}
+        ${renderRow(isEvent ? "Event" : "Business", data.businessName)}
+        ${isEvent ? "" : renderRow("Package", packageValue.toUpperCase())}
+        ${isEvent ? "" : renderRow("Route", data.routeId)}
+        ${renderRow(isEvent ? "Event type" : "Category", data.category.join(", "))}
+        ${isEvent ? renderRow("Date", data.eventDate) : ""}
+        ${isEvent ? renderRow("Time", data.eventTime) : ""}
+        ${isEvent ? renderRow("Venue", data.eventVenue) : ""}
         ${renderRow("Neighborhood", data.neighborhood)}
         ${renderRow("Address", data.address)}
+        ${isEvent ? renderRow("Tickets / Info link", data.eventUrl) : ""}
+        ${isEvent ? renderRow("Cost", data.eventCost) : ""}
         ${renderRow("Contact", data.contactName)}
         ${renderRow("Email", data.email)}
         ${renderRow("Phone", data.phone)}
         ${renderRow("Website", data.website)}
         ${renderRow("Instagram", data.instagram)}
-        ${renderRow("Subtitle", data.subtitle)}
-        ${renderRow("About", data.about)}
-        ${renderRow("Business Hours", data.businessHours)}
-        ${renderRow("Offer", data.offer)}
-        ${renderRow("Prize Sponsorship", data.prizeSponsorship)}
-        ${renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
-        ${renderRow("Walk to Beltline", typeof data.nearBeltline === "boolean" ? (data.nearBeltline ? "Yes" : "No") : "")}
+        ${isEvent ? "" : renderRow("Subtitle", data.subtitle)}
+        ${isEvent ? "" : renderRow("About", data.about)}
+        ${isEvent ? "" : renderRow("Business Hours", data.businessHours)}
+        ${renderRow(isEvent ? "Description" : "Offer", data.offer)}
+        ${isEvent ? "" : renderRow("Prize Sponsorship", data.prizeSponsorship)}
+        ${isEvent ? "" : renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
+        ${isEvent ? "" : renderRow("Walk to Beltline", typeof data.nearBeltline === "boolean" ? (data.nearBeltline ? "Yes" : "No") : "")}
         ${renderRow("Notes", data.notes)}
         ${data.logoUrl ? `<tr><td style="padding:6px 12px;font-weight:bold;background:#fef3c7;border:1px solid #111;">Logo</td><td style="padding:6px 12px;border:1px solid #111;"><img src="${data.logoUrl}" alt="logo" style="max-width:160px;max-height:160px;border:1px solid #111;" /></td></tr>` : ""}
       </table>
@@ -83,13 +111,18 @@ router.post("/applications", async (req, res) => {
     </div>
   `;
   const text = [
-    `New Atlanta Passport application`,
+    isEvent ? `New Atlanta Passport event submission` : `New Atlanta Passport application`,
     ``,
-    `Business: ${data.businessName}`,
-    `Package: ${data.package.toUpperCase()}${data.routeId ? ` (route: ${data.routeId})` : ""}`,
-    `Category: ${data.category.join(", ")}`,
+    `${isEvent ? "Event" : "Business"}: ${data.businessName}`,
+    isEvent ? "" : `Package: ${packageValue.toUpperCase()}${data.routeId ? ` (route: ${data.routeId})` : ""}`,
+    `${isEvent ? "Event type" : "Category"}: ${data.category.join(", ")}`,
+    isEvent && data.eventDate ? `Date: ${data.eventDate}` : "",
+    isEvent && data.eventTime ? `Time: ${data.eventTime}` : "",
+    isEvent && data.eventVenue ? `Venue: ${data.eventVenue}` : "",
     `Neighborhood: ${data.neighborhood}`,
     `Address: ${data.address}`,
+    isEvent && data.eventUrl ? `Tickets / Info link: ${data.eventUrl}` : "",
+    isEvent && data.eventCost ? `Cost: ${data.eventCost}` : "",
     ``,
     `Contact: ${data.contactName}`,
     `Email: ${data.email}`,
@@ -97,13 +130,13 @@ router.post("/applications", async (req, res) => {
     data.website ? `Website: ${data.website}` : "",
     data.instagram ? `Instagram: ${data.instagram}` : "",
     ``,
-    data.subtitle ? `Subtitle: ${data.subtitle}` : "",
-    data.about ? `About: ${data.about}` : "",
-    data.businessHours ? `Business Hours: ${data.businessHours}` : "",
-    `Offer: ${data.offer}`,
-    data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
-    typeof data.nearMarta === "boolean" ? `Walk to MARTA: ${data.nearMarta ? "Yes" : "No"}` : "",
-    typeof data.nearBeltline === "boolean" ? `Walk to Beltline: ${data.nearBeltline ? "Yes" : "No"}` : "",
+    !isEvent && data.subtitle ? `Subtitle: ${data.subtitle}` : "",
+    !isEvent && data.about ? `About: ${data.about}` : "",
+    !isEvent && data.businessHours ? `Business Hours: ${data.businessHours}` : "",
+    `${isEvent ? "Description" : "Offer"}: ${data.offer}`,
+    !isEvent && data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
+    !isEvent && typeof data.nearMarta === "boolean" ? `Walk to MARTA: ${data.nearMarta ? "Yes" : "No"}` : "",
+    !isEvent && typeof data.nearBeltline === "boolean" ? `Walk to Beltline: ${data.nearBeltline ? "Yes" : "No"}` : "",
     data.notes ? `Notes: ${data.notes}` : "",
     ``,
     `Application id: ${row!.id}`,

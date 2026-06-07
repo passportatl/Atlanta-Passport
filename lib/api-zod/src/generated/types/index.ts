@@ -20,6 +20,7 @@ export * from "./stampCollection";
 export * from "./stampList";
 export * from "./submitApplicationInput";
 export * from "./submitApplicationInputPackage";
+export * from "./submitApplicationInputSubmissionType";
 export * from "./submitContactMessageInput";
 export * from "./submitContactMessageInputTopic";
 export * from "./visitor";
