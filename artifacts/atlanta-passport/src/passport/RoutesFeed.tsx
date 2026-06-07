@@ -91,7 +91,8 @@ export default function RoutesFeed({
         </div>
         <p className="text-sm text-foreground/70 mb-3">
           Pick where you start and the time of day — the stops, order, and
-          timing adjust. Tap a route to trace it across the map.
+          timing adjust. Tap a route to trace it across the map, or tap the stop
+          for stop details.
         </p>
 
         <motion.div
