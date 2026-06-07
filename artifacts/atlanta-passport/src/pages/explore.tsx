@@ -294,7 +294,7 @@ export default function ExploreContent({
                       <p className="text-muted-foreground line-clamp-2 text-xs mb-2">
                         {biz.description}
                       </p>
-                      <div className="mt-auto flex items-center justify-between gap-2">
+                      <div className="mt-auto flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
                         {biz.offer ? (
                           <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1 truncate">
                             <SoccerBall className="w-3 h-3 shrink-0" /> {t("listing_page.passport_offer_label")}
