@@ -98,6 +98,87 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   },
 ];
 
+// MARTA heavy-rail lines, approximate station coordinates (south→north / west→east).
+// Red + Gold share the trunk from Airport up to Lindbergh, then split (Red → North
+// Springs, Gold → Doraville). Blue + Green share the downtown trunk (Ashby →
+// Edgewood/Candler Park); Green branches to Bankhead and ends at Edgewood, Blue
+// continues east to Indian Creek and west to Hamilton E. Holmes.
+const MARTA_TRUNK_NS = [
+  { lat: 33.6407, lng: -84.4444 }, // Airport
+  { lat: 33.6519, lng: -84.4486 }, // College Park
+  { lat: 33.6766, lng: -84.4404 }, // East Point
+  { lat: 33.7012, lng: -84.429 }, // Lakewood/Ft. McPherson
+  { lat: 33.7177, lng: -84.4254 }, // Oakland City
+  { lat: 33.7356, lng: -84.4136 }, // West End
+  { lat: 33.7478, lng: -84.3924 }, // Garnett
+  { lat: 33.7539, lng: -84.3915 }, // Five Points
+  { lat: 33.7592, lng: -84.3875 }, // Peachtree Center
+  { lat: 33.7669, lng: -84.3874 }, // Civic Center
+  { lat: 33.7716, lng: -84.3866 }, // North Avenue
+  { lat: 33.7813, lng: -84.3862 }, // Midtown
+  { lat: 33.7892, lng: -84.3872 }, // Arts Center
+  { lat: 33.8231, lng: -84.3692 }, // Lindbergh Center
+];
+
+const MARTA_TRUNK_EW = [
+  { lat: 33.7564, lng: -84.4176 }, // Ashby
+  { lat: 33.7565, lng: -84.4054 }, // Vine City
+  { lat: 33.757, lng: -84.396 }, // GWCC/CNN Center
+  { lat: 33.7539, lng: -84.3915 }, // Five Points
+  { lat: 33.7503, lng: -84.3858 }, // Georgia State
+  { lat: 33.7501, lng: -84.3766 }, // King Memorial
+  { lat: 33.757, lng: -84.3526 }, // Inman Park/Reynoldstown
+  { lat: 33.7617, lng: -84.3393 }, // Edgewood/Candler Park
+];
+
+const MARTA_LINES: { name: string; color: string; path: { lat: number; lng: number }[] }[] = [
+  {
+    name: "Gold",
+    color: "#FDB913",
+    path: [
+      ...MARTA_TRUNK_NS,
+      { lat: 33.8459, lng: -84.358 }, // Lenox
+      { lat: 33.8602, lng: -84.3393 }, // Brookhaven/Oglethorpe
+      { lat: 33.8877, lng: -84.3057 }, // Chamblee
+      { lat: 33.9028, lng: -84.2802 }, // Doraville
+    ],
+  },
+  {
+    name: "Red",
+    color: "#E0001B",
+    path: [
+      ...MARTA_TRUNK_NS,
+      { lat: 33.8479, lng: -84.3674 }, // Buckhead
+      { lat: 33.9123, lng: -84.3516 }, // Medical Center
+      { lat: 33.9214, lng: -84.3447 }, // Dunwoody
+      { lat: 33.9319, lng: -84.3516 }, // Sandy Springs
+      { lat: 33.9453, lng: -84.3573 }, // North Springs
+    ],
+  },
+  {
+    name: "Green",
+    color: "#00A94F",
+    path: [
+      { lat: 33.772, lng: -84.4258 }, // Bankhead
+      ...MARTA_TRUNK_EW,
+    ],
+  },
+  {
+    name: "Blue",
+    color: "#0067B1",
+    path: [
+      { lat: 33.7547, lng: -84.4694 }, // Hamilton E. Holmes
+      { lat: 33.753, lng: -84.4459 }, // West Lake
+      ...MARTA_TRUNK_EW,
+      { lat: 33.7651, lng: -84.3132 }, // East Lake
+      { lat: 33.7748, lng: -84.2963 }, // Decatur
+      { lat: 33.7752, lng: -84.2799 }, // Avondale
+      { lat: 33.7723, lng: -84.2496 }, // Kensington
+      { lat: 33.769, lng: -84.2295 }, // Indian Creek
+    ],
+  },
+];
+
 export type MapBusiness = {
   id: string;
   name: string;
@@ -187,6 +268,43 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
   return null;
 }
 
+// Small parallel offset (in degrees) so a line sharing a trunk with another
+// renders beside it instead of hidden underneath. Gold shifts east of Red on the
+// N-S trunk; Green shifts north of Blue on the E-W trunk.
+const MARTA_OFFSETS: Record<string, { lat: number; lng: number }> = {
+  Gold: { lat: 0, lng: 0.0013 },
+  Green: { lat: 0.0011, lng: 0 },
+};
+
+// Draws the four MARTA heavy-rail lines in their official colors. Mounted once
+// with the map; cleans its polylines up on unmount.
+function MartaRailLines() {
+  const map = useMap();
+  const mapsLib = useMapsLibrary("maps");
+
+  useEffect(() => {
+    if (!map || !mapsLib) return;
+    const lines = MARTA_LINES.map(({ name, color, path }) => {
+      const off = MARTA_OFFSETS[name];
+      const shifted = off
+        ? path.map((p) => ({ lat: p.lat + off.lat, lng: p.lng + off.lng }))
+        : path;
+      return new mapsLib.Polyline({
+        path: shifted,
+        geodesic: true,
+        strokeColor: color,
+        strokeOpacity: 0.95,
+        strokeWeight: 4,
+        zIndex: 4,
+        map,
+      });
+    });
+    return () => lines.forEach((l) => l.setMap(null));
+  }, [map, mapsLib]);
+
+  return null;
+}
+
 export default function BusinessMap({
   businesses,
   selectedId,
@@ -226,6 +344,8 @@ export default function BusinessMap({
         style={{ width: "100%", height: "100%" }}
         onClick={() => onSelect(undefined)}
       >
+        <MartaRailLines />
+
         <BusinessMarkers businesses={businesses} onSelect={onSelect} />
 
         {selected && (
