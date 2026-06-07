@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Compass, Stamp as StampIcon, Map, Trophy, User, Calendar } from "lucide-react";
+import { Compass, Stamp as StampIcon, Map, Mail, User, Calendar } from "lucide-react";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SocialLinks } from "@/components/SocialLinks";
@@ -9,7 +9,7 @@ const TABS = [
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/explore/events", label: "Events", icon: Calendar },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
-  { href: "/passport/rewards", label: "Rewards", icon: Trophy },
+  { href: "/apply", label: "Contact", icon: Mail },
   { href: "/passport", label: "Profile", icon: User, exact: true },
 ];
 
