@@ -59,7 +59,6 @@ const formSchema = z.object({
   nearMarta: z.boolean().optional(),
   nearBeltline: z.boolean().optional(),
   notes: z.string().optional(),
-  logoUrl: z.string().optional(),
   subtitle: z.string().optional(),
   about: z.string().optional(),
   businessHours: z.string().optional(),
@@ -103,7 +102,6 @@ export default function Apply() {
       prizeSponsorship: "",
       nearMarta: undefined,
       nearBeltline: undefined,
-      logoUrl: "",
       subtitle: "",
       about: "",
       businessHours: "",
@@ -494,84 +492,6 @@ export default function Apply() {
                     )}
                   />
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="logoUrl"
-                  render={({ field }) => {
-                    const [logoError, setLogoError] = [
-                      form.formState.errors.logoUrl?.message,
-                      (msg: string) => form.setError("logoUrl", { message: msg }),
-                    ] as const;
-                    const handleFile = (file: File | undefined) => {
-                      form.clearErrors("logoUrl");
-                      if (!file) {
-                        field.onChange("");
-                        return;
-                      }
-                      if (!/^image\/(png|jpeg|jpg|webp|svg\+xml|gif)$/.test(file.type)) {
-                        setLogoError("Please upload a PNG, JPG, SVG, WebP, or GIF.");
-                        return;
-                      }
-                      if (file.size > 2 * 1024 * 1024) {
-                        setLogoError("Logo must be 2MB or smaller.");
-                        return;
-                      }
-                      const reader = new FileReader();
-                      reader.onload = () => {
-                        const result = reader.result;
-                        if (typeof result === "string") field.onChange(result);
-                      };
-                      reader.readAsDataURL(file);
-                    };
-                    return (
-                      <FormItem>
-                        <FormLabel>Logo ({t("apply_page.optional")})</FormLabel>
-                        <FormControl>
-                          <div className="rounded-2xl border-[3px] border-dashed border-foreground/40 bg-white p-4 flex items-center gap-4">
-                            {field.value ? (
-                              <img
-                                src={field.value}
-                                alt="Logo preview"
-                                className="w-16 h-16 object-contain border-[2px] border-foreground rounded-lg bg-brand-cream shrink-0"
-                              />
-                            ) : (
-                              <div className="w-16 h-16 rounded-lg border-[2px] border-dashed border-foreground/40 flex items-center justify-center text-foreground/40 text-xs font-display tracking-wider shrink-0">
-                                LOGO
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <input
-                                type="file"
-                                accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
-                                onChange={(e) => handleFile(e.target.files?.[0])}
-                                className="block w-full text-sm text-foreground file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-[2px] file:border-foreground file:font-display file:text-xs file:tracking-wider file:uppercase file:bg-brand-yellow file:text-brand-yellow-foreground hover:file:bg-brand-yellow/90 file:cursor-pointer cursor-pointer"
-                              />
-                              <p className="text-xs text-muted-foreground mt-2">
-                                PNG, JPG, SVG, WebP, or GIF · up to 2MB
-                              </p>
-                              {field.value && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    form.clearErrors("logoUrl");
-                                    field.onChange("");
-                                  }}
-                                  className="text-xs underline decoration-brand-red decoration-[2px] underline-offset-4 font-medium mt-1"
-                                >
-                                  Remove logo
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </FormControl>
-                        {logoError && (
-                          <p className="text-sm font-medium text-destructive mt-2">{logoError}</p>
-                        )}
-                      </FormItem>
-                    );
-                  }}
-                />
               </div>
 
               <div className="space-y-6">
