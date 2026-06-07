@@ -12,6 +12,7 @@ import Events from "@/pages/events";
 import EventDetail from "@/pages/event-detail";
 import About from "@/pages/about";
 import Apply from "@/pages/apply";
+import Contact from "@/pages/contact";
 import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
 import StampPage from "@/pages/stamp";
@@ -37,6 +38,7 @@ function MarketingRoutes() {
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/about" component={About} />
         <Route path="/apply" component={Apply} />
+        <Route path="/contact" component={Contact} />
         <Route path="/listing/:id" component={Listing} />
         <Route component={NotFound} />
       </Switch>

@@ -137,3 +137,28 @@ export interface ApplicationReceipt {
   id: string;
   emailDelivered: string;
 }
+
+export type SubmitContactMessageInputTopic =
+  (typeof SubmitContactMessageInputTopic)[keyof typeof SubmitContactMessageInputTopic];
+
+export const SubmitContactMessageInputTopic = {
+  question: "question",
+  suggestion: "suggestion",
+  feedback: "feedback",
+  business: "business",
+  other: "other",
+} as const;
+
+export interface SubmitContactMessageInput {
+  /** @minLength 2 */
+  name: string;
+  email: string;
+  topic: SubmitContactMessageInputTopic;
+  /** @minLength 10 */
+  message: string;
+}
+
+export interface ContactReceipt {
+  id: string;
+  emailDelivered: string;
+}

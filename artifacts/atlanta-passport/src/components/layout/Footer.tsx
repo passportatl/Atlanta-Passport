@@ -46,6 +46,7 @@ export default function Footer() {
                 ["/beltline", t("nav.beltline_tour")],
                 ["/events", t("nav.events")],
                 ["/about", t("nav.about")],
+                ["/contact", t("nav.contact", { defaultValue: "Contact" })],
               ].map(([href, label]) => (
                 <li key={href}>
                   <Link

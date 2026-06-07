@@ -9,7 +9,7 @@ const TABS = [
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/explore/events", label: "Events", icon: Calendar },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
-  { href: "/apply", label: "Contact", icon: Mail },
+  { href: "/contact", label: "Contact", icon: Mail },
   { href: "/passport", label: "Profile", icon: User, exact: true },
 ];
 

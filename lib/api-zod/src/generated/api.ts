@@ -214,3 +214,22 @@ export const ListApplicationsResponseItem = zod.object({
   createdAt: zod.coerce.date(),
 });
 export const ListApplicationsResponse = zod.array(ListApplicationsResponseItem);
+
+/**
+ * @summary Submit a contact / suggestion message
+ */
+export const submitContactMessageBodyNameMin = 2;
+
+export const submitContactMessageBodyMessageMin = 10;
+
+export const SubmitContactMessageBody = zod.object({
+  name: zod.string().min(submitContactMessageBodyNameMin),
+  email: zod.string().email(),
+  topic: zod.enum(["question", "suggestion", "feedback", "business", "other"]),
+  message: zod.string().min(submitContactMessageBodyMessageMin),
+});
+
+export const SubmitContactMessageResponse = zod.object({
+  id: zod.string(),
+  emailDelivered: zod.string(),
+});
