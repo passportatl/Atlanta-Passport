@@ -74,7 +74,7 @@ export default function ExploreContent({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="text"
-              placeholder="Explore..."
+              placeholder="EXPLORE..."
               className="pl-9 h-11 text-base leading-[1.8] bg-white font-serif placeholder:font-serif"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
