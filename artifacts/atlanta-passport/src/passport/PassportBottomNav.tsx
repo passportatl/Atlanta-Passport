@@ -65,7 +65,11 @@ export function PassportBottomNav() {
           </Link>
           {TABS.slice(3).map((tab) => renderTab(tab, location))}
         </div>
-        <SocialLinks linkClassName="text-[#f9c629]/80 hover:text-[#f9c629] hover:bg-white/10" />
+        <div className="h-10 px-1 inline-flex items-center border-2 border-foreground bg-brand-cream rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+          <SocialLinks
+            linkClassName="h-7 w-7 text-foreground/80 hover:text-brand-red hover:bg-foreground/10"
+          />
+        </div>
       </div>
     </nav>
   );
