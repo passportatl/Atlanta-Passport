@@ -857,15 +857,14 @@ export default function BusinessMap({
             style={{ width: "100%", height: "100%" }}
             onClick={() => onSelect(undefined)}
           >
-            {showAreas && <NeighborhoodOverlays />}
-            {!showAreas &&
-              highlightNeighborhoods &&
-              highlightNeighborhoods.length > 0 && (
-                <NeighborhoodOverlays
-                  names={highlightNeighborhoods}
-                  emphasize
-                />
-              )}
+            {highlightNeighborhoods && highlightNeighborhoods.length > 0 ? (
+              // A neighborhood filter is active — show ONLY the selected areas
+              // (emphasized), hiding every other colored area regardless of the
+              // Areas toggle.
+              <NeighborhoodOverlays names={highlightNeighborhoods} emphasize />
+            ) : (
+              showAreas && <NeighborhoodOverlays />
+            )}
             {showMarta && <MartaRailLines />}
             {showMarta && <MartaStationMarkers />}
             {showBeltline && <BeltlineLoop />}
