@@ -29,6 +29,17 @@ export default function Partners() {
       {/* Marquee */}
       <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
 
+      {/* Top bubble CTA */}
+      <div className="container mx-auto px-4 pt-10 flex justify-center">
+        <Link
+          href="/apply"
+          className="inline-block text-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-full px-8 py-5 sm:px-12 sm:py-6 font-display text-base sm:text-xl tracking-[0.06em] uppercase shadow-pop hover:-translate-y-0.5 active:translate-y-0 transition-transform"
+          data-testid="link-apply-bubble-top"
+        >
+          Apply to list your event or venue
+        </Link>
+      </div>
+
       {/* Hero Section */}
       <section className="relative pt-20 pb-24 overflow-hidden bg-background">
         <div className="container mx-auto px-4">
@@ -330,6 +341,17 @@ export default function Partners() {
           </Link>
         </div>
       </section>
+
+      {/* Bottom bubble CTA */}
+      <div className="container mx-auto px-4 py-14 flex justify-center">
+        <Link
+          href="/apply"
+          className="inline-block text-center bg-brand-yellow text-brand-yellow-foreground border-[3px] border-foreground rounded-full px-8 py-5 sm:px-12 sm:py-6 font-display text-base sm:text-xl tracking-[0.06em] uppercase shadow-pop hover:-translate-y-0.5 active:translate-y-0 transition-transform"
+          data-testid="link-apply-bubble-bottom"
+        >
+          Apply to list your event or venue
+        </Link>
+      </div>
     </div>
   );
 }
