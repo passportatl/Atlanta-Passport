@@ -85,7 +85,7 @@ export default function RoutesFeed({
     <div className="flex-1 min-h-0 overflow-y-auto">
       <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">
         <div className="flex items-center gap-2 mb-1">
-          <span className="badge-sticker bg-brand-lime text-foreground text-[10px] -rotate-1">
+          <span className="badge-sticker bg-brand-lime text-foreground text-[10px] !rounded-md">
             Routes
           </span>
         </div>
