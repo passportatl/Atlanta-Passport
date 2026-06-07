@@ -38,110 +38,104 @@ export default function ExploreContent({
 
   const categoryPalette = ["bg-brand-yellow text-brand-yellow-foreground", "bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-cream text-foreground"];
   const neighborhoodPalette = ["bg-brand-red text-white", "bg-brand-sky text-foreground", "bg-brand-yellow text-brand-yellow-foreground", "bg-brand-lime text-foreground", "bg-brand-orange text-white", "bg-brand-navy text-white", "bg-brand-cream text-foreground"];
-  const chipBase = "shrink-0 px-3 py-1.5 rounded-lg text-xs font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
+  const chipBase = "px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
 
   return (
     <>
-      {/* Compact filter panel — fixed between the map and the nav bar */}
-      <div className="shrink-0 px-4 pb-2.5 border-b-2 border-foreground/10">
-        <div className="max-w-3xl mx-auto px-0 space-y-2">
+      {/* Scrollable area — filters scroll together with the results */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">
+        {/* Compact filter panel */}
+        <div className="space-y-2.5 mb-4 pb-3 border-b-2 border-foreground/10">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               type="text"
               placeholder="Explore..."
-              className="pl-9 h-12 text-base leading-[1.8] bg-white font-serif placeholder:font-serif"
+              className="pl-9 h-11 text-base leading-[1.8] bg-white font-serif placeholder:font-serif"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
-          {/* Category row */}
-          <div className="flex items-center gap-2">
-            <span className="shrink-0 w-12 text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground leading-tight">
+          {/* Category chips — wrap so they all show without scrolling */}
+          <div>
+            <span className="block text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground mb-1">
               {t("explore_page.category_short", { defaultValue: "Type" })}
             </span>
-            <div className="-mr-4 flex-1 min-w-0">
-              <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r pr-8">
-                <button
-                  onClick={() => setActiveCategories([])}
-                  className={cn(
-                    chipBase,
-                    activeCategories.length === 0
-                      ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
-                      : chipIdle,
-                  )}
-                >
-                  {t("explore_page.all")}
-                </button>
-                {categories.map((cat, i) => {
-                  const active = activeCategories.includes(cat);
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => toggleCategory(cat)}
-                      aria-pressed={active}
-                      className={cn(
-                        chipBase,
-                        active
-                          ? `${categoryPalette[i % categoryPalette.length]} shadow-pop-sm -translate-y-0.5`
-                          : chipIdle,
-                      )}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setActiveCategories([])}
+                className={cn(
+                  chipBase,
+                  activeCategories.length === 0
+                    ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
+                    : chipIdle,
+                )}
+              >
+                {t("explore_page.all")}
+              </button>
+              {categories.map((cat, i) => {
+                const active = activeCategories.includes(cat);
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => toggleCategory(cat)}
+                    aria-pressed={active}
+                    className={cn(
+                      chipBase,
+                      active
+                        ? `${categoryPalette[i % categoryPalette.length]} shadow-pop-sm -translate-y-0.5`
+                        : chipIdle,
+                    )}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Neighborhood row */}
-          <div className="flex items-center gap-2">
-            <span className="shrink-0 w-12 text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground leading-tight">
+          {/* Neighborhood chips — wrap so they all show without scrolling */}
+          <div>
+            <span className="block text-[9px] font-display uppercase tracking-[0.12em] text-muted-foreground mb-1">
               {t("explore_page.area_short", { defaultValue: "Area" })}
             </span>
-            <div className="-mr-4 flex-1 min-w-0">
-              <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r pr-8">
-                <button
-                  onClick={() => setActiveNeighborhood("All")}
-                  className={cn(
-                    chipBase,
-                    activeNeighborhood === "All"
-                      ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
-                      : chipIdle,
-                  )}
-                >
-                  {t("explore_page.all")}
-                </button>
-                {neighborhoods.map((n, i) => {
-                  const active = activeNeighborhood === n.name;
-                  return (
-                    <button
-                      key={n.id}
-                      onClick={() => setActiveNeighborhood(n.name)}
-                      className={cn(
-                        chipBase,
-                        active
-                          ? `${neighborhoodPalette[i % neighborhoodPalette.length]} shadow-pop-sm -translate-y-0.5`
-                          : chipIdle,
-                      )}
-                    >
-                      {n.name}
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setActiveNeighborhood("All")}
+                className={cn(
+                  chipBase,
+                  activeNeighborhood === "All"
+                    ? "bg-foreground text-background shadow-pop-sm -translate-y-0.5"
+                    : chipIdle,
+                )}
+              >
+                {t("explore_page.all")}
+              </button>
+              {neighborhoods.map((n, i) => {
+                const active = activeNeighborhood === n.name;
+                return (
+                  <button
+                    key={n.id}
+                    onClick={() => setActiveNeighborhood(n.name)}
+                    className={cn(
+                      chipBase,
+                      active
+                        ? `${neighborhoodPalette[i % neighborhoodPalette.length]} shadow-pop-sm -translate-y-0.5`
+                        : chipIdle,
+                    )}
+                  >
+                    {n.name}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Scrollable results — fills the space between the filters and the nav bar */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">
         {/* Results */}
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredBusinesses.length > 0 ? (
