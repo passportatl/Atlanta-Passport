@@ -10,6 +10,7 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
+import { neighborhoodColors } from "@/data/sample-data";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -536,20 +537,20 @@ function NeighborhoodOverlays({
           ),
         )
       : NEIGHBORHOOD_AREAS;
-    const polygons = wanted.map(
-      (area) =>
-        new mapsLib.Polygon({
-          paths: area.path,
-          strokeColor: area.color,
-          strokeOpacity: emphasize ? 0.95 : 0.7,
-          strokeWeight: emphasize ? 2.5 : 1.5,
-          fillColor: area.color,
-          fillOpacity: emphasize ? 0.32 : 0.18,
-          clickable: false,
-          zIndex: emphasize ? 2 : 1,
-          map,
-        }),
-    );
+    const polygons = wanted.map((area) => {
+      const color = neighborhoodColors[area.name] ?? area.color;
+      return new mapsLib.Polygon({
+        paths: area.path,
+        strokeColor: color,
+        strokeOpacity: emphasize ? 0.95 : 0.7,
+        strokeWeight: emphasize ? 2.5 : 1.5,
+        fillColor: color,
+        fillOpacity: emphasize ? 0.32 : 0.18,
+        clickable: false,
+        zIndex: emphasize ? 2 : 1,
+        map,
+      });
+    });
     return () => polygons.forEach((p) => p.setMap(null));
     // `key` re-runs the effect when the selected-name set changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps

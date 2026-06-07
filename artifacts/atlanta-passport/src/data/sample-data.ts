@@ -309,19 +309,37 @@ export const events = [
 ] as const;
 
 export const neighborhoods = [
-  { id: "o4w", name: "Old Fourth Ward", description: "Murals, patios, late nights, and Beltline movement.", color: "yellow" },
-  { id: "grant-park", name: "Grant Park", description: "Memorial Drive, zoo & history, indie shops, Beltline edge.", color: "sky" },
-  { id: "eav", name: "East Atlanta Village", description: "Dive bars, live music, bike-friendly streets, and beautiful chaos.", color: "red" },
-  { id: "reynoldstown", name: "Reynoldstown", description: "Beltline-adjacent, bike-friendly, low-key local energy.", color: "sky" },
-  { id: "castleberry", name: "Castleberry Hill", description: "Galleries, breweries, lofts, and weekend art walks.", color: "yellow" },
-  { id: "midtown", name: "Midtown", description: "Skyline energy and match-day movement.", color: "red" },
-  { id: "west-end", name: "West End", description: "Historic Black ATL, indie food, art, and Beltline Westside Trail.", color: "sky" },
-  { id: "downtown", name: "Downtown", description: "Stadium energy, history, city in motion.", color: "yellow" },
-  { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red" },
-  { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky" },
-  { id: "poncey", name: "Poncey-Highland", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow" },
-  { id: "glenwood-park", name: "Glenwood Park", description: "Walkable square, Beltline Southeast Trail, patios and pubs.", color: "lime" },
+  { id: "o4w", name: "Old Fourth Ward", description: "Murals, patios, late nights, and Beltline movement.", color: "yellow", hex: "#F2B705" },
+  { id: "grant-park", name: "Grant Park", description: "Memorial Drive, zoo & history, indie shops, Beltline edge.", color: "sky", hex: "#2FA4D9" },
+  { id: "eav", name: "East Atlanta Village", description: "Dive bars, live music, bike-friendly streets, and beautiful chaos.", color: "red", hex: "#D9262A" },
+  { id: "reynoldstown", name: "Reynoldstown", description: "Beltline-adjacent, bike-friendly, low-key local energy.", color: "sky", hex: "#7CB518" },
+  { id: "castleberry", name: "Castleberry Hill", description: "Galleries, breweries, lofts, and weekend art walks.", color: "yellow", hex: "#F5853F" },
+  { id: "midtown", name: "Midtown", description: "Skyline energy and match-day movement.", color: "red", hex: "#3454D1" },
+  { id: "west-end", name: "West End", description: "Historic Black ATL, indie food, art, and Beltline Westside Trail.", color: "sky", hex: "#8E44AD" },
+  { id: "downtown", name: "Downtown", description: "Stadium energy, history, city in motion.", color: "yellow", hex: "#E84C8A" },
+  { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red", hex: "#14B8A6" },
+  { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky", hex: "#1D3461" },
+  { id: "poncey", name: "Poncey-Highland", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow", hex: "#A0522D" },
+  { id: "glenwood-park", name: "Glenwood Park", description: "Walkable square, Beltline Southeast Trail, patios and pubs.", color: "lime", hex: "#C2D500" },
 ];
+
+// Single source of truth: each neighborhood's display color (name → hex). Used by
+// both the Explore filter chips and the colored area overlays on the map so they
+// always match. Each neighborhood gets a distinct color.
+export const neighborhoodColors: Record<string, string> = Object.fromEntries(
+  neighborhoods.map((n) => [n.name, n.hex]),
+);
+
+// True when text on top of `hex` should be light (the color is dark enough).
+export function isDarkColor(hex: string): boolean {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  // Perceived luminance (sRGB-weighted).
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance < 0.6;
+}
 
 export const applicationCategories = [
   "Food",
