@@ -12,7 +12,7 @@ export const businesses = [
   {
     id: "atlantucky-brewing",
     name: "Atlantucky Brewing",
-    category: "Food & Drink",
+    category: "Drink",
     neighborhood: "Castleberry Hill",
     description: "Great food, local beer, dope art, and chill vibes — owned by Nappy Roots, blocks from Mercedes-Benz Stadium.",
     offer: "10% off your tab when you show your Atlanta Passport.",
@@ -103,8 +103,8 @@ export const businesses = [
   {
     id: "the-westwood",
     name: "The Westwood",
-    category: "Food & Drink",
-    categories: ["Food & Drink", "Nightlife", "Games"],
+    category: "Drink",
+    categories: ["Food", "Drink", "Nightlife", "Games"],
     neighborhood: "West End",
     description:
       "Affordable & delicious drinks, solid comfort food with options for late-night dining, pool, and darts!",
@@ -171,7 +171,7 @@ export const businesses = [
   {
     id: "vickerys-bar-grill",
     name: "Vickery's Bar & Grill",
-    category: "Food & Drink",
+    category: "Food",
     neighborhood: "Glenwood Park",
     description: "Always a party since 1983.",
     offer:
@@ -358,7 +358,7 @@ export const applicationCategories = [
 ];
 
 export const categories = [
-  "Food & Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences", "Public Art", "Parks", "Landmarks"
+  "Food", "Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences", "Public Art", "Parks", "Landmarks"
 ];
 
 // Single source of truth: each Type/category's display color (name → hex). Used
@@ -367,7 +367,8 @@ export const categories = [
 // the whole site. Includes event-only categories (Music, Tournament, …) that
 // appear in the data but aren't in the Explore Type filter.
 export const categoryColors: Record<string, string> = {
-  "Food & Drink": "#DC2626",
+  Food: "#DC2626",
+  Drink: "#1D4ED8",
   Coffee: "#92400E",
   Retail: "#65A30D",
   Nightlife: "#7C3AED",
@@ -391,7 +392,8 @@ export function categoryColor(name: string): string {
 }
 
 export const exploreCategories = [
-  { id: "food-drink",  label: "Food & Drink", tagline: "Good plates, patios, last calls.",   color: "red",    icon: "Utensils" },
+  { id: "food",        label: "Food",        tagline: "Good plates, patios, late bites.",     color: "red",    icon: "Utensils" },
+  { id: "drinks",      label: "Drink",       tagline: "Cocktails, breweries, last calls.",     color: "navy",   icon: "Beer" },
   { id: "coffee",      label: "Coffee",      tagline: "Slow mornings. Strong espresso.",      color: "cream",  icon: "Coffee" },
   { id: "retail",      label: "Retail",      tagline: "Vinyl, sneakers, local finds.",        color: "lime",   icon: "ShoppingBag" },
   { id: "nightlife",   label: "Nightlife",   tagline: "Dive bars to dance floors.",           color: "navy",   icon: "Music" },
@@ -468,9 +470,9 @@ export const routes = [
 export const beltlineStops = [
   { n: 1, name: "Wheelhaus Bikes",       category: "Rentals",   note: "Pick up your e-bike & passport." },
   { n: 2, name: "Peachtree Wellness",    category: "Retail",    note: "Crystals, hot sauce, & founder energy on Memorial." },
-  { n: 3, name: "Ponce City Market",     category: "Food & Drink", note: "Food hall lunch break." },
+  { n: 3, name: "Ponce City Market",     category: "Food", note: "Food hall lunch break." },
   { n: 4, name: "Krog Street Market",    category: "Retail",       note: "Local makers & artisan goods." },
-  { n: 5, name: "Atlantucky Brewing",    category: "Food & Drink", note: "Closing brews from the Nappy Roots." },
+  { n: 5, name: "Atlantucky Brewing",    category: "Drink", note: "Closing brews from the Nappy Roots." },
 ] as const;
 
 // Curated map routes — each strings together real listed spots (by business id,

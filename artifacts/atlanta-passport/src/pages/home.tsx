@@ -52,7 +52,7 @@ const cardBadgeById: Record<string, { key: string; color: "yellow" | "red" | "sk
 };
 
 const heroChipKeys: Array<{ key: string; href: string }> = [
-  { key: "chip_food",       href: "/explore?category=food-drink" },
+  { key: "chip_food",       href: "/explore?category=food" },
   { key: "chip_coffee",     href: "/explore?category=coffee" },
   { key: "chip_nightlife",  href: "/explore?category=nightlife" },
   { key: "chip_routes",     href: "/beltline#routes" },

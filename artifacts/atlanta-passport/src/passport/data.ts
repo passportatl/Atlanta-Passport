@@ -209,10 +209,10 @@ export const SAMPLE_NEIGHBORHOODS = NEIGHBORHOODS.map((n) => n.name);
 
 export const CATEGORY_LABEL: Record<string, string> = {
   coffee: "Coffee",
-  drinks: "Food & Drink",
+  drinks: "Drink",
   rides: "Rides",
   retail: "Shop",
-  food: "Food & Drink",
+  food: "Food",
   nightlife: "Nightlife",
   arts: "Arts",
   wellness: "Wellness",
