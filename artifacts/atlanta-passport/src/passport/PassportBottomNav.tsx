@@ -72,7 +72,7 @@ export function PassportBottomNav() {
         {/* Mobile pop-up menu (above the bar) */}
         {menuOpen && (
           <div className="md:hidden absolute bottom-full inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop max-h-[70vh] overflow-y-auto">
-            <div className="max-w-3xl mx-auto p-3">
+            <div className="max-w-3xl mx-auto px-3 pt-3 pb-16">
               <div className="grid grid-cols-1 gap-1.5">
                 {TABS.map((tab) => {
                   const active = isActive(tab, location);
