@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
-      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:grid md:grid-cols-3 md:gap-4 relative">
+      <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:grid md:grid-cols-3 md:gap-4 md:items-start relative">
         {/* Far left: language selector + (desktop) business dropdown + (mobile) logo */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0 md:justify-end">
           <LanguageSwitcher align="start" />
