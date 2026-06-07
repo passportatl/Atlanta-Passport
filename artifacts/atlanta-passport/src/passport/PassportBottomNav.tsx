@@ -128,20 +128,18 @@ export function PassportBottomNav() {
             <SocialLinks linkClassName="h-7 w-7 text-foreground/80 hover:text-brand-red hover:bg-foreground/10" />
           </div>
 
-          {/* Mobile: centered logo + hamburger */}
-          <div className="flex md:hidden flex-1 items-center justify-center relative self-stretch py-2">
-            <Link
-              href="/passport"
-              aria-label="Atlanta Passport profile"
-              className="relative flex items-center justify-center"
-            >
-              <Logo
-                asLink={false}
-                variant="nav"
-                className="absolute bottom-0 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
-              />
-            </Link>
-          </div>
+          {/* Mobile: centered logo, bottom-aligned with the two buttons */}
+          <Link
+            href="/passport"
+            aria-label="Atlanta Passport profile"
+            className="flex md:hidden flex-1 relative self-stretch"
+          >
+            <Logo
+              asLink={false}
+              variant="nav"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
+            />
+          </Link>
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
