@@ -240,19 +240,6 @@ export default function Partners() {
         </div>
       </section>
 
-      {/* Closing CTA */}
-      <section className="py-24 bg-primary text-primary-foreground text-center relative overflow-hidden">
-        <div className="absolute inset-0 dot-grid opacity-10 pointer-events-none" />
-        <div className="container mx-auto px-4 relative">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-8 leading-tight">
-            {t("business_cta.title")}
-          </h2>
-          <Link href="/apply" className="button-pop button-pop-yellow">
-            {t("partners_page.cta_apply")}
-          </Link>
-        </div>
-      </section>
-
       {/* Bottom bubble CTA */}
       <div className="container mx-auto px-4 py-14 flex justify-center">
         <Link
