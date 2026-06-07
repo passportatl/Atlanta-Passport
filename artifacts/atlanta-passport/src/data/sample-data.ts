@@ -495,6 +495,8 @@ export const ROUTE_TIMES: { value: RouteTime; label: string }[] = [
   { value: "night", label: "Night" },
 ];
 
+export type RouteLeg = { miles: string; duration: string };
+
 export type ResolvedRoute = {
   startAnchor: { name: string; lat: number; lng: number };
   stops: RouteStop[];
@@ -502,12 +504,44 @@ export type ResolvedRoute = {
   miles: string;
   duration: string;
   pace: string;
+  // One leg per stop: distance + travel time from the previous point (the start
+  // anchor for the first stop, otherwise the preceding stop) to this stop.
+  legs: RouteLeg[];
 };
 
 function formatRouteDuration(totalMinutes: number): string {
   if (totalMinutes < 60) return `${totalMinutes} min`;
   const hours = Math.round((totalMinutes / 60) * 10) / 10;
   return `${hours} hr${hours >= 2 ? "s" : ""}`;
+}
+
+// Great-circle distance between two points, in miles.
+function haversineMiles(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number },
+): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const R = 3958.8;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+// Travel time for a leg, in whole minutes. Bike-friendly routes move faster
+// (~9 mph) than walking routes (~3 mph). Streets aren't straight lines, so pad
+// the crow-flies distance by 30% before converting to time.
+function legMinutes(miles: number, pace: string): number {
+  const mph = pace === "Bike Friendly" ? 9 : 3;
+  return Math.max(1, Math.round((miles / mph) * 60));
+}
+
+function formatLegMiles(miles: number): string {
+  return miles < 0.1 ? "<0.1 mi" : `${miles.toFixed(1)} mi`;
 }
 
 export function resolveRoute(
@@ -528,6 +562,7 @@ export function resolveRoute(
       miles: "0.0 mi",
       duration: "0 min",
       pace: route.pace,
+      legs: [],
     };
   }
   const n = Math.max(1, full.length);
@@ -539,16 +574,28 @@ export function resolveRoute(
         ? full.slice(full.length - half)
         : full;
   const stops = start === "parking" ? [...subset].reverse() : subset;
+  const startAnchor = route.starts[start];
   const baseMiles = parseFloat(route.miles) || 1;
   const miles = `${(((subset.length || 1) / n) * baseMiles).toFixed(1)} mi`;
   const durationMinutes =
     subset.length * 35 + (time === "night" ? 25 : time === "noon" ? 15 : 0);
+  // Per-stop legs: distance + travel time from the previous point (start anchor
+  // for the first stop, the preceding stop otherwise) to this stop.
+  const legs: RouteLeg[] = stops.map((stop, idx) => {
+    const from = idx === 0 ? startAnchor : stops[idx - 1];
+    const legMiles = haversineMiles(from, stop);
+    return {
+      miles: formatLegMiles(legMiles),
+      duration: `${legMinutes(legMiles, route.pace)} min`,
+    };
+  });
   return {
-    startAnchor: route.starts[start],
+    startAnchor,
     stops,
     stopCount: stops.length,
     miles,
     duration: formatRouteDuration(durationMinutes),
     pace: route.pace,
+    legs,
   };
 }

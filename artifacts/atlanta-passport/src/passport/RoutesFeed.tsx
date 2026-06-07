@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Bike, Footprints, Check, Clock, Navigation } from "lucide-react";
 import {
@@ -209,20 +210,28 @@ export default function RoutesFeed({
                           </span>
                         </li>
                         {stops.map((b, idx) => (
-                          <li
-                            key={b.id}
-                            className="flex items-center gap-2 text-xs text-foreground/85"
-                          >
-                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-foreground text-brand-yellow font-black text-[10px] flex items-center justify-center">
-                              {idx + 1}
-                            </span>
-                            <span className="font-semibold truncate">
-                              {b.name}
-                            </span>
-                            <span className="text-foreground/50 truncate">
-                              · {b.neighborhood}
-                            </span>
-                          </li>
+                          <Fragment key={b.id}>
+                            {resolved.legs[idx] && (
+                              <li className="flex items-center gap-1.5 pl-2 text-[10px] font-semibold uppercase tracking-wide text-foreground/45">
+                                <span className="ml-[7px] mr-1 h-3 w-px bg-foreground/25" />
+                                <Footprints className="w-2.5 h-2.5" />
+                                {resolved.legs[idx].duration}
+                                <span className="text-foreground/30">·</span>
+                                {resolved.legs[idx].miles}
+                              </li>
+                            )}
+                            <li className="flex items-center gap-2 text-xs text-foreground/85">
+                              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-foreground text-brand-yellow font-black text-[10px] flex items-center justify-center">
+                                {idx + 1}
+                              </span>
+                              <span className="font-semibold truncate">
+                                {b.name}
+                              </span>
+                              <span className="text-foreground/50 truncate">
+                                · {b.neighborhood}
+                              </span>
+                            </li>
+                          </Fragment>
                         ))}
                       </ol>
 
