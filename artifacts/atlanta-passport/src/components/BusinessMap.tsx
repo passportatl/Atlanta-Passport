@@ -179,6 +179,33 @@ const MARTA_LINES: { name: string; color: string; path: { lat: number; lng: numb
   },
 ];
 
+// Unique MARTA stations (deduped across all lines; true coordinates, no line offset).
+const MARTA_STATIONS: { lat: number; lng: number }[] = (() => {
+  const seen = new Set<string>();
+  const out: { lat: number; lng: number }[] = [];
+  for (const line of MARTA_LINES) {
+    for (const p of line.path) {
+      const key = `${p.lat},${p.lng}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(p);
+      }
+    }
+  }
+  return out;
+})();
+
+// MARTA station badge — blue roundel with a white "M", white ring for contrast on
+// the dark map. Inline SVG data URI so it ships without an extra asset request.
+const MARTA_ICON_SRC =
+  "data:image/svg+xml;charset=UTF-8," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">` +
+      `<circle cx="13" cy="13" r="11" fill="#0067B1" stroke="#ffffff" stroke-width="2.5"/>` +
+      `<text x="13" y="18" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">M</text>` +
+      `</svg>`,
+  );
+
 export type MapBusiness = {
   id: string;
   name: string;
@@ -305,6 +332,36 @@ function MartaRailLines() {
   return null;
 }
 
+// Places a small MARTA roundel at every station. Non-interactive so it never
+// steals clicks from business pins or the map's deselect handler.
+function MartaStationMarkers() {
+  const coreLib = useMapsLibrary("core");
+
+  const icon = coreLib
+    ? {
+        url: MARTA_ICON_SRC,
+        scaledSize: new coreLib.Size(18, 18),
+        anchor: new coreLib.Point(9, 9),
+      }
+    : undefined;
+
+  if (!icon) return null;
+
+  return (
+    <>
+      {MARTA_STATIONS.map((s) => (
+        <Marker
+          key={`marta-${s.lat}-${s.lng}`}
+          position={s}
+          icon={icon}
+          clickable={false}
+          zIndex={2}
+        />
+      ))}
+    </>
+  );
+}
+
 export default function BusinessMap({
   businesses,
   selectedId,
@@ -345,6 +402,7 @@ export default function BusinessMap({
         onClick={() => onSelect(undefined)}
       >
         <MartaRailLines />
+        <MartaStationMarkers />
 
         <BusinessMarkers businesses={businesses} onSelect={onSelect} />
 
