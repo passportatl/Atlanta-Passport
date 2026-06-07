@@ -336,6 +336,144 @@ const BELTLINE_PATH = [
   { lat: 33.7726, lng: -84.3656 }, // Close loop at Ponce City Market
 ];
 
+// Approximate footprints for each neighborhood in the Explore "Area" filter, drawn
+// as semi-transparent color overlays for orientation. Colors mirror the brand
+// tokens used on each neighborhood card (yellow/red/sky/lime). Rough quadrilaterals,
+// not legal boundaries.
+const NB_COLOR = {
+  yellow: "#F9C61F",
+  red: "#D9262A",
+  sky: "#5CADD6",
+  lime: "#BCF000",
+} as const;
+
+const NEIGHBORHOOD_AREAS: {
+  name: string;
+  color: string;
+  path: { lat: number; lng: number }[];
+}[] = [
+  {
+    name: "Old Fourth Ward",
+    color: NB_COLOR.yellow,
+    path: [
+      { lat: 33.7745, lng: -84.379 },
+      { lat: 33.7755, lng: -84.3625 },
+      { lat: 33.7615, lng: -84.3625 },
+      { lat: 33.76, lng: -84.379 },
+    ],
+  },
+  {
+    name: "Grant Park",
+    color: NB_COLOR.sky,
+    path: [
+      { lat: 33.746, lng: -84.379 },
+      { lat: 33.747, lng: -84.361 },
+      { lat: 33.73, lng: -84.361 },
+      { lat: 33.729, lng: -84.379 },
+    ],
+  },
+  {
+    name: "East Atlanta Village",
+    color: NB_COLOR.red,
+    path: [
+      { lat: 33.748, lng: -84.352 },
+      { lat: 33.7485, lng: -84.332 },
+      { lat: 33.733, lng: -84.332 },
+      { lat: 33.7325, lng: -84.352 },
+    ],
+  },
+  {
+    name: "Reynoldstown",
+    color: NB_COLOR.sky,
+    path: [
+      { lat: 33.7565, lng: -84.3625 },
+      { lat: 33.757, lng: -84.348 },
+      { lat: 33.745, lng: -84.348 },
+      { lat: 33.7445, lng: -84.3625 },
+    ],
+  },
+  {
+    name: "Castleberry Hill",
+    color: NB_COLOR.yellow,
+    path: [
+      { lat: 33.752, lng: -84.412 },
+      { lat: 33.7525, lng: -84.396 },
+      { lat: 33.74, lng: -84.396 },
+      { lat: 33.7395, lng: -84.412 },
+    ],
+  },
+  {
+    name: "Midtown",
+    color: NB_COLOR.red,
+    path: [
+      { lat: 33.796, lng: -84.392 },
+      { lat: 33.797, lng: -84.3745 },
+      { lat: 33.77, lng: -84.3745 },
+      { lat: 33.769, lng: -84.392 },
+    ],
+  },
+  {
+    name: "West End",
+    color: NB_COLOR.sky,
+    path: [
+      { lat: 33.743, lng: -84.424 },
+      { lat: 33.7435, lng: -84.405 },
+      { lat: 33.728, lng: -84.405 },
+      { lat: 33.7275, lng: -84.424 },
+    ],
+  },
+  {
+    name: "Downtown",
+    color: NB_COLOR.yellow,
+    path: [
+      { lat: 33.7665, lng: -84.398 },
+      { lat: 33.767, lng: -84.382 },
+      { lat: 33.7475, lng: -84.382 },
+      { lat: 33.747, lng: -84.398 },
+    ],
+  },
+  {
+    name: "Little Five Points",
+    color: NB_COLOR.red,
+    path: [
+      { lat: 33.7705, lng: -84.356 },
+      { lat: 33.771, lng: -84.342 },
+      { lat: 33.7575, lng: -84.342 },
+      { lat: 33.757, lng: -84.356 },
+    ],
+  },
+  {
+    name: "Decatur",
+    color: NB_COLOR.sky,
+    path: [
+      { lat: 33.7825, lng: -84.308 },
+      { lat: 33.783, lng: -84.286 },
+      { lat: 33.765, lng: -84.286 },
+      { lat: 33.7645, lng: -84.308 },
+    ],
+  },
+  {
+    name: "Poncey-Highland",
+    color: NB_COLOR.yellow,
+    path: [
+      { lat: 33.7785, lng: -84.36 },
+      { lat: 33.779, lng: -84.346 },
+      { lat: 33.7655, lng: -84.346 },
+      { lat: 33.765, lng: -84.36 },
+    ],
+  },
+  {
+    name: "Glenwood Park",
+    color: NB_COLOR.lime,
+    path: [
+      { lat: 33.7465, lng: -84.356 },
+      { lat: 33.747, lng: -84.344 },
+      { lat: 33.734, lng: -84.344 },
+      { lat: 33.7335, lng: -84.356 },
+    ],
+  },
+];
+
 // Returns a copy of `path` shifted perpendicular to its own direction by half a
 // line-width, so two opposite-sign copies form one full-width line split
 // lengthwise down the centerline (the seam runs exactly through the stations).
@@ -367,6 +505,35 @@ function offsetPathPerpendicular(
       lng: p.lng + (offMeters * px) / (METERS_PER_DEG_LAT * cosPhi),
     };
   });
+}
+
+// Draws a semi-transparent color overlay for each Explore "Area" neighborhood, for
+// orientation. Non-interactive so it never steals map clicks. Sits below the rail
+// lines and markers (low zIndex). Mounted once with the map; cleans up on unmount.
+function NeighborhoodOverlays() {
+  const map = useMap();
+  const mapsLib = useMapsLibrary("maps");
+
+  useEffect(() => {
+    if (!map || !mapsLib) return;
+    const polygons = NEIGHBORHOOD_AREAS.map(
+      (area) =>
+        new mapsLib.Polygon({
+          paths: area.path,
+          strokeColor: area.color,
+          strokeOpacity: 0.7,
+          strokeWeight: 1.5,
+          fillColor: area.color,
+          fillOpacity: 0.18,
+          clickable: false,
+          zIndex: 1,
+          map,
+        }),
+    );
+    return () => polygons.forEach((p) => p.setMap(null));
+  }, [map, mapsLib]);
+
+  return null;
 }
 
 // Highlights the Atlanta Beltline loop as a dashed lime-green line. Dashes are
@@ -618,6 +785,7 @@ export default function BusinessMap({
         style={{ width: "100%", height: "100%" }}
         onClick={() => onSelect(undefined)}
       >
+        <NeighborhoodOverlays />
         <MartaRailLines />
         <MartaStationMarkers />
         <BeltlineLoop />
