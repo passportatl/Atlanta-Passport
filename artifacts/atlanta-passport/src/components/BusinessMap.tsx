@@ -296,10 +296,10 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
 }
 
 // Small parallel offset (in degrees) so a line sharing a trunk with another
-// renders beside it instead of hidden underneath. Gold shifts east of Red on the
-// N-S trunk; Green shifts north of Blue on the E-W trunk.
+// renders beside it instead of hidden underneath. Green shifts north of Blue on
+// the E-W trunk. Gold is intentionally left unoffset so it sits directly on the
+// Red line along their shared N-S trunk (they merge), only diverging at Lindbergh.
 const MARTA_OFFSETS: Record<string, { lat: number; lng: number }> = {
-  Gold: { lat: 0, lng: 0.0013 },
   Green: { lat: 0.0011, lng: 0 },
 };
 
