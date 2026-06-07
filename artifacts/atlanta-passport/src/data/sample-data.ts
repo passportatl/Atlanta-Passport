@@ -449,7 +449,7 @@ export const mapRoutes = [
   },
   {
     id: "westside-stadium-crawl",
-    name: "Westside Stadium Crawl",
+    name: "Nakato Route",
     area: "West End → Castleberry Hill",
     miles: "1.9 mi",
     pace: "Walkable",
