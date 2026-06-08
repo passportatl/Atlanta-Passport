@@ -91,8 +91,9 @@ export default function RoutesFeed({
         </div>
         <p className="text-sm text-foreground/70 mb-3">
           Pick where you start and the time of day — the stops, order, and
-          timing adjust. Tap a route to trace it across the map, or tap the stop
-          for stop details.
+          timing adjust into a 4–6 hour walking day, factoring in how long you'll
+          spend at each spot. Tap a route to trace it across the map, or tap a
+          stop for details.
         </p>
 
         <motion.div
@@ -244,6 +245,15 @@ export default function RoutesFeed({
                                   : [b.category]
                                 ).join(", ")}
                               </span>
+                              {resolved.visits[idx] != null && (
+                                <span
+                                  className="ml-auto flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-foreground/55"
+                                  title="Average time spent here"
+                                >
+                                  <Clock className="w-2.5 h-2.5" />~
+                                  {resolved.visits[idx]}m
+                                </span>
+                              )}
                             </li>
                           </Fragment>
                         ))}

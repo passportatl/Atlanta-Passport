@@ -56,6 +56,7 @@ export const businesses = [
     id: "atlantucky-brewing",
     name: "Atlantucky Brewing",
     category: "Drink",
+    visitMinutes: 75,
     neighborhood: "Castleberry Hill",
     description: "Great food, local beer, dope art, and chill vibes — owned by Nappy Roots, blocks from Mercedes-Benz Stadium.",
     offer: "10% off your tab when you show your Atlanta Passport.",
@@ -338,6 +339,7 @@ export const businesses = [
     image: trapMuseumImg,
     category: "Experiences",
     categories: ["Experiences","Drink"],
+    visitMinutes: 90,
     neighborhood: "Westside",
     description: "The world's FIRST hip-hop museum. \"One of the best musical landmarks in the deep south\", this is a cultural landmark & interactive exhibit founded by T.I.",
     address: "630 Travis St NW",
@@ -1101,24 +1103,115 @@ export const beltlineStops = [
 // shared map. Keep businessIds in visiting order; the map draws the line in
 // that sequence.
 export const mapRoutes = [
+  // ── Trap Museum series ──────────────────────────────────────────────
+  // Three walkable day-routes anchored on the Trap Museum (closed Mon–Thu,
+  // opens afternoons), each curated from real listed spots nearby. Instead of
+  // a single fixed order, each route carries an ordered stop list PER TIME of
+  // day (byTime) so the stops AND their order shift with when you set out — the
+  // Museum is saved for the afternoon/evening on the morning walk and leads the
+  // night walk. Starting at "parking" reverses the order. resolveRoute() sizes
+  // each day to ~4–6 hours using per-stop visit times + walking legs.
   {
-    id: "eastside-beltline-ride",
-    name: "Atlanta Trap Museum Route",
-    area: "East Atlanta → Grant Park",
-    miles: "3.1 mi",
-    pace: "Bike Friendly",
+    id: "trap-music-pilgrimage",
+    name: "Trap Music Pilgrimage",
+    area: "Westside → Castleberry Hill",
+    pace: "Walkable",
     color: "yellow",
-    vibe: "Grab an e-bike and roll west: village patios, Glenwood Park plates, Memorial wellness, and a loop past Oakland Cemetery.",
+    vibe: "The hip-hop core: the Tiny Door, the Trap City mural, the Trap Museum itself, then Nappy Roots' Atlantucky brews to close the night.",
     starts: {
-      marta: { name: "Inman Park Station", lat: 33.7574, lng: -84.3526 },
-      parking: { name: "Glenwood Park Lot", lat: 33.7445, lng: -84.3505 },
+      marta: { name: "Vine City Station", lat: 33.7565, lng: -84.4035 },
+      parking: { name: "Northside Dr Lot", lat: 33.7705, lng: -84.4075 },
     },
-    businessIds: [
-      "wheelhaus-bikes",
-      "vickerys-bar-grill",
-      "peachtree-wellness",
-      "oakland-cemetery",
-    ],
+    byTime: {
+      morning: [
+        "rodney-cook-sr-park",
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "trap-museum",
+        "atlantucky-brewing",
+      ],
+      noon: [
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "trap-museum",
+        "rodney-cook-sr-park",
+        "atlantucky-brewing",
+      ],
+      night: [
+        "trap-museum",
+        "atlantucky-brewing",
+        "rodney-cook-sr-park",
+        "mlk-mural-at-trap-city-cafe",
+      ],
+    },
+  },
+  {
+    id: "westside-legends-walk",
+    name: "Westside Legends Walk",
+    area: "Westside → West End",
+    pace: "Walkable",
+    color: "sky",
+    vibe: "Trap history meets Black-college legacy: the Museum, the Herndon Home, and the AUC's Spelman & Hammonds House galleries.",
+    starts: {
+      marta: { name: "Ashby Station", lat: 33.7558, lng: -84.4174 },
+      parking: { name: "AUC Lot", lat: 33.749, lng: -84.413 },
+    },
+    byTime: {
+      morning: [
+        "washington-park",
+        "herndon-home-muserum",
+        "spelman-college-museum-of-fine-art",
+        "trap-museum",
+      ],
+      noon: [
+        "trap-museum",
+        "herndon-home-muserum",
+        "spelman-college-museum-of-fine-art",
+        "hammonds-house-museum",
+      ],
+      night: [
+        "trap-museum",
+        "atlantucky-brewing",
+        "herndon-home-muserum",
+      ],
+    },
+  },
+  {
+    id: "parks-and-murals-loop",
+    name: "Parks & Murals Loop",
+    area: "Vine City → Westside",
+    pace: "Walkable",
+    color: "orange",
+    vibe: "An easy, kid-friendly day: green space at Rodney Cook & Maddox, the Tiny Door and Trap City murals, and the Museum in the middle.",
+    starts: {
+      marta: { name: "Bankhead Station", lat: 33.772, lng: -84.421 },
+      parking: { name: "Rodney Cook Park Lot", lat: 33.766, lng: -84.404 },
+    },
+    byTime: {
+      morning: [
+        "maddox-park",
+        "rodney-cook-sr-park",
+        "washington-park",
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "trap-museum",
+      ],
+      noon: [
+        "rodney-cook-sr-park",
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "trap-museum",
+        "washington-park",
+        "maddox-park",
+      ],
+      night: [
+        "trap-museum",
+        "rodney-cook-sr-park",
+        "mlk-mural-at-trap-city-cafe",
+        "jackson-st-bridge",
+        "tiny-door-atl-26",
+      ],
+    },
   },
   {
     id: "westside-stadium-crawl",
@@ -1152,11 +1245,39 @@ export const mapRoutes = [
 
 // Each route can be tailored at view time by two selectors: where you start
 // (a nearby MARTA station vs. a parking lot — flips the visiting order) and the
-// time of day (morning = a lighter first half, noon = the full route, night =
-// the later half). These change the stop set, order, distance, and duration.
+// time of day. These change the stop set, order, distance, and duration.
+//   • Trap-series routes carry an explicit ordered stop list PER TIME (byTime),
+//     so morning/noon/night each visit a genuinely different set in a different
+//     order (e.g. the Trap Museum opens in the afternoon, so the morning walk
+//     saves it for last and the night walk leads with it).
+//   • Legacy routes (businessIds only) fall back to a generic split — morning =
+//     the first half, noon = the full list, night = the later half.
 export type RouteStart = "marta" | "parking";
 export type RouteTime = "morning" | "noon" | "night";
 export type RouteStop = (typeof businesses)[number];
+
+// Average time a visitor spends AT each stop, by category, used to size a route
+// to a realistic 4–6 hour day. A business can override this with its own
+// `visitMinutes` field (e.g. the Trap Museum runs long; a mural is a quick
+// photo stop).
+const VISIT_MINUTES_BY_CATEGORY: Record<string, number> = {
+  Experiences: 60,
+  Drink: 60,
+  Food: 60,
+  Parks: 30,
+  Landmarks: 20,
+  "Public Art": 10,
+  Rentals: 20,
+  Retail: 25,
+  Wellness: 30,
+};
+
+function visitMinutesFor(stop: RouteStop): number {
+  if ("visitMinutes" in stop && typeof stop.visitMinutes === "number") {
+    return stop.visitMinutes;
+  }
+  return VISIT_MINUTES_BY_CATEGORY[stop.category] ?? 30;
+}
 
 export const ROUTE_STARTS: { value: RouteStart; label: string }[] = [
   { value: "marta", label: "Start: MARTA" },
@@ -1175,11 +1296,14 @@ export type ResolvedRoute = {
   stops: RouteStop[];
   stopCount: number;
   miles: string;
+  // Total time for the day = every walking leg + every on-site visit, formatted.
   duration: string;
   pace: string;
   // One leg per stop: distance + travel time from the previous point (the start
   // anchor for the first stop, otherwise the preceding stop) to this stop.
   legs: RouteLeg[];
+  // Average on-site time (minutes) for each stop, parallel to `stops`.
+  visits: number[];
 };
 
 function formatRouteDuration(totalMinutes: number): string {
@@ -1222,53 +1346,74 @@ export function resolveRoute(
   start: RouteStart,
   time: RouteTime,
 ): ResolvedRoute {
-  const full = route.businessIds
+  const startAnchor = route.starts[start];
+  // Pick the ordered list of business ids for this time of day. Trap-series
+  // routes carry an explicit per-time list (byTime); legacy routes split a
+  // single businessIds list (morning = first half, night = later half).
+  let orderedIds: readonly string[];
+  if ("byTime" in route) {
+    orderedIds = route.byTime[time];
+  } else {
+    const ids = route.businessIds;
+    const n = Math.max(1, ids.length);
+    const half = Math.max(1, Math.ceil(n / 2));
+    orderedIds =
+      time === "morning"
+        ? ids.slice(0, half)
+        : time === "night"
+          ? ids.slice(ids.length - half)
+          : ids;
+  }
+
+  const subset = orderedIds
     .map((id) => businesses.find((b) => b.id === id))
     .filter((b): b is RouteStop => Boolean(b));
   // Defensive: if a route maps to no real businesses, return zeroed metrics
   // rather than misleading non-zero distance/duration.
-  if (full.length === 0) {
+  if (subset.length === 0) {
     return {
-      startAnchor: route.starts[start],
+      startAnchor,
       stops: [],
       stopCount: 0,
       miles: "0.0 mi",
       duration: "0 min",
       pace: route.pace,
       legs: [],
+      visits: [],
     };
   }
-  const n = Math.max(1, full.length);
-  const half = Math.max(1, Math.ceil(n / 2));
-  const subset =
-    time === "morning"
-      ? full.slice(0, half)
-      : time === "night"
-        ? full.slice(full.length - half)
-        : full;
+  // Starting from parking (rather than transit) flips the visiting order.
   const stops = start === "parking" ? [...subset].reverse() : subset;
-  const startAnchor = route.starts[start];
-  const baseMiles = parseFloat(route.miles) || 1;
-  const miles = `${(((subset.length || 1) / n) * baseMiles).toFixed(1)} mi`;
-  const durationMinutes =
-    subset.length * 35 + (time === "night" ? 25 : time === "noon" ? 15 : 0);
+
   // Per-stop legs: distance + travel time from the previous point (start anchor
-  // for the first stop, the preceding stop otherwise) to this stop.
+  // for the first stop, the preceding stop otherwise) to this stop. Total miles
+  // and total walking time are summed from these so they always match the stops
+  // actually shown for this time of day.
+  let totalMiles = 0;
+  let walkingMinutes = 0;
   const legs: RouteLeg[] = stops.map((stop, idx) => {
     const from = idx === 0 ? startAnchor : stops[idx - 1];
     const legMiles = haversineMiles(from, stop);
+    totalMiles += legMiles;
+    walkingMinutes += legMinutes(legMiles, route.pace);
     return {
       miles: formatLegMiles(legMiles),
       duration: `${legMinutes(legMiles, route.pace)} min`,
     };
   });
+
+  // Total day = walking between stops + average on-site time at each stop.
+  const visits = stops.map((stop) => visitMinutesFor(stop));
+  const visitingMinutes = visits.reduce((sum, m) => sum + m, 0);
+
   return {
     startAnchor,
     stops,
     stopCount: stops.length,
-    miles,
-    duration: formatRouteDuration(durationMinutes),
+    miles: `${totalMiles.toFixed(1)} mi`,
+    duration: formatRouteDuration(walkingMinutes + visitingMinutes),
     pace: route.pace,
     legs,
+    visits,
   };
 }
