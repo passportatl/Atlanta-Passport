@@ -100,15 +100,17 @@ export function PassportBottomNav() {
             className="w-16 justify-center md:w-auto md:justify-start"
           />
 
-          <button
-            type="button"
-            onClick={() => window.close()}
-            className="group flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider text-[#f9c629]/80 hover:text-[#f9c629]"
-            style={{ fontFamily: "Bungee, sans-serif" }}
-          >
-            <ArrowLeft className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
-            <span>BACK TO PASSPORT</span>
-          </button>
+          <div className="flex-1 flex justify-center">
+            <button
+              type="button"
+              onClick={() => window.close()}
+              className="group flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider text-[#f9c629]/80 hover:text-[#f9c629]"
+              style={{ fontFamily: "Bungee, sans-serif" }}
+            >
+              <ArrowLeft className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
+              <span>BACK TO PASSPORT</span>
+            </button>
+          </div>
 
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
             <Logo
@@ -118,14 +120,14 @@ export function PassportBottomNav() {
             />
           </div>
 
-          <div className="flex-1" />
-
-          <div
-            className="flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider text-[#f9c629]"
-            style={{ fontFamily: "Bungee, sans-serif" }}
-          >
-            <Mail className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
-            <span>CONTACT</span>
+          <div className="flex-1 flex justify-center">
+            <div
+              className="flex flex-col items-center justify-center py-2 text-[10px] font-black tracking-wider text-[#f9c629]"
+              style={{ fontFamily: "Bungee, sans-serif" }}
+            >
+              <Mail className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
+              <span>CONTACT</span>
+            </div>
           </div>
 
           <div className="inline-flex h-10 px-1 items-center border-2 border-foreground bg-brand-cream rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]">
