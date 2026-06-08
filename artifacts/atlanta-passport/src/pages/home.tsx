@@ -199,7 +199,7 @@ function JourneySection() {
 
 function SpotsAndEventsSection() {
   const { t } = useTranslation();
-  const featuredSpots = businesses.filter(b => b.featured).slice(0, 4);
+  const offerSpots = businesses.filter(b => b.offer);
   const featuredEvents = events.slice(0, 2);
 
   return (
@@ -231,7 +231,7 @@ function SpotsAndEventsSection() {
              </div>
           ))}
 
-          {featuredSpots.map(spot => (
+          {offerSpots.map(spot => (
             <Link key={spot.id} href={`/listing/${spot.id}`} className="group block">
               <div className="card-pop bg-white h-full overflow-hidden transition-transform group-hover:-translate-y-2 flex flex-col border-4">
                 <div className="aspect-[4/3] relative border-b-4 border-foreground">
