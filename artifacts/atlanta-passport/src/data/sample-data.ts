@@ -342,6 +342,7 @@ export const businesses = [
     visitMinutes: 90,
     neighborhood: "Westside",
     description: "The world's FIRST hip-hop museum. \"One of the best musical landmarks in the deep south\", this is a cultural landmark & interactive exhibit founded by T.I.",
+    offer: "10% off admission when you show your Atlanta Passport.",
     address: "630 Travis St NW",
     lat: 33.7718,
     lng: -84.40869,
