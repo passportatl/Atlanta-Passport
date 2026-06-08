@@ -21,7 +21,6 @@ export default function Navbar() {
   const [location] = useLocation();
   const { t } = useTranslation();
   const { isSignedIn } = useUser();
-  const passportShort = isSignedIn ? "My Passport" : "Log In";
 
   // Business listing AND event detail pages are standalone (opened in their own
   // tab via a scanned link/QR or the "View" buttons), so they hide the
@@ -148,7 +147,7 @@ export default function Navbar() {
 
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-1.5">
-          {isStandalone ? (
+          {isStandalone && (
             <button
               type="button"
               onClick={closeTab}
@@ -160,17 +159,6 @@ export default function Navbar() {
               <X className="h-4 w-4" />
               <span>Back</span>
             </button>
-          ) : (
-            <Link
-              href={isSignedIn ? "/passport" : "/sign-in"}
-              aria-label={passportShort}
-              title={passportShort}
-              className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-              data-testid="link-mobile-passport"
-            >
-              {isSignedIn ? <BookMarked className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
-              <span>{isSignedIn ? "Pass" : "Log In"}</span>
-            </Link>
           )}
           <Sheet>
             <SheetTrigger asChild>
