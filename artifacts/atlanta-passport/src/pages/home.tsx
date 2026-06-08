@@ -5,7 +5,7 @@ import {
   MoveRight, Gift, Ticket, Landmark, Compass, Trophy
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { routes, events } from "@/data/sample-data";
+import { mapRoutes, resolveRoute, events } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
 import PassportStamp from "@/components/PassportStamp";
@@ -151,7 +151,11 @@ function PillarsSection() {
 
 function JourneySection() {
   const { t } = useTranslation();
-  
+
+  const featuredRoutes = ["soccer-route", "wheelhaus-beltline-ride"]
+    .map((id) => mapRoutes.find((r) => r.id === id))
+    .filter((r): r is (typeof mapRoutes)[number] => Boolean(r));
+
   return (
     <section className="bg-brand-navy text-brand-cream texture-paper section-hero border-b-4 border-foreground overflow-hidden">
       <div className="container mx-auto px-4 relative z-10 mb-12">
@@ -168,27 +172,30 @@ function JourneySection() {
       </div>
 
       <div className="flex gap-6 overflow-x-auto pb-12 px-4 md:px-8 scrollbar-none snap-x snap-mandatory">
-        {routes.map((route, i) => (
-          <Link key={route.id} href={`/beltline#${route.id}`} className="snap-center shrink-0 w-[85vw] md:w-[450px] group cursor-pointer block">
-            <div className="card-pop bg-white text-foreground p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
-              <div className="flex justify-between items-start mb-8">
-                <div className="w-16 h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-2xl font-black shadow-pop-sm">
-                  {i + 1}
+        {featuredRoutes.map((route, i) => {
+          const resolved = resolveRoute(route, "marta", "morning");
+          return (
+            <Link key={route.id} href="/passport/routes" className="snap-center shrink-0 w-[85vw] md:w-[450px] group cursor-pointer block">
+              <div className="card-pop bg-white text-foreground p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
+                <div className="flex justify-between items-start mb-8">
+                  <div className="w-16 h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-2xl font-black shadow-pop-sm">
+                    {i + 1}
+                  </div>
+                  <div className="font-display text-sm tracking-widest uppercase text-brand-red text-right font-bold bg-brand-cream px-3 py-1 border-2 border-foreground rounded-full shadow-pop-sm">
+                    {route.area}
+                  </div>
                 </div>
-                <div className="font-display text-sm tracking-widest uppercase text-brand-red text-right font-bold bg-brand-cream px-3 py-1 border-2 border-foreground rounded-full shadow-pop-sm">
-                  {route.neighborhood}
+                <h3 className="font-serif font-black text-4xl mb-4 leading-tight">{route.name}</h3>
+                <p className="text-foreground/80 mb-8 text-lg font-medium flex-grow">{route.vibe}</p>
+                
+                <div className="flex gap-6 font-display text-sm tracking-wide bg-brand-cream p-4 border-2 border-foreground rounded-xl">
+                  <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-brand-red"/> {t("home.journey.stops_count", { count: resolved.stopCount })}</span>
+                  <span className="flex items-center gap-2"><Bike className="w-5 h-5 text-primary"/> {resolved.miles}</span>
                 </div>
               </div>
-              <h3 className="font-serif font-black text-4xl mb-4 leading-tight">{route.name}</h3>
-              <p className="text-foreground/80 mb-8 text-lg font-medium flex-grow">{route.vibe}</p>
-              
-              <div className="flex gap-6 font-display text-sm tracking-wide bg-brand-cream p-4 border-2 border-foreground rounded-xl">
-                <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-brand-red"/> {t("home.journey.stops_count", { count: route.stops })}</span>
-                <span className="flex items-center gap-2"><Bike className="w-5 h-5 text-primary"/> {route.miles}</span>
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </section>
   )
