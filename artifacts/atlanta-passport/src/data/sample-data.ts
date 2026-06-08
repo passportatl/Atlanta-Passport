@@ -12,6 +12,44 @@ import nakatoImg from "@/assets/images/nakato.jpg";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
+import mlkMuralAtTrapCityCafeImg from "@/assets/images/mlk-mural-at-trap-city-cafe.jpg";
+import varasanosImg from "@/assets/images/varasanos.jpg";
+import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
+import spelmanCollegeMuseumOfFineArtImg from "@/assets/images/spelman-college-museum-of-fine-art.jpg";
+import hammondsHouseMuseumImg from "@/assets/images/hammonds-house-museum.jpg";
+import theWrensNestImg from "@/assets/images/the-wrens-nest.jpg";
+import tinyDoorAtl26Img from "@/assets/images/tiny-door-atl-26.jpg";
+import herndonHomeMuserumImg from "@/assets/images/herndon-home-muserum.jpg";
+import morehouseCollegeCampusLandmarkImg from "@/assets/images/morehouse-college-campus-landmark.jpg";
+import clarkAtlantaUniversityHarknessHallAreaImg from "@/assets/images/clark-atlanta-university-harkness-hall-area.jpg";
+import atlantaBicycleBarnImg from "@/assets/images/atlanta-bicycle-barn.jpg";
+import theBelthubImg from "@/assets/images/the-belthub.jpg";
+import musetteBikeRentalsDeliveryImg from "@/assets/images/musette-bike-rentals-delivery.jpg";
+import catalystSportsImg from "@/assets/images/catalyst-sports.jpg";
+import piedmontParkImg from "@/assets/images/piedmont-park.jpg";
+import historicFourthWardParkImg from "@/assets/images/historic-fourth-ward-park.jpg";
+import thomasTaylorMemorialSkateparkImg from "@/assets/images/thomas-taylor-memorial-skatepark.jpg";
+import springvaleParkImg from "@/assets/images/springvale-park.jpg";
+import freedomParkImg from "@/assets/images/freedom-park.jpg";
+import langCarsonParkImg from "@/assets/images/lang-carson-park.jpg";
+import grantParkImg from "@/assets/images/grant-park.jpg";
+import boulevardCrossingImg from "@/assets/images/boulevard-crossing.jpg";
+import dhStantonParkImg from "@/assets/images/dh-stanton-park.jpg";
+import perkersonParkImg from "@/assets/images/perkerson-park.jpg";
+import adairParkIImg from "@/assets/images/adair-park-i.jpg";
+import roseCircleParkImg from "@/assets/images/rose-circle-park.jpg";
+import gordonWhiteParkImg from "@/assets/images/gordon-white-park.jpg";
+import washingtonParkImg from "@/assets/images/washington-park.jpg";
+import rodneyCookSrParkImg from "@/assets/images/rodney-cook-sr-park.jpg";
+import maddoxParkImg from "@/assets/images/maddox-park.jpg";
+import shirleyClarkeFranklinParkImg from "@/assets/images/shirley-clarke-franklin-park.webp";
+import tanyardCreekParkImg from "@/assets/images/tanyard-creek-park.jpg";
+import ardmoreParkImg from "@/assets/images/ardmore-park.jpg";
+import atlantaMemorialParkImg from "@/assets/images/atlanta-memorial-park.webp";
+import morningsideNaturePreserveImg from "@/assets/images/morningside-nature-preserve.webp";
+import ormeParkImg from "@/assets/images/orme-park.jpg";
+import enotaParkImg from "@/assets/images/enota-park.jpg";
+import arthurLangfordJrParkImg from "@/assets/images/arthur-langford-jr-park.jpg";
 
 export const businesses = [
   {
@@ -281,6 +319,7 @@ export const businesses = [
   },
   {
     id: "mlk-mural-at-trap-city-cafe",
+    image: mlkMuralAtTrapCityCafeImg,
     name: "MLK Mural at Trap City Cafe",
     category: "Public Art",
     neighborhood: "Westside",
@@ -314,6 +353,7 @@ export const businesses = [
   },
   {
     id: "varasanos",
+    image: varasanosImg,
     name: "Varasanos",
     category: "Food",
     categories: ["Food","Drink"],
@@ -351,6 +391,7 @@ export const businesses = [
   },
   {
     id: "jackson-st-bridge",
+    image: jacksonStBridgeImg,
     name: "Jackson St Bridge",
     category: "Landmarks",
     neighborhood: "Downtown",
@@ -363,6 +404,7 @@ export const businesses = [
   },
   {
     id: "spelman-college-museum-of-fine-art",
+    image: spelmanCollegeMuseumOfFineArtImg,
     name: "Spelman College Museum of Fine Art",
     category: "Experiences",
     neighborhood: "West End",
@@ -373,6 +415,7 @@ export const businesses = [
   },
   {
     id: "hammonds-house-museum",
+    image: hammondsHouseMuseumImg,
     name: "Hammond's House Museum",
     category: "Experiences",
     neighborhood: "West End",
@@ -383,6 +426,7 @@ export const businesses = [
   },
   {
     id: "the-wrens-nest",
+    image: theWrensNestImg,
     name: "The Wren's Nest",
     category: "Experiences",
     neighborhood: "West End",
@@ -393,6 +437,7 @@ export const businesses = [
   },
   {
     id: "tiny-door-atl-26",
+    image: tinyDoorAtl26Img,
     name: "Tiny Door ATL #26",
     category: "Public Art",
     neighborhood: "Westside",
@@ -403,6 +448,7 @@ export const businesses = [
   },
   {
     id: "herndon-home-muserum",
+    image: herndonHomeMuserumImg,
     name: "Herndon Home Muserum",
     category: "Experiences",
     neighborhood: "West End",
@@ -413,6 +459,7 @@ export const businesses = [
   },
   {
     id: "morehouse-college-campus-landmark",
+    image: morehouseCollegeCampusLandmarkImg,
     name: "Morehouse College - Campus Landmark",
     category: "Landmarks",
     neighborhood: "West End",
@@ -423,6 +470,7 @@ export const businesses = [
   },
   {
     id: "clark-atlanta-university-harkness-hall-area",
+    image: clarkAtlantaUniversityHarknessHallAreaImg,
     name: "Clark Atlanta University - Harkness Hall area",
     category: "Landmarks",
     neighborhood: "West End",
@@ -433,6 +481,7 @@ export const businesses = [
   },
   {
     id: "atlanta-bicycle-barn",
+    image: atlantaBicycleBarnImg,
     name: "Atlanta Bicycle Barn",
     category: "Rentals",
     neighborhood: "Old Fourth Ward",
@@ -442,6 +491,7 @@ export const businesses = [
   },
   {
     id: "the-belthub",
+    image: theBelthubImg,
     name: "The Belthub",
     category: "Rentals",
     neighborhood: "West Midtown",
@@ -452,6 +502,7 @@ export const businesses = [
   },
   {
     id: "musette-bike-rentals-delivery",
+    image: musetteBikeRentalsDeliveryImg,
     name: "Musette Bike Rentals (delivery)",
     category: "Rentals",
     neighborhood: "Old Fourth Ward",
@@ -462,6 +513,7 @@ export const businesses = [
   },
   {
     id: "catalyst-sports",
+    image: catalystSportsImg,
     name: "Catalyst Sports",
     category: "Rentals",
     neighborhood: "Old Fourth Ward",
@@ -471,6 +523,7 @@ export const businesses = [
   },
   {
     id: "piedmont-park",
+    image: piedmontParkImg,
     name: "Piedmont Park",
     category: "Parks",
     neighborhood: "Midtown",
@@ -482,6 +535,7 @@ export const businesses = [
   },
   {
     id: "historic-fourth-ward-park",
+    image: historicFourthWardParkImg,
     name: "Historic Fourth Ward Park",
     category: "Parks",
     neighborhood: "Old Fourth Ward",
@@ -493,6 +547,7 @@ export const businesses = [
   },
   {
     id: "thomas-taylor-memorial-skatepark",
+    image: thomasTaylorMemorialSkateparkImg,
     name: "Thomas Taylor Memorial Skatepark",
     category: "Parks",
     neighborhood: "Old Fourth Ward",
@@ -504,6 +559,7 @@ export const businesses = [
   },
   {
     id: "springvale-park",
+    image: springvaleParkImg,
     name: "Springvale Park",
     category: "Parks",
     neighborhood: "Inman Park",
@@ -515,6 +571,7 @@ export const businesses = [
   },
   {
     id: "freedom-park",
+    image: freedomParkImg,
     name: "Freedom Park",
     category: "Parks",
     neighborhood: "Inman Park",
@@ -526,6 +583,7 @@ export const businesses = [
   },
   {
     id: "lang-carson-park",
+    image: langCarsonParkImg,
     name: "Lang-Carson Park",
     category: "Parks",
     neighborhood: "Reynoldstown",
@@ -537,6 +595,7 @@ export const businesses = [
   },
   {
     id: "grant-park",
+    image: grantParkImg,
     name: "Grant Park",
     category: "Parks",
     neighborhood: "Grant Park",
@@ -548,6 +607,7 @@ export const businesses = [
   },
   {
     id: "boulevard-crossing",
+    image: boulevardCrossingImg,
     name: "Boulevard Crossing",
     category: "Parks",
     neighborhood: "Boulevard Heights",
@@ -559,6 +619,7 @@ export const businesses = [
   },
   {
     id: "dh-stanton-park",
+    image: dhStantonParkImg,
     name: "D.H. Stanton Park",
     category: "Parks",
     neighborhood: "Peoplestown",
@@ -570,6 +631,7 @@ export const businesses = [
   },
   {
     id: "arthur-langford-jr-park",
+    image: arthurLangfordJrParkImg,
     name: "Arthur Langford Jr. Park",
     category: "Parks",
     neighborhood: "Pittsburgh",
@@ -581,6 +643,7 @@ export const businesses = [
   },
   {
     id: "perkerson-park",
+    image: perkersonParkImg,
     name: "Perkerson Park",
     category: "Parks",
     neighborhood: "Capitol View",
@@ -592,6 +655,7 @@ export const businesses = [
   },
   {
     id: "adair-park-i",
+    image: adairParkIImg,
     name: "Adair Park I",
     category: "Parks",
     neighborhood: "Adair Park",
@@ -603,6 +667,7 @@ export const businesses = [
   },
   {
     id: "rose-circle-park",
+    image: roseCircleParkImg,
     name: "Rose Circle Park",
     category: "Parks",
     neighborhood: "West End",
@@ -614,6 +679,7 @@ export const businesses = [
   },
   {
     id: "gordon-white-park",
+    image: gordonWhiteParkImg,
     name: "Gordon White Park",
     category: "Parks",
     neighborhood: "West End",
@@ -625,6 +691,7 @@ export const businesses = [
   },
   {
     id: "enota-park",
+    image: enotaParkImg,
     name: "Enota Park",
     category: "Parks",
     neighborhood: "English Avenue",
@@ -636,6 +703,7 @@ export const businesses = [
   },
   {
     id: "washington-park",
+    image: washingtonParkImg,
     name: "Washington Park",
     category: "Parks",
     neighborhood: "Washington Park",
@@ -647,6 +715,7 @@ export const businesses = [
   },
   {
     id: "rodney-cook-sr-park",
+    image: rodneyCookSrParkImg,
     name: "Rodney Cook Sr. Park",
     category: "Parks",
     neighborhood: "Vine City",
@@ -658,6 +727,7 @@ export const businesses = [
   },
   {
     id: "maddox-park",
+    image: maddoxParkImg,
     name: "Maddox Park",
     category: "Parks",
     neighborhood: "Grove Park",
@@ -669,6 +739,7 @@ export const businesses = [
   },
   {
     id: "shirley-clarke-franklin-park",
+    image: shirleyClarkeFranklinParkImg,
     name: "Shirley Clarke Franklin Park",
     category: "Parks",
     neighborhood: "Mechanicsville",
@@ -680,6 +751,7 @@ export const businesses = [
   },
   {
     id: "tanyard-creek-park",
+    image: tanyardCreekParkImg,
     name: "Tanyard Creek Park",
     category: "Parks",
     neighborhood: "Collier Hills",
@@ -691,6 +763,7 @@ export const businesses = [
   },
   {
     id: "ardmore-park",
+    image: ardmoreParkImg,
     name: "Ardmore Park",
     category: "Parks",
     neighborhood: "Brookwood Hills",
@@ -702,6 +775,7 @@ export const businesses = [
   },
   {
     id: "atlanta-memorial-park",
+    image: atlantaMemorialParkImg,
     name: "Atlanta Memorial Park",
     category: "Parks",
     neighborhood: "Buckhead",
@@ -713,6 +787,7 @@ export const businesses = [
   },
   {
     id: "morningside-nature-preserve",
+    image: morningsideNaturePreserveImg,
     name: "Morningside Nature Preserve",
     category: "Parks",
     neighborhood: "Morningside",
@@ -724,6 +799,7 @@ export const businesses = [
   },
   {
     id: "orme-park",
+    image: ormeParkImg,
     name: "Orme Park",
     category: "Parks",
     neighborhood: "Virginia Highlands",
