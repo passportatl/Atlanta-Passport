@@ -15,6 +15,7 @@ import EventsFeed from "@/passport/EventsFeed";
 import RoutesFeed from "@/passport/RoutesFeed";
 import PassportStamps from "@/pages/passport/stamps";
 import PassportRewards from "@/pages/passport/rewards";
+import PassportHome from "@/pages/passport/index";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import LegalDisclaimer from "@/components/LegalDisclaimer";
 
@@ -39,15 +40,17 @@ function PassportPanel({ children }: { children: ReactNode }) {
 export default function MapShell() {
   const [location] = useLocation();
   const view =
-    location === "/passport/explore/events"
-      ? "events"
-      : location === "/passport/stamps"
-        ? "stamps"
-        : location === "/passport/rewards"
-          ? "rewards"
-          : location === "/passport/routes"
-            ? "routes"
-            : "explore";
+    location === "/passport"
+      ? "profile"
+      : location === "/passport/explore/events"
+        ? "events"
+        : location === "/passport/stamps"
+          ? "stamps"
+          : location === "/passport/rewards"
+            ? "rewards"
+            : location === "/passport/routes"
+              ? "routes"
+              : "explore";
 
   const params =
     typeof window !== "undefined"
@@ -241,6 +244,11 @@ export default function MapShell() {
           getRouteOptions={getRouteOptions}
           onChangeRouteOption={setRouteOption}
         />
+      )}
+      {view === "profile" && (
+        <PassportPanel>
+          <PassportHome />
+        </PassportPanel>
       )}
       {view === "stamps" && (
         <PassportPanel>

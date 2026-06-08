@@ -16,7 +16,6 @@ import Contact from "@/pages/contact";
 import Listing from "@/pages/listing";
 import Beltline from "@/pages/beltline";
 import StampPage from "@/pages/stamp";
-import PassportHome from "@/pages/passport/index";
 import PassportContact from "@/pages/passport/contact";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
@@ -82,6 +81,7 @@ function ProtectedRouteRedirect() {
 // Routes that share the persistent, never-reloading map shell.
 function isMapShellRoute(location: string) {
   return (
+    location === "/passport" ||
     location === "/passport/explore" ||
     location === "/passport/explore/events" ||
     location === "/passport/stamps" ||
@@ -122,7 +122,6 @@ function PassportRoutesGroup() {
   return (
     <PassportLayout>
       <Switch>
-        <Route path="/passport" component={PassportHome} />
         <Route path="/passport/contact" component={PassportContact} />
         <Route component={NotFound} />
       </Switch>
