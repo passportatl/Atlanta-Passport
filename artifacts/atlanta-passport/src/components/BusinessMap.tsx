@@ -266,8 +266,8 @@ function BusinessMarkers({
   const ballIcon = coreLib
     ? {
         url: BALL_ICON_URL,
-        scaledSize: new coreLib.Size(44, 44),
-        anchor: new coreLib.Point(22, 22),
+        scaledSize: new coreLib.Size(18, 18),
+        anchor: new coreLib.Point(9, 9),
       }
     : undefined;
 
