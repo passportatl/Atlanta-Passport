@@ -1246,30 +1246,47 @@ export const mapRoutes = [
     },
   },
   {
-    id: "grant-park-memorial",
+    id: "varasanos-buckhead-green",
     name: "Veresanos Route",
-    area: "Grant Park → Glenwood Park",
-    miles: "1.4 mi",
+    area: "Buckhead → Collier Hills",
     pace: "Walkable",
     color: "lime",
-    vibe: "An easy stroll: historic Oakland Cemetery, crystals and hot sauce on Memorial, and a patio finish in Glenwood Park.",
+    vibe: "Buckhead's green corridor capped by a legendary pie: the woods of Atlanta Memorial, the creek at Tanyard, and Ardmore Park — built around a wood-fired dinner at Varasano's.",
     starts: {
-      marta: { name: "King Memorial Station", lat: 33.7493, lng: -84.3722 },
-      parking: { name: "Oakland Cemetery Lot", lat: 33.7475, lng: -84.3705 },
+      marta: { name: "Arts Center Station", lat: 33.7892, lng: -84.3875 },
+      parking: { name: "Memorial Park Lot", lat: 33.815, lng: -84.398 },
     },
-    businessIds: ["oakland-cemetery", "peachtree-wellness", "vickerys-bar-grill"],
+    byTime: {
+      morning: [
+        "atlanta-memorial-park",
+        "tanyard-creek-park",
+        "ardmore-park",
+        "piedmont-park",
+        "varasanos",
+      ],
+      noon: [
+        "piedmont-park",
+        "tanyard-creek-park",
+        "ardmore-park",
+        "atlanta-memorial-park",
+        "varasanos",
+      ],
+      night: [
+        "varasanos",
+        "ardmore-park",
+        "nakato-japanese-restaurant",
+      ],
+    },
   },
 ] as const;
 
 // Each route can be tailored at view time by two selectors: where you start
 // (a nearby MARTA station vs. a parking lot — flips the visiting order) and the
 // time of day. These change the stop set, order, distance, and duration.
-//   • Trap-series routes carry an explicit ordered stop list PER TIME (byTime),
-//     so morning/noon/night each visit a genuinely different set in a different
-//     order (e.g. the Trap Museum opens in the afternoon, so the morning walk
-//     saves it for last and the night walk leads with it).
-//   • Legacy routes (businessIds only) fall back to a generic split — morning =
-//     the first half, noon = the full list, night = the later half.
+//   • Every route carries an explicit ordered stop list PER TIME (byTime), so
+//     morning/noon/night each visit a genuinely different set in a different
+//     order (e.g. afternoon-only anchors like the Trap Museum or Nakato are
+//     saved for last in the morning walk and lead the night walk).
 export type RouteStart = "marta" | "parking";
 export type RouteTime = "morning" | "noon" | "night";
 export type RouteStop = (typeof businesses)[number];
@@ -1365,23 +1382,12 @@ export function resolveRoute(
   time: RouteTime,
 ): ResolvedRoute {
   const startAnchor = route.starts[start];
-  // Pick the ordered list of business ids for this time of day. Trap-series
-  // routes carry an explicit per-time list (byTime); legacy routes split a
-  // single businessIds list (morning = first half, night = later half).
-  let orderedIds: readonly string[];
-  if ("byTime" in route) {
-    orderedIds = route.byTime[time];
-  } else {
-    const ids = route.businessIds;
-    const n = Math.max(1, ids.length);
-    const half = Math.max(1, Math.ceil(n / 2));
-    orderedIds =
-      time === "morning"
-        ? ids.slice(0, half)
-        : time === "night"
-          ? ids.slice(ids.length - half)
-          : ids;
-  }
+  // Each route carries an explicit ordered stop list per time of day (byTime),
+  // so morning/noon/night each visit a genuinely different set in a different
+  // order (e.g. dinner anchors like the Trap Museum or Nakato open in the
+  // afternoon, so the morning walk saves them for last and the night walk leads
+  // with them).
+  const orderedIds: readonly string[] = route.byTime[time];
 
   const subset = orderedIds
     .map((id) => businesses.find((b) => b.id === id))
