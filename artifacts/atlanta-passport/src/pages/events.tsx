@@ -83,6 +83,8 @@ export default function Events() {
                 <motion.div key={event.id} variants={fadeInUp}>
                   <Link
                     href={`/events/${event.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`card-pop h-full flex flex-col overflow-hidden hover:-translate-y-1 transition-transform cursor-pointer ${cardTints[i % cardTints.length]}`}
                   >
                     {/* Bold typographic date tile — replaces the shared photo */}

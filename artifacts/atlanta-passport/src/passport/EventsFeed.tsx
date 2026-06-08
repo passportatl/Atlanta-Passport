@@ -246,6 +246,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                         </div>
                         <Link
                           href={`/events/${event.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           aria-label={`${t("events_page.view_event")}: ${event.name}`}
                           className="mt-auto inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
@@ -356,6 +358,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     </div>
                     <Link
                       href={`/events/${event.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       aria-label={`${t("events_page.view_event")}: ${event.name}`}
                       className="mt-1 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
