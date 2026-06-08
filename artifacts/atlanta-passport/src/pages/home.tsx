@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
-  businesses, neighborhoods, exploreCategories, routes, beltlineStops
+  businesses, neighborhoods, exploreCategories, routes, beltlineStops, businessCategories
 } from "@/data/sample-data";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -403,8 +403,12 @@ export default function Home() {
                           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
-                        <div className="absolute top-3 left-3 flex flex-col gap-2">
-                          <CategoryBadge category={biz.category} />
+                        <div className="absolute top-3 left-3 flex flex-col gap-2 items-start">
+                          <div className="flex flex-wrap gap-1.5">
+                            {businessCategories(biz).map((cat) => (
+                              <CategoryBadge key={cat} category={cat} />
+                            ))}
+                          </div>
                           {isFounding && (
                             <Sticker color="yellow">{t("card_badges.founding_spot")}</Sticker>
                           )}

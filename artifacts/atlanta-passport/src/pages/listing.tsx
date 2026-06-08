@@ -1,6 +1,6 @@
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses } from "@/data/sample-data";
+import { businesses, businessCategories } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen, Bike, Utensils, Train } from "lucide-react";
@@ -68,7 +68,9 @@ export default function Listing() {
         {/* Hero Bottom Content (badges + desktop title) */}
         <div className="absolute bottom-6 md:bottom-8 left-6 md:left-12 lg:left-24 right-28 md:right-32 text-white">
           <div className="flex gap-2 flex-wrap mb-3">
-            <CategoryBadge category={business.category} className="-rotate-2" />
+            {businessCategories(business).map((cat, i) => (
+              <CategoryBadge key={cat} category={cat} className={i % 2 === 0 ? "-rotate-2" : "rotate-1"} />
+            ))}
             {business.bikePickup && (
               <div className="badge-sticker bg-brand-navy text-brand-cream rotate-1 inline-flex items-center gap-1">
                 <Bike className="w-3.5 h-3.5" /> Wheelhaus Bike Pickup

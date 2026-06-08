@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, categories, neighborhoods, isDarkColor, categoryColor } from "@/data/sample-data";
+import { businesses, categories, neighborhoods, isDarkColor, categoryColor, businessCategories } from "@/data/sample-data";
 import BusinessImage from "@/components/BusinessImage";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, X, ChevronDown } from "lucide-react";
@@ -300,16 +300,24 @@ export default function ExploreContent({
                         <h3 className="text-base font-serif font-bold text-foreground leading-tight min-w-0">
                           {biz.name}
                         </h3>
-                        <CategoryBadge
-                          category={biz.category}
-                          className="text-[9px] px-1.5 py-0.5 shrink-0 mt-0.5 hidden sm:inline-block"
-                        />
+                        <div className="hidden sm:flex flex-wrap gap-1 shrink-0 mt-0.5 justify-end">
+                          {businessCategories(biz).map((cat) => (
+                            <CategoryBadge
+                              key={cat}
+                              category={cat}
+                              className="text-[9px] px-1.5 py-0.5 inline-block"
+                            />
+                          ))}
+                        </div>
                       </div>
-                      <div className="mb-1 sm:hidden">
-                        <CategoryBadge
-                          category={biz.category}
-                          className="text-[9px] px-1.5 py-0.5 inline-block"
-                        />
+                      <div className="mb-1 sm:hidden flex flex-wrap gap-1">
+                        {businessCategories(biz).map((cat) => (
+                          <CategoryBadge
+                            key={cat}
+                            category={cat}
+                            className="text-[9px] px-1.5 py-0.5 inline-block"
+                          />
+                        ))}
                       </div>
                       <div className="flex items-center text-muted-foreground text-xs mb-1">
                         <MapPin className="w-3 h-3 mr-1 shrink-0" />

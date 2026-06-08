@@ -928,6 +928,14 @@ export function categoryColor(name: string): string {
   return categoryColors[name] ?? "#475569";
 }
 
+// Return every category for a business as an array. Businesses with multiple
+// categories carry a `categories` list; otherwise fall back to the single
+// `category`. De-duplicates so the primary category isn't shown twice.
+export function businessCategories(biz: { category: string; categories?: string[] }): string[] {
+  const all = biz.categories && biz.categories.length ? biz.categories : [biz.category];
+  return Array.from(new Set([biz.category, ...all]));
+}
+
 export const exploreCategories = [
   { id: "food",        label: "Food",        tagline: "Good plates, patios, late bites.",     color: "red",    icon: "Utensils" },
   { id: "drinks",      label: "Drink",       tagline: "Cocktails, breweries, last calls.",     color: "navy",   icon: "Beer" },
