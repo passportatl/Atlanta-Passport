@@ -66,7 +66,8 @@
       "subtitle": "Local or visitor — the Passport's live calendar keeps you on top of every match screening, concert, market, and pop-up across the city.",
       "cta": "See the full calendar",
       "screen_title": "Tonight in Atlanta",
-      "live_badge": "Live Tonight"
+      "live_badge": "Live Tonight",
+      "cta_lead": "Get your free Passport"
     },
     "business_cta": {
       "kicker": "For Atlanta Businesses",

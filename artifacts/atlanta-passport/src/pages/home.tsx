@@ -230,8 +230,11 @@ function EventsShowcase() {
             <p className="text-xl md:text-2xl text-white/90 font-medium max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
               {t("home.events_showcase.subtitle")}
             </p>
-            <Link href="/passport/explore/events" className="button-pop bg-white text-foreground text-xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg inline-flex items-center">
-              <Calendar className="w-6 h-6 mr-2" /> {t("home.events_showcase.cta")} <MoveRight className="w-6 h-6 ml-2 rtl:rotate-180" />
+            <Link href="/sign-up" className="button-pop bg-white text-foreground text-xl !rounded-2xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg">
+              <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
+                <span>{t("home.events_showcase.cta_lead")}</span>
+                <span className="flex items-center justify-center"><Calendar className="w-5 h-5 mr-2" /> {t("home.events_showcase.cta")} <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" /></span>
+              </span>
             </Link>
           </div>
 
