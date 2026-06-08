@@ -57,11 +57,6 @@
       "stops_count_one": "{{count}} parada",
       "stops_count_other": "{{count}} paradas"
     },
-    "spots_callout": {
-      "kicker": "Favoritos dos Locais",
-      "title": "Vale sair do hotel por esses.",
-      "cta_all": "Explorar Todos os Lugares"
-    },
     "business_cta": {
       "kicker": "Para Negócios em Atlanta",
       "title": "Apareça no mapa antes que o mundo chegue.",
@@ -76,6 +71,14 @@
       "stamp_hero": "ATL 26 Stamp",
       "stamp_local": "Local Only",
       "stamp_year": "ATL 2026"
+    },
+    "events_showcase": {
+      "kicker": "O Que Rola Hoje à Noite",
+      "title": "Fique por dentro de tudo que acontece hoje à noite.",
+      "subtitle": "Morador ou visitante — o calendário ao vivo do Passport mantém você atualizado sobre cada transmissão de partida, show, feira e pop-up pela cidade.",
+      "cta": "Ver o calendário completo",
+      "screen_title": "Hoje à Noite em Atlanta",
+      "live_badge": "Acontecendo Hoje"
     }
   },
   "lang": {

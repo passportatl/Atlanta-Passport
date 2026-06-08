@@ -16,7 +16,8 @@
     "for_businesses": "انضم إلى الخريطة",
     "get_listed": "سجّل نشاطك",
     "partner_tiers": "باقات الشراكة",
-    "toggle_menu": "فتح القائمة"
+    "toggle_menu": "فتح القائمة",
+    "follow_us": "تابِعنا"
   },
   "marquee": {
     "real_atl": "ATL الأصيلة",
@@ -223,6 +224,9 @@
     "tier_premier_name": "Premier",
     "tier_premier_price": "$150",
     "tier_premier_desc": "كن لا يُغفَل عنك. صفحة كاملة في الجواز المطبوع وأعلى مرتبة في الدليل الرقمي وتقرير مميز خاص بك.",
+    "tier_route_name": "راعي مسار الحي",
+    "tier_route_price": "$250",
+    "tier_route_desc": "امتلك التجربة. ظهور بمستوى Premier مرتبط مباشرةً بمسار حي مُنسَّق.",
     "select_tier": "اختر الباقة",
     "request_custom": "اطلب باقة مخصصة",
     "feature_listing": "إدراج في الدليل الرقمي",
@@ -359,11 +363,6 @@
       "stops_count_one": "محطة واحدة",
       "stops_count_other": "{{count}} محطات"
     },
-    "spots_callout": {
-      "kicker": "المفضلات المحلية",
-      "title": "تستحق مغادرة الفندق من أجلها.",
-      "cta_all": "استكشف جميع الأماكن"
-    },
     "business_cta": {
       "kicker": "لأصحاب الأعمال في Atlanta",
       "title": "ضع مكانك على الخريطة قبل أن يصل العالم.",
@@ -378,6 +377,14 @@
       "stamp_hero": "ATL 26 Stamp",
       "stamp_local": "Local Only",
       "stamp_year": "ATL 2026"
+    },
+    "events_showcase": {
+      "kicker": "ما يحدث الليلة",
+      "title": "كن دائمًا على دراية بما يجري الليلة.",
+      "subtitle": "سواء كنت من سكان المدينة أو زائرًا — يُبقيك تقويم Atlanta Passport المباشر على اطلاع بكل مباراة مُذاعة، وحفلة موسيقية، وسوق، وفعالية مفاجئة في أرجاء المدينة.",
+      "cta": "اعرض التقويم الكامل",
+      "screen_title": "الليلة في Atlanta",
+      "live_badge": "مباشر الليلة"
     }
   }
 }

@@ -57,11 +57,6 @@
       "stops_count_one": "{{count}}スポット",
       "stops_count_other": "{{count}}スポット"
     },
-    "spots_callout": {
-      "kicker": "地元のお気に入り",
-      "title": "ホテルを出る価値、あります。",
-      "cta_all": "すべてのスポットを見る"
-    },
     "business_cta": {
       "kicker": "Atlanta のビジネスオーナーへ",
       "title": "世界が来る前に、地図に載ろう。",
@@ -76,6 +71,14 @@
       "stamp_hero": "ATL 26 Stamp",
       "stamp_local": "Local Only",
       "stamp_year": "ATL 2026"
+    },
+    "events_showcase": {
+      "kicker": "今夜のおすすめ",
+      "title": "今夜何があるか、いつでもチェック。",
+      "subtitle": "地元の方も旅行者も — Atlanta Passportのライブカレンダーで、試合観戦イベント、コンサート、マーケット、ポップアップまで、街中のあらゆる情報をリアルタイムでお届け。",
+      "cta": "カレンダーをすべて見る",
+      "screen_title": "Tonight in Atlanta",
+      "live_badge": "今夜開催中"
     }
   },
   "lang": {

@@ -57,10 +57,13 @@
       "stops_count_one": "{{count}} stop",
       "stops_count_other": "{{count}} stops"
     },
-    "spots_callout": {
-      "kicker": "Local Favorites",
-      "title": "Worth leaving the hotel for.",
-      "cta_all": "Explore All Spots"
+    "events_showcase": {
+      "kicker": "What's On Tonight",
+      "title": "Always know what's going on tonight.",
+      "subtitle": "Local or visitor — the Passport's live calendar keeps you on top of every match screening, concert, market, and pop-up across the city.",
+      "cta": "See the full calendar",
+      "screen_title": "Tonight in Atlanta",
+      "live_badge": "Live Tonight"
     },
     "business_cta": {
       "kicker": "For Atlanta Businesses",

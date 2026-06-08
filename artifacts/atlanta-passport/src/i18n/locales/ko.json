@@ -57,11 +57,6 @@
       "stops_count_one": "{{count}}개 스팟",
       "stops_count_other": "{{count}}개 스팟"
     },
-    "spots_callout": {
-      "kicker": "로컬 추천 명소",
-      "title": "호텔 밖으로 나설 가치가 충분한 곳들.",
-      "cta_all": "모든 스팟 보기"
-    },
     "business_cta": {
       "kicker": "Atlanta 사업자분들께",
       "title": "세계가 오기 전에 지도에 올라타세요.",
@@ -76,6 +71,14 @@
       "stamp_hero": "ATL 26 Stamp",
       "stamp_local": "Local Only",
       "stamp_year": "ATL 2026"
+    },
+    "events_showcase": {
+      "kicker": "오늘 밤 뭐 있어요?",
+      "title": "오늘 밤 어디서 뭘 하는지, 항상 놓치지 마세요.",
+      "subtitle": "Atlanta 주민이든 방문객이든 — Atlanta Passport의 실시간 캘린더 하나로 도시 곳곳의 경기 상영, 콘서트, 마켓, 팝업까지 전부 한눈에 확인하세요.",
+      "cta": "전체 캘린더 보기",
+      "screen_title": "오늘 밤, Atlanta에서",
+      "live_badge": "오늘 밤 Live"
     }
   },
   "lang": {

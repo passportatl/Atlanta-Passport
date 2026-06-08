@@ -57,11 +57,6 @@
       "stops_count_one": "{{count}} Station",
       "stops_count_other": "{{count}} Stationen"
     },
-    "spots_callout": {
-      "kicker": "Lokale Lieblinge",
-      "title": "Gut genug, um das Hotel zu verlassen.",
-      "cta_all": "Alle Orte entdecken"
-    },
     "business_cta": {
       "kicker": "Für Atlanta-Unternehmen",
       "title": "Setz dich auf die Karte, bevor die Welt ankommt.",
@@ -76,6 +71,14 @@
       "stamp_hero": "ATL 26 Stamp",
       "stamp_local": "Local Only",
       "stamp_year": "ATL 2026"
+    },
+    "events_showcase": {
+      "kicker": "Was heute Abend los ist",
+      "title": "Immer wissen, was heute Abend passiert.",
+      "subtitle": "Einheimischer oder Besucher — der live Kalender des Passport hält dich über jedes Match-Screening, Konzert, Markt und Pop-up in der ganzen Stadt auf dem Laufenden.",
+      "cta": "Den vollen Kalender anzeigen",
+      "screen_title": "Heute Abend in Atlanta",
+      "live_badge": "Heute Abend live"
     }
   },
   "lang": {

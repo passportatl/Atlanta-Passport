@@ -2,13 +2,12 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import {
   MapPin, Stamp, Bike, Calendar,
-  MoveRight, ArrowRight, Gift, Ticket, Map, Landmark, Compass
+  MoveRight, Gift, Ticket, Map, Landmark, Compass
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { businesses, routes, events } from "@/data/sample-data";
+import { routes, events } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
-import CategoryBadge from "@/components/CategoryBadge";
 import PassportStamp from "@/components/PassportStamp";
 import { cn } from "@/lib/utils";
 
@@ -197,66 +196,72 @@ function JourneySection() {
   )
 }
 
-function SpotsAndEventsSection() {
+function parseEventDate(d: string) {
+  const m = d.match(/([A-Za-z]+)\s+(\d+)/);
+  return { mon: m ? m[1].slice(0, 3).toUpperCase() : "", day: m ? m[2] : "" };
+}
+
+function EventsShowcase() {
   const { t } = useTranslation();
-  const offerSpots = businesses.filter(b => b.offer);
-  const featuredEvents = events.slice(0, 2);
+  const calendarEvents = events.slice(0, 4);
 
   return (
-    <section className="bg-brand-orange texture-paper section-hero relative overflow-hidden">
+    <section className="bg-brand-orange texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
       <PassportStamp size="lg" tone="navy" rotate={-25} className="absolute -top-12 -left-12 opacity-20 scale-[2] pointer-events-none" >
         {t("home.decor.stamp_local")}
       </PassportStamp>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16 md:mb-24">
-          <Sticker color="yellow" rotate="right" className="mb-6">{t("home.spots_callout.kicker")}</Sticker>
-          <h2 className="font-serif font-black text-5xl md:text-7xl text-white drop-shadow-md">{t("home.spots_callout.title")}</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {featuredEvents.map((evt, i) => (
-             <div key={evt.id} className={cn("card-pop bg-brand-navy text-white p-0 overflow-hidden flex flex-col border-4", i === 0 ? "md:col-span-2 lg:col-span-2" : "col-span-1")}>
-                <div className="bg-brand-red text-white p-4 md:p-6 font-display text-sm md:text-base tracking-widest uppercase border-b-4 border-foreground flex justify-between items-center">
-                  <span className="flex items-center gap-2"><Calendar className="w-5 h-5"/> {evt.category}</span>
-                  <span className="bg-white text-brand-red px-3 py-1 border-2 border-foreground rounded-full shadow-pop-sm">{evt.date}</span>
-                </div>
-                <div className="p-6 md:p-10 flex-grow flex flex-col justify-center">
-                  <h3 className="font-serif font-black text-4xl md:text-6xl mb-6 leading-none">{evt.name}</h3>
-                  <p className="text-brand-cream text-xl mb-8 font-medium max-w-2xl">{evt.description}</p>
-                  <Link href={`/events/${evt.id}`} className="button-pop bg-brand-yellow text-foreground self-start mt-auto border-4 text-lg py-3 px-6 hover:bg-white transition-colors">
-                    {t("home.events.view_event")} <ArrowRight className="w-5 h-5 ml-2"/>
-                  </Link>
-                </div>
-             </div>
-          ))}
-
-          {offerSpots.map(spot => (
-            <Link key={spot.id} href={`/listing/${spot.id}`} className="group block">
-              <div className="card-pop bg-white h-full overflow-hidden transition-transform group-hover:-translate-y-2 flex flex-col border-4">
-                <div className="aspect-[4/3] relative border-b-4 border-foreground">
-                  <img src={spot.image} alt={spot.name} className="w-full h-full object-cover" />
-                  <CategoryBadge category={spot.category} className="absolute top-4 left-4 scale-110 origin-top-left" />
-                </div>
-                <div className="p-6 md:p-8 flex flex-col flex-grow">
-                  <h3 className="font-serif font-black text-3xl mb-3 leading-tight">{spot.name}</h3>
-                  <p className="text-foreground/80 text-lg mb-6 line-clamp-2 font-medium">{spot.description}</p>
-                  {spot.offer && (
-                    <div className="mt-auto bg-brand-cream p-4 border-4 border-foreground rounded-xl flex items-start gap-3 shadow-pop-sm">
-                      <Gift className="w-6 h-6 text-brand-red shrink-0 mt-0.5" />
-                      <span className="font-bold text-base">{spot.offer}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Copy */}
+          <div className="text-center lg:text-left ltr:lg:text-left rtl:lg:text-right">
+            <Sticker color="yellow" rotate="right" className="mb-6">{t("home.events_showcase.kicker")}</Sticker>
+            <h2 className="font-serif font-black text-5xl md:text-7xl text-white drop-shadow-md leading-[0.95] mb-6">
+              {t("home.events_showcase.title")}
+            </h2>
+            <p className="text-xl md:text-2xl text-white/90 font-medium max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
+              {t("home.events_showcase.subtitle")}
+            </p>
+            <Link href="/passport/explore/events" className="button-pop bg-white text-foreground text-xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg inline-flex items-center">
+              <Calendar className="w-6 h-6 mr-2" /> {t("home.events_showcase.cta")} <MoveRight className="w-6 h-6 ml-2 rtl:rotate-180" />
             </Link>
-          ))}
-        </div>
-        
-        <div className="mt-16 text-center">
-           <Link href="/passport/explore" className="button-pop bg-white text-foreground text-xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg">
-             {t("home.spots_callout.cta_all")} <MoveRight className="w-6 h-6 ml-2" />
-           </Link>
+          </div>
+
+          {/* Events calendar "screenshot" */}
+          <div className="relative mx-auto w-full max-w-md">
+            <Sticker color="red" rotate="left" className="absolute -top-5 -right-2 z-20 shadow-pop-sm">
+              {t("home.events_showcase.live_badge")}
+            </Sticker>
+            <div className="card-pop bg-white border-4 p-0 overflow-hidden rotate-1">
+              <div className="bg-brand-navy text-white px-5 py-4 border-b-4 border-foreground flex items-center justify-between">
+                <span className="font-display text-sm tracking-widest uppercase flex items-center gap-2">
+                  <Calendar className="w-5 h-5" /> {t("home.events_showcase.screen_title")}
+                </span>
+                <span className="flex gap-1.5">
+                  <span className="w-3 h-3 rounded-full bg-brand-red border-2 border-foreground" />
+                  <span className="w-3 h-3 rounded-full bg-brand-yellow border-2 border-foreground" />
+                  <span className="w-3 h-3 rounded-full bg-brand-lime border-2 border-foreground" />
+                </span>
+              </div>
+              <div className="divide-y-2 divide-foreground/10">
+                {calendarEvents.map((evt) => {
+                  const { mon, day } = parseEventDate(evt.date);
+                  return (
+                    <div key={evt.id} className="flex items-center gap-4 p-4">
+                      <div className="shrink-0 w-16 h-16 bg-brand-yellow border-4 border-foreground rounded-lg flex flex-col items-center justify-center shadow-pop-sm">
+                        <span className="font-display text-[10px] tracking-widest text-foreground leading-none">{mon}</span>
+                        <span className="font-serif font-black text-2xl text-foreground leading-none mt-0.5">{day}</span>
+                      </div>
+                      <div className="min-w-0 flex-grow text-left rtl:text-right">
+                        <h3 className="font-serif font-black text-lg leading-tight truncate">{evt.name}</h3>
+                        <p className="text-foreground/70 text-sm font-medium truncate">{evt.venue} · {evt.time}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -294,7 +299,7 @@ export default function Home() {
       <HeroSection />
       <PillarsSection />
       <JourneySection />
-      <SpotsAndEventsSection />
+      <EventsShowcase />
       <BusinessCtaSection />
     </div>
   );
