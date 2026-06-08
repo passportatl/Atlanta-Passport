@@ -389,6 +389,7 @@ export const businesses = [
     hours: "4pm-9pm EVERYDAY extended hours on Fridays and Saturdays til 10pm",
     website: "https://www.nakatorestaurant.com",
     about: "Nakato Japanese Restaurant is a third-generation, family-owned destination for authentic Japanese cuisine. Guests can enjoy expertly crafted sushi, traditional Japanese dining, and an energetic teppanyaki experience—all delivered with the hospitality and heritage that have defined Nakato for generations. Combining time-honored recipes with vibrant tableside entertainment, Nakato offers a memorable dining experience for every occasion.",
+    visitMinutes: 90,
     stampSpot: true,
   },
   {
@@ -1214,18 +1215,35 @@ export const mapRoutes = [
     },
   },
   {
-    id: "westside-stadium-crawl",
+    id: "nakato-piedmont-heights-walk",
     name: "Nakato Route",
-    area: "West End → Castleberry Hill",
-    miles: "1.9 mi",
+    area: "Piedmont Heights → Morningside",
     pace: "Walkable",
     color: "red",
-    vibe: "A pre-match wander near Mercedes-Benz Stadium — dive-bar drinks at The Westwood, then local brews and art at Atlantucky.",
+    vibe: "Green space and a legendary dinner: Morningside's woods, Piedmont Park's meadows, and Orme Park — built around teppanyaki and sushi at third-generation Nakato.",
     starts: {
-      marta: { name: "Vine City Station", lat: 33.7565, lng: -84.4035 },
-      parking: { name: "Castleberry Hill Lot", lat: 33.7445, lng: -84.401 },
+      marta: { name: "Lindbergh Center Station", lat: 33.8236, lng: -84.3693 },
+      parking: { name: "Cheshire Bridge Lot", lat: 33.812, lng: -84.362 },
     },
-    businessIds: ["the-westwood", "atlantucky-brewing"],
+    byTime: {
+      morning: [
+        "morningside-nature-preserve",
+        "piedmont-park",
+        "orme-park",
+        "nakato-japanese-restaurant",
+      ],
+      noon: [
+        "piedmont-park",
+        "orme-park",
+        "morningside-nature-preserve",
+        "nakato-japanese-restaurant",
+      ],
+      night: [
+        "nakato-japanese-restaurant",
+        "piedmont-park",
+        "varasanos",
+      ],
+    },
   },
   {
     id: "grant-park-memorial",
