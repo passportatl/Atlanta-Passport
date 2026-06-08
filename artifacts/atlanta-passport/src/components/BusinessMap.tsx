@@ -10,7 +10,7 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
-import { neighborhoodColors, categoryColor } from "@/data/sample-data";
+import { neighborhoodColors, categoryColor, businessCategories } from "@/data/sample-data";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -217,12 +217,42 @@ export type MapBusiness = {
   name: string;
   neighborhood: string;
   category: string;
+  categories?: string[];
   lat: number;
   lng: number;
   sponsorTier?: string;
 };
 
 const BALL_ICON_URL = SOCCER_BALL_SRC;
+
+// Build a category-colored dot marker as an inline SVG data URL. A single
+// category renders a solid circle; multiple categories split the circle into
+// equal pie slices (two categories = left/right halves) so every category a
+// business belongs to is represented on the map.
+function dotIconSvg(colors: string[], size = 18): string {
+  const r = size / 2;
+  const c = size / 2;
+  const rr = r - 0.75;
+  let shapes = "";
+  if (colors.length <= 1) {
+    shapes = `<circle cx="${c}" cy="${c}" r="${rr}" fill="${colors[0] ?? "#475569"}"/>`;
+  } else {
+    const n = colors.length;
+    const slice = 360 / n;
+    for (let i = 0; i < n; i++) {
+      const a0 = ((-90 + i * slice) * Math.PI) / 180;
+      const a1 = ((-90 + (i + 1) * slice) * Math.PI) / 180;
+      const x0 = (c + rr * Math.cos(a0)).toFixed(3);
+      const y0 = (c + rr * Math.sin(a0)).toFixed(3);
+      const x1 = (c + rr * Math.cos(a1)).toFixed(3);
+      const y1 = (c + rr * Math.sin(a1)).toFixed(3);
+      const largeArc = slice > 180 ? 1 : 0;
+      shapes += `<path d="M${c} ${c} L${x0} ${y0} A${rr} ${rr} 0 ${largeArc} 1 ${x1} ${y1} Z" fill="${colors[i]}"/>`;
+    }
+  }
+  const border = `<circle cx="${c}" cy="${c}" r="${rr}" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${shapes}${border}</svg>`;
+}
 
 function BusinessMarkers({
   businesses,
@@ -241,6 +271,16 @@ function BusinessMarkers({
       }
     : undefined;
 
+  const dotIcon = (b: MapBusiness) => {
+    if (!coreLib) return undefined;
+    const colors = businessCategories(b).map(categoryColor);
+    return {
+      url: "data:image/svg+xml," + encodeURIComponent(dotIconSvg(colors, 18)),
+      scaledSize: new coreLib.Size(18, 18),
+      anchor: new coreLib.Point(9, 9),
+    };
+  };
+
   return (
     <>
       {businesses.map((b) => (
@@ -249,7 +289,7 @@ function BusinessMarkers({
           position={{ lat: b.lat, lng: b.lng }}
           title={b.name}
           onClick={() => onSelect(b.id)}
-          icon={b.sponsorTier === "Founding Sponsor" ? ballIcon : undefined}
+          icon={b.sponsorTier === "Founding Sponsor" ? ballIcon : dotIcon(b)}
         />
       ))}
     </>
