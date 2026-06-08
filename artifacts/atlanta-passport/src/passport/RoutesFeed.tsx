@@ -23,6 +23,7 @@ const headerTints: Record<string, string> = {
   lime: "bg-brand-lime text-foreground",
   sky: "bg-brand-sky text-foreground",
   orange: "bg-brand-orange text-white",
+  navy: "bg-brand-navy text-white",
 };
 
 type RouteOptions = { start: RouteStart; time: RouteTime };

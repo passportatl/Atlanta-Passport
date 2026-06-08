@@ -1185,6 +1185,42 @@ export const mapRoutes = [
     },
   },
   {
+    id: "soccer-route",
+    name: "Soccer Route",
+    area: "Mercedes-Benz Stadium → Castleberry Hill",
+    pace: "Walkable",
+    color: "navy",
+    vibe: "Match-day basecamp by the stadium: skyline shots from the Jackson St Bridge, the Trap Museum and Tiny Door, the Herndon Home, all looping back to a cold one at Atlantucky in Castleberry Hill — steps from the hotels.",
+    starts: {
+      marta: { name: "Vine City Station", lat: 33.7563, lng: -84.4035 },
+      parking: { name: "Stadium Deck (Castleberry)", lat: 33.751, lng: -84.398 },
+    },
+    byTime: {
+      morning: [
+        "rodney-cook-sr-park",
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "herndon-home-muserum",
+        "jackson-st-bridge",
+        "atlantucky-brewing",
+      ],
+      noon: [
+        "herndon-home-muserum",
+        "tiny-door-atl-26",
+        "trap-museum",
+        "jackson-st-bridge",
+        "atlantucky-brewing",
+      ],
+      night: [
+        "atlantucky-brewing",
+        "herndon-home-muserum",
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "jackson-st-bridge",
+      ],
+    },
+  },
+  {
     id: "parks-and-murals-loop",
     name: "Parks & Murals Loop",
     area: "Vine City → Westside",
