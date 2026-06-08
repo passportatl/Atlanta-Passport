@@ -340,7 +340,9 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
 
     const bounds = new google.maps.LatLngBounds();
     path.forEach((p) => bounds.extend(p));
-    map.fitBounds(bounds, 64);
+    // Tight padding so the traced route fills the map area instead of sitting
+    // small in the middle.
+    map.fitBounds(bounds, 24);
     if (path.length === 1 && (map.getZoom() ?? 0) > 15) map.setZoom(15);
 
     return () => {
