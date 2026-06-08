@@ -23,10 +23,12 @@ export default function Navbar() {
   const { isSignedIn } = useUser();
   const passportShort = isSignedIn ? "My Passport" : "Log In";
 
-  // Business listing pages are standalone (often opened in their own tab via a
-  // scanned link/QR), so they hide the "Get Listed" + passport/auth links and
-  // surface a single "Back to site" action that closes the tab instead.
-  const isListing = location.startsWith("/listing");
+  // Business listing AND event detail pages are standalone (opened in their own
+  // tab via a scanned link/QR or the "View" buttons), so they hide the
+  // "Get Listed" + passport/auth links and surface a single "Back to site"
+  // action that closes the tab instead. The /events index keeps the normal nav.
+  const isStandalone =
+    location.startsWith("/listing") || location.startsWith("/events/");
   const closeTab = () => window.close();
 
   const mobileTouristLinks = [
@@ -38,7 +40,7 @@ export default function Navbar() {
   const businessLinks = [
     { name: t("nav.get_listed"), path: "/apply" },
     { name: t("nav.partner_tiers"), path: "/partners" },
-  ].filter((l) => !(isListing && l.path === "/apply"));
+  ].filter((l) => !(isStandalone && l.path === "/apply"));
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
@@ -49,7 +51,7 @@ export default function Navbar() {
 
           {/* Desktop, left of the centered logo: "Back to site" on listing pages
               (closes the tab), otherwise the "Get Listed" link. */}
-          {isListing ? (
+          {isStandalone ? (
             <button
               type="button"
               onClick={closeTab}
@@ -102,7 +104,7 @@ export default function Navbar() {
 
         {/* Desktop Nav — Passport auth + socials (right of the centered logo) */}
         <nav className="hidden md:flex items-center gap-2 justify-start md:h-16">
-          {!isListing &&
+          {!isStandalone &&
             (isSignedIn ? (
               <Link
                 href="/passport"
@@ -141,13 +143,13 @@ export default function Navbar() {
 
           {/* Far right: social media icons */}
           <SocialLinks
-            className={cn(!isListing && "ml-2 pl-3 border-l border-brand-cream/25")}
+            className={cn(!isStandalone && "ml-2 pl-3 border-l border-brand-cream/25")}
           />
         </nav>
 
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-1.5">
-          {isListing ? (
+          {isStandalone ? (
             <button
               type="button"
               onClick={closeTab}
@@ -196,7 +198,7 @@ export default function Navbar() {
                     {link.name}
                   </Link>
                 ))}
-                {!isListing &&
+                {!isStandalone &&
                   (isSignedIn ? (
                     <Link
                       href="/passport"
