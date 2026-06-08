@@ -39,6 +39,11 @@ const STAMP_SLUG: Record<string, string> = {
   "wheelhaus-bikes": "wheelhaus",
   "the-westwood": "westwood",
   "vickerys-bar-grill": "vickerys",
+  "boxcar-at-hop-city": "boxcar",
+  "hop-city-at-krog-st-market": "hop-city-krog",
+  "la-semilla": "la-semilla",
+  varasanos: "varasanos",
+  "nakato-japanese-restaurant": "nakato",
 };
 
 // Drive the list off STAMP_SLUG (not a broad offer filter) so it stays exactly

@@ -131,6 +131,12 @@ const SEED_BUSINESSES: InsertBusiness[] = [
   // Outliers — black-lime / compass
   { slug: "pure-quill-superette", name: "Pure Quill Superette", category: "retail", neighborhood: "Outliers", stampColor: "black-lime", icon: "shopping-bag" },
   { slug: "that-art-gallery-we-went-to-last-week", name: "That Art Gallery We Went To Last Week", category: "arts", neighborhood: "Outliers", stampColor: "black-lime", icon: "palette" },
+
+  // Passport offer spots from the Explore dataset that weren't already seeded —
+  // so every business with a Passport offer is a collectible stamp location.
+  { slug: "hop-city-krog", name: "Hop City at Krog St Market", category: "retail", neighborhood: "Krog", stampColor: "lime", icon: "shopping-bag" },
+  { slug: "varasanos", name: "Varasanos", category: "food", neighborhood: "Buckhead", stampColor: "red", icon: "flame" },
+  { slug: "nakato", name: "Nakato Japanese Restaurant", category: "food", neighborhood: "Piedmont Heights", stampColor: "blue", icon: "utensils" },
 ].map(build);
 
 // Featured events — scannable BONUS stamps. These are stored as businesses in

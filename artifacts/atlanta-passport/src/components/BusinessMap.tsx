@@ -221,6 +221,7 @@ export type MapBusiness = {
   lat: number;
   lng: number;
   sponsorTier?: string;
+  offer?: string;
 };
 
 const BALL_ICON_URL = SOCCER_BALL_SRC;
@@ -289,7 +290,7 @@ function BusinessMarkers({
           position={{ lat: b.lat, lng: b.lng }}
           title={b.name}
           onClick={() => onSelect(b.id)}
-          icon={b.sponsorTier === "Founding Sponsor" ? ballIcon : dotIcon(b)}
+          icon={b.offer ? ballIcon : dotIcon(b)}
         />
       ))}
     </>
