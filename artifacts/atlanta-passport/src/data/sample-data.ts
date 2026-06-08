@@ -4,6 +4,11 @@ import atlantuckyImg from "@/assets/images/atlantucky.png";
 import theWestwoodImg from "@/assets/images/the-westwood-real.jpg";
 import vickerysImg from "@/assets/images/vickerys-real.jpg";
 import oaklandCemeteryImg from "@/assets/images/oakland-cemetery.jpg";
+import boxcarHopCityImg from "@/assets/images/boxcar-hop-city.jpg";
+import hopCityKrogImg from "@/assets/images/hop-city-krog.jpg";
+import laSemillaImg from "@/assets/images/la-semilla.jpg";
+import trapMuseumImg from "@/assets/images/trap-museum.jpg";
+import nakatoImg from "@/assets/images/nakato.jpg";
 import beltlineImg from "@/assets/images/beltline.png";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import midtownImg from "@/assets/images/midtown.png";
@@ -215,6 +220,7 @@ export const businesses = [
   {
     id: "boxcar-at-hop-city",
     name: "BoxCar at Hop City",
+    image: boxcarHopCityImg,
     category: "Retail",
     categories: ["Retail","Drink"],
     neighborhood: "West End",
@@ -235,6 +241,7 @@ export const businesses = [
   {
     id: "hop-city-at-krog-st-market",
     name: "Hop City at Krog St Market",
+    image: hopCityKrogImg,
     category: "Retail",
     categories: ["Retail","Drink"],
     neighborhood: "Krog",
@@ -255,6 +262,7 @@ export const businesses = [
   {
     id: "la-semilla",
     name: "La Semilla",
+    image: laSemillaImg,
     category: "Food",
     categories: ["Food","Drink"],
     neighborhood: "Reynoldstown",
@@ -288,6 +296,7 @@ export const businesses = [
   {
     id: "trap-museum",
     name: "Trap Museum",
+    image: trapMuseumImg,
     category: "Experiences",
     categories: ["Experiences","Drink"],
     neighborhood: "Westside",
@@ -326,6 +335,7 @@ export const businesses = [
   {
     id: "nakato-japanese-restaurant",
     name: "Nakato Japanese Restaurant",
+    image: nakatoImg,
     category: "Food",
     categories: ["Food","Drink"],
     neighborhood: "Piedmont Heights",
