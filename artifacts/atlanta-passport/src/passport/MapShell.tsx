@@ -72,6 +72,7 @@ export default function MapShell() {
     initialNeighborhood ? [initialNeighborhood] : [],
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [onlyOffers, setOnlyOffers] = useState(false);
   const [selectedBizId, setSelectedBizId] = useState<string | undefined>(
     undefined,
   );
@@ -120,10 +121,12 @@ export default function MapShell() {
       const matchSearch =
         biz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         biz.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchOffer =
+        !onlyOffers || Boolean((biz as { offer?: string }).offer);
 
-      return matchCategory && matchNeighborhood && matchSearch;
+      return matchCategory && matchNeighborhood && matchSearch && matchOffer;
     });
-  }, [activeCategories, activeNeighborhoods, searchQuery]);
+  }, [activeCategories, activeNeighborhoods, searchQuery, onlyOffers]);
 
   // The Routes view highlights one curated route at a time: the map shows only
   // that route's stops (in order) and draws a connecting line. With no route
@@ -271,6 +274,8 @@ export default function MapShell() {
           toggleCategory={toggleCategory}
           setActiveNeighborhoods={setActiveNeighborhoods}
           toggleNeighborhood={toggleNeighborhood}
+          onlyOffers={onlyOffers}
+          setOnlyOffers={setOnlyOffers}
           onSelectBusiness={setSelectedBizId}
         />
       )}

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, isDarkColor, categoryColor, businessCategories } from "@/data/sample-data";
 import BusinessImage from "@/components/BusinessImage";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, X, ChevronDown } from "lucide-react";
+import { MapPin, Search, X, ChevronDown, Ticket } from "lucide-react";
 import SoccerBall from "@/components/SoccerBall";
 import CategoryBadge from "@/components/CategoryBadge";
 import { motion } from "framer-motion";
@@ -29,6 +29,8 @@ type ExploreContentProps = {
   toggleCategory: (cat: string) => void;
   setActiveNeighborhoods: (value: string[]) => void;
   toggleNeighborhood: (n: string) => void;
+  onlyOffers: boolean;
+  setOnlyOffers: (value: boolean) => void;
   onSelectBusiness: (id: string) => void;
 };
 
@@ -42,6 +44,8 @@ export default function ExploreContent({
   toggleCategory,
   setActiveNeighborhoods,
   toggleNeighborhood,
+  onlyOffers,
+  setOnlyOffers,
   onSelectBusiness,
 }: ExploreContentProps) {
   const { t } = useTranslation();
@@ -52,13 +56,19 @@ export default function ExploreContent({
   const hasActiveFilters =
     activeCategories.length > 0 ||
     activeNeighborhoods.length > 0 ||
+    onlyOffers ||
     searchQuery.trim() !== "";
 
   const clearFilters = () => {
     setActiveCategories([]);
     setActiveNeighborhoods([]);
+    setOnlyOffers(false);
     setSearchQuery("");
   };
+
+  const offersLabel = t("explore_page.offers_short", {
+    defaultValue: "Passport offers",
+  });
 
   const catLabel = t("explore_page.category_short", { defaultValue: "Type" });
   const areaLabel = t("explore_page.area_short", { defaultValue: "Neighborhood" });
@@ -159,16 +169,32 @@ export default function ExploreContent({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={clearFilters}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground bg-brand-red text-white transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
+                onClick={() => setOnlyOffers(!onlyOffers)}
+                aria-pressed={onlyOffers}
+                className={cn(
+                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground transition-all hover:-translate-y-0.5 hover:shadow-pop-sm",
+                  onlyOffers
+                    ? "bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm -translate-y-0.5"
+                    : "bg-background text-foreground",
+                )}
               >
-                <X className="w-3 h-3" />
-                {t("explore_page.clear_filters")}
+                <Ticket className="w-3.5 h-3.5" />
+                {offersLabel}
               </button>
-            )}
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground bg-brand-red text-white transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
+                >
+                  <X className="w-3 h-3" />
+                  {t("explore_page.clear_filters")}
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Desktop: category chips — wrap so they all show without scrolling */}
@@ -211,6 +237,20 @@ export default function ExploreContent({
                   </button>
                 );
               })}
+              <button
+                onClick={() => setOnlyOffers(!onlyOffers)}
+                aria-pressed={onlyOffers}
+                className={cn(
+                  chipBase,
+                  "inline-flex items-center gap-1.5",
+                  onlyOffers
+                    ? "bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm -translate-y-0.5"
+                    : chipIdle,
+                )}
+              >
+                <Ticket className="w-3.5 h-3.5" />
+                {offersLabel}
+              </button>
             </div>
           </div>
 
