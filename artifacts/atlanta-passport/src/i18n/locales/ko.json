@@ -17,7 +17,7 @@
     "events": {
       "kicker": "★ 특별 이벤트",
       "title": "경기 주간의 특별한 순간들.",
-      "subtitle": "패스포트 소지자를 위해 엄선된 팝업 행사, 단체 관람 파티, 그리고 현지 축제.",
+      "subtitle": "Passport 소지자를 위해 엄선된 팝업, 단체 응원 파티, 그리고 로컬 페스티벌.",
       "view_all": "모든 이벤트 보기",
       "view_event": "이벤트 보기"
     },
@@ -25,6 +25,57 @@
       "title": "탐험할 준비가 됐나요?",
       "subtitle": "실물 소책자를 받아가거나, 오늘 바로 디지털 패스포트로 시작해보세요.",
       "button": "탐험 시작하기"
+    },
+    "new_hero": {
+      "kicker": "Summer 2026",
+      "headline_1": "비공식",
+      "headline_2": "진짜 여행 가이드",
+      "headline_3": "진짜 Atlanta를 만나다.",
+      "subtitle": "대부분의 방문객은 공항, 경기장, 체인 호텔만 봅니다. 그런 방문객이 되지 마세요. Beltline을 자전거로 달리고, 숨겨진 테라스를 발견하고, 진짜 특전을 누리세요.",
+      "cta_primary": "Passport 받기",
+      "cta_secondary": "루트 보기"
+    },
+    "pillars": {
+      "kicker": "꼭 필요한 이유",
+      "title": "이 도시로 향하는 티켓.",
+      "p1_title": "특별 혜택",
+      "p1_desc": "Passport를 보여주고 특전을 누리세요. 로컬 맛집에서 무료 음료, 식사 10% 할인, 그리고 특별 선물까지.",
+      "p2_title": "경기 주간 이벤트",
+      "p2_desc": "일반 여행 사이트에서는 찾을 수 없는 팝업 행사와 동네 축제에 참여하세요.",
+      "p3_title": "플랜 제로",
+      "p3_desc": "끝없는 후기 검색은 그만. 최고의 장소를 엄선해 두었으니 여행을 즐기기만 하면 됩니다.",
+      "p4_title": "진짜 동네 탐방",
+      "p4_desc": "딱딱한 도심 상업지구는 건너뛰고 문화가 살아 숨쉬는 핫플레이스를 탐험하세요.",
+      "p5_title": "자전거 & 도보 루트",
+      "p5_desc": "최고의 장소들을 잇는 엄선된 코스. 막히는 도로 대신 더 많은 탐험을."
+    },
+    "journey": {
+      "kicker": "이런 경험이 기다려요",
+      "title": "노란 루트를 따라가 보세요.",
+      "subtitle": "도보나 자전거로 도시 최고의 동네들을 연결해 보세요.",
+      "cta": "Beltline 탐험하기",
+      "stops_count_one": "{{count}}개 스팟",
+      "stops_count_other": "{{count}}개 스팟"
+    },
+    "spots_callout": {
+      "kicker": "로컬 추천 명소",
+      "title": "호텔 밖으로 나설 가치가 충분한 곳들.",
+      "cta_all": "모든 스팟 보기"
+    },
+    "business_cta": {
+      "kicker": "Atlanta 사업자분들께",
+      "title": "세계가 오기 전에 지도에 올라타세요.",
+      "subtitle": "Atlanta Passport는 체인점이 아닌 진짜 도시를 찾는 방문객들에게 당신의 공간을 소개합니다. Summer 2026 창립 입점은 한정되어 있습니다.",
+      "cta": "입점 신청하기"
+    },
+    "decor": {
+      "alt_skyline": "황혼 무렵의 Atlanta 스카이라인",
+      "alt_park": "Piedmont Park에서의 커플",
+      "photo_1": "ATL // 01",
+      "photo_2": "Midtown",
+      "stamp_hero": "ATL 26 Stamp",
+      "stamp_local": "Local Only",
+      "stamp_year": "ATL 2026"
     }
   },
   "lang": {

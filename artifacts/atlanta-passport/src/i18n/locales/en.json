@@ -25,6 +25,57 @@
       "title": "Ready to explore?",
       "subtitle": "Pick up your physical booklet or start with the digital passport today.",
       "button": "Start Exploring"
+    },
+    "new_hero": {
+      "kicker": "Summer 2026",
+      "headline_1": "The Unofficial",
+      "headline_2": "Field Guide",
+      "headline_3": "to the Real Atlanta.",
+      "subtitle": "Most visitors only see the airport, the venue, and a chain hotel. Don't be most visitors. Bike the Beltline, find the hidden patios, and unlock real perks.",
+      "cta_primary": "Get the Passport",
+      "cta_secondary": "See the Route"
+    },
+    "pillars": {
+      "kicker": "Why You Need This",
+      "title": "Your ticket to the city.",
+      "p1_title": "Exclusive Deals",
+      "p1_desc": "Show your passport, get the perk. Free drinks, 10% off meals, and special gifts at local spots.",
+      "p2_title": "Match-Week Events",
+      "p2_desc": "Access pop-ups and neighborhood festivals you won't find on generic travel sites.",
+      "p3_title": "Zero Planning",
+      "p3_desc": "No endless review scrolling. We curated the best spots so you just enjoy the trip.",
+      "p4_title": "Real Neighborhoods",
+      "p4_desc": "Skip the corporate downtown and explore the cultural hubs.",
+      "p5_title": "Bike & Walk Routes",
+      "p5_desc": "Curated paths connecting the best spots. Less traffic, more exploring."
+    },
+    "journey": {
+      "kicker": "The Experience",
+      "title": "Follow the yellow route.",
+      "subtitle": "Connect the city's best neighborhoods on foot or by bike.",
+      "cta": "Explore the Beltline",
+      "stops_count_one": "{{count}} stop",
+      "stops_count_other": "{{count}} stops"
+    },
+    "spots_callout": {
+      "kicker": "Local Favorites",
+      "title": "Worth leaving the hotel for.",
+      "cta_all": "Explore All Spots"
+    },
+    "business_cta": {
+      "kicker": "For Atlanta Businesses",
+      "title": "Get on the map before the world arrives.",
+      "subtitle": "Atlanta Passport puts your spot in front of visitors looking for the real city — not the chains. Limited founding listings for Summer 2026.",
+      "cta": "Get Listed"
+    },
+    "decor": {
+      "alt_skyline": "Atlanta skyline at dusk",
+      "alt_park": "A couple at Piedmont Park",
+      "photo_1": "ATL // 01",
+      "photo_2": "Midtown",
+      "stamp_hero": "ATL 26 Stamp",
+      "stamp_local": "Local Only",
+      "stamp_year": "ATL 2026"
     }
   },
   "lang": {

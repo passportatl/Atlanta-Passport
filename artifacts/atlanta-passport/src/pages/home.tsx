@@ -1,700 +1,301 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import {
-  MapPin, Stamp, Bike, Coffee, Beer, Music,
-  ShoppingBag, Calendar, Sparkles, Utensils,
-  MoveRight, ArrowRight, Gift, Ticket, Award, Map,
-  Quote, Gamepad2, Landmark, Trees, ShieldCheck, Map as MapIcon, Compass, Clock
+  MapPin, Stamp, Bike, Calendar,
+  MoveRight, ArrowRight, Gift, Ticket, Map, Landmark, Compass
 } from "lucide-react";
-import { motion } from "framer-motion";
-import {
-  businesses, neighborhoods, exploreCategories, routes, beltlineStops, businessCategories, events
-} from "@/data/sample-data";
-import heroHomeImg from "@/assets/images/hero-home.png";
-import InteractiveMap from "@/components/InteractiveMap";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { businesses, routes, events } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
 import CategoryBadge from "@/components/CategoryBadge";
 import PassportStamp from "@/components/PassportStamp";
 import { cn } from "@/lib/utils";
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
-};
-
-const iconMap = {
-  Utensils, Beer, Coffee, ShoppingBag, Music, Bike, Calendar, Sparkles,
-  Gamepad2, Landmark, Trees
-} as const;
-
-const catColor: Record<string, { bg: string; text: string; pin: string }> = {
-  red:    { bg: "bg-brand-red",    text: "text-white",                    pin: "bg-brand-yellow text-brand-yellow-foreground" },
-  yellow: { bg: "bg-brand-yellow", text: "text-brand-yellow-foreground",  pin: "bg-brand-red text-white" },
-  cream:  { bg: "bg-brand-cream",  text: "text-primary",                  pin: "bg-brand-red text-white" },
-  lime:   { bg: "bg-brand-lime",   text: "text-foreground",               pin: "bg-brand-navy text-brand-cream" },
-  navy:   { bg: "bg-brand-navy",   text: "text-brand-cream",              pin: "bg-brand-yellow text-brand-yellow-foreground" },
-  sky:    { bg: "bg-brand-sky",    text: "text-foreground",               pin: "bg-brand-navy text-brand-cream" },
-  orange: { bg: "bg-brand-orange", text: "text-white",                    pin: "bg-brand-yellow text-brand-yellow-foreground" },
-};
-
-const cardBadgeById: Record<string, { key: string; color: "yellow" | "red" | "sky" | "lime" | "cream" | "navy" }> = {
-  "atlantucky-brewing":  { key: "match_day_move", color: "sky" },
-  "the-westwood":        { key: "match_day_move", color: "sky" },
-  "vickerys-bar-grill":  { key: "match_day_move", color: "sky" },
-  "peachtree-wellness":  { key: "founding_spot",  color: "yellow" },
-  "wheelhaus-bikes":     { key: "local_pick",     color: "red" },
-};
-
-const heroChipKeys: Array<{ key: string; href: string }> = [
-  { key: "chip_food",       href: "/passport/explore?category=food" },
-  { key: "chip_coffee",     href: "/passport/explore?category=coffee" },
-  { key: "chip_nightlife",  href: "/passport/explore?category=nightlife" },
-  { key: "chip_routes",     href: "/beltline#routes" },
-  { key: "chip_beltline",   href: "/beltline" },
-  { key: "chip_events",     href: "/events" },
-  { key: "chip_open_late",  href: "/passport/explore?category=nightlife" },
-];
+import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
+import piedmontParkImg from "@/assets/images/piedmont-park.jpg";
 
 const marqueeKeys = [
   "real_atl", "local_picks", "no_tourist_traps",
   "food_drinks_routes", "collect_stamps", "unlock_perks", "summer_2026",
 ];
 
-export default function Home() {
+function HeroSection() {
   const { t } = useTranslation();
-  const featuredBusinesses = businesses.slice(0, 3);
-  const featuredEvents = events.slice(0, 3);
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 700], [0, 150]);
+  const y2 = useTransform(scrollY, [0, 700], [0, -150]);
+  const rotate1 = useTransform(scrollY, [0, 700], [-6, -15]);
+  const rotate2 = useTransform(scrollY, [0, 700], [4, 10]);
 
   return (
-    <div className="w-full">
-      {/* Marquee */}
-      <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
+    <section className="relative min-h-[90vh] md:min-h-[100dvh] flex items-center justify-center bg-brand-cream texture-paper overflow-hidden pt-20 pb-24 border-b-4 border-foreground">
+      {/* Background Floating Elements */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center max-w-7xl mx-auto opacity-40 md:opacity-100">
+        <motion.div style={{ y: y1, rotate: rotate1 }} className="absolute left-[-5%] md:left-[5%] top-[15%] md:top-[20%] z-0 w-48 md:w-64 aspect-[3/4] p-3 md:p-4 bg-white shadow-pop-lg border-4 border-foreground rounded-sm -rotate-6">
+          <img src={jacksonStBridgeImg} alt={t("home.decor.alt_skyline")} className="w-full h-[80%] object-cover border-2 border-foreground" />
+          <div className="mt-3 font-display text-[10px] md:text-xs text-center tracking-widest text-foreground font-black">{t("home.decor.photo_1")}</div>
+        </motion.div>
+        
+        <motion.div style={{ y: y2, rotate: rotate2 }} className="absolute right-[-5%] md:right-[5%] bottom-[15%] md:bottom-[20%] z-0 w-48 md:w-72 aspect-square p-3 md:p-4 bg-white shadow-pop-lg border-4 border-foreground rounded-sm rotate-3">
+          <img src={piedmontParkImg} alt={t("home.decor.alt_park")} className="w-full h-[80%] object-cover border-2 border-foreground" />
+          <div className="mt-3 font-display text-[10px] md:text-xs text-center tracking-widest text-foreground font-black">{t("home.decor.photo_2")}</div>
+        </motion.div>
 
-      {/* HERO */}
-      <section className="relative section-hero overflow-hidden bg-paper texture-paper">
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-14 items-center">
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={fadeInUp}
-              className="max-w-2xl relative"
-            >
-              <Sticker color="yellow" className="mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse mr-1" />
-                {t("hero.launching")}
-              </Sticker>
+        <div className="absolute top-[20%] right-[10%] md:right-[25%] z-10 drop-shadow-xl animate-pulse">
+           <PassportStamp size="lg" tone="red" rotate={12}>
+              {t("home.decor.stamp_hero")}
+           </PassportStamp>
+        </div>
+      </div>
 
-              <h1 className="hero-title text-primary mb-6">
-                {t("hero.title_line1")}<br />
-                {t("hero.title_line2")}<br />
-                <span className="highlight-yellow text-foreground">{t("hero.title_highlight")}</span>.
-              </h1>
+      <div className="container relative z-20 px-4 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="max-w-5xl mx-auto flex flex-col items-center"
+        >
+          <Sticker color="lime" rotate="left" className="mb-6 md:mb-8 scale-110">
+            {t("home.new_hero.kicker")}
+          </Sticker>
+          
+          <h1 className="font-serif font-black text-6xl md:text-8xl lg:text-[8.5rem] leading-[0.85] text-primary tracking-tighter mb-8 mix-blend-multiply">
+            {t("home.new_hero.headline_1")}<br/>
+            <span className="text-brand-red">{t("home.new_hero.headline_2")}</span><br/>
+            {t("home.new_hero.headline_3")}
+          </h1>
+          
+          <p className="font-sans text-lg md:text-2xl text-foreground max-w-2xl mx-auto mb-10 leading-relaxed font-semibold bg-brand-cream/80 p-4 rounded-xl border-2 border-foreground backdrop-blur-sm shadow-pop-sm">
+            {t("home.new_hero.subtitle")}
+          </p>
 
-              <p className="text-base md:text-lg text-foreground/75 mb-8 max-w-xl leading-relaxed">
-                {t("hero.subtitle")}
-              </p>
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full sm:w-auto">
+            <Link href="/passport/explore" className="button-pop bg-brand-yellow text-foreground text-lg md:text-xl px-8 py-5 w-full sm:w-auto hover:bg-brand-red hover:text-white transition-colors border-4">
+              <Stamp className="w-6 h-6 mr-2"/> {t("home.new_hero.cta_primary")}
+            </Link>
+            <Link href="/beltline" className="button-pop bg-white text-foreground text-lg md:text-xl px-8 py-5 w-full sm:w-auto border-4 hover:bg-brand-sky hover:text-foreground transition-colors">
+              <Map className="w-6 h-6 mr-2"/> {t("home.new_hero.cta_secondary")}
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+      
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-16 md:h-24 w-2 border-l-4 border-r-4 border-dashed border-foreground opacity-30" />
+    </section>
+  );
+}
 
-              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 sm:items-center mb-7">
-                <Link href="/passport/explore" className="button-pop w-full sm:w-auto">
-                  {t("hero.cta_explore")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
-                </Link>
-                <Link href="/beltline" className="button-pop button-pop-yellow w-full sm:w-auto">
-                  {t("hero.cta_routes")} <Map className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/events"
-                  className="button-pop col-span-2 w-full sm:w-auto bg-brand-red text-white hover:bg-brand-red/90"
-                >
-                  <Calendar className="w-4 h-4" /> {t("hero.cta_events")}
-                </Link>
-              </div>
+function PillarsSection() {
+  const { t } = useTranslation();
+  
+  const pillars = [
+    { id: "p1", icon: Gift, bg: "bg-brand-red", fg: "text-white", title: t("home.pillars.p1_title"), desc: t("home.pillars.p1_desc") },
+    { id: "p2", icon: Ticket, bg: "bg-brand-sky", fg: "text-white", title: t("home.pillars.p2_title"), desc: t("home.pillars.p2_desc") },
+    { id: "p3", icon: Compass, bg: "bg-brand-lime", fg: "text-foreground", title: t("home.pillars.p3_title"), desc: t("home.pillars.p3_desc") },
+    { id: "p4", icon: MapPin, bg: "bg-brand-orange", fg: "text-white", title: t("home.pillars.p4_title"), desc: t("home.pillars.p4_desc") },
+    { id: "p5", icon: Bike, bg: "bg-brand-yellow", fg: "text-foreground", title: t("home.pillars.p5_title"), desc: t("home.pillars.p5_desc") }
+  ];
 
-              <div className="-mx-4 sm:mx-0 mb-2">
-                <div className="flex gap-2 overflow-x-auto scrollbar-none scroll-fade-r sm:no-fade px-4 sm:px-0 sm:flex-wrap pb-1 pr-8 sm:pr-0">
-                  {heroChipKeys.map((chip) => (
-                    <Link
-                      key={chip.key}
-                      href={chip.href}
-                      className="shrink-0 font-display text-[11px] tracking-[0.16em] uppercase px-3.5 py-2 rounded-full border-2 border-foreground bg-background hover:bg-brand-yellow transition-colors shadow-pop-sm"
-                    >
-                      {t(`hero.${chip.key}`)}
-                    </Link>
-                  ))}
+  return (
+    <section className="bg-background relative texture-paper section-tight border-b-4 border-foreground overflow-hidden">
+      {/* Background Route Line */}
+      <div className="absolute top-0 bottom-0 left-8 md:left-1/2 md:-translate-x-1/2 w-2 border-x-4 border-dashed border-foreground z-0 opacity-10" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16 md:mb-24">
+           <Sticker color="navy" rotate="right" className="mb-6">{t("home.pillars.kicker")}</Sticker>
+           <h2 className="font-serif font-black text-5xl md:text-7xl text-primary">{t("home.pillars.title")}</h2>
+        </div>
+
+        <div className="max-w-5xl mx-auto space-y-12 md:space-y-32">
+          {pillars.map((p, i) => {
+            const isEven = i % 2 === 0;
+            return (
+              <motion.div 
+                key={p.id}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className={cn(
+                  "flex flex-col md:flex-row gap-6 md:gap-16 items-center pl-16 md:pl-0 relative", // pl-16 on mobile to clear the line
+                  isEven ? "md:flex-row" : "md:flex-row-reverse"
+                )}
+              >
+                {/* Mobile connector */}
+                <div className="md:hidden absolute top-12 -left-8 w-16 h-2 border-y-4 border-dashed border-foreground opacity-20" />
+                
+                <div className={cn("w-full md:w-1/2 flex justify-start md:justify-center relative", isEven ? "md:justify-end" : "md:justify-start")}>
+                  <div className={cn(
+                    "w-24 h-24 md:w-56 md:h-56 rounded-full border-4 border-foreground flex items-center justify-center shadow-pop-lg relative shrink-0",
+                    p.bg,
+                    p.fg
+                  )}>
+                     <p.icon className="w-10 h-10 md:w-24 md:h-24" />
+                     {/* Horizontal connector to the center line */}
+                     <div className={cn(
+                       "hidden md:block absolute top-1/2 -translate-y-1/2 h-2 border-y-4 border-dashed border-foreground opacity-20",
+                       isEven ? "right-[-4rem] w-16" : "left-[-4rem] w-16"
+                     )} />
+                  </div>
+                </div>
+                <div className={cn("w-full md:w-1/2 text-left", isEven ? "md:text-left" : "md:text-right")}>
+                  <h3 className="font-serif font-black text-3xl md:text-5xl mb-4">{p.title}</h3>
+                  <p className="text-xl md:text-2xl text-foreground/80 leading-relaxed font-medium">{p.desc}</p>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function JourneySection() {
+  const { t } = useTranslation();
+  
+  return (
+    <section className="bg-brand-navy text-brand-cream texture-paper section-hero border-b-4 border-foreground overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10 mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+          <div className="max-w-3xl">
+            <Sticker color="red" rotate="left" className="mb-6">{t("home.journey.kicker")}</Sticker>
+            <h2 className="font-serif font-black text-5xl md:text-7xl text-brand-cream mb-4">{t("home.journey.title")}</h2>
+            <p className="text-xl md:text-3xl text-brand-cream/80 font-medium">{t("home.journey.subtitle")}</p>
+          </div>
+          <Link href="/beltline" className="button-pop bg-brand-yellow text-foreground border-4 border-foreground text-lg py-4 px-8 shrink-0 hover:bg-brand-red hover:text-white transition-colors">
+            {t("home.journey.cta")} <MoveRight className="w-6 h-6 ml-2" />
+          </Link>
+        </div>
+      </div>
+
+      <div className="flex gap-6 overflow-x-auto pb-12 px-4 md:px-8 scrollbar-none snap-x snap-mandatory">
+        {routes.map((route, i) => (
+          <Link key={route.id} href={`/beltline#${route.id}`} className="snap-center shrink-0 w-[85vw] md:w-[450px] group cursor-pointer block">
+            <div className="card-pop bg-white text-foreground p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-16 h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-2xl font-black shadow-pop-sm">
+                  {i + 1}
+                </div>
+                <div className="font-display text-sm tracking-widest uppercase text-brand-red text-right font-bold bg-brand-cream px-3 py-1 border-2 border-foreground rounded-full shadow-pop-sm">
+                  {route.neighborhood}
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.15 }}
-              className="relative aspect-[4/3] sm:aspect-[5/4] lg:aspect-auto lg:h-[560px] max-h-[55vh] sm:max-h-none"
-            >
-              <div className="absolute inset-2 sm:inset-4 rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop-lg">
-                <img
-                  src={heroHomeImg}
-                  alt="Atlanta"
-                  className="object-cover w-full h-full"
-                  loading="eager"
-                />
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/35 via-transparent to-transparent mix-blend-multiply" />
-              </div>
-
-              <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 z-20">
-                <PassportStamp size="lg" tone="red" rotate={-12}>
-                  ATL<br />2026<br />Passport
-                </PassportStamp>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* VALUE PROPS */}
-      <section className="section-tight bg-brand-cream/40">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="text-center max-w-3xl mx-auto mb-10 md:mb-14"
-          >
-            <div className="section-kicker mb-5">{t("home.value_props.kicker")}</div>
-            <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              {t("home.value_props.title")}
-            </h2>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          >
-            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-brand-yellow text-brand-yellow-foreground border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
-                <Gift className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.discounts_title")}</h3>
-              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.discounts_desc")}</p>
-            </motion.div>
-            
-            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center bg-brand-sky/20">
-              <div className="w-16 h-16 rounded-full bg-brand-sky text-foreground border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
-                <Ticket className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.events_title")}</h3>
-              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.events_desc")}</p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center bg-brand-lime/20">
-              <div className="w-16 h-16 rounded-full bg-brand-lime text-foreground border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
-                <Compass className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.planning_title")}</h3>
-              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.planning_desc")}</p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center bg-brand-orange/20 lg:col-start-1 lg:col-span-1 md:col-span-1">
-              <div className="w-16 h-16 rounded-full bg-brand-orange text-white border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
-                <MapPin className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.neighborhoods_title")}</h3>
-              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.neighborhoods_desc")}</p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center lg:col-start-2 lg:col-span-1 md:col-span-2">
-              <div className="w-16 h-16 rounded-full bg-brand-red text-white border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
-                <Bike className="w-8 h-8" />
-              </div>
-              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.routes_title")}</h3>
-              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.routes_desc")}</p>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* EXPLORE BY CATEGORY */}
-      <section className="section-tight bg-background">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="max-w-3xl mb-10 md:mb-14"
-          >
-            <div className="section-kicker mb-5">{t("explore_section.kicker")}</div>
-            <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              {t("explore_section.title")}
-            </h2>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
-          >
-            {exploreCategories.map((c) => {
-              const Icon = iconMap[c.icon as keyof typeof iconMap];
-              const cls = catColor[c.color];
-              return (
-                <motion.div key={c.id} variants={fadeInUp}>
-                  <Link href={`/passport/explore?category=${c.id}`}>
-                    <div
-                      className={cn(
-                        "h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 cursor-pointer transition-all hover:-translate-y-1 shadow-pop-sm hover:shadow-pop",
-                        cls.bg, cls.text
-                      )}
-                    >
-                      <div className={cn(
-                        "w-10 h-10 rounded-full border-2 border-foreground grid place-items-center mb-4",
-                        cls.pin
-                      )}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div className="font-display text-base md:text-lg tracking-wide uppercase mb-1.5 leading-none">
-                        {c.label}
-                      </div>
-                      <p className="text-xs md:text-sm leading-snug opacity-90">
-                        {c.tagline}
-                      </p>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* EXCLUSIVE EVENTS */}
-      <section className="section-tight bg-brand-navy text-brand-cream texture-paper">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-between items-end gap-6 mb-10 md:mb-14">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="max-w-2xl"
-            >
-              <div className="section-kicker mb-5 !bg-brand-red !text-white">{t("home.events.kicker")}</div>
-              <h2 className="font-serif font-bold text-3xl md:text-5xl leading-[1.05] mb-3">
-                {t("home.events.title")}
-              </h2>
-              <p className="text-brand-cream/80 text-base md:text-lg">
-                {t("home.events.subtitle")}
-              </p>
-            </motion.div>
-            <Link href="/events" className="hidden md:inline-flex font-display text-xs tracking-[0.16em] uppercase text-brand-yellow items-center hover:gap-2 transition-all">
-              {t("home.events.view_all")} <ArrowRight className="ml-2 w-4 h-4 rtl:rotate-180" />
-            </Link>
-          </div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            {featuredEvents.map((event) => {
-              const dateParts = event.date.split(" ");
-              const eventMonth = dateParts[0] ?? "";
-              const eventDay = (dateParts[1] ?? "").replace(",", "");
-              return (
-              <motion.div key={event.id} variants={fadeInUp}>
-                <Link href={`/events/${event.id}`}>
-                  <div className="card-pop overflow-hidden h-full cursor-pointer hover:-translate-y-1 transition-transform group bg-background text-foreground border-brand-cream">
-                    <div className="relative border-b-[3px] border-foreground bg-brand-red text-white p-5 flex items-center gap-4">
-                      <div className="shrink-0 w-16 h-16 rounded-xl border-2 border-foreground bg-background text-foreground grid place-content-center text-center leading-none shadow-pop-sm">
-                        <span className="font-display text-[10px] tracking-[0.14em] uppercase">{eventMonth.slice(0, 3)}</span>
-                        <span className="font-serif font-bold text-2xl mt-0.5">{eventDay}</span>
-                      </div>
-                      <div className="min-w-0">
-                        <div className="font-display text-[10px] tracking-[0.16em] uppercase text-brand-yellow mb-1">
-                          {event.category}
-                        </div>
-                        <div className="flex items-center text-xs text-white/85">
-                          <Clock className="w-3.5 h-3.5 mr-1 shrink-0" /> {event.time}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-serif font-bold text-xl leading-tight mb-2">
-                        {event.name}
-                      </h3>
-                      <div className="flex items-center text-sm text-foreground/60 mb-3">
-                        <MapPin className="w-3.5 h-3.5 mr-1 shrink-0" /> {event.venue}
-                      </div>
-                      <p className="text-sm text-foreground/70 line-clamp-2 mb-4">
-                        {event.description}
-                      </p>
-                      <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
-                        {t("home.events.view_event")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-              );
-            })}
-          </motion.div>
-          <div className="mt-8 text-center md:hidden">
-            <Link href="/events" className="button-pop button-pop-yellow w-full justify-center">
-              {t("home.events.view_all")}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FEATURED EXPERIENCE — Beltline */}
-      <section className="section-tight bg-brand-cream/40 texture-paper">
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start max-w-6xl mx-auto"
-          >
-            <div className="relative">
-              <div className="rounded-3xl overflow-hidden border-[3px] border-foreground shadow-pop aspect-[4/3]">
-                <InteractiveMap />
-              </div>
-              <div className="absolute -top-3 -left-3 z-10 pointer-events-none">
-                <Sticker color="red">{t("featured.kicker")}</Sticker>
-              </div>
-              <div className="absolute -bottom-4 -right-3 z-10 hidden sm:block pointer-events-none">
-                <PassportStamp size="sm" tone="navy" rotate={9}>
-                  Stop
-                </PassportStamp>
-              </div>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <Sticker color="yellow" icon={<Bike className="w-3.5 h-3.5" />}>{t("hero.stamp_beltline")}</Sticker>
-                <Sticker color="lime" icon={<Stamp className="w-3.5 h-3.5" />}>{t("how_it_works.step3_title")}</Sticker>
-                <Sticker color="cream" icon={<Gift className="w-3.5 h-3.5" />}>{t("how_it_works.step4_title")}</Sticker>
+              <h3 className="font-serif font-black text-4xl mb-4 leading-tight">{route.name}</h3>
+              <p className="text-foreground/80 mb-8 text-lg font-medium flex-grow">{route.vibe}</p>
+              
+              <div className="flex gap-6 font-display text-sm tracking-wide bg-brand-cream p-4 border-2 border-foreground rounded-xl">
+                <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-brand-red"/> {t("home.journey.stops_count", { count: route.stops })}</span>
+                <span className="flex items-center gap-2"><Bike className="w-5 h-5 text-primary"/> {route.miles}</span>
               </div>
             </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
 
-            <div>
-              <div className="section-kicker mb-5">{t("featured.kicker")}</div>
-              <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">
-                {t("featured.title")} <span className="highlight-yellow">{t("featured.title_highlight")}</span>
-              </h2>
-              <p className="text-base md:text-lg text-foreground/75 mb-7 leading-relaxed">
-                {t("featured.subtitle")}
-              </p>
+function SpotsAndEventsSection() {
+  const { t } = useTranslation();
+  const featuredSpots = businesses.filter(b => b.featured).slice(0, 4);
+  const featuredEvents = events.slice(0, 2);
 
-              <div className="space-y-3 mb-7">
-                {beltlineStops.map((stop) => (
-                  <div
-                    key={stop.n}
-                    className="flex items-center gap-4 bg-background border-2 border-foreground rounded-xl p-3 shadow-pop-sm"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-brand-yellow text-brand-yellow-foreground border-2 border-foreground grid place-items-center font-display text-sm flex-shrink-0">
-                      {stop.n}
+  return (
+    <section className="bg-brand-orange texture-paper section-hero relative overflow-hidden">
+      <PassportStamp size="lg" tone="navy" rotate={-25} className="absolute -top-12 -left-12 opacity-20 scale-[2] pointer-events-none" >
+        {t("home.decor.stamp_local")}
+      </PassportStamp>
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16 md:mb-24">
+          <Sticker color="yellow" rotate="right" className="mb-6">{t("home.spots_callout.kicker")}</Sticker>
+          <h2 className="font-serif font-black text-5xl md:text-7xl text-white drop-shadow-md">{t("home.spots_callout.title")}</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {featuredEvents.map((evt, i) => (
+             <div key={evt.id} className={cn("card-pop bg-brand-navy text-white p-0 overflow-hidden flex flex-col border-4", i === 0 ? "md:col-span-2 lg:col-span-2" : "col-span-1")}>
+                <div className="bg-brand-red text-white p-4 md:p-6 font-display text-sm md:text-base tracking-widest uppercase border-b-4 border-foreground flex justify-between items-center">
+                  <span className="flex items-center gap-2"><Calendar className="w-5 h-5"/> {evt.category}</span>
+                  <span className="bg-white text-brand-red px-3 py-1 border-2 border-foreground rounded-full shadow-pop-sm">{evt.date}</span>
+                </div>
+                <div className="p-6 md:p-10 flex-grow flex flex-col justify-center">
+                  <h3 className="font-serif font-black text-4xl md:text-6xl mb-6 leading-none">{evt.name}</h3>
+                  <p className="text-brand-cream text-xl mb-8 font-medium max-w-2xl">{evt.description}</p>
+                  <Link href={`/events/${evt.id}`} className="button-pop bg-brand-yellow text-foreground self-start mt-auto border-4 text-lg py-3 px-6 hover:bg-white transition-colors">
+                    {t("home.events.view_event")} <ArrowRight className="w-5 h-5 ml-2"/>
+                  </Link>
+                </div>
+             </div>
+          ))}
+
+          {featuredSpots.map(spot => (
+            <Link key={spot.id} href={`/listing/${spot.id}`} className="group block">
+              <div className="card-pop bg-white h-full overflow-hidden transition-transform group-hover:-translate-y-2 flex flex-col border-4">
+                <div className="aspect-[4/3] relative border-b-4 border-foreground">
+                  <img src={spot.image} alt={spot.name} className="w-full h-full object-cover" />
+                  <CategoryBadge category={spot.category} className="absolute top-4 left-4 scale-110 origin-top-left" />
+                </div>
+                <div className="p-6 md:p-8 flex flex-col flex-grow">
+                  <h3 className="font-serif font-black text-3xl mb-3 leading-tight">{spot.name}</h3>
+                  <p className="text-foreground/80 text-lg mb-6 line-clamp-2 font-medium">{spot.description}</p>
+                  {spot.offer && (
+                    <div className="mt-auto bg-brand-cream p-4 border-4 border-foreground rounded-xl flex items-start gap-3 shadow-pop-sm">
+                      <Gift className="w-6 h-6 text-brand-red shrink-0 mt-0.5" />
+                      <span className="font-bold text-base">{spot.offer}</span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-display text-xs tracking-wide uppercase text-brand-red leading-none mb-1">
-                        {t("featured.stops_label")} {stop.n}
-                      </div>
-                      <div className="font-serif font-bold text-base md:text-lg leading-tight truncate">
-                        {stop.name}
-                      </div>
-                      <div className="text-xs text-foreground/60 truncate">{stop.note}</div>
-                    </div>
-                    <div className="hidden sm:block">
-                      <CategoryBadge category={stop.category} />
-                    </div>
-                  </div>
-                ))}
+                  )}
+                </div>
               </div>
-
-              <Link href="/beltline" className="button-pop">
-                {t("featured.cta")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ROUTES & COLLECTIONS */}
-      <section id="routes" className="section-tight bg-background scroll-mt-24">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="max-w-3xl mb-10 md:mb-14"
-          >
-            <div className="section-kicker mb-5">{t("routes_section.kicker")}</div>
-            <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
-              {t("routes_section.title")}
-            </h2>
-            <p className="text-base md:text-lg text-foreground/70 mt-4 max-w-2xl">
-              {t("routes_section.subtitle")}
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
-          >
-            {routes.map((r, i) => {
-              const cls = catColor[r.color] ?? catColor.yellow;
-              return (
-                <motion.div key={r.id} variants={fadeInUp}>
-                  <Link href={`/beltline#${r.id}`}>
-                    <div className="card-pop p-5 md:p-6 h-full cursor-pointer hover:-translate-y-1 transition-transform">
-                      <div className="flex items-start justify-between gap-3 mb-4">
-                        <div className={cn(
-                          "rounded-full w-12 h-12 grid place-items-center border-2 border-foreground font-display text-sm flex-shrink-0",
-                          cls.bg, cls.text
-                        )}>
-                          {String(i + 1).padStart(2, "0")}
-                        </div>
-                        <div className="font-display text-[10px] tracking-[0.18em] uppercase text-brand-red text-right pt-1">
-                          {t("routes_section.kicker").replace("★ ", "")}<br />
-                          <span className="text-foreground/60">{r.neighborhood}</span>
-                        </div>
-                      </div>
-                      <h3 className="font-serif font-bold text-xl md:text-2xl leading-tight mb-3">
-                        {r.name}
-                      </h3>
-                      <p className="text-sm text-foreground/70 leading-snug mb-5">{r.vibe}</p>
-
-                      <div className="flex items-center gap-4 mb-5 text-[11px] font-display tracking-[0.14em] uppercase text-foreground/70">
-                        <span className="inline-flex items-center gap-1.5">
-                          <MapPin className="w-3.5 h-3.5" /> {r.stops} {t("routes_section.stops_label")}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <MapIcon className="w-3.5 h-3.5" /> {r.miles}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Bike className="w-3.5 h-3.5" /> {r.pace}
-                        </span>
-                      </div>
-
-                      <div className="route-line mb-5" />
-
-                      <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
-                        {t("routes_section.view_route")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180" />
-                      </span>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SELECTED LOCAL SPOTS */}
-      <section className="section-tight bg-brand-cream/40">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-between items-end gap-6 mb-10 md:mb-14">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="max-w-2xl"
-            >
-              <div className="section-kicker mb-5">{t("spots_section.kicker")}</div>
-              <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-3">
-                {t("spots_section.title")}
-              </h2>
-              <p className="text-base md:text-lg text-foreground/70">
-                {t("spots_section.subtitle")}
-              </p>
-            </motion.div>
-            <Link href="/passport/explore" className="hidden md:inline-flex font-display text-xs tracking-[0.16em] uppercase text-brand-red items-center hover:gap-2 transition-all">
-              {t("common.view_all")} <ArrowRight className="ml-2 w-4 h-4 rtl:rotate-180" />
             </Link>
-          </div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-7"
-          >
-            {featuredBusinesses.map((biz) => {
-              const badge = cardBadgeById[biz.id] ?? null;
-              const isFounding = biz.id === "atlantucky-brewing";
-              return (
-                <motion.div key={biz.id} variants={fadeInUp}>
-                  <Link href={`/listing/${biz.id}`}>
-                    <div className="card-pop overflow-hidden h-full cursor-pointer hover:-translate-y-1 transition-transform group bg-background">
-                      <div className="aspect-[4/3] overflow-hidden relative border-b-[3px] border-foreground">
-                        <img
-                          src={biz.image}
-                          alt={biz.name}
-                          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                        <div className="absolute top-3 left-3 flex flex-col gap-2 items-start">
-                          <div className="flex flex-wrap gap-1.5">
-                            {businessCategories(biz).map((cat) => (
-                              <CategoryBadge key={cat} category={cat} />
-                            ))}
-                          </div>
-                          {isFounding && (
-                            <Sticker color="yellow">{t("card_badges.founding_spot")}</Sticker>
-                          )}
-                        </div>
-                        {badge && (
-                          <div className="absolute top-3 right-3">
-                            <Sticker color={badge.color}>{t(`card_badges.${badge.key}`)}</Sticker>
-                          </div>
-                        )}
-                        {isFounding && (
-                          <div className="absolute -bottom-3 right-4 z-10">
-                            <PassportStamp size="sm" tone="red" rotate={10}>
-                              ATL
-                            </PassportStamp>
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-5">
-                        <h3 className="font-serif font-bold text-xl md:text-2xl leading-tight mb-1">
-                          {biz.name}
-                        </h3>
-                        <div className="flex items-center text-xs text-foreground/60 mb-3">
-                          <MapPin className="w-3 h-3 mr-1" /> {biz.neighborhood}
-                        </div>
-                        <p className="text-sm text-foreground/70 line-clamp-2 mb-4">
-                          {biz.description}
-                        </p>
-                        {biz.offer && (
-                          <div className="flex items-start gap-2 bg-brand-yellow/30 border-2 border-foreground/20 rounded-lg px-3 py-2 mb-4">
-                            <Gift className="w-4 h-4 text-brand-red flex-shrink-0 mt-0.5" />
-                            <span className="text-xs leading-snug">{biz.offer}</span>
-                          </div>
-                        )}
-                        <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
-                          {t("spots_section.view_listing")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180" />
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          <div className="mt-8 text-center md:hidden">
-            <Link href="/passport/explore" className="button-pop button-pop-yellow w-full justify-center">
-              {t("spots_section.view_all")}
-            </Link>
-          </div>
+          ))}
         </div>
-      </section>
-
-      {/* NEIGHBORHOODS */}
-      <section className="section-tight bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="mb-10 md:mb-14 max-w-3xl"
-          >
-            <Sticker color="yellow" className="mb-5">{t("neighborhoods_section.kicker")}</Sticker>
-            <h2 className="font-serif font-bold text-3xl md:text-5xl mb-3 leading-[1.05]">
-              {t("neighborhoods_section.title")}
-            </h2>
-            <p className="text-primary-foreground/75 text-base md:text-lg">
-              {t("neighborhoods_section.subtitle")}
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
-          >
-            {neighborhoods.map((n, i) => {
-              const isCream = i % 3 === 1;
-              const cls = isCream
-                ? { bg: "bg-brand-cream", text: "text-foreground", pin: "bg-brand-red text-white" }
-                : (catColor[n.color ?? "yellow"] ?? catColor.yellow);
-              return (
-                <motion.div key={n.id} variants={fadeInUp}>
-                  <Link href={`/passport/explore?neighborhood=${n.id}`}>
-                    <div className={cn(
-                      "relative h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 hover:-translate-y-1 transition-transform cursor-pointer group shadow-pop-sm hover:shadow-pop",
-                      cls.bg, cls.text
-                    )}>
-                      <div className={cn(
-                        "w-12 h-12 rounded-full border-2 border-foreground flex items-center justify-center mb-5",
-                        cls.pin
-                      )}>
-                        <MapPin className="w-5 h-5" />
-                      </div>
-                      <h3 className="font-serif font-bold text-xl md:text-2xl mb-2">{n.name}</h3>
-                      <p className="text-sm opacity-90 leading-snug">{n.description}</p>
-
-                      <div className="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <MoveRight className="w-5 h-5 rtl:rotate-180" />
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+        
+        <div className="mt-16 text-center">
+           <Link href="/passport/explore" className="button-pop bg-white text-foreground text-xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg">
+             {t("home.spots_callout.cta_all")} <MoveRight className="w-6 h-6 ml-2" />
+           </Link>
         </div>
-      </section>
+      </div>
+    </section>
+  )
+}
 
-      {/* FINAL CTA */}
-      <section className="section-tight bg-brand-yellow text-brand-yellow-foreground texture-paper relative overflow-hidden">
-        <div className="container mx-auto px-4 relative z-10 text-center max-w-2xl">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-          >
-            <h2 className="font-serif font-bold text-4xl md:text-6xl mb-6 leading-tight">
-              {t("home.cta.title")}
-            </h2>
-            <p className="text-brand-yellow-foreground/80 text-lg md:text-xl mb-10">
-              {t("home.cta.subtitle")}
-            </p>
-            <Link href="/passport" className="button-pop bg-brand-red text-white hover:bg-brand-red/90 text-lg px-8 py-4">
-              {t("home.cta.button")} <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
-            </Link>
-          </motion.div>
-        </div>
-        <div className="absolute top-1/2 left-10 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-          <PassportStamp size="lg" tone="red" rotate={-15}>ATL</PassportStamp>
-        </div>
-        <div className="absolute bottom-10 right-10 opacity-20 pointer-events-none hidden lg:block">
-          <PassportStamp size="lg" tone="red" rotate={25}>2026</PassportStamp>
-        </div>
-      </section>
+function BusinessCtaSection() {
+  const { t } = useTranslation();
+  return (
+    <section className="bg-brand-red text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+      <PassportStamp size="lg" tone="navy" rotate={18} className="absolute -bottom-12 -right-10 opacity-20 scale-[2] pointer-events-none">
+        {t("home.decor.stamp_year")}
+      </PassportStamp>
+      <div className="container mx-auto px-4 relative z-10 max-w-4xl text-center flex flex-col items-center">
+        <Sticker color="cream" rotate="left" className="mb-6">{t("home.business_cta.kicker")}</Sticker>
+        <h2 className="font-serif font-black text-5xl md:text-7xl leading-[0.9] mb-6 drop-shadow-md">
+          {t("home.business_cta.title")}
+        </h2>
+        <p className="text-xl md:text-2xl text-white/90 font-medium max-w-2xl mb-10 leading-relaxed">
+          {t("home.business_cta.subtitle")}
+        </p>
+        <Link href="/apply" className="button-pop bg-brand-yellow text-foreground text-xl px-10 py-5 border-4 hover:bg-white transition-colors shadow-pop-lg">
+          <Landmark className="w-6 h-6 mr-2" /> {t("home.business_cta.cta")}
+        </Link>
+      </div>
+    </section>
+  )
+}
+
+export default function Home() {
+  const { t } = useTranslation();
+  return (
+    <div className="w-full">
+      <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
+      <HeroSection />
+      <PillarsSection />
+      <JourneySection />
+      <SpotsAndEventsSection />
+      <BusinessCtaSection />
     </div>
   );
 }

@@ -16,8 +16,8 @@
     },
     "events": {
       "kicker": "★ Eventos Exclusivos",
-      "title": "Momentos de la semana del partido.",
-      "subtitle": "Pop-ups, watch parties y festivales locales curados especialmente para los portadores del pasaporte.",
+      "title": "Momentos de la semana de partidos.",
+      "subtitle": "Pop-ups, fiestas para ver los partidos y festivales locales seleccionados para los portadores del passport.",
       "view_all": "Ver Todos los Eventos",
       "view_event": "Ver evento"
     },
@@ -25,6 +25,57 @@
       "title": "¿Listo para explorar?",
       "subtitle": "Consigue tu libreta física o empieza hoy mismo con el pasaporte digital.",
       "button": "Empieza a Explorar"
+    },
+    "new_hero": {
+      "kicker": "Summer 2026",
+      "headline_1": "La Guía No Oficial",
+      "headline_2": "de Campo",
+      "headline_3": "del Atlanta de Verdad.",
+      "subtitle": "La mayoría de los visitantes solo ven el aeropuerto, el estadio y un hotel de cadena. No seas como todos. Recorre el Beltline en bici, descubre las terrazas escondidas y desbloquea ventajas exclusivas.",
+      "cta_primary": "Obtén el Passport",
+      "cta_secondary": "Ver la Ruta"
+    },
+    "pillars": {
+      "kicker": "Por Qué Lo Necesitas",
+      "title": "Tu llave para la ciudad.",
+      "p1_title": "Descuentos Exclusivos",
+      "p1_desc": "Muestra tu passport y llévate el beneficio. Bebidas gratis, 10% de descuento en comidas y regalos especiales en negocios locales.",
+      "p2_title": "Eventos de la Semana de los Partidos",
+      "p2_desc": "Accede a pop-ups y festivales de barrio que no encontrarás en ninguna guía turística genérica.",
+      "p3_title": "Cero Planificación",
+      "p3_desc": "Sin horas scrolleando reseñas. Nosotros seleccionamos los mejores lugares para que tú solo disfrutes el viaje.",
+      "p4_title": "Barrios de Verdad",
+      "p4_desc": "Olvídate del centro corporativo y explora los barrios con más vida cultural.",
+      "p5_title": "Rutas en Bici y a Pie",
+      "p5_desc": "Caminos curados que conectan los mejores rincones. Menos tráfico, más aventura."
+    },
+    "journey": {
+      "kicker": "La Experiencia",
+      "title": "Sigue la ruta amarilla.",
+      "subtitle": "Conecta los mejores barrios de la ciudad a pie o en bici.",
+      "cta": "Explorar el Beltline",
+      "stops_count_one": "{{count}} parada",
+      "stops_count_other": "{{count}} paradas"
+    },
+    "spots_callout": {
+      "kicker": "Favoritos Locales",
+      "title": "Vale la pena salir del hotel.",
+      "cta_all": "Explorar Todos los Lugares"
+    },
+    "business_cta": {
+      "kicker": "Para Negocios en Atlanta",
+      "title": "Ponte en el mapa antes de que llegue el mundo.",
+      "subtitle": "Atlanta Passport pone tu negocio frente a visitantes que buscan la ciudad de verdad, no las cadenas. Listados fundadores limitados para Summer 2026.",
+      "cta": "Únete al Mapa"
+    },
+    "decor": {
+      "alt_skyline": "El skyline de Atlanta al atardecer",
+      "alt_park": "Una pareja en Piedmont Park",
+      "photo_1": "ATL // 01",
+      "photo_2": "Midtown",
+      "stamp_hero": "ATL 26 Stamp",
+      "stamp_local": "Solo Locales",
+      "stamp_year": "ATL 2026"
     }
   },
   "lang": {
