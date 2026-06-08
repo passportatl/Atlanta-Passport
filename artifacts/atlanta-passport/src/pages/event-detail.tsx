@@ -38,13 +38,6 @@ export default function EventDetail() {
   return (
     <div className="w-full pt-8 pb-20">
       <div className="container mx-auto px-4 max-w-5xl">
-        <Link
-          href="/events"
-          className="inline-flex items-center gap-2 font-display text-[11px] tracking-[0.16em] uppercase text-foreground/60 hover:text-foreground mb-6"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" /> All Events
-        </Link>
-
         {/* Hero */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
