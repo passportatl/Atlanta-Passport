@@ -55,9 +55,10 @@
       "kicker": "L'Esperienza",
       "title": "Segui il percorso giallo.",
       "subtitle": "Collega i quartieri più belli della città a piedi o in bicicletta.",
-      "cta": "Registrati per il tuo Passport gratuito ed esplora il Beltline",
+      "cta": "per esplorare il Beltline",
       "stops_count_one": "{{count}} tappa",
-      "stops_count_other": "{{count}} tappe"
+      "stops_count_other": "{{count}} tappe",
+      "cta_lead": "Registrati per il tuo Passport gratuito"
     },
     "business_cta": {
       "kicker": "Per le Attività di Atlanta",

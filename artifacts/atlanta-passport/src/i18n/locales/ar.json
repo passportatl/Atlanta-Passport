@@ -361,9 +361,10 @@
       "kicker": "التجربة",
       "title": "اتبع المسار الأصفر.",
       "subtitle": "تنقّل بين أجمل أحياء المدينة سيراً على الأقدام أو بالدراجة.",
-      "cta": "سجّل للحصول على جوازك المجاني واستكشف الـ Beltline",
+      "cta": "لاستكشاف الـ Beltline",
       "stops_count_one": "محطة واحدة",
-      "stops_count_other": "{{count}} محطات"
+      "stops_count_other": "{{count}} محطات",
+      "cta_lead": "سجّل للحصول على جوازك المجاني"
     },
     "business_cta": {
       "kicker": "لأصحاب الأعمال في Atlanta",

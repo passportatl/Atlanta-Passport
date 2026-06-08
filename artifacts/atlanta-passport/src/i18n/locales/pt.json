@@ -55,9 +55,10 @@
       "kicker": "A Experiência",
       "title": "Siga a rota amarela.",
       "subtitle": "Conecte os melhores bairros da cidade a pé ou de bike.",
-      "cta": "Cadastre-se para o seu Passport grátis e explore o Beltline",
+      "cta": "para explorar o Beltline",
       "stops_count_one": "{{count}} parada",
-      "stops_count_other": "{{count}} paradas"
+      "stops_count_other": "{{count}} paradas",
+      "cta_lead": "Cadastre-se para o seu Passport grátis"
     },
     "business_cta": {
       "kicker": "Para Negócios em Atlanta",

@@ -165,9 +165,12 @@ function JourneySection() {
             <h2 className="font-serif font-black text-5xl md:text-7xl text-brand-cream mb-4">{t("home.journey.title")}</h2>
             <p className="text-xl md:text-3xl text-brand-cream/80 font-medium">{t("home.journey.subtitle")}</p>
           </div>
-          <Link href="/sign-up" className="button-pop bg-brand-yellow text-foreground border-4 border-foreground text-lg py-4 px-8 shrink-0 hover:bg-brand-red hover:text-white transition-colors">
-            {t("home.journey.cta")} <MoveRight className="w-6 h-6 ml-2" />
-          </Link>
+          <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
+            <span className="font-display text-sm md:text-base tracking-wide uppercase font-bold text-brand-yellow">{t("home.journey.cta_lead")}</span>
+            <Link href="/sign-up" className="button-pop bg-brand-yellow text-foreground border-4 border-foreground text-lg py-4 px-8 hover:bg-brand-red hover:text-white transition-colors">
+              {t("home.journey.cta")} <MoveRight className="w-6 h-6 ml-2" />
+            </Link>
+          </div>
         </div>
       </div>
 

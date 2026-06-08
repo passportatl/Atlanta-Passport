@@ -55,9 +55,10 @@
       "kicker": "The Experience",
       "title": "Follow the yellow route.",
       "subtitle": "Connect the city's best neighborhoods on foot or by bike.",
-      "cta": "Sign up for your free Passport to explore the Beltline",
+      "cta": "to explore the Beltline",
       "stops_count_one": "{{count}} stop",
-      "stops_count_other": "{{count}} stops"
+      "stops_count_other": "{{count}} stops",
+      "cta_lead": "Sign up for your free Passport"
     },
     "events_showcase": {
       "kicker": "What's On Tonight",
