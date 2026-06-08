@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import {
   MapPin, Stamp, Bike, Calendar,
-  MoveRight, Gift, Ticket, Landmark, Compass
+  MoveRight, Gift, Ticket, Landmark, Compass, Trophy
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { routes, events } from "@/data/sample-data";
@@ -90,7 +90,8 @@ function PillarsSection() {
     { id: "p2", icon: Ticket, bg: "bg-brand-sky", fg: "text-white", title: t("home.pillars.p2_title"), desc: t("home.pillars.p2_desc") },
     { id: "p3", icon: Compass, bg: "bg-brand-lime", fg: "text-foreground", title: t("home.pillars.p3_title"), desc: t("home.pillars.p3_desc") },
     { id: "p4", icon: MapPin, bg: "bg-brand-orange", fg: "text-white", title: t("home.pillars.p4_title"), desc: t("home.pillars.p4_desc") },
-    { id: "p5", icon: Bike, bg: "bg-brand-yellow", fg: "text-foreground", title: t("home.pillars.p5_title"), desc: t("home.pillars.p5_desc") }
+    { id: "p5", icon: Bike, bg: "bg-brand-yellow", fg: "text-foreground", title: t("home.pillars.p5_title"), desc: t("home.pillars.p5_desc") },
+    { id: "p6", icon: Trophy, bg: "bg-brand-navy", fg: "text-brand-cream", title: t("home.pillars.p6_title"), desc: t("home.pillars.p6_desc") }
   ];
 
   return (

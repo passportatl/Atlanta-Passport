@@ -47,7 +47,9 @@
       "p4_title": "De Vrais Quartiers",
       "p4_desc": "Évitez le centre-ville sans âme et explorez les quartiers culturels.",
       "p5_title": "Parcours Vélo & Balade",
-      "p5_desc": "Des itinéraires soigneusement tracés reliant les meilleures adresses. Moins de circulation, plus d'aventure."
+      "p5_desc": "Des itinéraires soigneusement tracés reliant les meilleures adresses. Moins de circulation, plus d'aventure.",
+      "p6_title": "Jeux et Prix",
+      "p6_desc": "Énigmes, bingo-chasse et plus encore, pour gagner du swag, des cadeaux et des tirages au sort."
     },
     "journey": {
       "kicker": "L'Expérience",
