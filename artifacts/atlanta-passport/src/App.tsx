@@ -46,9 +46,10 @@ function MarketingRoutes() {
   );
 }
 
-// TEMP: while we design, allow signed-out access to every page. Set back to
-// false (or remove the bypass usages) to re-enable account gating.
-const ALLOW_PUBLIC_ACCESS = true;
+// Account gating is ON: signed-out visitors are redirected to the marketing
+// home from any protected route. Set to true to allow signed-out access to
+// every page (e.g. while designing the passport pages).
+const ALLOW_PUBLIC_ACCESS = false;
 
 // Almost everything requires a registered account. Only the marketing home (`/`),
 // contact, partners, and apply pages stay open to signed-out visitors. Sign-in/up,
