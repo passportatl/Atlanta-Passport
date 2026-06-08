@@ -33,8 +33,6 @@ export default function Navbar() {
 
   const mobileTouristLinks = [
     { name: t("nav.explore"), path: "/passport/explore" },
-    { name: t("nav.neighborhoods"), path: "/passport/explore" },
-    { name: t("nav.local_spots"), path: "/passport/explore" },
   ];
 
   const businessLinks = [
