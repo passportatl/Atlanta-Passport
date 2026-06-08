@@ -9,7 +9,19 @@ import {
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import { StampGraphic } from "@/passport/StampGraphic";
-import { businesses as exploreBusinesses } from "@/data/sample-data";
+import {
+  businesses as exploreBusinesses,
+  events as sampleEvents,
+} from "@/data/sample-data";
+
+// Featured events are seeded as DB businesses with no coordinates, so resolve
+// each to a sample-data business (the map only renders the static dataset) by
+// matching the event name to its venue, then the venue to a mapped business.
+function resolveEventMapId(name: string): string | undefined {
+  const venue = sampleEvents.find((e) => e.name === name)?.venue;
+  if (!venue) return undefined;
+  return exploreBusinesses.find((b) => b.name === venue)?.id;
+}
 
 // The Explore cards (sample-data `businesses`) are the participating spots with
 // real Passport offers. Map each to its seeded stamp slug so collected stamps,
@@ -35,6 +47,7 @@ function StampListItem({
   stamp,
   iconName,
   color,
+  onSelect,
 }: {
   name: string;
   meta: string;
@@ -42,9 +55,31 @@ function StampListItem({
   stamp?: Stamp;
   iconName: string;
   color: string;
+  onSelect?: () => void;
 }) {
+  const interactive = !!onSelect;
   return (
-    <li className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0">
+    <li
+      onClick={onSelect}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onSelect?.();
+              }
+            }
+          : undefined
+      }
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={interactive ? `Show ${name} on the map` : undefined}
+      className={`flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0${
+        interactive
+          ? " cursor-pointer transition-colors hover:bg-[hsl(var(--brand-cream))]/40 focus-visible:outline-none focus-visible:bg-[hsl(var(--brand-cream))]/40"
+          : ""
+      }`}
+    >
       <div className="flex-1 min-w-0">
         <div className="font-black text-sm leading-tight">{name}</div>
         <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
@@ -77,7 +112,11 @@ function StampListItem({
   );
 }
 
-export default function PassportStamps() {
+export default function PassportStamps({
+  onSelectBusiness,
+}: {
+  onSelectBusiness?: (id: string) => void;
+}) {
   const { visitorId } = useVisitor();
   const { data: stampsRaw } = useListVisitorStamps(visitorId ?? "", {
     query: {
@@ -176,6 +215,9 @@ export default function PassportStamps() {
               stamp={stamp}
               iconName={api?.icon ?? "coffee"}
               color={api?.stampColor ?? "yellow"}
+              onSelect={
+                onSelectBusiness ? () => onSelectBusiness(biz.id) : undefined
+              }
             />
           ))}
         </ul>
@@ -195,17 +237,25 @@ export default function PassportStamps() {
             </span>
           </header>
           <ul>
-            {eventRows.map(({ api, stamp }) => (
-              <StampListItem
-                key={api.id}
-                name={api.name}
-                meta="Featured Event"
-                detail={api.description ?? undefined}
-                stamp={stamp}
-                iconName={api.icon ?? "star"}
-                color={api.stampColor ?? "orange"}
-              />
-            ))}
+            {eventRows.map(({ api, stamp }) => {
+              const mapId = resolveEventMapId(api.name);
+              return (
+                <StampListItem
+                  key={api.id}
+                  name={api.name}
+                  meta="Featured Event"
+                  detail={api.description ?? undefined}
+                  stamp={stamp}
+                  iconName={api.icon ?? "star"}
+                  color={api.stampColor ?? "orange"}
+                  onSelect={
+                    onSelectBusiness && mapId
+                      ? () => onSelectBusiness(mapId)
+                      : undefined
+                  }
+                />
+              );
+            })}
           </ul>
         </section>
       )}

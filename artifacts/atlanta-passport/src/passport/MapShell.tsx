@@ -143,16 +143,15 @@ export default function MapShell() {
   const routeBusinesses = resolvedSelectedRoute?.stops ?? [];
 
   // The dataset actually rendered on the map: route stops on the routes view,
-  // otherwise the explore-filtered list.
-  const mapBusinesses = useMemo(
-    () =>
-      view === "routes"
-        ? selectedRoute
-          ? routeBusinesses
-          : businesses
-        : filteredBusinesses,
-    [view, selectedRoute, routeBusinesses, filteredBusinesses],
-  );
+  // the explore-filtered list on Explore/Events, and every spot on
+  // Stamps/Rewards (those views have no filter UI, so a stamp-driven selection
+  // must always resolve against the full dataset — otherwise carried-over
+  // Explore filters would silently drop the clicked spot).
+  const mapBusinesses = useMemo(() => {
+    if (view === "routes") return selectedRoute ? routeBusinesses : businesses;
+    if (view === "explore" || view === "events") return filteredBusinesses;
+    return businesses;
+  }, [view, selectedRoute, routeBusinesses, filteredBusinesses]);
 
   // Drop a stale selection/InfoWindow only when the selected spot is no longer
   // on the map — validate against what's actually rendered (mapBusinesses), not
@@ -231,7 +230,7 @@ export default function MapShell() {
       )}
       {view === "stamps" && (
         <PassportPanel>
-          <PassportStamps />
+          <PassportStamps onSelectBusiness={setSelectedBizId} />
         </PassportPanel>
       )}
       {view === "rewards" && (
