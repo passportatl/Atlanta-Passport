@@ -175,6 +175,15 @@ export default function MapShell() {
     ];
   }, [view, resolvedSelectedRoute]);
 
+  // When a route is selected, light up only the neighborhoods its stops pass
+  // through (and dim the rest) so the colored areas frame the walk.
+  const routeNeighborhoods = useMemo(() => {
+    if (view !== "routes" || !resolvedSelectedRoute) return [];
+    return Array.from(
+      new Set(resolvedSelectedRoute.stops.map((b) => b.neighborhood)),
+    );
+  }, [view, resolvedSelectedRoute]);
+
   // The shell stays mounted across navigation, so re-apply category/neighborhood
   // filters whenever a deep link's query string changes — but only while a
   // map-shell route is active, so query strings on other pages can't clobber
@@ -209,7 +218,11 @@ export default function MapShell() {
                 onSelect={setSelectedBizId}
                 routePath={routePath}
                 highlightNeighborhoods={
-                  view === "explore" ? activeNeighborhoods : []
+                  view === "explore"
+                    ? activeNeighborhoods
+                    : view === "routes"
+                      ? routeNeighborhoods
+                      : []
                 }
               />
             </div>
