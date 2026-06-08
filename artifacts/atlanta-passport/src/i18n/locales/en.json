@@ -1,4 +1,32 @@
 {
+  "home": {
+    "value_props": {
+      "kicker": "★ The Passport Advantage",
+      "title": "Experience Atlanta like a local, not a tourist.",
+      "discounts_title": "Exclusive Deals",
+      "discounts_desc": "Show your passport, get the perk. Free drinks, 10% off meals, and special gifts at local spots.",
+      "events_title": "Local Events",
+      "events_desc": "Access match-week pop-ups and neighborhood festivals you won't find on generic travel sites.",
+      "planning_title": "Effortless Planning",
+      "planning_desc": "No more scrolling through endless reviews. We did the work so you can just enjoy the trip.",
+      "neighborhoods_title": "Distinct Neighborhoods",
+      "neighborhoods_desc": "Skip the corporate downtown areas and explore the real cultural hubs of the city.",
+      "routes_title": "Curated Routes",
+      "routes_desc": "Bike and walk-friendly paths that connect the best spots. Spend less time in traffic, more time exploring."
+    },
+    "events": {
+      "kicker": "★ Exclusive Events",
+      "title": "Match-week moments.",
+      "subtitle": "Pop-ups, watch parties, and local festivals curated for passport holders.",
+      "view_all": "View All Events",
+      "view_event": "View event"
+    },
+    "cta": {
+      "title": "Ready to explore?",
+      "subtitle": "Pick up your physical booklet or start with the digital passport today.",
+      "button": "Start Exploring"
+    }
+  },
   "lang": {
     "switcher_label": "Language",
     "current": "Language"
@@ -46,7 +74,8 @@
     "chip_open_late": "Open Late",
     "stamp_old_fourth_ward": "Old Fourth Ward",
     "stamp_beltline": "★ Beltline",
-    "stamp_local_pick": "Local Pick"
+    "stamp_local_pick": "Local Pick",
+    "cta_events": "See Events"
   },
   "card_badges": {
     "founding_spot": "Founding Spot",

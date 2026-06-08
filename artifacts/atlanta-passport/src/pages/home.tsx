@@ -4,11 +4,11 @@ import {
   MapPin, Stamp, Bike, Coffee, Beer, Music,
   ShoppingBag, Calendar, Sparkles, Utensils,
   MoveRight, ArrowRight, Gift, Ticket, Award, Map,
-  Quote, Gamepad2, Landmark, Trees
+  Quote, Gamepad2, Landmark, Trees, ShieldCheck, Map as MapIcon, Compass, Clock
 } from "lucide-react";
 import { motion } from "framer-motion";
 import {
-  businesses, neighborhoods, exploreCategories, routes, beltlineStops, businessCategories
+  businesses, neighborhoods, exploreCategories, routes, beltlineStops, businessCategories, events
 } from "@/data/sample-data";
 import heroHomeImg from "@/assets/images/hero-home.png";
 import InteractiveMap from "@/components/InteractiveMap";
@@ -68,7 +68,8 @@ const marqueeKeys = [
 
 export default function Home() {
   const { t } = useTranslation();
-  const featuredBusinesses = businesses.slice(0, 6);
+  const featuredBusinesses = businesses.slice(0, 3);
+  const featuredEvents = events.slice(0, 3);
 
   return (
     <div className="w-full">
@@ -111,7 +112,7 @@ export default function Home() {
                   href="/events"
                   className="button-pop col-span-2 w-full sm:w-auto bg-brand-red text-white hover:bg-brand-red/90"
                 >
-                  <Calendar className="w-4 h-4" /> See Events
+                  <Calendar className="w-4 h-4" /> {t("hero.cta_events")}
                 </Link>
               </div>
 
@@ -153,6 +154,72 @@ export default function Home() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* VALUE PROPS */}
+      <section className="section-tight bg-brand-cream/40">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={fadeInUp}
+            className="text-center max-w-3xl mx-auto mb-10 md:mb-14"
+          >
+            <div className="section-kicker mb-5">{t("home.value_props.kicker")}</div>
+            <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05]">
+              {t("home.value_props.title")}
+            </h2>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          >
+            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-brand-yellow text-brand-yellow-foreground border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
+                <Gift className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.discounts_title")}</h3>
+              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.discounts_desc")}</p>
+            </motion.div>
+            
+            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center bg-brand-sky/20">
+              <div className="w-16 h-16 rounded-full bg-brand-sky text-foreground border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
+                <Ticket className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.events_title")}</h3>
+              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.events_desc")}</p>
+            </motion.div>
+
+            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center bg-brand-lime/20">
+              <div className="w-16 h-16 rounded-full bg-brand-lime text-foreground border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
+                <Compass className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.planning_title")}</h3>
+              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.planning_desc")}</p>
+            </motion.div>
+
+            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center bg-brand-orange/20 lg:col-start-1 lg:col-span-1 md:col-span-1">
+              <div className="w-16 h-16 rounded-full bg-brand-orange text-white border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
+                <MapPin className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.neighborhoods_title")}</h3>
+              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.neighborhoods_desc")}</p>
+            </motion.div>
+
+            <motion.div variants={fadeInUp} className="card-pop p-6 flex flex-col items-center text-center lg:col-start-2 lg:col-span-1 md:col-span-2">
+              <div className="w-16 h-16 rounded-full bg-brand-red text-white border-2 border-foreground grid place-items-center mb-5 shadow-pop-sm">
+                <Bike className="w-8 h-8" />
+              </div>
+              <h3 className="font-serif font-bold text-2xl mb-3">{t("home.value_props.routes_title")}</h3>
+              <p className="text-foreground/75 text-sm md:text-base leading-relaxed">{t("home.value_props.routes_desc")}</p>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -209,6 +276,87 @@ export default function Home() {
               );
             })}
           </motion.div>
+        </div>
+      </section>
+
+      {/* EXCLUSIVE EVENTS */}
+      <section className="section-tight bg-brand-navy text-brand-cream texture-paper">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-between items-end gap-6 mb-10 md:mb-14">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="max-w-2xl"
+            >
+              <div className="section-kicker mb-5 !bg-brand-red !text-white">{t("home.events.kicker")}</div>
+              <h2 className="font-serif font-bold text-3xl md:text-5xl leading-[1.05] mb-3">
+                {t("home.events.title")}
+              </h2>
+              <p className="text-brand-cream/80 text-base md:text-lg">
+                {t("home.events.subtitle")}
+              </p>
+            </motion.div>
+            <Link href="/events" className="hidden md:inline-flex font-display text-xs tracking-[0.16em] uppercase text-brand-yellow items-center hover:gap-2 transition-all">
+              {t("home.events.view_all")} <ArrowRight className="ml-2 w-4 h-4 rtl:rotate-180" />
+            </Link>
+          </div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {featuredEvents.map((event) => {
+              const dateParts = event.date.split(" ");
+              const eventMonth = dateParts[0] ?? "";
+              const eventDay = (dateParts[1] ?? "").replace(",", "");
+              return (
+              <motion.div key={event.id} variants={fadeInUp}>
+                <Link href={`/events/${event.id}`}>
+                  <div className="card-pop overflow-hidden h-full cursor-pointer hover:-translate-y-1 transition-transform group bg-background text-foreground border-brand-cream">
+                    <div className="relative border-b-[3px] border-foreground bg-brand-red text-white p-5 flex items-center gap-4">
+                      <div className="shrink-0 w-16 h-16 rounded-xl border-2 border-foreground bg-background text-foreground grid place-content-center text-center leading-none shadow-pop-sm">
+                        <span className="font-display text-[10px] tracking-[0.14em] uppercase">{eventMonth.slice(0, 3)}</span>
+                        <span className="font-serif font-bold text-2xl mt-0.5">{eventDay}</span>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-display text-[10px] tracking-[0.16em] uppercase text-brand-yellow mb-1">
+                          {event.category}
+                        </div>
+                        <div className="flex items-center text-xs text-white/85">
+                          <Clock className="w-3.5 h-3.5 mr-1 shrink-0" /> {event.time}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-serif font-bold text-xl leading-tight mb-2">
+                        {event.name}
+                      </h3>
+                      <div className="flex items-center text-sm text-foreground/60 mb-3">
+                        <MapPin className="w-3.5 h-3.5 mr-1 shrink-0" /> {event.venue}
+                      </div>
+                      <p className="text-sm text-foreground/70 line-clamp-2 mb-4">
+                        {event.description}
+                      </p>
+                      <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase text-brand-red">
+                        {t("home.events.view_event")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+              );
+            })}
+          </motion.div>
+          <div className="mt-8 text-center md:hidden">
+            <Link href="/events" className="button-pop button-pop-yellow w-full justify-center">
+              {t("home.events.view_all")}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -337,7 +485,7 @@ export default function Home() {
                           <MapPin className="w-3.5 h-3.5" /> {r.stops} {t("routes_section.stops_label")}
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <Map className="w-3.5 h-3.5" /> {r.miles}
+                          <MapIcon className="w-3.5 h-3.5" /> {r.miles}
                         </span>
                         <span className="inline-flex items-center gap-1.5">
                           <Bike className="w-3.5 h-3.5" /> {r.pace}
@@ -395,7 +543,7 @@ export default function Home() {
               return (
                 <motion.div key={biz.id} variants={fadeInUp}>
                   <Link href={`/listing/${biz.id}`}>
-                    <div className="card-pop overflow-hidden h-full cursor-pointer hover:-translate-y-1 transition-transform group">
+                    <div className="card-pop overflow-hidden h-full cursor-pointer hover:-translate-y-1 transition-transform group bg-background">
                       <div className="aspect-[4/3] overflow-hidden relative border-b-[3px] border-foreground">
                         <img
                           src={biz.image}
@@ -500,23 +648,17 @@ export default function Home() {
                       cls.bg, cls.text
                     )}>
                       <div className={cn(
-                        "absolute -top-3 -right-3 border-2 border-foreground rounded-full w-10 h-10 grid place-items-center",
+                        "w-12 h-12 rounded-full border-2 border-foreground flex items-center justify-center mb-5",
                         cls.pin
                       )}>
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="w-5 h-5" />
                       </div>
-                      <div className="font-display text-[10px] tracking-[0.18em] mb-3 opacity-80">
-                        {t("listing_page.neighborhood_label")}
+                      <h3 className="font-serif font-bold text-xl md:text-2xl mb-2">{n.name}</h3>
+                      <p className="text-sm opacity-90 leading-snug">{n.description}</p>
+
+                      <div className="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <MoveRight className="w-5 h-5 rtl:rotate-180" />
                       </div>
-                      <h3 className="font-serif font-bold text-xl md:text-2xl leading-tight mb-3">
-                        {n.name}
-                      </h3>
-                      <p className="text-xs md:text-sm leading-snug mb-5 opacity-90">
-                        {n.description}
-                      </p>
-                      <span className="inline-flex items-center font-display text-[11px] tracking-[0.16em] uppercase">
-                        {t("nav.explore")} <MoveRight className="ml-2 w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 transition-transform" />
-                      </span>
                     </div>
                   </Link>
                 </motion.div>
@@ -526,121 +668,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MANIFESTO */}
-      <section className="section-tight bg-brand-red text-white relative overflow-hidden">
-        <div className="absolute inset-0 dot-grid opacity-15 pointer-events-none" />
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeInUp}
-            className="max-w-4xl mx-auto"
-          >
-            <Sticker color="yellow" className="mb-7">{t("manifesto.kicker")}</Sticker>
-            <h2 className="font-serif font-bold leading-[1.02] mb-8 text-3xl md:text-5xl lg:text-6xl">
-              {t("manifesto.title")}
-            </h2>
-            <p className="text-lg md:text-xl leading-relaxed text-white/90 max-w-3xl mb-10">
-              {t("manifesto.body")}
-            </p>
-            <div className="border-l-4 border-brand-yellow ltr:pl-6 rtl:border-l-0 rtl:border-r-4 rtl:pr-6 max-w-2xl">
-              <Quote className="w-6 h-6 text-brand-yellow mb-2 -ml-1" />
-              <p className="font-serif italic text-xl md:text-2xl lg:text-3xl leading-snug text-brand-yellow">
-                {t("manifesto.title")}
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* BUSINESS CTA */}
-      <section className="section-tight bg-brand-cream texture-paper">
-        <div className="container mx-auto px-4">
+      {/* FINAL CTA */}
+      <section className="section-tight bg-brand-yellow text-brand-yellow-foreground texture-paper relative overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10 text-center max-w-2xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
-            className="max-w-5xl mx-auto"
           >
-            <div className="card-pop bg-background p-8 md:p-12 lg:p-14">
-              <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-10 items-center">
-                <div>
-                  <div className="section-kicker mb-5">{t("business_cta.kicker")}</div>
-                  <h2 className="font-serif font-bold text-3xl md:text-5xl text-primary leading-[1.05] mb-5">
-                    {t("business_cta.title")}
-                  </h2>
-                  <p className="text-base md:text-lg text-foreground/75 mb-7 max-w-2xl leading-relaxed">
-                    {t("business_cta.subtitle")}
-                  </p>
-                  <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
-                    <Link href="/apply" className="button-pop">
-                      {t("business_cta.cta_apply")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
-                    </Link>
-                    <Link href="/partners" className="button-pop button-pop-cream">
-                      {t("business_cta.cta_partners")}
-                    </Link>
-                  </div>
-                  <p className="font-display text-[11px] tracking-[0.16em] uppercase text-foreground/55 mt-6">
-                    ★ {t("business_cta.limited_label")}
-                  </p>
-                </div>
-
-                <div className="relative h-[220px] hidden lg:block">
-                  <div className="absolute top-2 left-2">
-                    <PassportStamp tone="red" rotate={-10}>
-                      Atlanta<br />2026
-                    </PassportStamp>
-                  </div>
-                  <div className="absolute top-10 right-2">
-                    <PassportStamp tone="navy" rotate={8}>
-                      Founding
-                    </PassportStamp>
-                  </div>
-                  <div className="absolute bottom-0 left-16">
-                    <PassportStamp tone="green" rotate={-4}>
-                      Stop
-                    </PassportStamp>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h2 className="font-serif font-bold text-4xl md:text-6xl mb-6 leading-tight">
+              {t("home.cta.title")}
+            </h2>
+            <p className="text-brand-yellow-foreground/80 text-lg md:text-xl mb-10">
+              {t("home.cta.subtitle")}
+            </p>
+            <Link href="/passport" className="button-pop bg-brand-red text-white hover:bg-brand-red/90 text-lg px-8 py-4">
+              {t("home.cta.button")} <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+            </Link>
           </motion.div>
         </div>
-      </section>
-
-      {/* Sponsorship strip */}
-      <section className="bg-brand-red text-white border-t-[3px] border-b-[3px] border-foreground">
-        <div className="container mx-auto px-4 py-5 md:py-6">
-          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 text-center md:text-left">
-            <span className="inline-block self-center md:self-auto bg-brand-yellow text-brand-yellow-foreground border-[2px] border-foreground rounded-full px-3 py-1 font-display text-[11px] tracking-[0.18em] uppercase shadow-pop-sm shrink-0">
-              ★ Sponsored
-            </span>
-            <p className="font-display text-sm md:text-base tracking-wide leading-snug">
-              <span className="uppercase tracking-[0.08em]">Hot Sauce Fest ATL</span>
-              {" — November 14th at "}
-              <span className="underline decoration-brand-yellow decoration-[3px] underline-offset-2">Atlantucky Brewing</span>
-              {". Visit "}
-              <a
-                href="https://hotsaucefestatl.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline decoration-brand-yellow decoration-[3px] underline-offset-2 hover:text-brand-yellow"
-              >
-                hotsaucefestatl.com
-              </a>
-              {" · IG "}
-              <a
-                href="https://instagram.com/hotsaucefest.atl"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline decoration-brand-yellow decoration-[3px] underline-offset-2 hover:text-brand-yellow"
-              >
-                @hotsaucefest.atl
-              </a>
-            </p>
-          </div>
+        <div className="absolute top-1/2 left-10 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
+          <PassportStamp size="lg" tone="red" rotate={-15}>ATL</PassportStamp>
+        </div>
+        <div className="absolute bottom-10 right-10 opacity-20 pointer-events-none hidden lg:block">
+          <PassportStamp size="lg" tone="red" rotate={25}>2026</PassportStamp>
         </div>
       </section>
     </div>

@@ -1,3 +1,4 @@
 - [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).
 - [Clerk React v6 custom OAuth](clerk-react-v6-custom-oauth.md) — for custom social buttons (authenticateWithRedirect), import useSignUp/useSignIn from `@clerk/react/legacy`, not `@clerk/react`.
+- [i18n translate script limits](i18n-translate-script.md) — full-file translation exceeds the 120s bash cap (esp. Arabic); parallelize with `& wait`, and for a few new keys patch just the subset & merge.
 - [Sandbox geocoding](sandbox-geocoding.md) — Maps key is redacted in the code_execution sandbox; geocode imports via keyless Nominatim (User-Agent required, ~1.1s/req).
