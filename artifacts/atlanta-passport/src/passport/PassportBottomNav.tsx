@@ -94,7 +94,12 @@ export function PassportBottomNav() {
   if (location === "/passport/contact") {
     return (
       <nav className="fixed bottom-0 inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop z-40">
-        <div className="relative max-w-3xl mx-auto flex items-center px-2 min-h-[56px]">
+        <div className="relative max-w-3xl mx-auto flex items-center gap-1 px-2 min-h-[56px]">
+          <LanguageSwitcher
+            align="start"
+            className="w-16 justify-center md:w-auto md:justify-start"
+          />
+
           <button
             type="button"
             onClick={() => window.close()}
@@ -121,6 +126,10 @@ export function PassportBottomNav() {
           >
             <Mail className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
             <span>CONTACT</span>
+          </div>
+
+          <div className="inline-flex h-10 px-1 items-center border-2 border-foreground bg-brand-cream rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+            <SocialLinks linkClassName="h-7 w-7 text-foreground/80 hover:text-brand-red hover:bg-foreground/10" />
           </div>
         </div>
       </nav>
