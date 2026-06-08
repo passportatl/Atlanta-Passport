@@ -1,11 +1,22 @@
 import { useTranslation } from "react-i18next";
 import Logo from "@/components/Logo";
 
-export default function Footer() {
+// `clearBottomNav` adds extra bottom padding so the footer clears the fixed
+// PassportBottomNav on the passport/map-shell pages (which have no marketing
+// chrome). Marketing pages render it without the prop.
+export default function Footer({
+  clearBottomNav = false,
+}: {
+  clearBottomNav?: boolean;
+} = {}) {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-foreground text-background pt-6 pb-10 md:pt-8 md:pb-14 relative overflow-hidden">
+    <footer
+      className={`bg-foreground text-background pt-6 md:pt-8 relative overflow-hidden ${
+        clearBottomNav ? "pb-32" : "pb-10 md:pb-14"
+      }`}
+    >
       <div className="absolute inset-0 dot-grid opacity-[0.06] pointer-events-none" />
       <div className="container mx-auto px-4 relative">
         <div className="flex items-center gap-5">

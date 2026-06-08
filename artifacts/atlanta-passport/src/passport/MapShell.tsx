@@ -17,7 +17,7 @@ import PassportStamps from "@/pages/passport/stamps";
 import PassportRewards from "@/pages/passport/rewards";
 import PassportHome from "@/pages/passport/index";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
-import LegalDisclaimer from "@/components/LegalDisclaimer";
+import Footer from "@/components/layout/Footer";
 
 export type RouteOptions = { start: RouteStart; time: RouteTime };
 const DEFAULT_ROUTE_OPTIONS: RouteOptions = { start: "marta", time: "noon" };
@@ -28,7 +28,7 @@ function PassportPanel({ children }: { children: ReactNode }) {
   return (
     <div className="flex-1 min-h-0 overflow-y-auto bg-[hsl(var(--brand-cream))] texture-paper">
       <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">{children}</div>
-      <LegalDisclaimer />
+      <Footer clearBottomNav />
     </div>
   );
 }

@@ -10,7 +10,7 @@ import {
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
-import LegalDisclaimer from "@/components/LegalDisclaimer";
+import Footer from "@/components/layout/Footer";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 16 },
@@ -266,7 +266,7 @@ export default function RoutesFeed({
           })}
         </motion.div>
       </div>
-      <LegalDisclaimer />
+      <Footer clearBottomNav />
     </div>
   );
 }

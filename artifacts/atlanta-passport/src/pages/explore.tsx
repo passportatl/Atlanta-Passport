@@ -15,7 +15,7 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import LegalDisclaimer from "@/components/LegalDisclaimer";
+import Footer from "@/components/layout/Footer";
 
 type Biz = (typeof businesses)[number];
 
@@ -404,7 +404,7 @@ export default function ExploreContent({
           )}
         </motion.div>
         </div>
-        <LegalDisclaimer />
+        <Footer clearBottomNav />
       </div>
     </>
   );

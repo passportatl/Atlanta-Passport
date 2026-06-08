@@ -5,6 +5,7 @@ import { MapPin, Calendar, Clock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
+import Footer from "@/components/layout/Footer";
 
 const GROUP_SIZE = 2;
 const AUTOPLAY_MS = 9000;
@@ -156,7 +157,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
       : "";
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto px-4 pt-3 pb-[calc(8rem+env(safe-area-inset-bottom))]">
+    <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="px-4 pt-3">
       <div className="max-w-3xl mx-auto px-0 flex flex-col">
         <div className="flex items-center justify-between mb-2 shrink-0">
           <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
@@ -374,6 +376,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
           </div>
         </div>
       </div>
+      </div>
+      <Footer clearBottomNav />
     </div>
   );
 }
