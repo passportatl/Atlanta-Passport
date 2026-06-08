@@ -6,9 +6,9 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SocialLinks } from "@/components/SocialLinks";
 
 const TABS = [
-  { href: "/explore", label: "Explore", icon: Compass, exact: true },
+  { href: "/passport/explore", label: "Explore", icon: Compass, exact: true },
   { href: "/passport/routes", label: "Routes", icon: Map },
-  { href: "/explore/events", label: "Events", icon: Calendar },
+  { href: "/passport/explore/events", label: "Events", icon: Calendar },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/contact", label: "Contact", icon: Mail },
   { href: "/passport", label: "Profile", icon: User, exact: true },

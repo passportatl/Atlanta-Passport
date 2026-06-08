@@ -18,7 +18,7 @@ export default function Listing() {
         <div className="card-pop bg-card max-w-md w-full p-8 text-center">
           <h2 className="text-2xl font-serif font-bold text-foreground mb-4">{t("common.error")}</h2>
           <p className="text-muted-foreground mb-8">{t("common.error")}</p>
-          <Link href="/explore" className="button-pop inline-flex items-center justify-center gap-2 w-full">
+          <Link href="/passport/explore" className="button-pop inline-flex items-center justify-center gap-2 w-full">
             <ArrowLeft className="w-4 h-4 rtl:rotate-180" /> {t("listing_page.back")}
           </Link>
         </div>
@@ -254,7 +254,7 @@ export default function Listing() {
 
         {/* Bottom Nav */}
         <div className="mt-20 pt-8 border-t border-border flex justify-center">
-          <Link href="/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors uppercase">
+          <Link href="/passport/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors uppercase">
             {t("listing_page.more_in_area")} →
           </Link>
         </div>

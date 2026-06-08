@@ -39,7 +39,7 @@ function PassportPanel({ children }: { children: ReactNode }) {
 export default function MapShell() {
   const [location] = useLocation();
   const view =
-    location === "/explore/events"
+    location === "/passport/explore/events"
       ? "events"
       : location === "/passport/stamps"
         ? "stamps"
@@ -182,7 +182,8 @@ export default function MapShell() {
   // intentionally leave existing filters untouched (don't reset on plain nav).
   const search = useSearch();
   useEffect(() => {
-    if (location !== "/explore" && location !== "/explore/events") return;
+    if (location !== "/passport/explore" && location !== "/passport/explore/events")
+      return;
     const sp = new URLSearchParams(search);
     const cat =
       exploreCategories.find((c) => c.id === sp.get("category"))?.label ?? null;

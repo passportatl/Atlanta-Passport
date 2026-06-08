@@ -24,9 +24,9 @@ export default function Navbar() {
   const passportShort = isSignedIn ? "My Passport" : "Log In";
 
   const mobileTouristLinks = [
-    { name: t("nav.explore"), path: "/explore" },
-    { name: t("nav.neighborhoods"), path: "/explore" },
-    { name: t("nav.local_spots"), path: "/explore" },
+    { name: t("nav.explore"), path: "/passport/explore" },
+    { name: t("nav.neighborhoods"), path: "/passport/explore" },
+    { name: t("nav.local_spots"), path: "/passport/explore" },
   ];
 
   const businessLinks = [

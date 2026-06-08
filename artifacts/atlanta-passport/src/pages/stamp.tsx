@@ -167,7 +167,7 @@ export default function StampPage() {
           <Link href="/passport" className="button-pop button-pop-yellow">
             View my passport
           </Link>
-          <Link href="/explore" className="button-pop button-pop-cream">
+          <Link href="/passport/explore" className="button-pop button-pop-cream">
             Keep exploring
           </Link>
         </div>

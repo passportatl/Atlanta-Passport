@@ -261,7 +261,7 @@ function SignedInHomeRedirect() {
     if (!isLoaded || evaluated.current) return;
     evaluated.current = true;
     if (isSignedIn && location === "/") {
-      setLocation("/explore", { replace: true });
+      setLocation("/passport/explore", { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
 

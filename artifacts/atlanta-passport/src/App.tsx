@@ -82,8 +82,8 @@ function ProtectedRouteRedirect() {
 // Routes that share the persistent, never-reloading map shell.
 function isMapShellRoute(location: string) {
   return (
-    location === "/explore" ||
-    location === "/explore/events" ||
+    location === "/passport/explore" ||
+    location === "/passport/explore/events" ||
     location === "/passport/stamps" ||
     location === "/passport/rewards" ||
     location === "/passport/routes"

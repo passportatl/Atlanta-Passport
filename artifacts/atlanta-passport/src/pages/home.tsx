@@ -52,13 +52,13 @@ const cardBadgeById: Record<string, { key: string; color: "yellow" | "red" | "sk
 };
 
 const heroChipKeys: Array<{ key: string; href: string }> = [
-  { key: "chip_food",       href: "/explore?category=food" },
-  { key: "chip_coffee",     href: "/explore?category=coffee" },
-  { key: "chip_nightlife",  href: "/explore?category=nightlife" },
+  { key: "chip_food",       href: "/passport/explore?category=food" },
+  { key: "chip_coffee",     href: "/passport/explore?category=coffee" },
+  { key: "chip_nightlife",  href: "/passport/explore?category=nightlife" },
   { key: "chip_routes",     href: "/beltline#routes" },
   { key: "chip_beltline",   href: "/beltline" },
   { key: "chip_events",     href: "/events" },
-  { key: "chip_open_late",  href: "/explore?category=nightlife" },
+  { key: "chip_open_late",  href: "/passport/explore?category=nightlife" },
 ];
 
 const marqueeKeys = [
@@ -101,7 +101,7 @@ export default function Home() {
               </p>
 
               <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 sm:items-center mb-7">
-                <Link href="/explore" className="button-pop w-full sm:w-auto">
+                <Link href="/passport/explore" className="button-pop w-full sm:w-auto">
                   {t("hero.cta_explore")} <MoveRight className="w-4 h-4 rtl:rotate-180" />
                 </Link>
                 <Link href="/beltline" className="button-pop button-pop-yellow w-full sm:w-auto">
@@ -184,7 +184,7 @@ export default function Home() {
               const cls = catColor[c.color];
               return (
                 <motion.div key={c.id} variants={fadeInUp}>
-                  <Link href={`/explore?category=${c.id}`}>
+                  <Link href={`/passport/explore?category=${c.id}`}>
                     <div
                       className={cn(
                         "h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 cursor-pointer transition-all hover:-translate-y-1 shadow-pop-sm hover:shadow-pop",
@@ -377,7 +377,7 @@ export default function Home() {
                 {t("spots_section.subtitle")}
               </p>
             </motion.div>
-            <Link href="/explore" className="hidden md:inline-flex font-display text-xs tracking-[0.16em] uppercase text-brand-red items-center hover:gap-2 transition-all">
+            <Link href="/passport/explore" className="hidden md:inline-flex font-display text-xs tracking-[0.16em] uppercase text-brand-red items-center hover:gap-2 transition-all">
               {t("common.view_all")} <ArrowRight className="ml-2 w-4 h-4 rtl:rotate-180" />
             </Link>
           </div>
@@ -450,7 +450,7 @@ export default function Home() {
           </motion.div>
 
           <div className="mt-8 text-center md:hidden">
-            <Link href="/explore" className="button-pop button-pop-yellow w-full justify-center">
+            <Link href="/passport/explore" className="button-pop button-pop-yellow w-full justify-center">
               {t("spots_section.view_all")}
             </Link>
           </div>
@@ -490,7 +490,7 @@ export default function Home() {
                 : (catColor[n.color ?? "yellow"] ?? catColor.yellow);
               return (
                 <motion.div key={n.id} variants={fadeInUp}>
-                  <Link href={`/explore?neighborhood=${n.id}`}>
+                  <Link href={`/passport/explore?neighborhood=${n.id}`}>
                     <div className={cn(
                       "relative h-full rounded-2xl border-[3px] border-foreground p-5 md:p-6 hover:-translate-y-1 transition-transform cursor-pointer group shadow-pop-sm hover:shadow-pop",
                       cls.bg, cls.text
