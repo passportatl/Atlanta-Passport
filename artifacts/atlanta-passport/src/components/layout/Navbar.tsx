@@ -160,6 +160,7 @@ export default function Navbar() {
               <span>Back</span>
             </button>
           )}
+          {!isStandalone && (
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -270,6 +271,7 @@ export default function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
+          )}
         </div>
       </div>
     </header>
