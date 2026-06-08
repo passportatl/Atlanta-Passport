@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import {
   MapPin, Stamp, Bike, Calendar,
-  MoveRight, Gift, Ticket, Map, Landmark, Compass
+  MoveRight, Gift, Ticket, Landmark, Compass
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { routes, events } from "@/data/sample-data";
@@ -72,9 +72,6 @@ function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full sm:w-auto">
             <Link href="/passport/explore" className="button-pop bg-brand-yellow text-foreground text-lg md:text-xl px-8 py-5 w-full sm:w-auto hover:bg-brand-red hover:text-white transition-colors border-4">
               <Stamp className="w-6 h-6 mr-2"/> {t("home.new_hero.cta_primary")}
-            </Link>
-            <Link href="/beltline" className="button-pop bg-white text-foreground text-lg md:text-xl px-8 py-5 w-full sm:w-auto border-4 hover:bg-brand-sky hover:text-foreground transition-colors">
-              <Map className="w-6 h-6 mr-2"/> {t("home.new_hero.cta_secondary")}
             </Link>
           </div>
         </motion.div>
