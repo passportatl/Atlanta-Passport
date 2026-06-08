@@ -964,29 +964,29 @@ export default function BusinessMap({
         </APIProvider>
       </div>
 
-      <div className="flex shrink-0 items-center justify-center gap-1 border-t-2 border-foreground bg-[#a71930] px-1.5 py-2 sm:gap-1.5 sm:px-2">
+      <div className="flex shrink-0 items-center justify-center gap-0.5 border-t-2 border-foreground bg-[#a71930] px-1 py-2 sm:gap-1.5 sm:px-2">
         <MapLayerToggle
           active={showMarta}
           onClick={() => setShowMarta((v) => !v)}
-          icon={<TrainFront className="h-3.5 w-3.5" />}
+          icon={<TrainFront className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
           label="MARTA"
         />
         <MapLayerToggle
           active={showBeltline}
           onClick={() => setShowBeltline((v) => !v)}
-          icon={<Spline className="h-3.5 w-3.5" />}
+          icon={<Spline className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
           label="Beltline"
         />
         <MapLayerToggle
           active={showAreas}
           onClick={() => setShowAreas((v) => !v)}
-          icon={<Layers className="h-3.5 w-3.5" />}
+          icon={<Layers className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
           label="Areas"
         />
         <MapLayerToggle
           active={showPins}
           onClick={() => setShowPins((v) => !v)}
-          icon={<MapPin className="h-3.5 w-3.5" />}
+          icon={<MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
           label="Pins"
         />
       </div>
@@ -1012,7 +1012,7 @@ function MapLayerToggle({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-md border-2 px-1.5 py-1 text-[10px] font-display uppercase tracking-wider transition-all sm:gap-1.5 sm:px-2.5 sm:text-[11px] ${
+      className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-md border-2 px-1 py-1 text-[9px] font-display uppercase tracking-normal transition-all sm:gap-1.5 sm:px-2.5 sm:text-[11px] sm:tracking-wider ${
         active
           ? "border-foreground bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm"
           : "border-brand-cream/30 bg-transparent text-brand-cream/55 hover:text-brand-cream/80"
