@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "wouter";
+import { ArrowUpRight } from "lucide-react";
 import {
   useListVisitorStamps,
   useListBusinesses,
@@ -21,6 +22,12 @@ function resolveEventMapId(name: string): string | undefined {
   const venue = sampleEvents.find((e) => e.name === name)?.venue;
   if (!venue) return undefined;
   return exploreBusinesses.find((b) => b.name === venue)?.id;
+}
+
+// Featured events have their own marketing detail page at /events/:id keyed by
+// the sample-data event id, matched off the seeded event name.
+function resolveEventDetailId(name: string): string | undefined {
+  return sampleEvents.find((e) => e.name === name)?.id;
 }
 
 // The Explore cards (sample-data `businesses`) are the participating spots with
@@ -48,6 +55,7 @@ function StampListItem({
   iconName,
   color,
   onSelect,
+  detailHref,
 }: {
   name: string;
   meta: string;
@@ -56,6 +64,7 @@ function StampListItem({
   iconName: string;
   color: string;
   onSelect?: () => void;
+  detailHref?: string;
 }) {
   const interactive = !!onSelect;
   return (
@@ -87,6 +96,19 @@ function StampListItem({
         </div>
         {detail && (
           <div className="text-xs font-semibold text-foreground/80 mt-1">{detail}</div>
+        )}
+        {detailHref && (
+          <Link
+            href={detailHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`View details for ${name}`}
+            className="mt-2 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
+          >
+            View details
+            <ArrowUpRight className="w-3 h-3" />
+          </Link>
         )}
       </div>
       <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-[hsl(var(--brand-cream))]/40 flex items-center justify-center">
@@ -218,6 +240,7 @@ export default function PassportStamps({
               onSelect={
                 onSelectBusiness ? () => onSelectBusiness(biz.id) : undefined
               }
+              detailHref={`/listing/${biz.id}`}
             />
           ))}
         </ul>
@@ -239,6 +262,7 @@ export default function PassportStamps({
           <ul>
             {eventRows.map(({ api, stamp }) => {
               const mapId = resolveEventMapId(api.name);
+              const detailId = resolveEventDetailId(api.name);
               return (
                 <StampListItem
                   key={api.id}
@@ -253,6 +277,7 @@ export default function PassportStamps({
                       ? () => onSelectBusiness(mapId)
                       : undefined
                   }
+                  detailHref={detailId ? `/events/${detailId}` : undefined}
                 />
               );
             })}
