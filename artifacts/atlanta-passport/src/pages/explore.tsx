@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, categories, neighborhoods, isDarkColor, categoryColor } from "@/data/sample-data";
+import BusinessImage from "@/components/BusinessImage";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, X, ChevronDown } from "lucide-react";
 import SoccerBall from "@/components/SoccerBall";
@@ -282,9 +283,10 @@ export default function ExploreContent({
                 >
                   <div className="card-pop bg-card h-full flex overflow-hidden hover:-translate-y-0.5 transition-transform">
                     <div className="relative w-24 sm:w-28 shrink-0 overflow-hidden border-r-[3px] border-foreground">
-                      <img
+                      <BusinessImage
                         src={biz.image}
-                        alt={biz.name}
+                        name={biz.name}
+                        category={biz.category}
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                       />
                       {biz.sponsorTier === "Founding Sponsor" && (

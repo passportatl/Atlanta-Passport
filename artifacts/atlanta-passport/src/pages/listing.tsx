@@ -2,6 +2,7 @@ import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
+import BusinessImage from "@/components/BusinessImage";
 import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen, Bike, Utensils, Train } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,6 +27,12 @@ export default function Listing() {
     );
   }
 
+  const mapsQuery = encodeURIComponent(
+    business.address
+      ? `${business.address}, Atlanta, GA`
+      : `${business.name}, ${business.neighborhood}, Atlanta, GA`,
+  );
+
   const handleSave = () => {
     toast({
       title: t("common.loading"),
@@ -38,9 +45,11 @@ export default function Listing() {
     <div className="w-full pb-24 bg-background">
       {/* Hero Image */}
       <div className="w-full h-[40vh] md:h-[50vh] relative">
-        <img
+        <BusinessImage
           src={business.image}
-          alt={business.name}
+          name={business.name}
+          category={business.category}
+          size="lg"
           className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
@@ -114,14 +123,18 @@ export default function Listing() {
           
           {/* Left Column - Details */}
           <div className="lg:col-span-3 space-y-10">
-            <section>
-              <h2 className="text-2xl font-serif font-bold text-primary mb-4">{t("nav.about")}</h2>
-              <p className="text-muted-foreground leading-relaxed text-lg">
-                {business.about}
-              </p>
-            </section>
+            {business.about && (
+              <section>
+                <h2 className="text-2xl font-serif font-bold text-primary mb-4">{t("nav.about")}</h2>
+                <p className="text-muted-foreground leading-relaxed text-lg">
+                  {business.about}
+                </p>
+              </section>
+            )}
 
+            {(business.hours || business.address) && (
             <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-border">
+              {business.hours && (
               <div>
                 <div className="flex items-center text-primary font-bold mb-2">
                   <Clock className="w-5 h-5 mr-2" /> {t("listing_page.hours_label")}
@@ -130,15 +143,19 @@ export default function Listing() {
                   {business.hours}
                 </p>
               </div>
-              <div>
-                <div className="flex items-center text-primary font-bold mb-2">
-                  <MapPin className="w-5 h-5 mr-2" /> {t("listing_page.address_label")}
+              )}
+              {business.address && (
+                <div>
+                  <div className="flex items-center text-primary font-bold mb-2">
+                    <MapPin className="w-5 h-5 mr-2" /> {t("listing_page.address_label")}
+                  </div>
+                  <p className="text-muted-foreground">
+                    {business.address}
+                  </p>
                 </div>
-                <p className="text-muted-foreground">
-                  {business.address}
-                </p>
-              </div>
+              )}
             </div>
+            )}
 
             {business.transit && (
               <section className="pt-6 border-t border-border">
@@ -192,7 +209,7 @@ export default function Listing() {
 
             <div className="flex flex-col sm:flex-row gap-5 pt-6">
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address + ', Atlanta, GA')}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="button-pop flex-1 inline-flex items-center justify-center gap-2"
@@ -220,10 +237,12 @@ export default function Listing() {
                 </div>
                 <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
               </div>
-              <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
+              {business.address && (
+                <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
+              )}
               <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address + ', Atlanta, GA')}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
