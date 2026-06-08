@@ -316,17 +316,27 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
   useEffect(() => {
     if (!map || !mapsLib || path.length < 1) return;
 
-    const polyline =
+    const polylines: google.maps.Polyline[] =
       path.length >= 2
-        ? new mapsLib.Polyline({
-            path,
-            geodesic: true,
-            strokeColor: "#f9c629",
-            strokeOpacity: 0.95,
-            strokeWeight: 4,
-            map,
-          })
-        : null;
+        ? [
+            new mapsLib.Polyline({
+              path,
+              geodesic: true,
+              strokeColor: "#1a1a1a",
+              strokeOpacity: 0.5,
+              strokeWeight: 7,
+              map,
+            }),
+            new mapsLib.Polyline({
+              path,
+              geodesic: true,
+              strokeColor: "#ffffff",
+              strokeOpacity: 1,
+              strokeWeight: 4,
+              map,
+            }),
+          ]
+        : [];
 
     const bounds = new google.maps.LatLngBounds();
     path.forEach((p) => bounds.extend(p));
@@ -334,7 +344,7 @@ function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
     if (path.length === 1 && (map.getZoom() ?? 0) > 15) map.setZoom(15);
 
     return () => {
-      polyline?.setMap(null);
+      polylines.forEach((p) => p.setMap(null));
     };
   }, [map, mapsLib, path]);
 
