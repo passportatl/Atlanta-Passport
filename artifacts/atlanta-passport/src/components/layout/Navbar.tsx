@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, BookMarked, LogIn } from "lucide-react";
+import { Menu, BookMarked, LogIn, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -23,6 +23,12 @@ export default function Navbar() {
   const { isSignedIn } = useUser();
   const passportShort = isSignedIn ? "My Passport" : "Log In";
 
+  // Business listing pages are standalone (often opened in their own tab via a
+  // scanned link/QR), so they hide the "Get Listed" + passport/auth links and
+  // surface a single "Back to site" action that closes the tab instead.
+  const isListing = location.startsWith("/listing");
+  const closeTab = () => window.close();
+
   const mobileTouristLinks = [
     { name: t("nav.explore"), path: "/passport/explore" },
     { name: t("nav.neighborhoods"), path: "/passport/explore" },
@@ -32,7 +38,7 @@ export default function Navbar() {
   const businessLinks = [
     { name: t("nav.get_listed"), path: "/apply" },
     { name: t("nav.partner_tiers"), path: "/partners" },
-  ];
+  ].filter((l) => !(isListing && l.path === "/apply"));
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
@@ -41,17 +47,33 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-3 shrink-0 md:justify-end md:h-16">
           <LanguageSwitcher align="start" />
 
-          {/* "Get Listed" — desktop, left of the centered logo */}
-          <Link
-            href="/partners"
-            className={cn(
-              navItemClass(location === "/partners"),
-              "hidden md:inline-flex items-center"
-            )}
-            data-testid="link-get-listed"
-          >
-            {t("nav.get_listed")}
-          </Link>
+          {/* Desktop, left of the centered logo: "Back to site" on listing pages
+              (closes the tab), otherwise the "Get Listed" link. */}
+          {isListing ? (
+            <button
+              type="button"
+              onClick={closeTab}
+              className={cn(
+                navItemClass(false),
+                "hidden md:inline-flex items-center gap-1.5"
+              )}
+              data-testid="link-back-to-site"
+            >
+              <X className="w-3.5 h-3.5" />
+              Back to site
+            </button>
+          ) : (
+            <Link
+              href="/partners"
+              className={cn(
+                navItemClass(location === "/partners"),
+                "hidden md:inline-flex items-center"
+              )}
+              data-testid="link-get-listed"
+            >
+              {t("nav.get_listed")}
+            </Link>
+          )}
 
           {/* Mobile logo (stays on the left) */}
           <Link
@@ -80,58 +102,75 @@ export default function Navbar() {
 
         {/* Desktop Nav — Passport auth + socials (right of the centered logo) */}
         <nav className="hidden md:flex items-center gap-2 justify-start md:h-16">
-          {isSignedIn ? (
-            <Link
-              href="/passport"
-              className={cn(
-                navItemClass(location.startsWith("/passport")),
-                "inline-flex items-center gap-1.5",
-              )}
-              data-testid="link-nav-passport"
-            >
-              <BookMarked className="w-3.5 h-3.5" />
-              My Passport
-            </Link>
-          ) : (
-            <>
+          {!isListing &&
+            (isSignedIn ? (
               <Link
-                href="/sign-in"
+                href="/passport"
                 className={cn(
-                  navItemClass(location.startsWith("/sign-in")),
+                  navItemClass(location.startsWith("/passport")),
                   "inline-flex items-center gap-1.5",
                 )}
-                data-testid="link-nav-login"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                Log In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center gap-1.5 h-9 px-3 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap transition active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-                data-testid="link-nav-signup"
+                data-testid="link-nav-passport"
               >
                 <BookMarked className="w-3.5 h-3.5" />
-                Sign Up
+                My Passport
               </Link>
-            </>
-          )}
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className={cn(
+                    navItemClass(location.startsWith("/sign-in")),
+                    "inline-flex items-center gap-1.5",
+                  )}
+                  data-testid="link-nav-login"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  Log In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="inline-flex items-center gap-1.5 h-9 px-3 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap transition active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                  data-testid="link-nav-signup"
+                >
+                  <BookMarked className="w-3.5 h-3.5" />
+                  Sign Up
+                </Link>
+              </>
+            ))}
 
           {/* Far right: social media icons */}
-          <SocialLinks className="ml-2 pl-3 border-l border-brand-cream/25" />
+          <SocialLinks
+            className={cn(!isListing && "ml-2 pl-3 border-l border-brand-cream/25")}
+          />
         </nav>
 
         {/* Mobile Nav — tourist CTA + menu */}
         <div className="md:hidden flex items-center gap-1.5">
-          <Link
-            href={isSignedIn ? "/passport" : "/sign-in"}
-            aria-label={passportShort}
-            title={passportShort}
-            className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-            data-testid="link-mobile-passport"
-          >
-            {isSignedIn ? <BookMarked className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
-            <span>{isSignedIn ? "Pass" : "Log In"}</span>
-          </Link>
+          {isListing ? (
+            <button
+              type="button"
+              onClick={closeTab}
+              aria-label="Back to site"
+              title="Back to site"
+              className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+              data-testid="button-mobile-back-to-site"
+            >
+              <X className="h-4 w-4" />
+              <span>Back</span>
+            </button>
+          ) : (
+            <Link
+              href={isSignedIn ? "/passport" : "/sign-in"}
+              aria-label={passportShort}
+              title={passportShort}
+              className="h-10 px-2.5 inline-flex items-center gap-1.5 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+              data-testid="link-mobile-passport"
+            >
+              {isSignedIn ? <BookMarked className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+              <span>{isSignedIn ? "Pass" : "Log In"}</span>
+            </Link>
+          )}
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -157,44 +196,45 @@ export default function Navbar() {
                     {link.name}
                   </Link>
                 ))}
-                {isSignedIn ? (
-                  <Link
-                    href="/passport"
-                    className={cn(
-                      "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                      location.startsWith("/passport") ? "text-foreground" : "text-foreground/60",
-                    )}
-                    data-testid="link-mobile-menu-passport"
-                  >
-                    <BookMarked className="w-4 h-4" />
-                    My Passport
-                  </Link>
-                ) : (
-                  <>
+                {!isListing &&
+                  (isSignedIn ? (
                     <Link
-                      href="/sign-in"
+                      href="/passport"
                       className={cn(
                         "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                        location.startsWith("/sign-in") ? "text-foreground" : "text-foreground/60",
+                        location.startsWith("/passport") ? "text-foreground" : "text-foreground/60",
                       )}
-                      data-testid="link-mobile-menu-login"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      Log In
-                    </Link>
-                    <Link
-                      href="/sign-up"
-                      className={cn(
-                        "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                        location.startsWith("/sign-up") ? "text-foreground" : "text-foreground/60",
-                      )}
-                      data-testid="link-mobile-menu-signup"
+                      data-testid="link-mobile-menu-passport"
                     >
                       <BookMarked className="w-4 h-4" />
-                      Sign Up
+                      My Passport
                     </Link>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <Link
+                        href="/sign-in"
+                        className={cn(
+                          "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
+                          location.startsWith("/sign-in") ? "text-foreground" : "text-foreground/60",
+                        )}
+                        data-testid="link-mobile-menu-login"
+                      >
+                        <LogIn className="w-4 h-4" />
+                        Log In
+                      </Link>
+                      <Link
+                        href="/sign-up"
+                        className={cn(
+                          "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
+                          location.startsWith("/sign-up") ? "text-foreground" : "text-foreground/60",
+                        )}
+                        data-testid="link-mobile-menu-signup"
+                      >
+                        <BookMarked className="w-4 h-4" />
+                        Sign Up
+                      </Link>
+                    </>
+                  ))}
 
                 {/* Social links */}
                 <div className="pt-2 border-t border-foreground/15">
