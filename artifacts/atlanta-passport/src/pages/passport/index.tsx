@@ -11,6 +11,7 @@ import { useVisitor } from "@/passport/visitor-context";
 import { basePath } from "@/auth/clerk";
 import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
+import Sticker from "@/components/Sticker";
 import { REWARDS, NEIGHBORHOOD_BY_NAME } from "@/passport/data";
 import { Check, Lock } from "lucide-react";
 
@@ -72,12 +73,7 @@ export default function PassportHome() {
   return (
     <div className="space-y-6">
       <div>
-        <div
-          className="inline-block bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))] border-2 border-foreground px-3 py-1 text-xs font-black tracking-widest mb-3"
-          style={{ fontFamily: "Bungee, sans-serif" }}
-        >
-          YOUR PASSPORT
-        </div>
+        <Sticker color="lime" className="mb-3">YOUR PASSPORT</Sticker>
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
             Hey, {visitor?.firstName ?? "Explorer"}.
