@@ -3,3 +3,4 @@ export * from "./businesses";
 export * from "./stamps";
 export * from "./applications";
 export * from "./contact-messages";
+export * from "./app-config";

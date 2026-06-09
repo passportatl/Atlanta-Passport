@@ -1,4 +1,5 @@
 - [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).
 - [Clerk React v6 custom OAuth](clerk-react-v6-custom-oauth.md) — for custom social buttons (authenticateWithRedirect), import useSignUp/useSignIn from `@clerk/react/legacy`, not `@clerk/react`.
+- [Google Drive / Sheets export](google-drive-sheets-export.md) — google-sheet connector is read-only; use google-drive connector + Drive CSV media-upload to write a Sheet (proxy can't reach the Sheets host).
 - [i18n regen + framer useScroll](i18n-and-scroll.md) — translate only NEW keys & merge (full-file regen times out/SIGKILLs, esp. Arabic); use window `scrollY` not `target:ref` to kill the useScroll warning.
 - [Sandbox geocoding](sandbox-geocoding.md) — Maps key is redacted in the code_execution sandbox; geocode imports via keyless Nominatim (User-Agent required, ~1.1s/req).

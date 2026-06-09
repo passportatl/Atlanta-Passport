@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getAuth, clerkClient } from "@clerk/express";
 import { db, visitorsTable } from "@workspace/db";
 import { CreateVisitorBody } from "@workspace/api-zod";
+import { scheduleSignupSync } from "../lib/googleSheetSync";
 
 const router: IRouter = Router();
 
@@ -45,6 +46,7 @@ router.post("/visitors/link", async (req, res) => {
     .returning();
 
   if (created) {
+    scheduleSignupSync();
     res.json(created);
     return;
   }
@@ -71,6 +73,7 @@ router.post("/visitors", async (req, res) => {
     .insert(visitorsTable)
     .values({ firstName, email, phone: phone ?? null })
     .returning();
+  scheduleSignupSync();
   res.json(visitor);
 });
 
