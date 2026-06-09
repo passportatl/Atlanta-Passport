@@ -368,12 +368,14 @@ export default function ExploreContent({
                       </p>
                       <div className="mt-auto flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
                         {biz.offer ? (
-                          <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1 truncate">
-                            <SoccerBall className="w-3 h-3 shrink-0" /> {t("listing_page.passport_offer_label")}
+                          <span className="text-[9px] sm:text-[10px] font-display tracking-wide uppercase text-brand-red inline-flex items-center gap-1 max-w-full min-w-0">
+                            <SoccerBall className="w-3 h-3 shrink-0" />
+                            <span className="truncate">{t("listing_page.passport_offer_label")}</span>
                           </span>
                         ) : (
-                          <span className="text-[10px] font-display tracking-wider uppercase text-brand-red inline-flex items-center gap-1">
-                            <MapPin className="w-3 h-3" /> Show on map
+                          <span className="text-[9px] sm:text-[10px] font-display tracking-wide uppercase text-brand-red inline-flex items-center gap-1 max-w-full min-w-0">
+                            <MapPin className="w-3 h-3 shrink-0" />
+                            <span className="truncate">Show on map</span>
                           </span>
                         )}
                         <Link
