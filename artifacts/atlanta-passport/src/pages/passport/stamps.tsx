@@ -203,14 +203,24 @@ export default function PassportStamps({
       <div className="flex flex-wrap items-center gap-2">
         <span className="sticker-pill sticker-yellow">Summer 2026</span>
         <div className="flex items-center gap-1.5">
-          {["June", "July", "August"].map((m) => (
-            <span
-              key={m}
-              className="font-display text-[0.62rem] tracking-[0.14em] uppercase rounded-full border-2 border-foreground bg-white px-2.5 py-1 leading-none"
-            >
-              {m}
-            </span>
-          ))}
+          {["June", "July", "August"].map((m) => {
+            const isCurrent =
+              m ===
+              new Date().toLocaleString("en-US", { month: "long" });
+            return (
+              <span
+                key={m}
+                aria-current={isCurrent ? "date" : undefined}
+                className={`font-display text-[0.62rem] tracking-[0.14em] uppercase rounded-full border-2 border-foreground px-2.5 py-1 leading-none ${
+                  isCurrent
+                    ? "bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm"
+                    : "bg-white"
+                }`}
+              >
+                {m}
+              </span>
+            );
+          })}
         </div>
       </div>
 
