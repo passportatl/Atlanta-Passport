@@ -18,7 +18,7 @@ const navItemClass = (active: boolean) =>
   );
 
 export default function Navbar() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { t } = useTranslation();
   const { isSignedIn } = useUser();
 
@@ -28,7 +28,18 @@ export default function Navbar() {
   // action that closes the tab instead. The /events index keeps the normal nav.
   const isStandalone =
     location.startsWith("/listing") || location.startsWith("/events/");
-  const closeTab = () => window.close();
+  // window.close() only works for script-opened tabs. When the page was opened
+  // via a normal target="_blank" link, a scanned QR, or pasted URL, the browser
+  // blocks close() silently — so fall back to navigating back into the site.
+  const closeTab = () => {
+    window.close();
+    window.setTimeout(() => {
+      if (!window.closed) {
+        if (window.history.length > 1) window.history.back();
+        else setLocation("/passport/explore");
+      }
+    }, 120);
+  };
 
   const mobileTouristLinks = [
     { name: t("nav.explore"), path: "/passport/explore" },
