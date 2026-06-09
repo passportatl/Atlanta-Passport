@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq, and, desc } from "drizzle-orm";
 import { db, stampsTable, businessesTable, visitorsTable } from "@workspace/db";
 import { CollectStampBody } from "@workspace/api-zod";
+import { scheduleSignupSync } from "../lib/googleSheetSync";
 
 const router: IRouter = Router();
 
@@ -55,6 +56,7 @@ router.post("/stamps", async (req, res) => {
       category: business.category,
     })
     .returning();
+  scheduleSignupSync();
   res.json({ stamp, alreadyCollected: false });
 });
 

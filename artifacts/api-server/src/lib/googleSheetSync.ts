@@ -9,7 +9,7 @@
 // list — making the operation idempotent and free of append/dedup races.
 import { ReplitConnectors } from "@replit/connectors-sdk";
 import { asc, eq } from "drizzle-orm";
-import { db, visitorsTable, appConfigTable } from "@workspace/db";
+import { db, visitorsTable, stampsTable, appConfigTable } from "@workspace/db";
 import { logger } from "./logger";
 
 const SHEET_TITLE = "Atlanta Passport — Signups";
@@ -85,20 +85,50 @@ function escapeCsv(value: string): string {
   return /[",\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 }
 
-function toCsv(rows: { firstName: string; email: string }[]): string {
-  const lines = ["Name,Email"];
+function toCsv(
+  rows: { firstName: string; email: string; stamps: string }[],
+): string {
+  const lines = ["Name,Email,Stamps Collected"];
   for (const row of rows) {
-    lines.push(`${escapeCsv(row.firstName)},${escapeCsv(row.email)}`);
+    lines.push(
+      `${escapeCsv(row.firstName)},${escapeCsv(row.email)},${escapeCsv(row.stamps)}`,
+    );
   }
   return `${lines.join("\n")}\n`;
 }
 
 async function syncSignups(): Promise<void> {
   const id = await ensureSheetId();
-  const rows = await db
-    .select({ firstName: visitorsTable.firstName, email: visitorsTable.email })
+  const visitors = await db
+    .select({
+      id: visitorsTable.id,
+      firstName: visitorsTable.firstName,
+      email: visitorsTable.email,
+    })
     .from(visitorsTable)
     .orderBy(asc(visitorsTable.createdAt));
+
+  // Build a visitorId -> ordered stamp names map in one query.
+  const stamps = await db
+    .select({
+      visitorId: stampsTable.visitorId,
+      stampName: stampsTable.stampName,
+    })
+    .from(stampsTable)
+    .orderBy(asc(stampsTable.collectedAt));
+  const stampsByVisitor = new Map<string, string[]>();
+  for (const s of stamps) {
+    const list = stampsByVisitor.get(s.visitorId);
+    if (list) list.push(s.stampName);
+    else stampsByVisitor.set(s.visitorId, [s.stampName]);
+  }
+
+  const rows = visitors.map((v) => ({
+    firstName: v.firstName,
+    email: v.email,
+    stamps: (stampsByVisitor.get(v.id) ?? []).join(", "),
+  }));
+
   const res = await drive(`/upload/drive/v3/files/${id}?uploadType=media`, {
     method: "PATCH",
     headers: { "Content-Type": "text/csv" },
