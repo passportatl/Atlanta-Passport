@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "QSS4knhBXQ-nNgqn6AjtD"
@@ -108,3 +107,9 @@ id = "9YmLVh2DBlR_fe2fPNAFJ"
 uri = "file://artifacts/atlanta-passport/src/assets/images/vickerys-bar-grill.png"
 type = "image"
 title = "vickerys bar grill"
+
+[[outputs]]
+id = "1G3Tc1XWZuZUVFVu3MqaM"
+uri = "file://exports/atlanta-passport-qr-codes.xlsx"
+type = "table"
+title = "Atlanta Passport — Stamp QR Codes & Bonus Events"
