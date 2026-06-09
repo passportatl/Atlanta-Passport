@@ -200,6 +200,20 @@ export default function PassportStamps({
 
   return (
     <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="sticker-pill sticker-yellow">Summer 2026</span>
+        <div className="flex items-center gap-1.5">
+          {["June", "July", "August"].map((m) => (
+            <span
+              key={m}
+              className="font-display text-[0.62rem] tracking-[0.14em] uppercase rounded-full border-2 border-foreground bg-white px-2.5 py-1 leading-none"
+            >
+              {m}
+            </span>
+          ))}
+        </div>
+      </div>
+
       <div>
         <p className="text-sm font-bold text-foreground/70">
           {collected} of {total} stamps collected · show your Passport to claim each offer
