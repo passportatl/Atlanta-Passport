@@ -22,7 +22,7 @@ export default function Footer({
         <div className="flex items-center gap-3 sm:gap-5">
           <Logo variant="nav" />
           <div className="space-y-1 min-w-0">
-            <p className="text-sm sm:text-base text-background/75 break-words">
+            <p className="text-xs sm:text-base text-background/75 break-words">
               {t("footer.built_by")}
             </p>
             <p className="text-[11px] sm:text-xs text-background/55 leading-snug break-words">
