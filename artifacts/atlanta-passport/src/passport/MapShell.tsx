@@ -42,7 +42,7 @@ export default function MapShell() {
   const view =
     location === "/passport"
       ? "profile"
-      : location === "/passport/explore/events"
+      : location === "/passport/events"
         ? "events"
         : location === "/passport/stamps"
           ? "stamps"
@@ -204,7 +204,7 @@ export default function MapShell() {
   // intentionally leave existing filters untouched (don't reset on plain nav).
   const search = useSearch();
   useEffect(() => {
-    if (location !== "/passport/explore" && location !== "/passport/explore/events")
+    if (location !== "/passport/explore" && location !== "/passport/events")
       return;
     const sp = new URLSearchParams(search);
     const cat =

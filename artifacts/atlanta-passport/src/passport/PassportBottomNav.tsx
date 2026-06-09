@@ -19,7 +19,7 @@ function openContactTab() {
 const TABS = [
   { href: "/passport/explore", label: "Explore", icon: Compass, exact: true },
   { href: "/passport/routes", label: "Routes", icon: Map },
-  { href: "/passport/explore/events", label: "Events", icon: Calendar },
+  { href: "/passport/events", label: "Events", icon: Calendar },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/contact", label: "Contact", icon: Mail },
   { href: "/passport", label: "Profile", icon: User, exact: true },

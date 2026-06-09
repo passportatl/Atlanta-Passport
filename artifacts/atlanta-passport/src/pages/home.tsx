@@ -219,7 +219,7 @@ function EventsShowcase() {
   const calendarEvents = events.slice(0, 4);
 
   return (
-    <section className="bg-brand-orange texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+    <section className="bg-brand-lime texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
       <div className="hidden md:block absolute -top-12 -left-12 opacity-20 scale-[2] pointer-events-none">
         <PassportStamp size="lg" tone="navy" rotate={-25}>
           {t("home.decor.stamp_local")}
@@ -231,10 +231,10 @@ function EventsShowcase() {
           {/* Copy */}
           <div className="text-center lg:text-left ltr:lg:text-left rtl:lg:text-right">
             <Sticker color="yellow" rotate="right" className="mb-6">{t("home.events_showcase.kicker")}</Sticker>
-            <h2 className="font-serif font-black text-5xl md:text-7xl text-white drop-shadow-md leading-[0.95] mb-6">
+            <h2 className="font-serif font-black text-5xl md:text-7xl text-foreground leading-[0.95] mb-6">
               {t("home.events_showcase.title")}
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-xl md:text-2xl text-foreground/80 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
               {t("home.events_showcase.subtitle")}
             </p>
           </div>

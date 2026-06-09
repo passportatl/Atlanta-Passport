@@ -84,7 +84,7 @@ function isMapShellRoute(location: string) {
   return (
     location === "/passport" ||
     location === "/passport/explore" ||
-    location === "/passport/explore/events" ||
+    location === "/passport/events" ||
     location === "/passport/stamps" ||
     location === "/passport/rewards" ||
     location === "/passport/routes"
