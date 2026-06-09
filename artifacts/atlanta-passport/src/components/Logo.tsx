@@ -10,7 +10,7 @@ const sizeByVariant: Record<Variant, string> = {
   compact: "h-9 w-9",
   nav: "h-[124px] w-[124px]",
   xl: "h-[136px] w-[136px]",
-  mini: "h-12 w-12",
+  mini: "h-9 w-9",
 };
 
 export default function Logo({
