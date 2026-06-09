@@ -215,9 +215,11 @@ function EventsShowcase() {
 
   return (
     <section className="bg-brand-orange texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
-      <PassportStamp size="lg" tone="navy" rotate={-25} className="absolute -top-12 -left-12 opacity-20 scale-[2] pointer-events-none" >
-        {t("home.decor.stamp_local")}
-      </PassportStamp>
+      <div className="hidden md:block absolute -top-12 -left-12 opacity-20 scale-[2] pointer-events-none">
+        <PassportStamp size="lg" tone="navy" rotate={-25}>
+          {t("home.decor.stamp_local")}
+        </PassportStamp>
+      </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -283,9 +285,11 @@ function BusinessCtaSection() {
   const { t } = useTranslation();
   return (
     <section className="bg-brand-red text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
-      <PassportStamp size="lg" tone="navy" rotate={18} className="absolute -bottom-12 -right-10 opacity-20 scale-[2] pointer-events-none">
-        {t("home.decor.stamp_year")}
-      </PassportStamp>
+      <div className="hidden md:block absolute -bottom-12 -right-10 opacity-20 scale-[2] pointer-events-none">
+        <PassportStamp size="lg" tone="navy" rotate={18}>
+          {t("home.decor.stamp_year")}
+        </PassportStamp>
+      </div>
       <div className="container mx-auto px-4 relative z-10 max-w-4xl text-center flex flex-col items-center">
         <Sticker color="cream" rotate="left" className="mb-6">{t("home.business_cta.kicker")}</Sticker>
         <h2 className="font-serif font-black text-5xl md:text-7xl leading-[0.9] mb-6 drop-shadow-md">
