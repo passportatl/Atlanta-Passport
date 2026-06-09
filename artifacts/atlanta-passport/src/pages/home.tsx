@@ -70,8 +70,11 @@ function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center w-full sm:w-auto">
-            <Link href="/passport/explore" className="button-pop bg-brand-yellow text-foreground text-lg md:text-xl px-8 py-5 w-full sm:w-auto hover:bg-brand-red hover:text-white transition-colors border-4">
-              <Stamp className="w-6 h-6 mr-2"/> {t("home.new_hero.cta_primary")}
+            <Link href="/passport/explore" className="button-pop bg-brand-yellow text-foreground text-lg md:text-xl px-8 py-6 w-full sm:w-auto hover:bg-brand-red hover:text-white transition-colors border-4 [white-space:normal] leading-tight">
+              <span className="flex items-center justify-center gap-2 text-center max-w-[11rem] sm:max-w-none">
+                <Stamp className="w-6 h-6 shrink-0"/>
+                <span>{t("home.new_hero.cta_primary")}</span>
+              </span>
             </Link>
           </div>
         </motion.div>
