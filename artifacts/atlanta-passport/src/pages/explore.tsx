@@ -337,7 +337,7 @@ export default function ExploreContent({
                     </div>
                     <div className="p-3 flex-1 min-w-0 flex flex-col">
                       <div className="flex items-start gap-2 mb-0.5">
-                        <h3 className="text-base font-serif font-bold text-foreground leading-tight min-w-0">
+                        <h3 className="text-sm sm:text-base font-serif font-bold text-foreground leading-tight min-w-0">
                           {biz.name}
                         </h3>
                         <div className="hidden sm:flex flex-wrap gap-1 shrink-0 mt-0.5 justify-end">
@@ -355,7 +355,7 @@ export default function ExploreContent({
                           <CategoryBadge
                             key={cat}
                             category={cat}
-                            className="text-[9px] px-1.5 py-0.5 inline-block"
+                            className="text-[8px] tracking-[0.06em] px-2 py-0.5 inline-block"
                           />
                         ))}
                       </div>
