@@ -47,7 +47,7 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   {
     featureType: "road",
     elementType: "geometry",
-    stylers: [{ color: "#23456b" }],
+    stylers: [{ color: "#ffffff" }],
   },
   {
     featureType: "road",
@@ -327,7 +327,7 @@ function RoutePath({
     let cancelled = false;
     const polylines: google.maps.Polyline[] = [];
 
-    // Draw the brand route line (black underlay + solid white stroke) along the
+    // Draw the brand route line (black underlay + solid yellow stroke) along the
     // given point list.
     const draw = (linePath: { lat: number; lng: number }[]) => {
       if (cancelled) return;
@@ -344,7 +344,7 @@ function RoutePath({
         new mapsLib.Polyline({
           path: linePath,
           geodesic: true,
-          strokeColor: "#ffffff",
+          strokeColor: "#f9c629",
           strokeOpacity: 1,
           strokeWeight: 4,
           zIndex: 8,
