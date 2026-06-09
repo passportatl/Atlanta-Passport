@@ -179,7 +179,7 @@ function JourneySection() {
                   <div className="w-11 h-11 md:w-16 md:h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-lg md:text-2xl font-black shadow-pop-sm shrink-0">
                     {i + 1}
                   </div>
-                  <div className="font-display text-[10px] md:text-sm leading-tight tracking-widest uppercase text-brand-red font-bold bg-brand-cream px-3 py-1.5 border-2 border-foreground rounded-full shadow-pop-sm">
+                  <div className="font-display text-[9px] md:text-xs leading-tight tracking-tight uppercase text-brand-red font-bold bg-brand-cream px-3 py-1.5 border-2 border-foreground rounded-full shadow-pop-sm">
                     {route.area}
                   </div>
                 </div>
