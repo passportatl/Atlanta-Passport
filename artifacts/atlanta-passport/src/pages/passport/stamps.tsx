@@ -201,7 +201,7 @@ export default function PassportStamps({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="sticker-pill sticker-yellow">Summer 2026</span>
+        <span className="sticker-pill sticker-lime">Summer 2026</span>
         <div className="flex items-center gap-1.5">
           {["June", "July", "August"].map((m) => {
             const isCurrent =
