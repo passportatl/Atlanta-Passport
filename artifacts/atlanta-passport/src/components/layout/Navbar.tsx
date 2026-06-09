@@ -83,16 +83,18 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Mobile logo — absolutely centered so it hangs down through the
-              marquee; anchored to the header top so it never clips. */}
+          {/* Mobile logo — horizontally centered, bottom-aligned with the
+              language + menu bubble buttons (their bottom sits 12px above the
+              header bottom). */}
           <Link
             href="/"
             aria-label="Atlanta Passport home"
-            className="md:hidden absolute left-1/2 top-0 -translate-x-1/2 inline-flex items-center pointer-events-none"
+            className="md:hidden absolute left-1/2 bottom-3 -translate-x-1/2 inline-flex items-end pointer-events-none"
           >
             <Logo
+              variant="mini"
               asLink={false}
-              className="relative drop-shadow-[0_6px_10px_rgba(0,0,0,0.35)] pointer-events-auto"
+              className="relative drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)] pointer-events-auto"
             />
           </Link>
         </div>
