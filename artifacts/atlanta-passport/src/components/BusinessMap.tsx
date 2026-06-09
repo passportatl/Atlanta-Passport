@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import { TrainFront, Spline, Layers, MapPin, LocateFixed } from "lucide-react";
+import {
+  TrainFront,
+  Spline,
+  Layers,
+  MapPin,
+  LocateFixed,
+  Plus,
+  Minus,
+} from "lucide-react";
 import {
   APIProvider,
   Map,
@@ -1001,11 +1009,19 @@ export default function BusinessMap({
   const [showPins, setShowPins] = useState(true);
   const [showLocation, setShowLocation] = useState(false);
   const [locationError, setLocationError] = useState(false);
+  const mapRef = useRef<google.maps.Map | null>(null);
 
   const handleLocationError = useCallback(() => {
     setShowLocation(false);
     setLocationError(true);
     window.setTimeout(() => setLocationError(false), 4000);
+  }, []);
+
+  const zoomBy = useCallback((delta: number) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const z = map.getZoom() ?? 12;
+    map.setZoom(z + delta);
   }, []);
 
   if (!API_KEY) {
@@ -1031,7 +1047,7 @@ export default function BusinessMap({
             gestureHandling="cooperative"
             scrollwheel={false}
             disableDefaultUI={true}
-            zoomControl={true}
+            zoomControl={false}
             clickableIcons={false}
             styles={MAP_STYLES}
             className="h-full w-full"
@@ -1095,6 +1111,7 @@ export default function BusinessMap({
             />
 
             <PanToSelected selected={selected} />
+            <MapInstanceBridge mapRef={mapRef} />
           </Map>
         </APIProvider>
 
@@ -1139,8 +1156,62 @@ export default function BusinessMap({
           icon={<LocateFixed className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
           label="Me"
         />
+
+        <span className="mx-0.5 h-6 w-px shrink-0 bg-brand-cream/30 sm:mx-1" aria-hidden />
+
+        <MapZoomButton
+          onClick={() => zoomBy(1)}
+          icon={<Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
+          label="Zoom in"
+        />
+        <MapZoomButton
+          onClick={() => zoomBy(-1)}
+          icon={<Minus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
+          label="Zoom out"
+        />
       </div>
     </div>
+  );
+}
+
+// Bridges the Map instance (only available inside APIProvider) up to a ref the
+// outer component can use for the custom zoom controls in the footer.
+function MapInstanceBridge({
+  mapRef,
+}: {
+  mapRef: React.MutableRefObject<google.maps.Map | null>;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    mapRef.current = map;
+    return () => {
+      mapRef.current = null;
+    };
+  }, [map, mapRef]);
+  return null;
+}
+
+// Zoom in/out control styled to sit inline with the MapLayerToggle pills. Always
+// a solid cream button (it's an action, not a toggle state).
+function MapZoomButton({
+  onClick,
+  icon,
+  label,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="inline-flex items-center justify-center rounded-md border-2 border-brand-cream/30 bg-transparent px-2 py-1.5 text-brand-cream/80 transition-all hover:border-foreground hover:bg-brand-cream hover:text-foreground sm:px-2.5 sm:py-1"
+    >
+      {icon}
+    </button>
   );
 }
 
