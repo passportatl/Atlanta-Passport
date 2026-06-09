@@ -327,12 +327,22 @@ function RoutePath({
     let cancelled = false;
     const polylines: google.maps.Polyline[] = [];
 
-    // Draw the brand route line (dotted white) along the given point list.
+    // Draw the brand route line (dashed white) along the given point list.
     const draw = (linePath: { lat: number; lng: number }[]) => {
       if (cancelled) return;
       polylines.push(
-        // Dotted white route line (transparent base stroke + repeating round
-        // dots) so highlighted routes read differently from the solid Beltline.
+        // Dark underlay so the dashes stay legible over light map areas.
+        new mapsLib.Polyline({
+          path: linePath,
+          geodesic: true,
+          strokeColor: "#1a1a1a",
+          strokeOpacity: 0.4,
+          strokeWeight: 7,
+          zIndex: 7,
+          map,
+        }),
+        // Dashed white route line so highlighted routes read differently from
+        // the solid Beltline.
         new mapsLib.Polyline({
           path: linePath,
           geodesic: true,
@@ -341,16 +351,14 @@ function RoutePath({
           icons: [
             {
               icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: "#ffffff",
-                fillOpacity: 1,
-                strokeColor: "#1a1a1a",
+                path: "M 0,-1 0,1",
+                strokeColor: "#ffffff",
                 strokeOpacity: 1,
-                strokeWeight: 1.5,
-                scale: 3.2,
+                strokeWeight: 4,
+                scale: 4,
               },
               offset: "0",
-              repeat: "14px",
+              repeat: "20px",
             },
           ],
           map,
