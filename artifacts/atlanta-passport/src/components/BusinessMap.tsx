@@ -310,46 +310,112 @@ function PanToSelected({ selected }: { selected?: MapBusiness }) {
 // Draws the highlighted route line connecting its stops in order and fits the
 // map to it. Rendered only when a route is selected; cleans the line up on
 // deselection or route change.
-function RoutePath({ path }: { path: { lat: number; lng: number }[] }) {
+function RoutePath({
+  path,
+  travelMode = "WALKING",
+}: {
+  path: { lat: number; lng: number }[];
+  travelMode?: "WALKING" | "BICYCLING";
+}) {
   const map = useMap();
   const mapsLib = useMapsLibrary("maps");
+  const routesLib = useMapsLibrary("routes");
 
   useEffect(() => {
     if (!map || !mapsLib || path.length < 1) return;
 
-    const polylines: google.maps.Polyline[] =
-      path.length >= 2
-        ? [
-            new mapsLib.Polyline({
-              path,
-              geodesic: true,
-              strokeColor: "#1a1a1a",
-              strokeOpacity: 0.5,
-              strokeWeight: 7,
-              map,
-            }),
-            new mapsLib.Polyline({
-              path,
-              geodesic: true,
-              strokeColor: "#ffffff",
-              strokeOpacity: 1,
-              strokeWeight: 4,
-              map,
-            }),
-          ]
-        : [];
+    let cancelled = false;
+    const polylines: google.maps.Polyline[] = [];
 
-    const bounds = new google.maps.LatLngBounds();
-    path.forEach((p) => bounds.extend(p));
+    // Draw the brand route line (black underlay + white stroke) along the given
+    // point list.
+    const draw = (linePath: { lat: number; lng: number }[]) => {
+      if (cancelled) return;
+      polylines.push(
+        new mapsLib.Polyline({
+          path: linePath,
+          geodesic: true,
+          strokeColor: "#1a1a1a",
+          strokeOpacity: 0.5,
+          strokeWeight: 7,
+          map,
+        }),
+        new mapsLib.Polyline({
+          path: linePath,
+          geodesic: true,
+          strokeColor: "#ffffff",
+          strokeOpacity: 1,
+          strokeWeight: 4,
+          map,
+        }),
+      );
+    };
+
     // Tight padding so the traced route fills the map area instead of sitting
     // small in the middle.
-    map.fitBounds(bounds, 24);
-    if (path.length === 1 && (map.getZoom() ?? 0) > 15) map.setZoom(15);
+    const fitTo = (pts: { lat: number; lng: number }[]) => {
+      if (cancelled) return;
+      const bounds = new google.maps.LatLngBounds();
+      pts.forEach((p) => bounds.extend(p));
+      map.fitBounds(bounds, 24);
+      if (pts.length === 1 && (map.getZoom() ?? 0) > 15) map.setZoom(15);
+    };
+
+    // A single stop: nothing to connect, just frame it.
+    if (path.length < 2) {
+      fitTo(path);
+      return () => {
+        cancelled = true;
+        polylines.forEach((p) => p.setMap(null));
+      };
+    }
+
+    const drawStraight = () => {
+      draw(path);
+      fitTo(path);
+    };
+
+    // Trace the real walking/biking route along roads + trails via the
+    // Directions service. Falls back to a straight connector if it's
+    // unavailable (Directions API not enabled, no route found, quota, etc.).
+    if (routesLib) {
+      const service = new routesLib.DirectionsService();
+      service
+        .route({
+          origin: path[0],
+          destination: path[path.length - 1],
+          waypoints: path
+            .slice(1, -1)
+            .map((location) => ({ location, stopover: true })),
+          travelMode:
+            google.maps.TravelMode[travelMode] ??
+            google.maps.TravelMode.WALKING,
+          optimizeWaypoints: false,
+        })
+        .then((result) => {
+          if (cancelled) return;
+          const overview = result.routes[0]?.overview_path;
+          if (overview && overview.length > 1) {
+            draw(overview.map((p) => ({ lat: p.lat(), lng: p.lng() })));
+            const bounds = result.routes[0].bounds;
+            if (bounds) map.fitBounds(bounds, 24);
+            else fitTo(path);
+          } else {
+            drawStraight();
+          }
+        })
+        .catch(() => {
+          drawStraight();
+        });
+    } else {
+      drawStraight();
+    }
 
     return () => {
+      cancelled = true;
       polylines.forEach((p) => p.setMap(null));
     };
-  }, [map, mapsLib, path]);
+  }, [map, mapsLib, routesLib, path, travelMode]);
 
   return null;
 }
@@ -867,12 +933,14 @@ export default function BusinessMap({
   selectedId,
   onSelect,
   routePath,
+  routeTravelMode,
   highlightNeighborhoods,
 }: {
   businesses: MapBusiness[];
   selectedId?: string;
   onSelect: (id?: string) => void;
   routePath?: { lat: number; lng: number }[];
+  routeTravelMode?: "WALKING" | "BICYCLING";
   highlightNeighborhoods?: string[];
 }) {
   const [showMarta, setShowMarta] = useState(true);
@@ -957,7 +1025,9 @@ export default function BusinessMap({
               </InfoWindow>
             )}
 
-            {routePath && routePath.length > 0 && <RoutePath path={routePath} />}
+            {routePath && routePath.length > 0 && (
+              <RoutePath path={routePath} travelMode={routeTravelMode} />
+            )}
 
             <PanToSelected selected={selected} />
           </Map>

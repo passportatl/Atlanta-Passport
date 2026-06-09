@@ -181,6 +181,13 @@ export default function MapShell() {
     ];
   }, [view, resolvedSelectedRoute]);
 
+  // Bike routes follow cycling paths/roads; everything else is traced on foot.
+  const routeTravelMode: "WALKING" | "BICYCLING" = selectedRoute?.pace
+    ?.toLowerCase()
+    .includes("bike")
+    ? "BICYCLING"
+    : "WALKING";
+
   // When a route is selected, light up only the neighborhoods its stops pass
   // through (and dim the rest) so the colored areas frame the walk.
   const routeNeighborhoods = useMemo(() => {
@@ -223,6 +230,7 @@ export default function MapShell() {
                 selectedId={selectedBizId}
                 onSelect={setSelectedBizId}
                 routePath={routePath}
+                routeTravelMode={routeTravelMode}
                 highlightNeighborhoods={
                   view === "explore"
                     ? activeNeighborhoods
