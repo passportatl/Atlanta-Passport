@@ -1117,25 +1117,25 @@ export default function BusinessMap({
         <MapLayerToggle
           active={showMarta}
           onClick={() => setShowMarta((v) => !v)}
-          icon={<TrainFront className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />}
+          icon={<TrainFront className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
           label="MARTA"
         />
         <MapLayerToggle
           active={showBeltline}
           onClick={() => setShowBeltline((v) => !v)}
-          icon={<Spline className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />}
+          icon={<Spline className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
           label="Beltline"
         />
         <MapLayerToggle
           active={showAreas}
           onClick={() => setShowAreas((v) => !v)}
-          icon={<Layers className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />}
+          icon={<Layers className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
           label="Areas"
         />
         <MapLayerToggle
           active={showPins}
           onClick={() => setShowPins((v) => !v)}
-          icon={<MapPin className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />}
+          icon={<MapPin className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
           label="Pins"
         />
         <MapLayerToggle
@@ -1144,7 +1144,7 @@ export default function BusinessMap({
             setLocationError(false);
             setShowLocation((v) => !v);
           }}
-          icon={<LocateFixed className="h-2.5 w-2.5 sm:h-3.5 sm:w-3.5" />}
+          icon={<LocateFixed className="h-4 w-4 sm:h-3.5 sm:w-3.5" />}
           label="Me"
         />
       </div>
@@ -1170,14 +1170,16 @@ function MapLayerToggle({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-md border-2 px-1 py-1 text-[8px] font-display uppercase tracking-normal transition-all sm:gap-1.5 sm:px-2.5 sm:text-[11px] sm:tracking-wider ${
+      aria-label={label}
+      title={label}
+      className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md border-2 px-2 py-1.5 font-display uppercase tracking-normal transition-all sm:px-2.5 sm:py-1 sm:text-[11px] sm:tracking-wider ${
         active
           ? "border-foreground bg-brand-yellow text-brand-yellow-foreground shadow-pop-sm"
           : "border-brand-cream/30 bg-transparent text-brand-cream/55 hover:text-brand-cream/80"
       }`}
     >
       {icon}
-      {label}
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }
