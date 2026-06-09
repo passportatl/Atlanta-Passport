@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
-import { TrainFront, Spline, Layers, MapPin } from "lucide-react";
+import { TrainFront, Spline, Layers, MapPin, LocateFixed } from "lucide-react";
 import {
   APIProvider,
   Map,
@@ -418,6 +418,66 @@ function RoutePath({
   }, [map, mapsLib, routesLib, path, travelMode]);
 
   return null;
+}
+
+// Live "you are here" blue dot driven by the browser Geolocation API. Active
+// only after the user opts in (taps the "Me" control), which is also what
+// triggers the permission prompt. Re-centers the map once on the first fix,
+// then keeps tracking as the user moves.
+function UserLocationMarker({
+  active,
+  onError,
+}: {
+  active: boolean;
+  onError: () => void;
+}) {
+  const map = useMap();
+  const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
+  const didCenter = useRef(false);
+
+  useEffect(() => {
+    if (!active) {
+      setPos(null);
+      didCenter.current = false;
+      return;
+    }
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      onError();
+      return;
+    }
+    const watchId = navigator.geolocation.watchPosition(
+      (p) => {
+        const next = { lat: p.coords.latitude, lng: p.coords.longitude };
+        setPos(next);
+        if (!didCenter.current && map) {
+          map.panTo(next);
+          if ((map.getZoom() ?? 0) < 14) map.setZoom(15);
+          didCenter.current = true;
+        }
+      },
+      () => onError(),
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 },
+    );
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [active, map, onError]);
+
+  if (!pos) return null;
+
+  return (
+    <Marker
+      position={pos}
+      zIndex={9999}
+      title="Your location"
+      icon={{
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 7,
+        fillColor: "#1a73e8",
+        fillOpacity: 1,
+        strokeColor: "#ffffff",
+        strokeWeight: 3,
+      }}
+    />
+  );
 }
 
 const MARTA_LINE_WEIGHT = 4;
@@ -947,6 +1007,14 @@ export default function BusinessMap({
   const [showBeltline, setShowBeltline] = useState(true);
   const [showAreas, setShowAreas] = useState(true);
   const [showPins, setShowPins] = useState(true);
+  const [showLocation, setShowLocation] = useState(false);
+  const [locationError, setLocationError] = useState(false);
+
+  const handleLocationError = useCallback(() => {
+    setShowLocation(false);
+    setLocationError(true);
+    window.setTimeout(() => setLocationError(false), 4000);
+  }, []);
 
   if (!API_KEY) {
     return (
@@ -1029,9 +1097,20 @@ export default function BusinessMap({
               <RoutePath path={routePath} travelMode={routeTravelMode} />
             )}
 
+            <UserLocationMarker
+              active={showLocation}
+              onError={handleLocationError}
+            />
+
             <PanToSelected selected={selected} />
           </Map>
         </APIProvider>
+
+        {locationError && (
+          <div className="pointer-events-none absolute inset-x-0 top-2 z-10 mx-auto w-fit max-w-[90%] rounded-full border-2 border-foreground bg-brand-cream px-3 py-1 text-center font-display text-[11px] uppercase tracking-wide text-foreground shadow-pop-sm">
+            Turn on location access to show your spot
+          </div>
+        )}
       </div>
 
       <div className="flex shrink-0 items-center justify-center gap-0.5 border-t-2 border-foreground bg-[#a71930] px-1 py-2 sm:gap-1.5 sm:px-2">
@@ -1058,6 +1137,15 @@ export default function BusinessMap({
           onClick={() => setShowPins((v) => !v)}
           icon={<MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
           label="Pins"
+        />
+        <MapLayerToggle
+          active={showLocation}
+          onClick={() => {
+            setLocationError(false);
+            setShowLocation((v) => !v);
+          }}
+          icon={<LocateFixed className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
+          label="Me"
         />
       </div>
     </div>
