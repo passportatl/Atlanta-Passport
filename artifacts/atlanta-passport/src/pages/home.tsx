@@ -162,18 +162,10 @@ function JourneySection() {
   return (
     <section className="bg-brand-navy text-brand-cream texture-paper section-hero border-b-4 border-foreground overflow-hidden">
       <div className="container mx-auto px-4 relative z-10 mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-          <div className="max-w-3xl">
-            <Sticker color="red" rotate="left" className="mb-6">{t("home.journey.kicker")}</Sticker>
-            <h2 className="font-serif font-black text-5xl md:text-7xl text-brand-cream mb-4">{t("home.journey.title")}</h2>
-            <p className="text-xl md:text-3xl text-brand-cream/80 font-medium">{t("home.journey.subtitle")}</p>
-          </div>
-          <Link href="/sign-up" className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 shrink-0 hover:bg-brand-red hover:text-white transition-colors">
-            <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
-              <span>{t("home.journey.cta_lead")}</span>
-              <span className="flex items-center justify-center">{t("home.journey.cta")} <MoveRight className="w-5 h-5 ml-2" /></span>
-            </span>
-          </Link>
+        <div className="max-w-3xl">
+          <Sticker color="red" rotate="left" className="mb-6">{t("home.journey.kicker")}</Sticker>
+          <h2 className="font-serif font-black text-5xl md:text-7xl text-brand-cream mb-4">{t("home.journey.title")}</h2>
+          <p className="text-xl md:text-3xl text-brand-cream/80 font-medium">{t("home.journey.subtitle")}</p>
         </div>
       </div>
 
@@ -204,6 +196,15 @@ function JourneySection() {
           );
         })}
       </div>
+
+      <div className="container mx-auto px-4 relative z-10 mt-10 flex justify-center">
+        <Link href="/sign-up" className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 shrink-0 hover:bg-brand-red hover:text-white transition-colors">
+          <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
+            <span>{t("home.journey.cta_lead")}</span>
+            <span className="flex items-center justify-center">{t("home.journey.cta")} <MoveRight className="w-5 h-5 ml-2" /></span>
+          </span>
+        </Link>
+      </div>
     </section>
   )
 }
@@ -233,15 +234,9 @@ function EventsShowcase() {
             <h2 className="font-serif font-black text-5xl md:text-7xl text-white drop-shadow-md leading-[0.95] mb-6">
               {t("home.events_showcase.title")}
             </h2>
-            <p className="text-xl md:text-2xl text-white/90 font-medium max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
               {t("home.events_showcase.subtitle")}
             </p>
-            <Link href="/sign-up" className="button-pop bg-white text-foreground text-xl !rounded-2xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg">
-              <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
-                <span>{t("home.events_showcase.cta_lead")}</span>
-                <span className="flex items-center justify-center"><Calendar className="w-5 h-5 mr-2" /> {t("home.events_showcase.cta")} <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" /></span>
-              </span>
-            </Link>
           </div>
 
           {/* Events calendar "screenshot" */}
@@ -279,6 +274,15 @@ function EventsShowcase() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link href="/sign-up" className="button-pop bg-white text-foreground text-xl !rounded-2xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg">
+            <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
+              <span>{t("home.events_showcase.cta_lead")}</span>
+              <span className="flex items-center justify-center"><Calendar className="w-5 h-5 mr-2" /> {t("home.events_showcase.cta")} <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" /></span>
+            </span>
+          </Link>
         </div>
       </div>
     </section>
