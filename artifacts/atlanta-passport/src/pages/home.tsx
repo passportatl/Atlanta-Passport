@@ -177,26 +177,27 @@ function JourneySection() {
         </div>
       </div>
 
-      <div className="flex gap-6 overflow-x-auto pb-12 px-4 md:px-8 scrollbar-none snap-x snap-mandatory">
+      <div className="flex gap-4 md:gap-6 overflow-x-auto pb-12 px-4 md:px-8 scrollbar-none snap-x snap-mandatory">
         {featuredRoutes.map((route, i) => {
           const resolved = resolveRoute(route, "marta", "morning");
           return (
-            <Link key={route.id} href="/passport/routes" className="snap-center shrink-0 w-[85vw] md:w-[450px] group cursor-pointer block">
-              <div className="card-pop bg-white text-foreground p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
-                <div className="flex justify-between items-start mb-8">
-                  <div className="w-16 h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-2xl font-black shadow-pop-sm">
+            <Link key={route.id} href="/passport/routes" className="snap-center shrink-0 w-[78vw] sm:w-[360px] md:w-[450px] group cursor-pointer block">
+              <div className="card-pop bg-white text-foreground p-5 md:p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
+                <div className="flex items-center gap-3 mb-4 md:mb-8">
+                  <div className="w-11 h-11 md:w-16 md:h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-lg md:text-2xl font-black shadow-pop-sm shrink-0">
                     {i + 1}
                   </div>
-                  <div className="font-display text-sm tracking-widest uppercase text-brand-red text-right font-bold bg-brand-cream px-3 py-1 border-2 border-foreground rounded-full shadow-pop-sm">
+                  <div className="font-display text-[10px] md:text-sm leading-tight tracking-widest uppercase text-brand-red font-bold bg-brand-cream px-3 py-1.5 border-2 border-foreground rounded-full shadow-pop-sm">
                     {route.area}
                   </div>
                 </div>
-                <h3 className="font-serif font-black text-4xl mb-4 leading-tight">{route.name}</h3>
-                <p className="text-foreground/80 mb-8 text-lg font-medium flex-grow">{route.vibe}</p>
+                <h3 className="font-serif font-black text-2xl md:text-4xl mb-2 md:mb-4 leading-tight">{route.name}</h3>
+                <p className="text-foreground/75 mb-5 md:mb-8 text-base md:text-lg font-medium flex-grow line-clamp-3 md:line-clamp-none">{route.vibe}</p>
                 
-                <div className="flex gap-6 font-display text-sm tracking-wide bg-brand-cream p-4 border-2 border-foreground rounded-xl">
-                  <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-brand-red"/> {t("home.journey.stops_count", { count: resolved.stopCount })}</span>
-                  <span className="flex items-center gap-2"><Bike className="w-5 h-5 text-primary"/> {resolved.miles}</span>
+                <div className="flex items-center gap-5 md:gap-6 font-display text-xs md:text-sm tracking-wide bg-brand-cream px-4 py-3 md:p-4 border-2 border-foreground rounded-xl">
+                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4 md:w-5 md:h-5 text-brand-red shrink-0"/> {t("home.journey.stops_count", { count: resolved.stopCount })}</span>
+                  <span className="flex items-center gap-2"><Bike className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0"/> {resolved.miles}</span>
+                  <MoveRight className="w-4 h-4 ml-auto text-brand-red rtl:rotate-180 md:hidden"/>
                 </div>
               </div>
             </Link>
