@@ -41,9 +41,7 @@ export default function Navbar() {
     }, 120);
   };
 
-  const mobileTouristLinks = [
-    { name: t("nav.explore"), path: "/passport/explore" },
-  ];
+  const mobileTouristLinks: { name: string; path: string }[] = [];
 
   const businessLinks = [
     { name: t("nav.get_listed"), path: "/apply" },
