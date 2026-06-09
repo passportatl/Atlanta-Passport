@@ -327,25 +327,32 @@ function RoutePath({
     let cancelled = false;
     const polylines: google.maps.Polyline[] = [];
 
-    // Draw the brand route line (black underlay + white stroke) along the given
-    // point list.
+    // Draw the brand route line (dotted white) along the given point list.
     const draw = (linePath: { lat: number; lng: number }[]) => {
       if (cancelled) return;
       polylines.push(
+        // Dotted white route line (transparent base stroke + repeating round
+        // dots) so highlighted routes read differently from the solid Beltline.
         new mapsLib.Polyline({
           path: linePath,
           geodesic: true,
-          strokeColor: "#1a1a1a",
-          strokeOpacity: 0.5,
-          strokeWeight: 7,
-          map,
-        }),
-        new mapsLib.Polyline({
-          path: linePath,
-          geodesic: true,
-          strokeColor: "#ffffff",
-          strokeOpacity: 1,
-          strokeWeight: 4,
+          strokeOpacity: 0,
+          zIndex: 8,
+          icons: [
+            {
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: "#ffffff",
+                fillOpacity: 1,
+                strokeColor: "#1a1a1a",
+                strokeOpacity: 1,
+                strokeWeight: 1.5,
+                scale: 3.2,
+              },
+              offset: "0",
+              repeat: "14px",
+            },
+          ],
           map,
         }),
       );
@@ -790,21 +797,10 @@ function BeltlineLoop() {
     const polyline = new mapsLib.Polyline({
       path: BELTLINE_PATH,
       geodesic: true,
-      strokeOpacity: 0,
+      strokeColor: "#BCF000",
+      strokeOpacity: 1,
+      strokeWeight: 4,
       zIndex: 6,
-      icons: [
-        {
-          icon: {
-            path: "M 0,-1 0,1",
-            strokeColor: "#BCF000",
-            strokeOpacity: 1,
-            strokeWeight: 4,
-            scale: 3,
-          },
-          offset: "0",
-          repeat: "16px",
-        },
-      ],
       map,
     });
     return () => polyline.setMap(null);
