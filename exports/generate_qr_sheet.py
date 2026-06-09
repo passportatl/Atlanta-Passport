@@ -119,6 +119,27 @@ for name, hood, cat, offer, slug, status in SPOTS:
     img = qr_image(url)
     ws1.add_image(img, f"A{row}")
 
+# Append the 5 events as their own rows with unique QR codes (event name above venue in Spot column)
+for name, date, venue, slug in EVENTS:
+    url = f"{BASE}/{slug}"
+    spot = f"{name}\n{venue}"
+    ws1.append(["", spot, "Castleberry Hill", "Event", f"Bonus stamp toward your rewards total. {date}.", url, "Live"])
+    row = ws1.max_row
+    ws1.row_dimensions[row].height = 90
+    for col in range(1, ncols1 + 1):
+        cell = ws1.cell(row=row, column=col)
+        cell.border = border
+        cell.alignment = Alignment(vertical="center", wrap_text=True,
+                                   horizontal="left" if col in (5, 6) else "center")
+    ws1.cell(row=row, column=2).font = Font(bold=True, size=11)
+    sc = ws1.cell(row=row, column=7)
+    sc.font = Font(bold=True, color="2E7D32")
+    uc = ws1.cell(row=row, column=6)
+    uc.font = Font(color="1A5276", size=9)
+    uc.hyperlink = url
+    img = qr_image(url)
+    ws1.add_image(img, f"A{row}")
+
 # zebra striping
 for r in range(5, ws1.max_row + 1):
     if (r - 5) % 2 == 1:
