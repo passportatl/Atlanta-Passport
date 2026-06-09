@@ -15,11 +15,12 @@ import { neighborhoodColors, categoryColor, businessCategories } from "@/data/sa
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 
-// Dark navy base (#0f2942) with gold roads/labels and red accents to match the
-// passport nav bar scheme (red #a71930 + gold #f9c629).
+// Dark navy base (#0f2942) with cream roads/labels and red accents to match the
+// passport nav bar scheme (red #a71930 + cream #fff3d6). The brand yellow is
+// reserved for the highlighted route line only.
 const MAP_STYLES: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#0f2942" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#e8d9a8" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#fff3d6" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#0a1c2e" }, { weight: 3 }] },
   { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "poi.business", stylers: [{ visibility: "off" }] },
@@ -57,12 +58,12 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   {
     featureType: "road",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#cdb98f" }],
+    stylers: [{ color: "#fff3d6" }],
   },
   {
     featureType: "road.highway",
     elementType: "geometry",
-    stylers: [{ color: "#f9c629" }],
+    stylers: [{ color: "#fff3d6" }],
   },
   {
     featureType: "road.highway",
@@ -72,7 +73,7 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   {
     featureType: "road.highway",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#f9c629" }],
+    stylers: [{ color: "#fff3d6" }],
   },
   {
     featureType: "road.arterial",
