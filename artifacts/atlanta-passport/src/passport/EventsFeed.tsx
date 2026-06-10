@@ -182,7 +182,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto">
-      <div className="px-4 pt-3">
+      <div className="px-4 pt-3 pb-5">
       <div className="max-w-3xl mx-auto px-0 flex flex-col">
         <div className="flex items-center justify-between mb-2 shrink-0">
           <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
