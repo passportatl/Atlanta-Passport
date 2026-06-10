@@ -127,7 +127,7 @@ export default function RouteDetail() {
             </p>
 
             <div className="section-kicker mb-4">★ The Walk</div>
-            <ol className="space-y-1.5">
+            <ol className="space-y-2.5">
               <li className="flex items-center gap-2 text-sm text-foreground/85">
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-red text-white font-black text-[10px] flex items-center justify-center">
                   ●
@@ -146,24 +146,34 @@ export default function RouteDetail() {
                       {resolved.legs[i].miles}
                     </li>
                   )}
-                  <li className="flex items-center gap-2 text-sm text-foreground/85">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-foreground text-brand-yellow font-black text-[11px] flex items-center justify-center">
+                  <li className="flex items-start gap-2 text-sm text-foreground/85">
+                    <span className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full bg-foreground text-brand-yellow font-black text-[11px] flex items-center justify-center">
                       {i + 1}
                     </span>
-                    <Link
-                      href={`/listing/${b.id}`}
-                      className="font-semibold text-foreground hover:text-brand-red hover:underline"
-                    >
-                      {b.name}
-                    </Link>
-                    <span className="text-foreground/50 truncate">
-                      · {b.neighborhood}
-                    </span>
-                    {resolved.visits[i] != null && (
-                      <span className="ml-auto flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-foreground/55">
-                        <Clock className="w-3 h-3" />~{resolved.visits[i]}m
-                      </span>
-                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/listing/${b.id}`}
+                          className="font-semibold text-foreground hover:text-brand-red hover:underline"
+                        >
+                          {b.name}
+                        </Link>
+                        <span className="text-foreground/50 truncate">
+                          · {b.neighborhood}
+                        </span>
+                        {resolved.visits[i] != null && (
+                          <span className="ml-auto flex-shrink-0 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-foreground/55">
+                            <Clock className="w-3 h-3" />~{resolved.visits[i]}m
+                          </span>
+                        )}
+                      </div>
+                      {b.description &&
+                        b.description.trim() !== b.name.trim() && (
+                          <p className="mt-0.5 text-[13px] leading-snug text-foreground/60 line-clamp-2">
+                            {b.description}
+                          </p>
+                        )}
+                    </div>
                   </li>
                 </Fragment>
               ))}
