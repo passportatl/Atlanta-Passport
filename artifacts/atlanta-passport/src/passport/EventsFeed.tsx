@@ -185,7 +185,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
       <div className="px-4 pt-3 pb-5">
       <div className="max-w-3xl mx-auto px-0 flex flex-col">
         <div className="flex items-center justify-between mb-2 shrink-0">
-          <span className="badge-sticker bg-brand-red text-white text-[10px] -rotate-1">
+          <span className="badge-sticker bg-brand-lime text-foreground text-[10px] -rotate-1">
             {t("events_page.kicker")}
           </span>
           {count > 1 && (
