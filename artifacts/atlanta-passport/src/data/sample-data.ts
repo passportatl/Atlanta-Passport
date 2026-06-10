@@ -1459,7 +1459,7 @@ function formatRouteDuration(totalMinutes: number): string {
 }
 
 // Great-circle distance between two points, in miles.
-function haversineMiles(
+export function haversineMiles(
   a: { lat: number; lng: number },
   b: { lat: number; lng: number },
 ): number {

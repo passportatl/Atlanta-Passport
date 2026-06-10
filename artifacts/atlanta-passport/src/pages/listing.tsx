@@ -1,12 +1,12 @@
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, businessCategories, mapRoutes, events as sampleEvents } from "@/data/sample-data";
+import { businesses, businessCategories, mapRoutes, haversineMiles, events as sampleEvents } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import MapSnapshot from "@/components/MapSnapshot";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
-import { MapPin, Gift, Clock, Navigation, ArrowLeft, ArrowRight, Bike, Footprints, Utensils, Train, Globe, Route as RouteIcon } from "lucide-react";
+import { MapPin, Gift, Clock, Navigation, ArrowLeft, ArrowRight, Bike, Footprints, Utensils, Train, Globe } from "lucide-react";
 
 // Brand color token → header tint, mirroring RoutesFeed so route cards look
 // consistent wherever they appear. Tailwind can't see dynamic class names, so
@@ -45,13 +45,38 @@ export default function Listing() {
       : `${business.name}, ${business.neighborhood}, Atlanta, GA`,
   );
 
-  // Routes that feature this spot — a business is "featured in" a route when its
-  // id appears in any of the route's time-of-day stop lists (byTime).
-  const featuredRoutes = mapRoutes.filter((route) =>
-    Object.values(route.byTime).some((ids) =>
-      (ids as readonly string[]).includes(business.id),
-    ),
-  );
+  // Routes that go through OR near this spot. "Through" = this business's id is
+  // one of the route's stops (in any time-of-day list). "Near" = the spot sits
+  // within NEAR_ROUTE_MILES of any of the route's stops, even if it isn't a stop
+  // itself. Through routes are listed first.
+  const NEAR_ROUTE_MILES = 0.5;
+  const coordsOf = (b: { lat?: number; lng?: number }) =>
+    typeof b.lat === "number" && typeof b.lng === "number"
+      ? { lat: b.lat, lng: b.lng }
+      : null;
+  const here = coordsOf(business);
+  const nearbyRoutes = mapRoutes
+    .map((route) => {
+      const stopIds = new Set<string>();
+      for (const ids of Object.values(route.byTime)) {
+        for (const sid of ids as readonly string[]) stopIds.add(sid);
+      }
+      const through = stopIds.has(business.id);
+      let near = false;
+      if (!through && here) {
+        for (const sid of stopIds) {
+          const stop = businesses.find((b) => b.id === sid);
+          const sc = stop ? coordsOf(stop) : null;
+          if (sc && haversineMiles(here, sc) <= NEAR_ROUTE_MILES) {
+            near = true;
+            break;
+          }
+        }
+      }
+      return { route, through, near };
+    })
+    .filter((r) => r.through || r.near)
+    .sort((a, b) => Number(b.through) - Number(a.through));
 
   // Stamps a visitor can collect here: this spot's own stamp (when it's a
   // participating Explore business) plus any featured events hosted at this venue.
@@ -244,48 +269,6 @@ export default function Listing() {
               </section>
             )}
 
-            {featuredRoutes.length > 0 && (
-              <section className="pt-6 border-t border-border">
-                <div className="flex items-center text-primary font-bold mb-4">
-                  <RouteIcon className="w-5 h-5 mr-2" /> Featured in these routes
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {featuredRoutes.map((route) => (
-                    <Link
-                      key={route.id}
-                      href={`/routes/${route.id}`}
-                      className="card-pop bg-card overflow-hidden flex flex-col hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
-                    >
-                      <div className={`border-b-[3px] border-foreground p-3 ${routeTints[route.color] ?? routeTints.yellow}`}>
-                        <span className="font-display text-[10px] tracking-[0.14em] uppercase">
-                          {route.area}
-                        </span>
-                        <h3 className="font-serif text-lg font-bold leading-tight mt-1">
-                          {route.name}
-                        </h3>
-                      </div>
-                      <div className="flex flex-1 flex-col p-3">
-                        <div className="flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-muted-foreground mb-2">
-                          {route.pace === "Bike Friendly" ? (
-                            <Bike className="w-3 h-3" />
-                          ) : (
-                            <Footprints className="w-3 h-3" />
-                          )}
-                          {route.pace}
-                        </div>
-                        <p className="text-muted-foreground text-xs line-clamp-2 mb-3">
-                          {route.vibe}
-                        </p>
-                        <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-auto uppercase inline-flex items-center gap-1">
-                          View route <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {business.menu && business.menu.length > 0 && (
               <section className="pt-6 border-t border-border">
                 <div className="flex items-center text-primary font-bold mb-5">
@@ -324,6 +307,53 @@ export default function Listing() {
                   ★ {t("listing_page.stamp_label")}
                 </div>
                 <StampChecklist targets={stampTargets} />
+              </div>
+            )}
+
+            {nearbyRoutes.length > 0 && (
+              <div>
+                <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-4 uppercase">
+                  ★ Routes near here
+                </div>
+                <div className="space-y-4">
+                  {nearbyRoutes.map(({ route, near }) => (
+                    <Link
+                      key={route.id}
+                      href={`/routes/${route.id}`}
+                      className="card-pop bg-card overflow-hidden flex flex-col hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
+                    >
+                      <div className={`border-b-[3px] border-foreground p-3 ${routeTints[route.color] ?? routeTints.yellow}`}>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-display text-[10px] tracking-[0.14em] uppercase">
+                            {route.area}
+                          </span>
+                          <span className="font-display text-[9px] tracking-[0.12em] uppercase px-1.5 py-0.5 border-2 border-foreground bg-card text-foreground whitespace-nowrap">
+                            {near ? "Nearby" : "On route"}
+                          </span>
+                        </div>
+                        <h3 className="font-serif text-lg font-bold leading-tight mt-1">
+                          {route.name}
+                        </h3>
+                      </div>
+                      <div className="flex flex-1 flex-col p-3">
+                        <div className="flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-muted-foreground mb-2">
+                          {route.pace === "Bike Friendly" ? (
+                            <Bike className="w-3 h-3" />
+                          ) : (
+                            <Footprints className="w-3 h-3" />
+                          )}
+                          {route.pace}
+                        </div>
+                        <p className="text-muted-foreground text-xs line-clamp-2 mb-3">
+                          {route.vibe}
+                        </p>
+                        <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-auto uppercase inline-flex items-center gap-1">
+                          View route <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
           </div>
