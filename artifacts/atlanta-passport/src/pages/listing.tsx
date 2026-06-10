@@ -1,13 +1,25 @@
 import { useParams, Link } from "wouter";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { businesses, businessCategories } from "@/data/sample-data";
+import { businesses, businessCategories, mapRoutes } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import { MAP_STYLES } from "@/components/BusinessMap";
-import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, Bike, Utensils, Train, Globe } from "lucide-react";
+import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, ArrowRight, Bike, Footprints, Utensils, Train, Globe, Route as RouteIcon } from "lucide-react";
 
 const MAPS_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
+
+// Brand color token → header tint, mirroring RoutesFeed so route cards look
+// consistent wherever they appear. Tailwind can't see dynamic class names, so
+// this map is explicit.
+const routeTints: Record<string, string> = {
+  yellow: "bg-brand-yellow text-brand-yellow-foreground",
+  red: "bg-brand-red text-white",
+  lime: "bg-brand-lime text-foreground",
+  sky: "bg-brand-sky text-foreground",
+  orange: "bg-brand-orange text-white",
+  navy: "bg-brand-navy text-white",
+};
 
 // Convert the in-app map's MapTypeStyle array into Static Maps `style=` params so
 // the snapshot matches our dark-navy branded map exactly.
@@ -73,6 +85,14 @@ export default function Listing() {
     business.address
       ? `${business.address}, Atlanta, GA`
       : `${business.name}, ${business.neighborhood}, Atlanta, GA`,
+  );
+
+  // Routes that feature this spot — a business is "featured in" a route when its
+  // id appears in any of the route's time-of-day stop lists (byTime).
+  const featuredRoutes = mapRoutes.filter((route) =>
+    Object.values(route.byTime).some((ids) =>
+      (ids as readonly string[]).includes(business.id),
+    ),
   );
 
 
@@ -242,6 +262,48 @@ export default function Listing() {
                     </li>
                   )}
                 </ul>
+              </section>
+            )}
+
+            {featuredRoutes.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div className="flex items-center text-primary font-bold mb-4">
+                  <RouteIcon className="w-5 h-5 mr-2" /> Featured in these routes
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {featuredRoutes.map((route) => (
+                    <Link
+                      key={route.id}
+                      href={`/routes/${route.id}`}
+                      className="card-pop bg-card overflow-hidden flex flex-col hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
+                    >
+                      <div className={`border-b-[3px] border-foreground p-3 ${routeTints[route.color] ?? routeTints.yellow}`}>
+                        <span className="font-display text-[10px] tracking-[0.14em] uppercase">
+                          {route.area}
+                        </span>
+                        <h3 className="font-serif text-lg font-bold leading-tight mt-1">
+                          {route.name}
+                        </h3>
+                      </div>
+                      <div className="flex flex-1 flex-col p-3">
+                        <div className="flex items-center gap-1 text-[11px] font-black uppercase tracking-wider text-muted-foreground mb-2">
+                          {route.pace === "Bike Friendly" ? (
+                            <Bike className="w-3 h-3" />
+                          ) : (
+                            <Footprints className="w-3 h-3" />
+                          )}
+                          {route.pace}
+                        </div>
+                        <p className="text-muted-foreground text-xs line-clamp-2 mb-3">
+                          {route.vibe}
+                        </p>
+                        <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-auto uppercase inline-flex items-center gap-1">
+                          View route <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </section>
             )}
 
