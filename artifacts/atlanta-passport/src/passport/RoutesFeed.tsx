@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { MapPin, Bike, Footprints, Check, Clock, Navigation } from "lucide-react";
+import { MapPin, Bike, Footprints, Check, Clock, Navigation, ArrowRight } from "lucide-react";
 import {
   mapRoutes,
   resolveRoute,
@@ -259,6 +259,16 @@ export default function RoutesFeed({
                           </Fragment>
                         ))}
                       </ol>
+                  </div>
+
+                  <div className="border-t-[3px] border-foreground p-3">
+                    <Link
+                      href={`/routes/${route.id}`}
+                      className="button-pop button-pop-cream w-full inline-flex items-center justify-center gap-2 text-xs"
+                    >
+                      View route details
+                      <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                    </Link>
                   </div>
                 </div>
               </motion.div>

@@ -14,7 +14,6 @@ import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
 import RoutesFeed from "@/passport/RoutesFeed";
 import PassportStamps from "@/pages/passport/stamps";
-import PassportRewards from "@/pages/passport/rewards";
 import PassportHome from "@/pages/passport/index";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import Footer from "@/components/layout/Footer";
@@ -34,7 +33,7 @@ function PassportPanel({ children }: { children: ReactNode }) {
 }
 
 // MapShell keeps the orientation map mounted across the map-backed routes
-// (Explore, Events, Stamps, Rewards). Only the content below the map swaps based
+// (Explore, Events, Stamps, Routes). Only the content below the map swaps based
 // on the route, so the Google map never reloads or recenters when moving between
 // them.
 export default function MapShell() {
@@ -46,11 +45,9 @@ export default function MapShell() {
         ? "events"
         : location === "/passport/stamps"
           ? "stamps"
-          : location === "/passport/rewards"
-            ? "rewards"
-            : location === "/passport/routes"
-              ? "routes"
-              : "explore";
+          : location === "/passport/routes"
+            ? "routes"
+            : "explore";
 
   const params =
     typeof window !== "undefined"
@@ -264,11 +261,6 @@ export default function MapShell() {
       {view === "stamps" && (
         <PassportPanel>
           <PassportStamps onSelectBusiness={setSelectedBizId} />
-        </PassportPanel>
-      )}
-      {view === "rewards" && (
-        <PassportPanel>
-          <PassportRewards />
         </PassportPanel>
       )}
       {view === "explore" && (

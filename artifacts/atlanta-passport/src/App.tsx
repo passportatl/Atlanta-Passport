@@ -8,13 +8,10 @@ import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
 import Home from "@/pages/home";
 import Partners from "@/pages/partners";
-import Events from "@/pages/events";
 import EventDetail from "@/pages/event-detail";
-import About from "@/pages/about";
+import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
-import Contact from "@/pages/contact";
 import Listing from "@/pages/listing";
-import Beltline from "@/pages/beltline";
 import StampPage from "@/pages/stamp";
 import PassportContact from "@/pages/passport/contact";
 import AdminStamps from "@/pages/admin-stamps";
@@ -31,14 +28,10 @@ function MarketingRoutes() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/beltline" component={Beltline} />
-        <Route path="/routes" component={Beltline} />
         <Route path="/partners" component={Partners} />
-        <Route path="/events" component={Events} />
         <Route path="/events/:id" component={EventDetail} />
-        <Route path="/about" component={About} />
+        <Route path="/routes/:id" component={RouteDetail} />
         <Route path="/apply" component={Apply} />
-        <Route path="/contact" component={Contact} />
         <Route path="/listing/:id" component={Listing} />
         <Route component={NotFound} />
       </Switch>
@@ -52,10 +45,10 @@ function MarketingRoutes() {
 const ALLOW_PUBLIC_ACCESS = false;
 
 // Almost everything requires a registered account. Only the marketing home (`/`),
-// contact, partners, and apply pages stay open to signed-out visitors. Sign-in/up,
+// partners, and apply pages stay open to signed-out visitors. Sign-in/up,
 // the /stamp QR landing, and admin are functional routes that must also stay reachable.
 function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/contact", "/partners", "/apply"];
+  const publicExact = ["/", "/partners", "/apply"];
   if (publicExact.includes(location)) return false;
   const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/admin/"];
   if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
@@ -86,7 +79,6 @@ function isMapShellRoute(location: string) {
     location === "/passport/explore" ||
     location === "/passport/events" ||
     location === "/passport/stamps" ||
-    location === "/passport/rewards" ||
     location === "/passport/routes"
   );
 }

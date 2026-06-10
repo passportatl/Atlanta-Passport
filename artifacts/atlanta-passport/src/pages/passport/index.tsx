@@ -13,7 +13,6 @@ import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
 import Sticker from "@/components/Sticker";
 import { REWARDS, NEIGHBORHOOD_BY_NAME } from "@/passport/data";
-import { Check, Lock } from "lucide-react";
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
@@ -63,10 +62,6 @@ export default function PassportHome() {
     .sort((a, b) => a.threshold - b.threshold);
   // Completed passports = total-reward milestones the visitor has reached
   const completedPassports = totalRewards.filter((r) => total >= r.threshold).length;
-  // Next reward = lowest total threshold not yet hit
-  const nextReward = totalRewards.find((r) => total < r.threshold);
-  const nextThreshold = nextReward?.threshold ?? 20;
-  const progress = Math.min(100, Math.round((total / nextThreshold) * 100));
 
   const visited = stamps.slice(0, 6);
 
@@ -109,57 +104,6 @@ export default function PassportHome() {
           </div>
         </div>
       </div>
-
-      {nextReward && (
-        <div className="card-pop bg-[hsl(var(--brand-cream))] p-4">
-          <div className="flex items-baseline justify-between mb-2">
-            <div className="text-xs font-black uppercase tracking-wider">Next reward</div>
-            <div className="text-xs font-black opacity-70">
-              {total} / {nextThreshold}
-            </div>
-          </div>
-          <div className="font-black text-base mb-2">{nextReward.name}</div>
-          <div className="progress-track">
-            <div className="progress-fill" style={{ width: `${progress}%` }} />
-          </div>
-
-          <ul className="mt-4 space-y-2.5 border-t-2 border-foreground/10 pt-3">
-            {totalRewards.map((r) => {
-              const earned = total >= r.threshold;
-              const isNext = nextReward.id === r.id;
-              return (
-                <li key={r.id} className="flex items-start gap-2.5">
-                  <span
-                    className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-foreground text-[11px] font-black ${
-                      earned
-                        ? "bg-[hsl(var(--brand-lime))] text-foreground"
-                        : isNext
-                          ? "bg-[hsl(var(--brand-yellow))] text-[hsl(var(--brand-yellow-foreground))]"
-                          : "bg-white text-foreground/60"
-                    }`}
-                    style={{ fontFamily: "Bungee, sans-serif" }}
-                  >
-                    {r.threshold}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`font-black text-sm leading-tight ${earned ? "" : "text-foreground/80"}`}>
-                        {r.name}
-                      </span>
-                      {earned ? (
-                        <Check className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--brand-red))]" />
-                      ) : (
-                        <Lock className="h-3 w-3 shrink-0 opacity-40" />
-                      )}
-                    </div>
-                    <p className="text-xs text-foreground/60 leading-snug mt-0.5">{r.description}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
 
       <div>
         <div className="flex items-center justify-between mb-3">
