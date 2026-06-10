@@ -121,7 +121,13 @@ export default function Listing() {
                   <Clock className="w-5 h-5 mr-2" /> {t("listing_page.hours_label")}
                 </div>
                 <p className="text-muted-foreground whitespace-pre-line">
-                  {business.hours}
+                  {business.hours.split(/(Book in advance)/g).map((part, i) =>
+                    part === "Book in advance" ? (
+                      <span key={i} className="text-brand-red font-semibold">{part}</span>
+                    ) : (
+                      part
+                    ),
+                  )}
                 </p>
               </div>
               )}
