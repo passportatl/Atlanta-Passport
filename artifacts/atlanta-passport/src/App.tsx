@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { useUser } from "@clerk/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -57,17 +57,29 @@ function isProtectedRoute(location: string) {
   return true;
 }
 
-// Send signed-out visitors who hit a protected route to the sign-up page. This
-// fires on every navigation so a signed-out user can never linger on a gated
-// page — any non-public link funnels them into creating an account.
+// Gate protected routes for signed-out visitors. The marketing home is always
+// the FIRST page an unregistered visitor sees: if their entry point (a fresh
+// load, deep link, or refresh) is a gated route, send them to the marketing
+// home rather than the sign-up page. Once they're in-session, clicking any
+// gated link funnels them to sign-up to create an account.
 function ProtectedRouteRedirect() {
   const { isLoaded, isSignedIn } = useUser();
   const [location, setLocation] = useLocation();
+  // False until Clerk has resolved once — distinguishes the initial page load
+  // (their "first page") from later in-session navigation.
+  const initialLoadHandled = useRef(false);
   useEffect(() => {
     if (!isLoaded) return;
-    if (!ALLOW_PUBLIC_ACCESS && !isSignedIn && isProtectedRoute(location)) {
-      setLocation("/sign-up", { replace: true });
+    if (ALLOW_PUBLIC_ACCESS || isSignedIn) {
+      initialLoadHandled.current = true;
+      return;
     }
+    if (isProtectedRoute(location)) {
+      setLocation(initialLoadHandled.current ? "/sign-up" : "/", {
+        replace: true,
+      });
+    }
+    initialLoadHandled.current = true;
   }, [isLoaded, isSignedIn, location, setLocation]);
   return null;
 }
@@ -180,7 +192,7 @@ function Router() {
   }
   if (isProtectedRoute(location)) {
     // Render nothing while Clerk resolves or while a signed-out user is being
-    // redirected to the sign-up page — never flash gated content.
+    // redirected (to the marketing home or sign-up) — never flash gated content.
     if (!isLoaded || (!isSignedIn && !ALLOW_PUBLIC_ACCESS)) {
       return null;
     }
