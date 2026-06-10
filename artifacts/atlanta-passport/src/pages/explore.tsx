@@ -298,6 +298,20 @@ export default function ExploreContent({
               })}
             </div>
           </div>
+
+          {/* Desktop: clear filters */}
+          {hasActiveFilters && (
+            <div className="hidden md:flex justify-end">
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground bg-brand-red text-white transition-all hover:-translate-y-0.5 hover:shadow-pop-sm"
+              >
+                <X className="w-3 h-3" />
+                {t("explore_page.clear_filters")}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Results */}
