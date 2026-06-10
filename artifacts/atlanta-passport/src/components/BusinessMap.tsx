@@ -1081,16 +1081,20 @@ export default function BusinessMap({
                   <div className="text-sm font-bold text-[#15171c]">
                     {selected.name}
                   </div>
-                  <div className="mb-1.5 flex items-center gap-1.5 text-xs text-gray-500">
+                  <div className="mb-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-gray-500">
                     <span>{selected.neighborhood}</span>
-                    <span aria-hidden>·</span>
-                    <span className="inline-flex items-center gap-1">
-                      <span
-                        className="inline-block h-2 w-2 rounded-full"
-                        style={{ backgroundColor: categoryColor(selected.category) }}
-                      />
-                      {selected.category}
-                    </span>
+                    {businessCategories(selected).map((cat) => (
+                      <span key={cat} className="inline-flex items-center gap-1">
+                        <span aria-hidden>·</span>
+                        <span className="inline-flex items-center gap-1">
+                          <span
+                            className="inline-block h-2 w-2 rounded-full"
+                            style={{ backgroundColor: categoryColor(cat) }}
+                          />
+                          {cat}
+                        </span>
+                      </span>
+                    ))}
                   </div>
                   <Link
                     href={`/listing/${selected.id}`}

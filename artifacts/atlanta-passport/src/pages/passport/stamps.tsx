@@ -13,6 +13,7 @@ import { StampGraphic } from "@/passport/StampGraphic";
 import {
   businesses as exploreBusinesses,
   events as sampleEvents,
+  businessCategories,
 } from "@/data/sample-data";
 
 // Featured events are seeded as DB businesses with no coordinates, so resolve
@@ -261,7 +262,7 @@ export default function PassportStamps({
             <StampListItem
               key={biz.id}
               name={biz.name}
-              meta={`${biz.neighborhood} · ${biz.category}`}
+              meta={`${biz.neighborhood} · ${businessCategories(biz).join(" · ")}`}
               detail={biz.offer}
               stamp={stamp}
               iconName={api?.icon ?? "coffee"}
