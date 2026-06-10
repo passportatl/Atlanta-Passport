@@ -26,7 +26,7 @@ const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 // Dark navy base (#0f2942) with cream roads/labels and red accents to match the
 // passport nav bar scheme (red #a71930 + cream #fff3d6). The brand yellow is
 // reserved for the highlighted route line only.
-const MAP_STYLES: google.maps.MapTypeStyle[] = [
+export const MAP_STYLES: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#0f2942" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#fff3d6" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#0a1c2e" }, { weight: 3 }] },
