@@ -5,7 +5,7 @@ import { businesses, businessCategories } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import { MAP_STYLES } from "@/components/BusinessMap";
-import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, Bike, Utensils, Train } from "lucide-react";
+import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, Bike, Utensils, Train, Globe } from "lucide-react";
 
 const MAPS_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 
@@ -174,6 +174,17 @@ export default function Listing() {
                     ),
                   )}
                 </p>
+                {business.website && (
+                  <a
+                    href={business.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-brand-red hover:underline break-all"
+                  >
+                    <Globe className="w-4 h-4 shrink-0" />
+                    {business.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                  </a>
+                )}
               </div>
               )}
               {(business.address || (business.lat != null && business.lng != null)) && (
