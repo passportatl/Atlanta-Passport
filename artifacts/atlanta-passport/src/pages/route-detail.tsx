@@ -147,17 +147,12 @@ export default function RouteDetail() {
                     <span className="text-foreground/50">· Start</span>
                   </div>
                   {start === "marta" && (
-                    <>
-                      <div className="mt-1.5 flex flex-wrap gap-1.5">
-                        <CategoryBadge category="MARTA Rail" />
-                      </div>
-                      <p className="mt-1.5 flex gap-1.5 text-[12px] leading-snug text-foreground/55">
-                        <Clock className="w-3.5 h-3.5 flex-shrink-0 mt-[1px]" />
-                        <span className="whitespace-pre-line">
-                          {MARTA_RAIL_HOURS}
-                        </span>
-                      </p>
-                    </>
+                    <p className="mt-1.5 flex gap-1.5 text-[12px] leading-snug text-foreground/55">
+                      <Clock className="w-3.5 h-3.5 flex-shrink-0 mt-[1px]" />
+                      <span className="whitespace-pre-line">
+                        {MARTA_RAIL_HOURS}
+                      </span>
+                    </p>
                   )}
                 </div>
               </li>
