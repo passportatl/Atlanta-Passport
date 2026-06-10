@@ -53,17 +53,6 @@ export default function Listing() {
           className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        
-        {business.sponsorTier && (
-          <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 drop-shadow-[0_4px_0_rgba(0,0,0,0.85)] z-10">
-            <div className="passport-stamp bg-white text-brand-red ring-4 ring-foreground/10">
-              <div>
-                <Sparkles className="w-4 h-4 mx-auto mb-1" />
-                {t("listing_page.founding_badge")}<br />· ATL ·
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Hero Bottom Content (badges + desktop title) */}
         <div className="absolute bottom-6 md:bottom-8 left-6 md:left-12 lg:left-24 right-28 md:right-32 text-white">
