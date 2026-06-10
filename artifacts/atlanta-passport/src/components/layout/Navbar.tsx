@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SocialLinks, SOCIALS } from "@/components/SocialLinks";
-import { useUser } from "@clerk/react";
+import { basePath } from "@/auth/clerk";
 
 const navItemClass = (active: boolean) =>
   cn(
@@ -20,7 +20,6 @@ const navItemClass = (active: boolean) =>
 export default function Navbar() {
   const [location, setLocation] = useLocation();
   const { t } = useTranslation();
-  const { isSignedIn } = useUser();
 
   // Business listing, event detail AND route detail pages are standalone (opened
   // in their own tab via a scanned link/QR or the "View" buttons), so they hide
@@ -41,6 +40,12 @@ export default function Navbar() {
         else setLocation("/passport/explore");
       }
     }, 120);
+  };
+
+  // "Contact us" opens the contact page in its own tab (same convention as the
+  // passport bottom nav) so it stays reachable from the marketing site.
+  const openContactTab = () => {
+    window.open(`${window.location.origin}${basePath}/passport/contact`, "_blank");
   };
 
   const mobileTouristLinks: { name: string; path: string }[] = [];
@@ -73,16 +78,17 @@ export default function Navbar() {
               Back to site
             </button>
           ) : (
-            <Link
-              href="/partners"
+            <button
+              type="button"
+              onClick={openContactTab}
               className={cn(
-                navItemClass(location === "/partners"),
+                navItemClass(false),
                 "hidden md:inline-flex items-center"
               )}
-              data-testid="link-get-listed"
+              data-testid="link-contact-us"
             >
-              {t("nav.get_listed")}
-            </Link>
+              Contact us
+            </button>
           )}
 
           {/* Mobile logo — horizontally centered, bottom-aligned with the
@@ -117,42 +123,29 @@ export default function Navbar() {
 
         {/* Desktop Nav — Passport auth + socials (right of the centered logo) */}
         <nav className="hidden md:flex items-center gap-2 justify-start md:h-16">
-          {!isStandalone &&
-            (isSignedIn ? (
+          {!isStandalone && (
+            <>
               <Link
-                href="/passport"
+                href="/sign-in"
                 className={cn(
-                  navItemClass(location.startsWith("/passport")),
+                  navItemClass(location.startsWith("/sign-in")),
                   "inline-flex items-center gap-1.5",
                 )}
-                data-testid="link-nav-passport"
+                data-testid="link-nav-login"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                Log In
+              </Link>
+              <Link
+                href="/sign-up"
+                className="inline-flex items-center gap-1.5 h-9 px-3 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap transition active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                data-testid="link-nav-signup"
               >
                 <BookMarked className="w-3.5 h-3.5" />
-                My Passport
+                Sign Up
               </Link>
-            ) : (
-              <>
-                <Link
-                  href="/sign-in"
-                  className={cn(
-                    navItemClass(location.startsWith("/sign-in")),
-                    "inline-flex items-center gap-1.5",
-                  )}
-                  data-testid="link-nav-login"
-                >
-                  <LogIn className="w-3.5 h-3.5" />
-                  Log In
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="inline-flex items-center gap-1.5 h-9 px-3 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] font-display text-[10px] tracking-[0.14em] uppercase whitespace-nowrap transition active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
-                  data-testid="link-nav-signup"
-                >
-                  <BookMarked className="w-3.5 h-3.5" />
-                  Sign Up
-                </Link>
-              </>
-            ))}
+            </>
+          )}
 
           {/* Far right: social media icons */}
           <SocialLinks
@@ -201,45 +194,32 @@ export default function Navbar() {
                     {link.name}
                   </Link>
                 ))}
-                {!isStandalone &&
-                  (isSignedIn ? (
+                {!isStandalone && (
+                  <>
                     <Link
-                      href="/passport"
+                      href="/sign-in"
                       className={cn(
                         "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                        location.startsWith("/passport") ? "text-foreground" : "text-foreground/60",
+                        location.startsWith("/sign-in") ? "text-foreground" : "text-foreground/60",
                       )}
-                      data-testid="link-mobile-menu-passport"
+                      data-testid="link-mobile-menu-login"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      Log In
+                    </Link>
+                    <Link
+                      href="/sign-up"
+                      className={cn(
+                        "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
+                        location.startsWith("/sign-up") ? "text-foreground" : "text-foreground/60",
+                      )}
+                      data-testid="link-mobile-menu-signup"
                     >
                       <BookMarked className="w-4 h-4" />
-                      My Passport
+                      Sign Up
                     </Link>
-                  ) : (
-                    <>
-                      <Link
-                        href="/sign-in"
-                        className={cn(
-                          "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                          location.startsWith("/sign-in") ? "text-foreground" : "text-foreground/60",
-                        )}
-                        data-testid="link-mobile-menu-login"
-                      >
-                        <LogIn className="w-4 h-4" />
-                        Log In
-                      </Link>
-                      <Link
-                        href="/sign-up"
-                        className={cn(
-                          "font-display text-base tracking-[0.16em] uppercase inline-flex items-center gap-2",
-                          location.startsWith("/sign-up") ? "text-foreground" : "text-foreground/60",
-                        )}
-                        data-testid="link-mobile-menu-signup"
-                      >
-                        <BookMarked className="w-4 h-4" />
-                        Sign Up
-                      </Link>
-                    </>
-                  ))}
+                  </>
+                )}
 
                 {/* Social links */}
                 <div className="pt-2 border-t border-foreground/15">

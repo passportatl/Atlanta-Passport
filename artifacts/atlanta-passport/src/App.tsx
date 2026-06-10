@@ -48,7 +48,7 @@ const ALLOW_PUBLIC_ACCESS = false;
 // partners, and apply pages stay open to signed-out visitors. Sign-in/up,
 // the /stamp QR landing, and admin are functional routes that must also stay reachable.
 function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/partners", "/apply"];
+  const publicExact = ["/", "/partners", "/apply", "/passport/contact"];
   if (publicExact.includes(location)) return false;
   const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/admin/"];
   if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
@@ -153,6 +153,11 @@ function Router() {
   }
   if (location === "/admin/applications") {
     return <AdminApplications />;
+  }
+  // Contact is reachable to everyone (opened in its own tab from the marketing
+  // nav), so render it before the protected-route gate.
+  if (location === "/passport/contact") {
+    return <PassportRoutesGroup />;
   }
   if (isProtectedRoute(location)) {
     // Render nothing while Clerk resolves or while a signed-out user is being
