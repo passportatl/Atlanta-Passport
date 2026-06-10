@@ -348,7 +348,7 @@ export const businesses = [
     address: "630 Travis St NW",
     lat: 33.7718,
     lng: -84.40869,
-    hours: "Museum Hours: Sun 12-6pm,\nMon-Thurs CLOSED, Fri 4-9pm, Sat 12-8pm.\n\"Escape the Trap\" - Book in advance -\nMon-Thurs 4:30-10pm, Fri 4:30pm-12am, Sat 12pm-12am, Sun 12pm-10pm",
+    hours: "Museum Hours:\nSun 12-6pm,\nMon-Thurs CLOSED, Fri 4-9pm, Sat 12-8pm.\n\"Escape the Trap\" - Book in advance -\nMon-Thurs 4:30-10pm, Fri 4:30pm-12am, Sat 12pm-12am, Sun 12pm-10pm",
     about: "A one-of-a-kind gallery celebrating the history and culture of trap music where you can explore the origins of Atlanta's most unique musical genres. Featuring themed rooms, an escape room, an art gallery & a bar. All escape room visits include entry into the museum! This cultural destination gives visitors a closer look at the music and movement that helped define modern Atlanta.",
     transit: {
       marta: "Nearest MARTA — Vine City Station, Bankhead Station, or Arts Center Station depending route.",
