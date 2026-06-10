@@ -659,6 +659,7 @@ export const businesses = [
     lat: 33.72204,
     lng: -84.37295,
     hours: "Daily: 6am - 11pm",
+    website: "https://beltline.org/parks-trails/boulevard-crossing-park",
     about: "The first phase of a planned larger park, currently offering open fields and green space beside the Southside Trail corridor.",
   },
   {
@@ -763,6 +764,7 @@ export const businesses = [
     lat: 33.75762,
     lng: -84.42141,
     hours: "Daily: 6am - 11pm",
+    website: "https://conservancyathwp.org",
     about: "A historic Black Atlanta park with a recreation center, pool, tennis courts, playgrounds, open lawns and trail access.",
   },
   {
@@ -789,6 +791,7 @@ export const businesses = [
     lat: 33.77266,
     lng: -84.4255,
     hours: "Daily: 6am - 11pm",
+    website: "https://beltline.org/venue/maddox-park",
     about: "A large recreation park with athletic fields, courts, a swimming pool, playground areas and connections toward Proctor Creek.",
   },
   {
@@ -828,6 +831,7 @@ export const businesses = [
     lat: 33.80683,
     lng: -84.39886,
     hours: "Daily: 6am - 11pm",
+    website: "https://ardmorepark.org",
     about: "A compact neighborhood park with open lawns, playgrounds and a direct connection to the wooded Northside Trail.",
   },
   {
@@ -841,6 +845,7 @@ export const businesses = [
     lat: 33.81669,
     lng: -84.40374,
     hours: "Daily: 6am - 11pm",
+    website: "https://atlmemorialpark.org",
     about: "A large park system surrounding Peachtree Creek, Bobby Jones Golf Course, Bitsy Grant Tennis Center and wooded paths.",
   },
   {
@@ -854,6 +859,7 @@ export const businesses = [
     lat: 33.80969,
     lng: -84.352,
     hours: "Daily: 6am - 11pm",
+    website: "https://www.mlpa.org/morningside-nature-park-reserve",
     about: "A wooded nature preserve with creek crossings, natural-surface trails and a popular dog-friendly beach area.",
   },
   {
@@ -867,6 +873,7 @@ export const businesses = [
     lat: 33.78598,
     lng: -84.36157,
     hours: "Daily: 6am - 11pm",
+    website: "https://vahi.org/parks/orme",
     about: "A shaded neighborhood park featuring a playground, creek, woodland paths and picnic space near the Eastside Trail.",
   },
 ];
