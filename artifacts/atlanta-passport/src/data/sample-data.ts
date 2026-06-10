@@ -1,4 +1,17 @@
 import wheelhausImg from "@/assets/images/wheelhaus-featured.png";
+import chickFilAImg from "@/assets/images/chick-fil-a.jpg";
+import felixsAtlantaImg from "@/assets/images/felixs-atlanta.jpg";
+import liddelHouseImg from "@/assets/images/liddel-house.png";
+import midtownBowlImg from "@/assets/images/midtown-bowl.jpg";
+import sixFeetUnderImg from "@/assets/images/six-feet-under.jpg";
+import smithsOldBarImg from "@/assets/images/smiths-old-bar.jpg";
+import thePaintedPickleImg from "@/assets/images/the-painted-pickle.png";
+import waffleHouseImg from "@/assets/images/waffle-house.jpg";
+import zooAtlantaImg from "@/assets/images/zoo-atlanta.jpg";
+import aswDistilleryImg from "@/assets/images/asw-distillery.jpg";
+import tattletaleLoungeImg from "@/assets/images/tattletale-lounge.jpg";
+import tongueAndGrooveImg from "@/assets/images/tongue-and-groove.jpg";
+import lindberghStationImg from "@/assets/images/lindbergh-station.jpg";
 import peachtreeWellnessImg from "@/assets/images/peachtree-wellness-featured.jpg";
 import atlantuckyImg from "@/assets/images/atlantucky-featured.jpg";
 import theWestwoodImg from "@/assets/images/the-westwood-featured.jpg";
@@ -879,6 +892,7 @@ export const businesses = [
   },
   {
     id: "chick-fil-a",
+    image: chickFilAImg,
     name: "Chick-fil-A",
     category: "Food",
     categories: ["Food", "Drink"],
@@ -890,6 +904,7 @@ export const businesses = [
   },
   {
     id: "felixs-atlanta",
+    image: felixsAtlantaImg,
     name: "Felix's Atlanta",
     category: "Nightlife",
     categories: ["Nightlife", "Events", "LGBTQ", "Drink"],
@@ -901,6 +916,7 @@ export const businesses = [
   },
   {
     id: "liddel-house",
+    image: liddelHouseImg,
     name: "Liddel House",
     category: "Landmarks",
     neighborhood: "Piedmont Heights",
@@ -912,6 +928,7 @@ export const businesses = [
   },
   {
     id: "midtown-bowl",
+    image: midtownBowlImg,
     name: "Midtown Bowl",
     category: "Games",
     categories: ["Games", "Food", "Drink"],
@@ -923,6 +940,7 @@ export const businesses = [
   },
   {
     id: "six-feet-under",
+    image: sixFeetUnderImg,
     name: "Six Feet Under",
     category: "Food",
     categories: ["Food", "Drink"],
@@ -934,6 +952,7 @@ export const businesses = [
   },
   {
     id: "smiths-old-bar",
+    image: smithsOldBarImg,
     name: "Smith's Old Bar",
     category: "Food",
     categories: ["Food", "Drink", "Games", "Events", "Nightlife"],
@@ -945,6 +964,7 @@ export const businesses = [
   },
   {
     id: "the-painted-pickle",
+    image: thePaintedPickleImg,
     name: "The Painted Pickle",
     category: "Games",
     categories: ["Games", "Food", "Drink"],
@@ -959,6 +979,7 @@ export const businesses = [
   },
   {
     id: "waffle-house",
+    image: waffleHouseImg,
     name: "Waffle House",
     category: "Food",
     categories: ["Food", "Drink", "Nightlife"],
@@ -971,6 +992,7 @@ export const businesses = [
   },
   {
     id: "zoo-atlanta",
+    image: zooAtlantaImg,
     name: "Zoo Atlanta",
     category: "Experiences",
     categories: ["Experiences", "Food", "Drink"],
@@ -983,6 +1005,7 @@ export const businesses = [
   },
   {
     id: "asw-distillery",
+    image: aswDistilleryImg,
     name: "ASW Distillery",
     category: "Retail",
     categories: ["Retail", "Experiences"],
@@ -996,6 +1019,7 @@ export const businesses = [
   },
   {
     id: "tattletale-lounge",
+    image: tattletaleLoungeImg,
     name: "Tattletale Lounge",
     category: "Experiences",
     categories: ["Experiences", "Nightlife", "Drink"],
@@ -1009,6 +1033,7 @@ export const businesses = [
   },
   {
     id: "tongue-and-groove",
+    image: tongueAndGrooveImg,
     name: "Tongue & Groove",
     category: "Nightlife",
     categories: ["Nightlife", "Drink", "Events"],
@@ -1022,6 +1047,7 @@ export const businesses = [
   },
   {
     id: "lindbergh-station",
+    image: lindberghStationImg,
     name: "Lindbergh Station",
     category: "Landmarks",
     neighborhood: "Buckhead",
