@@ -357,6 +357,11 @@ export default function ExploreContent({
                       <h3 className="text-sm sm:text-base font-serif font-bold text-foreground leading-tight mb-1">
                         {biz.name}
                       </h3>
+                      {biz.hq && (
+                        <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[8px] sm:text-[9px] self-start mb-1 inline-flex items-center gap-1">
+                          ★ Passport ATL HQ
+                        </div>
+                      )}
                       <div className="mb-1 flex flex-wrap gap-1">
                         {businessCategories(biz).map((cat) => (
                           <CategoryBadge

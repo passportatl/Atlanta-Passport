@@ -15,6 +15,7 @@ import {
 import { events, businesses, businessCategories } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import MapSnapshot from "@/components/MapSnapshot";
+import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
 import NotFound from "@/pages/not-found";
@@ -186,6 +187,8 @@ export default function EventDetail() {
               <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/60 mb-2">★ Passport</div>
               <StampChecklist targets={stampTargets} />
             </div>
+
+            {venueBusiness && <NearbyRoutes business={venueBusiness} />}
           </aside>
         </div>
 

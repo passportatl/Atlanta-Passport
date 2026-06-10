@@ -115,6 +115,7 @@ export const businesses = [
     name: "Peachtree Wellness",
     category: "Retail",
     neighborhood: "Grant Park",
+    hq: true,
     description: "Atlanta's destination for spiritual wellness and natural living + Hot Sauce Shop ATL. Apothecary, crystals, hemp products & gift shop.",
     offer: "10% off for Passport holders.",
     address: "585 Memorial Dr SE, Atlanta, GA 30312",
