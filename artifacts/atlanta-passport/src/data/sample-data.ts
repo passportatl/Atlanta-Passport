@@ -56,6 +56,7 @@ export const businesses = [
     id: "atlantucky-brewing",
     name: "Atlantucky Brewing",
     category: "Drink",
+    categories: ["Drink", "Food"],
     visitMinutes: 75,
     neighborhood: "Castleberry Hill",
     description: "Great food, local beer, dope art, and chill vibes — owned by Nappy Roots, blocks from Mercedes-Benz Stadium.",
