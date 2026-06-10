@@ -22,12 +22,14 @@ export default function Navbar() {
   const { t } = useTranslation();
   const { isSignedIn } = useUser();
 
-  // Business listing AND event detail pages are standalone (opened in their own
-  // tab via a scanned link/QR or the "View" buttons), so they hide the
-  // "Get Listed" + passport/auth links and surface a single "Back to site"
+  // Business listing, event detail AND route detail pages are standalone (opened
+  // in their own tab via a scanned link/QR or the "View" buttons), so they hide
+  // the "Get Listed" + passport/auth links and surface a single "Back to site"
   // action that closes the tab instead. The /events index keeps the normal nav.
   const isStandalone =
-    location.startsWith("/listing") || location.startsWith("/events/");
+    location.startsWith("/listing") ||
+    location.startsWith("/events/") ||
+    location.startsWith("/routes/");
   // window.close() only works for script-opened tabs. When the page was opened
   // via a normal target="_blank" link, a scanned QR, or pasted URL, the browser
   // blocks close() silently — so fall back to navigating back into the site.
