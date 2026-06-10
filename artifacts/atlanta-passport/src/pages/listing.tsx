@@ -3,14 +3,11 @@ import { useTranslation } from "react-i18next";
 import { businesses, businessCategories } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
-import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, BookOpen, Bike, Utensils, Train } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, Bike, Utensils, Train } from "lucide-react";
 
 export default function Listing() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const { toast } = useToast();
-  
   const business = businesses.find(b => b.id === id);
 
   if (!business) {
@@ -33,13 +30,6 @@ export default function Listing() {
       : `${business.name}, ${business.neighborhood}, Atlanta, GA`,
   );
 
-  const handleSave = () => {
-    toast({
-      title: t("common.loading"),
-      description: t("listing_page.stamp_label"),
-      duration: 3500,
-    });
-  };
 
   return (
     <div className="w-full pb-24 bg-background">
@@ -207,14 +197,6 @@ export default function Listing() {
               >
                 <Navigation className="w-5 h-5" /> {t("listing_page.directions_label")}
               </a>
-              <button
-                type="button"
-                onClick={handleSave}
-                className="button-pop button-pop-yellow flex-1 inline-flex items-center justify-center gap-2"
-              >
-                <BookOpen className="w-5 h-5" /> {t("common.view_all", { defaultValue: "Save for later" })}
-                <span className="font-display text-[10px] tracking-[0.16em] opacity-70 ml-1">SOON</span>
-              </button>
             </div>
           </div>
 
