@@ -9,8 +9,6 @@ import {
   Navigation,
   ArrowLeft,
   ArrowRight,
-  Map as MapIcon,
-  Ticket,
 } from "lucide-react";
 import {
   mapRoutes,
@@ -198,43 +196,6 @@ export default function RouteDetail() {
                   ariaLabel="Time of day"
                 />
               </div>
-            </div>
-
-            <div className="card-pop bg-background p-5 md:p-6">
-              <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/60 mb-2">
-                ★ Map
-              </div>
-              <h3 className="font-serif font-bold text-lg mb-2 leading-tight">
-                Trace this route on the map.
-              </h3>
-              <p className="text-sm text-foreground/70 mb-4">
-                See every stop connected in order on the live passport map.
-              </p>
-              <Link
-                href="/passport/routes"
-                className="button-pop button-pop-yellow inline-flex items-center gap-2 text-xs"
-              >
-                <MapIcon className="w-3.5 h-3.5" /> Open Routes Map
-              </Link>
-            </div>
-
-            <div className="card-pop bg-background p-5 md:p-6">
-              <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/60 mb-2">
-                ★ Passport
-              </div>
-              <h3 className="font-serif font-bold text-lg mb-2 leading-tight">
-                Collect stamps along the way.
-              </h3>
-              <p className="text-sm text-foreground/70 mb-4">
-                Passport holders earn a stamp at each participating stop. Grab
-                yours free.
-              </p>
-              <Link
-                href="/passport"
-                className="button-pop inline-flex items-center gap-2 text-xs"
-              >
-                <Ticket className="w-3.5 h-3.5" /> Get Passport
-              </Link>
             </div>
           </aside>
         </div>
