@@ -137,6 +137,7 @@ const SEED_BUSINESSES: InsertBusiness[] = [
   { slug: "hop-city-krog", name: "Hop City at Krog St Market", category: "retail", neighborhood: "Krog", stampColor: "lime", icon: "shopping-bag" },
   { slug: "varasanos", name: "Varasanos", category: "food", neighborhood: "Buckhead", stampColor: "red", icon: "flame" },
   { slug: "nakato", name: "Nakato Japanese Restaurant", category: "food", neighborhood: "Piedmont Heights", stampColor: "blue", icon: "utensils" },
+  { slug: "trap-museum", name: "Trap Museum", category: "arts", neighborhood: "Westside", stampColor: "black-yellow", icon: "music" },
 ].map(build);
 
 // Featured events — scannable BONUS stamps. These are stored as businesses in

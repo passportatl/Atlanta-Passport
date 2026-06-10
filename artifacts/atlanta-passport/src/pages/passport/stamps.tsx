@@ -45,6 +45,7 @@ const STAMP_SLUG: Record<string, string> = {
   "la-semilla": "la-semilla",
   varasanos: "varasanos",
   "nakato-japanese-restaurant": "nakato",
+  "trap-museum": "trap-museum",
 };
 
 // Drive the list off STAMP_SLUG (not a broad offer filter) so it stays exactly
