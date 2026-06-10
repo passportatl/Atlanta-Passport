@@ -176,14 +176,29 @@ export default function Listing() {
                 </p>
               </div>
               )}
-              {business.address && (
-                <div>
-                  <div className="flex items-center text-primary font-bold mb-2">
-                    <MapPin className="w-5 h-5 mr-2" /> {t("listing_page.address_label")}
+              {(business.address || (business.lat != null && business.lng != null)) && (
+                <div className="card-pop bg-card p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
                   </div>
-                  <p className="text-muted-foreground">
-                    {business.address}
-                  </p>
+                  {business.address && (
+                    <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
+                  )}
+                  <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
+                  {business.lat != null && business.lng != null && (
+                    <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} />
+                  )}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
+                  >
+                    <Navigation className="w-4 h-4" /> {t("listing_page.view_on_map")}
+                  </a>
                 </div>
               )}
             </div>
@@ -251,33 +266,8 @@ export default function Listing() {
             </div>
           </div>
 
-          {/* Right Column — Find it + Stamp preview */}
+          {/* Right Column — Stamp preview */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Address card with real Google Maps link */}
-            <div className="card-pop bg-card p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
-              </div>
-              {business.address && (
-                <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
-              )}
-              <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
-              {business.lat != null && business.lng != null && (
-                <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} />
-              )}
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
-              >
-                <Navigation className="w-4 h-4" /> {t("listing_page.view_on_map")}
-              </a>
-            </div>
-
             {/* Passport stamp preview — clearly a preview, no fake "scan" CTA */}
             <div className="card-pop bg-brand-yellow text-brand-yellow-foreground text-center p-8">
               <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6 uppercase">
