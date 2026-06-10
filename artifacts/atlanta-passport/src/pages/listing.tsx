@@ -199,6 +199,14 @@ export default function Listing() {
                   >
                     <Navigation className="w-4 h-4" /> {t("listing_page.view_on_map")}
                   </a>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm mt-3"
+                  >
+                    <Navigation className="w-4 h-4" /> {t("listing_page.directions_label")}
+                  </a>
                 </div>
               )}
             </div>
@@ -254,16 +262,6 @@ export default function Listing() {
               </section>
             )}
 
-            <div className="flex flex-col sm:flex-row gap-5 pt-6">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button-pop flex-1 inline-flex items-center justify-center gap-2"
-              >
-                <Navigation className="w-5 h-5" /> {t("listing_page.directions_label")}
-              </a>
-            </div>
           </div>
 
           {/* Right Column — Stamp preview */}
