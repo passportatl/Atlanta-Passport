@@ -10,10 +10,12 @@ import {
   Instagram,
   Sparkles,
   ExternalLink,
+  Navigation,
   Ticket,
 } from "lucide-react";
-import { events } from "@/data/sample-data";
+import { events, businesses } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
+import MapSnapshot from "@/components/MapSnapshot";
 import NotFound from "@/pages/not-found";
 
 function parseDateTile(dateStr: string): { month: string; day: string } {
@@ -33,7 +35,17 @@ export default function EventDetail() {
   const idx = events.findIndex((e) => e.id === event.id);
   const prev = idx > 0 ? events[idx - 1] : null;
   const next = idx < events.length - 1 ? events[idx + 1] : null;
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue} ${event.address ?? "Atlanta"}`)}`;
+
+  // Match the event's venue to a listed business so we can deep-link to its
+  // location detail page and reuse its coordinates for the map snapshot.
+  const venueBusiness = businesses.find(
+    (b) => b.name === event.venue || (event.address && b.address === event.address),
+  );
+  const mapsQuery = encodeURIComponent(
+    event.address
+      ? `${event.address}, Atlanta, GA`
+      : `${event.venue}, ${event.neighborhood}, Atlanta, GA`,
+  );
 
   return (
     <div className="w-full pt-8 pb-20">
@@ -118,17 +130,39 @@ export default function EventDetail() {
           <aside className="space-y-5">
             <div className="card-pop bg-brand-cream p-5 md:p-6">
               <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/60 mb-2">★ Venue</div>
-              <h3 className="font-serif font-bold text-xl mb-2">{event.venue}</h3>
+              {venueBusiness ? (
+                <a
+                  href={`${import.meta.env.BASE_URL}listing/${venueBusiness.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-serif font-bold text-xl mb-2 inline-flex items-start gap-1.5 hover:text-brand-red transition-colors"
+                >
+                  {event.venue} <ExternalLink className="w-4 h-4 mt-1.5 flex-shrink-0" />
+                </a>
+              ) : (
+                <h3 className="font-serif font-bold text-xl mb-2">{event.venue}</h3>
+              )}
               {"address" in event && event.address && (
                 <p className="text-sm text-foreground/70 leading-snug mb-4">{event.address}</p>
               )}
+              {venueBusiness?.lat != null && venueBusiness?.lng != null && (
+                <MapSnapshot lat={venueBusiness.lat} lng={venueBusiness.lng} name={event.venue} />
+              )}
               <a
-                href={mapsUrl}
+                href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="button-pop button-pop-yellow inline-flex items-center gap-2 text-xs"
+                className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
               >
-                Open in Maps <ExternalLink className="w-3.5 h-3.5" />
+                <Navigation className="w-4 h-4" /> {t("listing_page.view_on_map")}
+              </a>
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm mt-3"
+              >
+                <Navigation className="w-4 h-4" /> {t("listing_page.directions_label")}
               </a>
             </div>
 
