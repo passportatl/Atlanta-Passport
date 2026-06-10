@@ -7,8 +7,25 @@ import { events, businesses } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import Footer from "@/components/layout/Footer";
 
-const GROUP_SIZE = 2;
 const AUTOPLAY_MS = 9000;
+
+// Show 3 events per slide on desktop, 2 on mobile.
+function useResponsiveGroupSize(): number {
+  const [size, setSize] = useState<number>(() =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(min-width: 768px)").matches
+      ? 3
+      : 2,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const handler = () => setSize(mq.matches ? 3 : 2);
+    handler();
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return size;
+}
 
 const MONTHS = [
   "january",
@@ -73,12 +90,19 @@ type EventsFeedProps = {
 export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const { t, i18n } = useTranslation();
   const [page, setPage] = useState(0);
+  const groupSize = useResponsiveGroupSize();
 
   const groups: EventItem[][] = [];
-  for (let i = 0; i < events.length; i += GROUP_SIZE) {
-    groups.push(events.slice(i, i + GROUP_SIZE));
+  for (let i = 0; i < events.length; i += groupSize) {
+    groups.push(events.slice(i, i + groupSize));
   }
   const count = groups.length;
+
+  // Page count changes when the slide size flips between mobile/desktop, so
+  // snap back to the first slide to keep the index in range.
+  useEffect(() => {
+    setPage(0);
+  }, [groupSize]);
 
   // Auto-advance through the groups; resets whenever the page changes (auto or
   // manual) so a tap on a dot gives a fresh dwell before the next fade.
@@ -194,11 +218,11 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
               transition={{ duration: 0.45 }}
               className="absolute inset-0 flex flex-row gap-2.5"
             >
-              {Array.from({ length: GROUP_SIZE }, (_, j) => current[j] ?? null).map((event, j) => {
+              {Array.from({ length: groupSize }, (_, j) => current[j] ?? null).map((event, j) => {
                 if (!event) {
                   return <div key={`empty-${j}`} className="flex-1 min-w-0" aria-hidden />;
                 }
-                const absIndex = page * GROUP_SIZE + j;
+                const absIndex = page * groupSize + j;
                 const tile = parseDateTile(event.date);
                 const headerTint = headerTints[absIndex % headerTints.length];
                 const venueBiz = businesses.find((b) => b.name === event.venue);
