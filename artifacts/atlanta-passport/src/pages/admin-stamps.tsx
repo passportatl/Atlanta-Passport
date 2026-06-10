@@ -68,13 +68,13 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
   );
 }
 
-interface BusinessCardProps {
+interface LocationCardProps {
   business: Business;
   copied: string | null;
   onCopy: (slug: string, url: string) => void;
 }
 
-function BusinessCard({ business: b, copied, onCopy }: BusinessCardProps) {
+function LocationCard({ business: b, copied, onCopy }: LocationCardProps) {
   const url = buildStampUrl(b.slug);
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
     url,
@@ -205,7 +205,7 @@ export default function AdminStamps() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {list.map((b) => (
-                <BusinessCard key={b.id} business={b} copied={copied} onCopy={copy} />
+                <LocationCard key={b.id} business={b} copied={copied} onCopy={copy} />
               ))}
             </div>
           </section>
@@ -231,7 +231,7 @@ export default function AdminStamps() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {eventBusinesses.map((b) => (
-                  <BusinessCard key={b.id} business={b} copied={copied} onCopy={copy} />
+                  <LocationCard key={b.id} business={b} copied={copied} onCopy={copy} />
                 ))}
               </div>
             </div>
