@@ -4,3 +4,4 @@
 - [Google Drive / Sheets export](google-drive-sheets-export.md) — google-sheet connector is read-only; use google-drive connector + Drive CSV media-upload to write a Sheet (proxy can't reach the Sheets host).
 - [i18n regen + framer useScroll](i18n-and-scroll.md) — translate only NEW keys & merge (full-file regen times out/SIGKILLs, esp. Arabic); use window `scrollY` not `target:ref` to kill the useScroll warning.
 - [Sandbox geocoding](sandbox-geocoding.md) — Maps key is redacted in the code_execution sandbox; geocode imports via keyless Nominatim (User-Agent required, ~1.1s/req).
+- [CSV location import](csv-location-import.md) — adding "CSV FOR REPLIT" rows to businesses: omit image (BusinessImage placeholder), dedupe by name not slug, map categories, only YES stamp-spots need seed.ts.
