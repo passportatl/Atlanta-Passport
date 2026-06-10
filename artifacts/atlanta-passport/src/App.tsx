@@ -57,16 +57,32 @@ function isProtectedRoute(location: string) {
   return true;
 }
 
-// Send signed-out visitors who hit a protected route back to the marketing home.
-// Unlike SignedInHomeRedirect this fires on every navigation so a signed-out
-// user can never linger on a gated page.
+// Send signed-out visitors who hit a protected route to the sign-up page. This
+// fires on every navigation so a signed-out user can never linger on a gated
+// page — any non-public link funnels them into creating an account.
 function ProtectedRouteRedirect() {
   const { isLoaded, isSignedIn } = useUser();
   const [location, setLocation] = useLocation();
   useEffect(() => {
     if (!isLoaded) return;
     if (!ALLOW_PUBLIC_ACCESS && !isSignedIn && isProtectedRoute(location)) {
-      setLocation("/", { replace: true });
+      setLocation("/sign-up", { replace: true });
+    }
+  }, [isLoaded, isSignedIn, location, setLocation]);
+  return null;
+}
+
+// A signed-in visitor never needs the sign-in/up pages — bounce them to their
+// passport home (the Stamps page). Combined with ProtectedRouteRedirect this
+// makes the sign-up page the single funnel: signed-out visitors land there to
+// register, signed-in visitors pass straight through to their stamps.
+function SignedInAuthRedirect() {
+  const { isLoaded, isSignedIn } = useUser();
+  const [location, setLocation] = useLocation();
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+    if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
+      setLocation("/passport/stamps", { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
   return null;
@@ -90,7 +106,7 @@ function PersistentMapShell() {
   const [location] = useLocation();
   const { isLoaded, isSignedIn } = useUser();
   // Never mount the map (or its Google map) for a signed-out visitor — they're
-  // being redirected to the marketing home.
+  // being redirected to the sign-up page.
   const isShell =
     isMapShellRoute(location) &&
     isLoaded &&
@@ -134,6 +150,9 @@ function Router() {
   const [location] = useLocation();
   const { isLoaded, isSignedIn } = useUser();
   if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
+    // Already signed in? Don't flash the auth UI — SignedInAuthRedirect is
+    // sending them to their stamps page.
+    if (isLoaded && isSignedIn) return null;
     return (
       <Switch>
         <Route path="/sign-in/*?" component={SignInPage} />
@@ -161,7 +180,7 @@ function Router() {
   }
   if (isProtectedRoute(location)) {
     // Render nothing while Clerk resolves or while a signed-out user is being
-    // redirected to the marketing home — never flash gated content.
+    // redirected to the sign-up page — never flash gated content.
     if (!isLoaded || (!isSignedIn && !ALLOW_PUBLIC_ACCESS)) {
       return null;
     }
@@ -184,6 +203,7 @@ function App() {
             <ClerkProviders>
               <ScrollToTop />
               <ProtectedRouteRedirect />
+              <SignedInAuthRedirect />
               <Router />
               <PersistentMapShell />
             </ClerkProviders>
