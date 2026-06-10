@@ -395,6 +395,24 @@
     .hero-title { line-height: .92; }
   }
 
+  /* Outline the big hero letters so they stay legible over the floating
+     polaroid photos. Stroke is painted behind the fill (paint-order) so the
+     letter weight is preserved, plus a soft dark halo for extra separation. */
+  .hero-outline {
+    paint-order: stroke fill;
+    -webkit-text-stroke: 5px hsl(var(--brand-cream));
+    text-stroke: 5px hsl(var(--brand-cream));
+    text-shadow:
+      0 0 2px hsl(var(--brand-cream)),
+      3px 3px 0 hsl(var(--foreground) / 0.28);
+  }
+  @media (min-width: 768px) {
+    .hero-outline {
+      -webkit-text-stroke-width: 8px;
+      text-stroke-width: 8px;
+    }
+  }
+
   .passport-stamp {
     width: 140px;
     height: 140px;

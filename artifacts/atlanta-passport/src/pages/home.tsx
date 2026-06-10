@@ -59,7 +59,7 @@ function HeroSection() {
             {t("home.new_hero.kicker")}
           </Sticker>
           
-          <h1 className="font-serif font-black text-6xl md:text-8xl lg:text-[8.5rem] leading-[0.85] text-primary tracking-tighter mb-8 mix-blend-multiply">
+          <h1 className="hero-outline font-serif font-black text-6xl md:text-8xl lg:text-[8.5rem] leading-[0.85] text-primary tracking-tighter mb-8">
             {t("home.new_hero.headline_1")}<br/>
             <span className="text-brand-red">{t("home.new_hero.headline_2")}</span><br/>
             {t("home.new_hero.headline_3")}
