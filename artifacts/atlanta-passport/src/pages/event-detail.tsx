@@ -52,7 +52,13 @@ export default function EventDetail() {
   // Stamps a visitor can collect here: the event's bonus stamp, plus the venue's
   // own spot stamp when the venue is a participating Explore business.
   const stampTargets: StampTarget[] = [
-    { kind: "event", eventName: event.name, name: event.name, meta: event.date },
+    {
+      kind: "event",
+      eventName: event.name,
+      name: event.name,
+      meta: "Featured Event",
+      detail: event.description,
+    },
   ];
   if (venueBusiness && STAMP_SLUG[venueBusiness.id]) {
     stampTargets.push({
@@ -60,6 +66,7 @@ export default function EventDetail() {
       sampleId: venueBusiness.id,
       name: venueBusiness.name,
       meta: `${venueBusiness.neighborhood} · ${businessCategories(venueBusiness).join(" · ")}`,
+      detail: venueBusiness.offer,
       detailHref: `/listing/${venueBusiness.id}`,
     });
   }

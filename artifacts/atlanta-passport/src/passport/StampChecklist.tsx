@@ -17,12 +17,13 @@ import { STAMP_SLUG } from "@/passport/data";
 // targets are featured events seeded as DB businesses (category "events"),
 // resolved by matching the seeded business name to the event name.
 export type StampTarget =
-  | { kind: "spot"; sampleId: string; name: string; meta: string; detailHref?: string }
-  | { kind: "event"; eventName: string; name: string; meta: string; detailHref?: string };
+  | { kind: "spot"; sampleId: string; name: string; meta: string; detail?: string; detailHref?: string }
+  | { kind: "event"; eventName: string; name: string; meta: string; detail?: string; detailHref?: string };
 
 function StampRow({
   name,
   meta,
+  detail,
   detailHref,
   stamp,
   iconName,
@@ -30,6 +31,7 @@ function StampRow({
 }: {
   name: string;
   meta: string;
+  detail?: string;
   detailHref?: string;
   stamp?: Stamp;
   iconName: string;
@@ -42,6 +44,9 @@ function StampRow({
         <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
           {meta}
         </div>
+        {detail && (
+          <div className="text-xs font-semibold text-foreground/80 mt-1">{detail}</div>
+        )}
         {detailHref && (
           <Link
             href={detailHref}
@@ -123,6 +128,7 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
           key: target.kind === "spot" ? target.sampleId : target.eventName,
           name: target.name,
           meta: target.meta,
+          detail: target.detail,
           detailHref: target.detailHref,
           stamp: slug ? stampBySlug.get(slug) : undefined,
           iconName: api?.icon ?? (target.kind === "event" ? "star" : "coffee"),
@@ -154,6 +160,7 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
             key={r.key}
             name={r.name}
             meta={r.meta}
+            detail={r.detail}
             detailHref={r.detailHref}
             stamp={r.stamp}
             iconName={r.iconName}
@@ -164,7 +171,7 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
       <div className="px-4 py-3 border-t-2 border-dashed border-foreground/15 bg-[hsl(var(--brand-cream))]/30">
         {visitorId ? (
           <p className="text-xs font-bold text-foreground/70 leading-snug">
-            Show your Passport in person to collect each stamp.
+            Scan the QR code at the location or event — or speak to an employee there — to collect each stamp.
           </p>
         ) : (
           <div className="flex items-center justify-between gap-3">
