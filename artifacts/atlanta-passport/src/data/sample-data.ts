@@ -977,7 +977,7 @@ export const applicationCategories = [
 ];
 
 export const categories = [
-  "Food", "Drink", "Coffee", "Retail", "Nightlife", "Games", "Rentals", "Events", "Experiences", "Public Art", "Parks", "Landmarks"
+  "Food", "Brunch", "Drink", "Brewery", "Coffee", "Retail", "Nightlife", "Sports Bar", "LGBTQ", "Games", "Rentals", "Events", "Experiences", "Public Art", "Parks", "Landmarks"
 ];
 
 // Single source of truth: each Type/category's display color (name → hex). Used
@@ -987,10 +987,14 @@ export const categories = [
 // appear in the data but aren't in the Explore Type filter.
 export const categoryColors: Record<string, string> = {
   Food: "#DC2626",
+  Brunch: "#F59E0B",
   Drink: "#1D4ED8",
+  Brewery: "#CA8A04",
   Coffee: "#92400E",
   Retail: "#65A30D",
   Nightlife: "#7C3AED",
+  "Sports Bar": "#1E3A8A",
+  LGBTQ: "#BE185D",
   Games: "#EA580C",
   Rentals: "#0EA5E9",
   Events: "#DB2777",
