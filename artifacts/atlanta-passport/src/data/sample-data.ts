@@ -64,6 +64,7 @@ export const businesses = [
     address: "170 Northside Dr SW, Suite 96, Atlanta, GA 30313",
     lat: 33.7531,
     lng: -84.4016,
+    website: "https://atlantucky.com",
     hours: "Wed-Fri: 3pm - 11pm · Sat: 4pm - 11:30pm (subject to change for FIFA)",
     image: atlantuckyImg,
     featured: true,
@@ -157,6 +158,7 @@ export const businesses = [
     address: "1529 Ralph David Abernathy Blvd SW, Atlanta, GA 30310",
     lat: 33.7343,
     lng: -84.4257,
+    website: "https://www.thewestwoodatl.com",
     hours: "Sun-Thurs: 12pm - 12am · Fri-Sat: 12pm - 2am",
     image: theWestwoodImg,
     featured: true,
@@ -225,6 +227,7 @@ export const businesses = [
     address: "933 Garrett St #101, Atlanta, GA 30316",
     lat: 33.7432,
     lng: -84.3522,
+    website: "https://vickerysatlanta.com",
     hours:
       "Dining Room: Mon 5pm–11pm · Tue–Fri 11:30am–11pm · Sat–Sun 11am–11pm. Bar: Sun–Tue until midnight · Wed–Sat until 2am.",
     image: vickerysImg,
@@ -248,6 +251,7 @@ export const businesses = [
       "248 Oakland Ave SE, Atlanta, GA 30312 · Visitor parking: 342 Martin Luther King Jr. Dr SE",
     lat: 33.7491,
     lng: -84.3722,
+    website: "https://www.oaklandcemetery.com",
     hours: "Visitor Center: 10am - 5pm · Cemetery Grounds: 6am - 8pm",
     image: oaklandCemeteryImg,
     featured: true,
@@ -330,6 +334,8 @@ export const businesses = [
     address: "660 Northside Dr NW Atlanta, GA 30318",
     lat: 33.77445,
     lng: -84.40816,
+    hours: "Mon-Thurs 5pm-2am\nFri-Sat 1pm-2am\nSun 1pm-12am",
+    website: "https://trapcitycafe.com",
     transit: {
       marta: "Nearest MARTA — Bankhead Station.",
       beltline: "Beltline access — Westside Trail / Westside BeltLine Connector / Washington Park–Lena St side.",
@@ -419,6 +425,8 @@ export const businesses = [
     address: "440 Westview Dr SW",
     lat: 33.74483,
     lng: -84.4141,
+    hours: "Wed-Sat 12pm-4pm\nSun-Tue CLOSED",
+    website: "https://www.spelman.edu/museum-of-fine-art",
   },
   {
     id: "hammonds-house-museum",
@@ -430,6 +438,8 @@ export const businesses = [
     address: "503 Peeples St SW",
     lat: 33.74121,
     lng: -84.42088,
+    hours: "Temporarily closed for restoration",
+    website: "https://www.hammondshousemuseum.org",
   },
   {
     id: "the-wrens-nest",
@@ -441,6 +451,8 @@ export const businesses = [
     address: "1050 Ralph David Abernathy Blvd SW",
     lat: 33.73766,
     lng: -84.42218,
+    hours: "Sat 11am-3pm (tours from 11am)\nMon-Fri & Sun CLOSED (tours by appointment)",
+    website: "https://www.wrensnest.org",
   },
   {
     id: "tiny-door-atl-26",
@@ -452,6 +464,8 @@ export const businesses = [
     address: "630 Travis St NW",
     lat: 33.7718,
     lng: -84.40869,
+    hours: "Public art - viewable anytime",
+    website: "https://www.tinydoorsatl.com",
   },
   {
     id: "herndon-home-muserum",
@@ -463,6 +477,8 @@ export const businesses = [
     address: "587 University Pl NW",
     lat: 33.75581,
     lng: -84.40678,
+    hours: "Tue & Thurs 10am-4pm (last tour 3pm)\nGroup tours by appointment",
+    website: "https://www.herndonhome.org",
   },
   {
     id: "morehouse-college-campus-landmark",
@@ -474,6 +490,7 @@ export const businesses = [
     address: "830 Westview Dr SW",
     lat: 33.74671,
     lng: -84.41532,
+    website: "https://www.morehouse.edu",
   },
   {
     id: "clark-atlanta-university-harkness-hall-area",
@@ -485,6 +502,7 @@ export const businesses = [
     address: "223 James P. Brawley Dr SW",
     lat: 33.75273,
     lng: -84.41279,
+    website: "https://www.cau.edu",
   },
   {
     id: "atlanta-bicycle-barn",
@@ -495,6 +513,8 @@ export const businesses = [
     description: "Atlanta Bicycle Barn",
     lat: 33.75822,
     lng: -84.36502,
+    hours: "Tue-Sun 10am-6pm (last rental 5pm)\nMon CLOSED",
+    website: "https://bikebarnatlanta.com",
   },
   {
     id: "the-belthub",
@@ -506,6 +526,8 @@ export const businesses = [
     address: "1385 English St NE Bldg A, Unit A",
     lat: 33.791,
     lng: -84.417,
+    hours: "Tue & Thurs 12pm-6pm\nFri 10am-7pm, Sat 10am-6pm\nSun, Mon & Wed CLOSED",
+    website: "https://thebelthub.com",
   },
   {
     id: "musette-bike-rentals-delivery",
@@ -517,6 +539,8 @@ export const businesses = [
     address: "701 Angler Springs Rd NE",
     lat: 33.75447,
     lng: -84.38982,
+    hours: "Open 7 days - delivery by appointment",
+    website: "https://www.musetteatl.com",
   },
   {
     id: "catalyst-sports",
@@ -527,6 +551,7 @@ export const businesses = [
     description: "Catalyst Sports",
     lat: 33.7726,
     lng: -84.3656,
+    website: "https://www.catalystsports.org/atlanta",
   },
   {
     id: "piedmont-park",
@@ -538,6 +563,8 @@ export const businesses = [
     address: "1320 Monroe Dr NE, Atlanta, GA 30306",
     lat: 33.79085,
     lng: -84.36724,
+    hours: "Daily: 6am - 11pm",
+    website: "https://piedmontpark.org",
     about: "Atlanta’s signature intown park, featuring lawns, trails, playgrounds, sports facilities, a dog park and connections to the Eastside and Northeast Trails.",
   },
   {
@@ -550,6 +577,8 @@ export const businesses = [
     address: "680 Dallas St NE, Atlanta, GA 30308",
     lat: 33.76862,
     lng: -84.36574,
+    hours: "Daily: 6am - 11pm",
+    website: "https://www.h4wpc.org",
     about: "A 17-acre park centered around a stormwater-retention pond, with landscaped paths, lawns, a playground and splash pad.",
   },
   {
@@ -562,6 +591,7 @@ export const businesses = [
     address: "830 Willoughby Way NE, Atlanta, GA 30312",
     lat: 33.76403,
     lng: -84.36277,
+    hours: "Daily: 6am - 11pm",
     about: "Atlanta’s first public skatepark, with bowls, ramps, an athletic field, playground, lighting and restrooms. Formerly called Historic Fourth Ward Skatepark.",
   },
   {
@@ -574,6 +604,7 @@ export const businesses = [
     address: "889 Euclid Ave NE, Atlanta, GA 30307",
     lat: 33.75681,
     lng: -84.35786,
+    hours: "Daily: 6am - 11pm",
     about: "A quiet historic neighborhood park with a pond, mature trees, walking paths and seating.",
   },
   {
@@ -586,6 +617,8 @@ export const businesses = [
     address: "453 John Lewis Freedom Pkwy NE, Atlanta, GA 30307",
     lat: 33.76684,
     lng: -84.35826,
+    hours: "Daily: 6am - 11pm",
+    website: "https://www.freedompark.org",
     about: "A large linear greenspace connecting the BeltLine area with the Carter Center, Little Five Points and Candler Park.",
   },
   {
@@ -598,6 +631,7 @@ export const businesses = [
     address: "100 Flat Shoals Ave SE, Atlanta, GA 30316",
     lat: 33.75152,
     lng: -84.35528,
+    hours: "Daily: 6am - 11pm",
     about: "A neighborhood recreation park with open lawn, playground space, basketball courts and community facilities.",
   },
   {
@@ -610,6 +644,8 @@ export const businesses = [
     address: "840 Cherokee Ave SE, Atlanta, GA 30315",
     lat: 33.73153,
     lng: -84.37394,
+    hours: "Daily: 6am - 11pm",
+    website: "https://www.gpconservancy.org",
     about: "One of Atlanta’s oldest parks, known for mature trees, historic landscapes, walking paths, Zoo Atlanta and surrounding Victorian architecture.",
   },
   {
@@ -622,6 +658,7 @@ export const businesses = [
     address: "500 Englewood Ave SE, Atlanta, GA 30315",
     lat: 33.72204,
     lng: -84.37295,
+    hours: "Daily: 6am - 11pm",
     about: "The first phase of a planned larger park, currently offering open fields and green space beside the Southside Trail corridor.",
   },
   {
@@ -634,6 +671,7 @@ export const businesses = [
     address: "1052 Martin St SE, Atlanta, GA 30315",
     lat: 33.72556,
     lng: -84.38329,
+    hours: "Daily: 6am - 11pm",
     about: "An eight-acre community park with a playground, splash pad, athletic field, pavilion and solar-powered facilities.",
   },
   {
@@ -646,6 +684,7 @@ export const businesses = [
     address: "1614 Arthur Langford Jr Pl SW, Atlanta, GA 30315",
     lat: 33.71029,
     lng: -84.39771,
+    hours: "Daily: 6am - 11pm",
     about: "A recreation-focused park with baseball, tennis, basketball, playgrounds, exercise equipment, a community center and beginner skatepark.",
   },
   {
@@ -658,6 +697,7 @@ export const businesses = [
     address: "770 Deckner Ave SW, Atlanta, GA 30310",
     lat: 33.71426,
     lng: -84.41557,
+    hours: "Daily: 6am - 11pm",
     about: "A 50-acre park with disc golf, tennis, ball fields, playgrounds, a splash pad, pavilion and mature oak trees.",
   },
   {
@@ -670,6 +710,7 @@ export const businesses = [
     address: "742 Catherine St SW, Atlanta, GA 30310",
     lat: 33.72521,
     lng: -84.412,
+    hours: "Daily: 6am - 11pm",
     about: "A historic neighborhood park with lawns, sports courts, playground areas and mature shade trees.",
   },
   {
@@ -682,6 +723,7 @@ export const businesses = [
     address: "1000 Rose Cir SW, Atlanta, GA 30310",
     lat: 33.7309,
     lng: -84.41761,
+    hours: "Daily: 6am - 11pm",
     about: "A small circular greenspace surrounded by historic homes and located near the West End Trail and",
   },
   {
@@ -694,6 +736,7 @@ export const businesses = [
     address: "1354 Ralph David Abernathy Blvd SW, Atlanta, GA 30310",
     lat: 33.7265,
     lng: -84.41368,
+    hours: "Daily: 6am - 11pm",
     about: "A BeltLine gathering space with landscaped beds, seating, performances, public art and direct trail access.",
   },
   {
@@ -706,6 +749,7 @@ export const businesses = [
     address: "1170 Enota Pl SW, Atlanta, GA 30310",
     lat: 33.74532,
     lng: -84.43395,
+    hours: "Daily: 6am - 11pm",
     about: "A neighborhood playlot beside the Westside Trail that is planned for expansion into a larger community park.",
   },
   {
@@ -718,6 +762,7 @@ export const businesses = [
     address: "102 Ollie St NW, Atlanta, GA 30314",
     lat: 33.75762,
     lng: -84.42141,
+    hours: "Daily: 6am - 11pm",
     about: "A historic Black Atlanta park with a recreation center, pool, tennis courts, playgrounds, open lawns and trail access.",
   },
   {
@@ -730,6 +775,7 @@ export const businesses = [
     address: "616 Joseph E. Boone Blvd NW, Atlanta, GA 30314",
     lat: 33.76335,
     lng: -84.41027,
+    hours: "Daily: 6am - 11pm",
     about: "A major stormwater park with fountains, lawns, playgrounds, walking paths and monuments honoring Atlanta’s civil-rights history.",
   },
   {
@@ -742,6 +788,7 @@ export const businesses = [
     address: "1115 Donald Lee Hollowell Pkwy NW, Atlanta, GA 30318",
     lat: 33.77266,
     lng: -84.4255,
+    hours: "Daily: 6am - 11pm",
     about: "A large recreation park with athletic fields, courts, a swimming pool, playground areas and connections toward Proctor Creek.",
   },
   {
@@ -754,6 +801,7 @@ export const businesses = [
     address: "1660 Johnson Rd NW, Atlanta, GA 30318",
     lat: 33.77924,
     lng: -84.43839,
+    hours: "Daily: 6am - 11pm",
     about: "Atlanta’s largest greenspace, built around a reservoir with trails, playgrounds, meadows, sculptures, pavilions and skyline views. Formerly Westside Park.",
   },
   {
@@ -766,6 +814,7 @@ export const businesses = [
     address: "73 28th St NW, Atlanta, GA 30309",
     lat: 33.8052,
     lng: -84.39829,
+    hours: "Daily: 6am - 11pm",
     about: "A wooded creekside park with bridges, trails and playground space, offering one of the BeltLine system’s quieter natural settings.",
   },
   {
@@ -778,6 +827,7 @@ export const businesses = [
     address: "170 Ardmore Rd NW, Atlanta, GA 30309",
     lat: 33.80683,
     lng: -84.39886,
+    hours: "Daily: 6am - 11pm",
     about: "A compact neighborhood park with open lawns, playgrounds and a direct connection to the wooded Northside Trail.",
   },
   {
@@ -790,6 +840,7 @@ export const businesses = [
     address: "384 Woodward Way NW, Atlanta, GA 30305",
     lat: 33.81669,
     lng: -84.40374,
+    hours: "Daily: 6am - 11pm",
     about: "A large park system surrounding Peachtree Creek, Bobby Jones Golf Course, Bitsy Grant Tennis Center and wooded paths.",
   },
   {
@@ -802,6 +853,7 @@ export const businesses = [
     address: "2020 Lenox Rd NE, Atlanta, GA 30324",
     lat: 33.80969,
     lng: -84.352,
+    hours: "Daily: 6am - 11pm",
     about: "A wooded nature preserve with creek crossings, natural-surface trails and a popular dog-friendly beach area.",
   },
   {
@@ -814,6 +866,7 @@ export const businesses = [
     address: "795 Brookridge Dr NE, Atlanta, GA 30306",
     lat: 33.78598,
     lng: -84.36157,
+    hours: "Daily: 6am - 11pm",
     about: "A shaded neighborhood park featuring a playground, creek, woodland paths and picnic space near the Eastside Trail.",
   },
 ];
