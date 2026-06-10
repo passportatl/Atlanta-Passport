@@ -17,6 +17,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/layout/Footer";
 
+const sortedNeighborhoods = [...neighborhoods].sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
+
 type Biz = (typeof businesses)[number];
 
 type ExploreContentProps = {
@@ -150,7 +154,7 @@ export default function ExploreContent({
                   align="start"
                   className="max-h-72 w-[var(--radix-dropdown-menu-trigger-width)]"
                 >
-                  {neighborhoods.map((n) => (
+                  {sortedNeighborhoods.map((n) => (
                     <DropdownMenuCheckboxItem
                       key={n.id}
                       checked={activeNeighborhoods.includes(n.name)}
@@ -271,7 +275,7 @@ export default function ExploreContent({
               >
                 {t("explore_page.all")}
               </button>
-              {neighborhoods.map((n) => {
+              {sortedNeighborhoods.map((n) => {
                 const active = activeNeighborhoods.includes(n.name);
                 return (
                   <button
