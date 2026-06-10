@@ -111,7 +111,7 @@ export default function Listing() {
                 <div className="bg-accent text-accent-foreground w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md">
                   <Gift className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-accent-foreground/90 tracking-wide uppercase text-sm">{t("listing_page.passport_offer_label")}</h3>
+                <h3 className="font-bold text-accent tracking-wide uppercase text-sm">{t("listing_page.passport_offer_label")}</h3>
               </div>
               <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
                 {business.offer}
