@@ -15,6 +15,7 @@ import {
   events as sampleEvents,
   businessCategories,
 } from "@/data/sample-data";
+import { STAMP_SLUG } from "@/passport/data";
 
 // Featured events are seeded as DB businesses with no coordinates, so resolve
 // each to a sample-data business (the map only renders the static dataset) by
@@ -30,23 +31,6 @@ function resolveEventMapId(name: string): string | undefined {
 function resolveEventDetailId(name: string): string | undefined {
   return sampleEvents.find((e) => e.name === name)?.id;
 }
-
-// The Explore cards (sample-data `businesses`) are the participating spots with
-// real Passport offers. Map each to its seeded stamp slug so collected stamps,
-// colors, and icons flow through from the backend.
-const STAMP_SLUG: Record<string, string> = {
-  "atlantucky-brewing": "atlantucky",
-  "peachtree-wellness": "peachtree-wellness",
-  "wheelhaus-bikes": "wheelhaus",
-  "the-westwood": "westwood",
-  "vickerys-bar-grill": "vickerys",
-  "boxcar-at-hop-city": "boxcar",
-  "hop-city-at-krog-st-market": "hop-city-krog",
-  "la-semilla": "la-semilla",
-  varasanos: "varasanos",
-  "nakato-japanese-restaurant": "nakato",
-  "trap-museum": "trap-museum",
-};
 
 // Drive the list off STAMP_SLUG (not a broad offer filter) so it stays exactly
 // these participating spots even if other Explore businesses gain an offer later.

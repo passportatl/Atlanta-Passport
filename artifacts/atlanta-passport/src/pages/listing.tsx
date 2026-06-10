@@ -1,10 +1,12 @@
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, businessCategories, mapRoutes } from "@/data/sample-data";
+import { businesses, businessCategories, mapRoutes, events as sampleEvents } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import MapSnapshot from "@/components/MapSnapshot";
-import { MapPin, Gift, Sparkles, Clock, Navigation, ArrowLeft, ArrowRight, Bike, Footprints, Utensils, Train, Globe, Route as RouteIcon } from "lucide-react";
+import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
+import { STAMP_SLUG } from "@/passport/data";
+import { MapPin, Gift, Clock, Navigation, ArrowLeft, ArrowRight, Bike, Footprints, Utensils, Train, Globe, Route as RouteIcon } from "lucide-react";
 
 // Brand color token → header tint, mirroring RoutesFeed so route cards look
 // consistent wherever they appear. Tailwind can't see dynamic class names, so
@@ -50,6 +52,27 @@ export default function Listing() {
       (ids as readonly string[]).includes(business.id),
     ),
   );
+
+  // Stamps a visitor can collect here: this spot's own stamp (when it's a
+  // participating Explore business) plus any featured events hosted at this venue.
+  const stampTargets: StampTarget[] = [];
+  if (STAMP_SLUG[business.id]) {
+    stampTargets.push({
+      kind: "spot",
+      sampleId: business.id,
+      name: business.name,
+      meta: `${business.neighborhood} · ${businessCategories(business).join(" · ")}`,
+    });
+  }
+  for (const e of sampleEvents.filter((e) => e.venue === business.name)) {
+    stampTargets.push({
+      kind: "event",
+      eventName: e.name,
+      name: e.name,
+      meta: "Featured Event",
+      detailHref: `/events/${e.id}`,
+    });
+  }
 
 
   return (
@@ -293,24 +316,16 @@ export default function Listing() {
 
           </div>
 
-          {/* Right Column — Stamp preview */}
+          {/* Right Column — Stamps to collect */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Passport stamp preview — clearly a preview, no fake "scan" CTA */}
-            <div className="card-pop bg-brand-yellow text-brand-yellow-foreground text-center p-8">
-              <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-6 uppercase">
-                ★ {t("listing_page.stamp_label")}
+            {stampTargets.length > 0 && (
+              <div>
+                <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-4 uppercase">
+                  ★ {t("listing_page.stamp_label")}
+                </div>
+                <StampChecklist targets={stampTargets} />
               </div>
-              <div className="w-40 h-40 mx-auto rounded-full border-[6px] border-double border-foreground bg-white flex flex-col items-center justify-center text-foreground">
-                <Sparkles className="w-6 h-6 mb-1 text-brand-red" />
-                <div className="font-display text-[9px] tracking-[0.2em]">VISITED</div>
-                <div className="font-serif text-base font-bold leading-tight px-3 mt-1">{business.name.split(' ').slice(0, 2).join(' ')}</div>
-                <div className="font-display text-[9px] tracking-[0.2em] mt-1">· ATL ·</div>
-              </div>
-              <p className="text-sm font-medium mt-6 leading-snug">
-                Visit in person to collect this stamp when the app launches —
-                <span className="block font-display text-[10px] tracking-[0.16em] text-foreground/70 mt-1">SUMMER 2026</span>
-              </p>
-            </div>
+            )}
           </div>
 
         </div>

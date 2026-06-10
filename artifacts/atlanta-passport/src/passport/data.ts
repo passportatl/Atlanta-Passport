@@ -207,6 +207,24 @@ export const PUBLIC_ROUTES = [
 
 export const SAMPLE_NEIGHBORHOODS = NEIGHBORHOODS.map((n) => n.name);
 
+// Map an Explore business (sample-data `businesses` id) to its seeded backend
+// stamp slug, so collected stamps, colors, and icons flow through from the API.
+// Single source of truth shared by the Stamps page and the detail-page stamp
+// checklists.
+export const STAMP_SLUG: Record<string, string> = {
+  "atlantucky-brewing": "atlantucky",
+  "peachtree-wellness": "peachtree-wellness",
+  "wheelhaus-bikes": "wheelhaus",
+  "the-westwood": "westwood",
+  "vickerys-bar-grill": "vickerys",
+  "boxcar-at-hop-city": "boxcar",
+  "hop-city-at-krog-st-market": "hop-city-krog",
+  "la-semilla": "la-semilla",
+  varasanos: "varasanos",
+  "nakato-japanese-restaurant": "nakato",
+  "trap-museum": "trap-museum",
+};
+
 export const CATEGORY_LABEL: Record<string, string> = {
   coffee: "Coffee",
   drinks: "Drink",

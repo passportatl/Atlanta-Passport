@@ -11,11 +11,12 @@ import {
   Sparkles,
   ExternalLink,
   Navigation,
-  Ticket,
 } from "lucide-react";
-import { events, businesses } from "@/data/sample-data";
+import { events, businesses, businessCategories } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
 import MapSnapshot from "@/components/MapSnapshot";
+import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
+import { STAMP_SLUG } from "@/passport/data";
 import NotFound from "@/pages/not-found";
 
 function parseDateTile(dateStr: string): { month: string; day: string } {
@@ -46,6 +47,21 @@ export default function EventDetail() {
       ? `${event.address}, Atlanta, GA`
       : `${event.venue}, ${event.neighborhood}, Atlanta, GA`,
   );
+
+  // Stamps a visitor can collect here: the event's bonus stamp, plus the venue's
+  // own spot stamp when the venue is a participating Explore business.
+  const stampTargets: StampTarget[] = [
+    { kind: "event", eventName: event.name, name: event.name, meta: event.date },
+  ];
+  if (venueBusiness && STAMP_SLUG[venueBusiness.id]) {
+    stampTargets.push({
+      kind: "spot",
+      sampleId: venueBusiness.id,
+      name: venueBusiness.name,
+      meta: `${venueBusiness.neighborhood} · ${businessCategories(venueBusiness).join(" · ")}`,
+      detailHref: `/listing/${venueBusiness.id}`,
+    });
+  }
 
   return (
     <div className="w-full pt-8 pb-20">
@@ -166,13 +182,9 @@ export default function EventDetail() {
               </a>
             </div>
 
-            <div className="card-pop bg-background p-5 md:p-6">
+            <div>
               <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/60 mb-2">★ Passport</div>
-              <h3 className="font-serif font-bold text-lg mb-2 leading-tight">Collect a stamp at this event.</h3>
-              <p className="text-sm text-foreground/70 mb-4">Passport holders earn a stamp for showing up. Grab yours free.</p>
-              <Link href="/passport" className="button-pop inline-flex items-center gap-2 text-xs">
-                <Ticket className="w-3.5 h-3.5" /> Get Passport
-              </Link>
+              <StampChecklist targets={stampTargets} />
             </div>
           </aside>
         </div>
