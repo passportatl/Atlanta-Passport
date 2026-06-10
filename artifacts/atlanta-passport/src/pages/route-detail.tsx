@@ -13,12 +13,19 @@ import {
 import {
   mapRoutes,
   resolveRoute,
+  businessCategories,
   ROUTE_STARTS,
   ROUTE_TIMES,
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
+import CategoryBadge from "@/components/CategoryBadge";
 import NotFound from "@/pages/not-found";
+
+// MARTA heavy-rail operates the same span system-wide, so we surface the same
+// service window for whichever station anchors a transit-start route.
+const MARTA_RAIL_HOURS =
+  "MARTA Rail:\nMon–Fri 4:45am–1am\nSat–Sun & holidays 6am–1am";
 
 const heroTints: Record<string, string> = {
   yellow: "bg-brand-yellow text-brand-yellow-foreground",
@@ -128,12 +135,31 @@ export default function RouteDetail() {
 
             <div className="section-kicker mb-4">★ The Walk</div>
             <ol className="space-y-2.5">
-              <li className="flex items-center gap-2 text-sm text-foreground/85">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-red text-white font-black text-[10px] flex items-center justify-center">
+              <li className="flex items-start gap-2 text-sm text-foreground/85">
+                <span className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full bg-brand-red text-white font-black text-[10px] flex items-center justify-center">
                   ●
                 </span>
-                <span className="font-semibold">{resolved.startAnchor.name}</span>
-                <span className="text-foreground/50">· Start</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">
+                      {resolved.startAnchor.name}
+                    </span>
+                    <span className="text-foreground/50">· Start</span>
+                  </div>
+                  {start === "marta" && (
+                    <>
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        <CategoryBadge category="MARTA Rail" />
+                      </div>
+                      <p className="mt-1.5 flex gap-1.5 text-[12px] leading-snug text-foreground/55">
+                        <Clock className="w-3.5 h-3.5 flex-shrink-0 mt-[1px]" />
+                        <span className="whitespace-pre-line">
+                          {MARTA_RAIL_HOURS}
+                        </span>
+                      </p>
+                    </>
+                  )}
+                </div>
               </li>
               {resolved.stops.map((b, i) => (
                 <Fragment key={b.id}>
@@ -173,6 +199,17 @@ export default function RouteDetail() {
                             {b.description}
                           </p>
                         )}
+                      <div className="mt-1.5 flex flex-wrap gap-1.5">
+                        {businessCategories(b).map((cat) => (
+                          <CategoryBadge key={cat} category={cat} />
+                        ))}
+                      </div>
+                      {b.hours && (
+                        <p className="mt-1.5 flex gap-1.5 text-[12px] leading-snug text-foreground/55">
+                          <Clock className="w-3.5 h-3.5 flex-shrink-0 mt-[1px]" />
+                          <span className="whitespace-pre-line">{b.hours}</span>
+                        </p>
+                      )}
                     </div>
                   </li>
                 </Fragment>
