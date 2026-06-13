@@ -4,7 +4,7 @@ import {
   getListBusinessesQueryKey,
   type Business,
 } from "@workspace/api-client-react";
-import { Copy, ExternalLink, Lock, QrCode, Star } from "lucide-react";
+import { AlertTriangle, Copy, ExternalLink, Lock, QrCode, Star } from "lucide-react";
 import { NEIGHBORHOODS } from "@/passport/data";
 import AdminNav from "@/components/AdminNav";
 
@@ -15,6 +15,21 @@ function buildStampUrl(slug: string): string {
   if (typeof window === "undefined") return `/stamp/${slug}`;
   const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   return `${window.location.origin}${base}/stamp/${slug}`;
+}
+
+// The QR codes encode the domain you're currently viewing this page on. Replit
+// development/preview domains are private — opening one on a phone prompts to log
+// into / install the Replit app. Only the published site is publicly scannable,
+// so warn if QR codes are being generated from a non-public host.
+function isPublicHost(): boolean {
+  if (typeof window === "undefined") return true;
+  const h = window.location.hostname;
+  // Published sites (*.replit.app or a custom domain) are publicly scannable.
+  if (h.endsWith(".replit.app")) return true;
+  // Local + Replit development/preview domains are private.
+  if (h === "localhost" || h === "127.0.0.1") return false;
+  if (h.endsWith(".replit.dev") || h.endsWith(".repl.co")) return false;
+  return true;
 }
 
 const NEIGHBORHOOD_ORDER = NEIGHBORHOODS.map((n) => n.name);
@@ -189,6 +204,18 @@ export default function AdminStamps() {
             {locationBusinesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
           </p>
         </div>
+
+        {!isPublicHost() && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border-2 border-foreground bg-[hsl(var(--brand-yellow))] p-4 shadow-pop-sm">
+            <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" />
+            <div className="text-sm font-semibold leading-snug">
+              <p className="font-black uppercase tracking-wide">Don't print these QR codes yet</p>
+              <p className="mt-1 font-medium">
+                You're viewing the private development preview, so these QR codes point to a Replit URL that asks visitors to log in or install the Replit app. Open your <span className="font-black">published site</span> (your <span className="font-mono">.replit.app</span> address or custom domain) and generate the QR codes from there — then they'll scan publicly with no app or login.
+              </p>
+            </div>
+          </div>
+        )}
 
         {grouped.map(({ neighborhood, list }) => (
           <section key={neighborhood} className="mb-8">
