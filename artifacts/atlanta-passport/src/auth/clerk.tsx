@@ -189,7 +189,7 @@ function ClerkQueryClientCacheInvalidator() {
 // Clerk account) are left untouched.
 function ClerkVisitorBridge() {
   const { isLoaded, isSignedIn, user } = useUser();
-  const { setVisitorId } = useVisitor();
+  const { setVisitorId, setLinkedReady } = useVisitor();
   const { mutateAsync } = useLinkVisitor();
   const linkedForUserId = useRef<string | null>(null);
   const linking = useRef(false);
@@ -207,11 +207,17 @@ function ClerkVisitorBridge() {
         linkedForUserId.current = null;
         setVisitorId(null);
       }
+      setLinkedReady(false);
       attempts.current = 0;
       return;
     }
 
     if (linkedForUserId.current === userId || linking.current) return;
+
+    // A sign-in (or account switch) is not yet confirmed-linked: until the
+    // link call below resolves, the active visitorId may be stale localStorage
+    // state, so consumers must not treat it as account-bound.
+    setLinkedReady(false);
 
     // Account switch: drop the prior account's visitor before relinking.
     if (linkedForUserId.current !== null) {
@@ -227,6 +233,7 @@ function ClerkVisitorBridge() {
           linkedForUserId.current = userId;
           attempts.current = 0;
           setVisitorId(v.id);
+          setLinkedReady(true);
         }
       } catch {
         // Retry with backoff so a transient /visitors/link failure doesn't
@@ -241,7 +248,7 @@ function ClerkVisitorBridge() {
         linking.current = false;
       }
     })();
-  }, [isLoaded, isSignedIn, userId, retryTick, setVisitorId, mutateAsync]);
+  }, [isLoaded, isSignedIn, userId, retryTick, setVisitorId, setLinkedReady, mutateAsync]);
 
   return null;
 }

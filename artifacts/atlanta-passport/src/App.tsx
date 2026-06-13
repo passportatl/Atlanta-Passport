@@ -17,6 +17,7 @@ import PassportContact from "@/pages/passport/contact";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
+import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
 import { PassportLayout } from "@/passport/PassportLayout";
 import MapShell from "@/passport/MapShell";
 import { ClerkProviders, SignInPage, SignUpPage } from "@/auth/clerk";
@@ -93,10 +94,35 @@ function SignedInAuthRedirect() {
   const [location, setLocation] = useLocation();
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
+    // If a stamp scan is pending, PendingStampRedirect owns the destination.
+    if (typeof window !== "undefined" && window.localStorage.getItem(PENDING_STAMP_KEY)) {
+      return;
+    }
     if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
       setLocation("/passport/stamps", { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
+  return null;
+}
+
+// QR-scan stamp flow: an unauthenticated visitor who scans a stamp QR is asked
+// to log in / create a passport. Once Clerk reports them signed in AND their
+// passport (visitorId) is linked, send them straight back to the stamp page so
+// it auto-collects into their account — regardless of where auth landed them
+// (hosted sign-in falls back to /passport/stamps; social OAuth returns there
+// too). The stamp page clears the pending key after collecting.
+function PendingStampRedirect() {
+  const { isLoaded, isSignedIn } = useUser();
+  const { visitorId, linkedReady } = useVisitor();
+  const [location, setLocation] = useLocation();
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !linkedReady || !visitorId) return;
+    if (typeof window === "undefined") return;
+    const pending = window.localStorage.getItem(PENDING_STAMP_KEY);
+    if (!pending) return;
+    const target = `/stamp/${pending}`;
+    if (location !== target) setLocation(target, { replace: true });
+  }, [isLoaded, isSignedIn, linkedReady, visitorId, location, setLocation]);
   return null;
 }
 
@@ -216,6 +242,7 @@ function App() {
               <ScrollToTop />
               <ProtectedRouteRedirect />
               <SignedInAuthRedirect />
+              <PendingStampRedirect />
               <Router />
               <PersistentMapShell />
             </ClerkProviders>

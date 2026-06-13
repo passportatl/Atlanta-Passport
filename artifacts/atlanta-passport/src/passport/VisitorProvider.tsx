@@ -22,6 +22,7 @@ export function VisitorProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return null;
     return window.localStorage.getItem(STORAGE_KEY);
   });
+  const [linkedReady, setLinkedReady] = useState(false);
   const queryClient = useQueryClient();
 
   const setVisitorId = useCallback((id: string | null) => {
@@ -54,10 +55,12 @@ export function VisitorProvider({ children }: { children: ReactNode }) {
       visitorId,
       visitor: (visitor as Visitor | undefined) ?? null,
       isLoading: !!visitorId && isLoading,
+      linkedReady,
       setVisitorId,
+      setLinkedReady,
       clear,
     }),
-    [visitorId, visitor, isLoading, setVisitorId, clear],
+    [visitorId, visitor, isLoading, linkedReady, setVisitorId, clear],
   );
 
   return <VisitorContext.Provider value={value}>{children}</VisitorContext.Provider>;
