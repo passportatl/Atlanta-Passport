@@ -63,8 +63,9 @@ import morningsideNaturePreserveImg from "@/assets/images/morningside-nature-pre
 import ormeParkImg from "@/assets/images/orme-park.jpg";
 import enotaParkImg from "@/assets/images/enota-park.jpg";
 import arthurLangfordJrParkImg from "@/assets/images/arthur-langford-jr-park.jpg";
+import { BUSINESS_SHEET_DATA } from "./business-sheet-data";
 
-export const businesses = [
+const businessesRaw = [
   {
     id: "atlantucky-brewing",
     name: "Atlantucky Brewing",
