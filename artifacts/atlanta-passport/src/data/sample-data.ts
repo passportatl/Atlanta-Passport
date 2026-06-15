@@ -1059,6 +1059,11 @@ const businessesRaw = [
   },
 ];
 
+export const businesses = businessesRaw.map((b) => {
+  const override = BUSINESS_SHEET_DATA[b.id];
+  return override ? { ...b, ...override } : b;
+});
+
 export const events = [
   {
     id: "battle-of-the-bands",

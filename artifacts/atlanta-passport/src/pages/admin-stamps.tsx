@@ -10,10 +10,27 @@ import AdminNav from "@/components/AdminNav";
 
 const ADMIN_PASSWORD = (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
+const PUBLISHED_URL_KEY = "atlanta-passport-published-url";
 
-function buildStampUrl(slug: string): string {
-  if (typeof window === "undefined") return `/stamp/${slug}`;
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+// Turn whatever the admin pasted into a clean origin (scheme + host), or null if
+// it isn't a usable URL. Lets us build production QR links from any workspace.
+function normalizeOrigin(input: string): string | null {
+  const raw = input.trim();
+  if (!raw) return null;
+  try {
+    const withProto = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    return new URL(withProto).origin;
+  } catch {
+    return null;
+  }
+}
+
+function buildStampUrl(slug: string, publishedOrigin?: string | null): string {
+  const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  // A pasted published origin always wins, so QR codes are public-scannable even
+  // when generated from the private dev/preview workspace.
+  if (publishedOrigin) return `${publishedOrigin}${base}/stamp/${slug}`;
+  if (typeof window === "undefined") return `${base}/stamp/${slug}`;
   return `${window.location.origin}${base}/stamp/${slug}`;
 }
 
@@ -21,15 +38,18 @@ function buildStampUrl(slug: string): string {
 // development/preview domains are private — opening one on a phone prompts to log
 // into / install the Replit app. Only the published site is publicly scannable,
 // so warn if QR codes are being generated from a non-public host.
-function isPublicHost(): boolean {
-  if (typeof window === "undefined") return true;
-  const h = window.location.hostname;
+function isPublicHostname(h: string): boolean {
   // Published sites (*.replit.app or a custom domain) are publicly scannable.
   if (h.endsWith(".replit.app")) return true;
   // Local + Replit development/preview domains are private.
   if (h === "localhost" || h === "127.0.0.1") return false;
   if (h.endsWith(".replit.dev") || h.endsWith(".repl.co")) return false;
   return true;
+}
+
+function isPublicHost(): boolean {
+  if (typeof window === "undefined") return true;
+  return isPublicHostname(window.location.hostname);
 }
 
 const NEIGHBORHOOD_ORDER = NEIGHBORHOODS.map((n) => n.name);
@@ -87,10 +107,11 @@ interface LocationCardProps {
   business: Business;
   copied: string | null;
   onCopy: (slug: string, url: string) => void;
+  publishedOrigin: string | null;
 }
 
-function LocationCard({ business: b, copied, onCopy }: LocationCardProps) {
-  const url = buildStampUrl(b.slug);
+function LocationCard({ business: b, copied, onCopy, publishedOrigin }: LocationCardProps) {
+  const url = buildStampUrl(b.slug, publishedOrigin);
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(
     url,
   )}&size=240x240&margin=10`;
@@ -150,6 +171,31 @@ export default function AdminStamps() {
   });
   const businesses = (businessesRaw as Business[] | undefined) ?? [];
   const [copied, setCopied] = useState<string | null>(null);
+  const [publishedUrl, setPublishedUrl] = useState("");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem(PUBLISHED_URL_KEY);
+    if (saved) setPublishedUrl(saved);
+  }, []);
+
+  const normalizedOrigin = normalizeOrigin(publishedUrl);
+  // Only a PUBLIC origin is usable for QR codes — a private dev address would
+  // re-introduce the very "log in / install Replit" prompt we're avoiding.
+  const publishedOrigin =
+    normalizedOrigin && isPublicHostname(new URL(normalizedOrigin).hostname)
+      ? normalizedOrigin
+      : null;
+  const enteredPrivate = Boolean(normalizedOrigin) && !publishedOrigin;
+
+  const savePublishedUrl = (value: string) => {
+    setPublishedUrl(value);
+    const origin = normalizeOrigin(value);
+    if (origin && isPublicHostname(new URL(origin).hostname)) {
+      window.localStorage.setItem(PUBLISHED_URL_KEY, origin);
+    } else {
+      window.localStorage.removeItem(PUBLISHED_URL_KEY);
+    }
+  };
 
   const locationBusinesses = useMemo(
     () => businesses.filter((b) => b.category !== "events"),
@@ -205,13 +251,44 @@ export default function AdminStamps() {
           </p>
         </div>
 
-        {!isPublicHost() && (
+        <div className="mb-6 card-pop bg-white p-4">
+          <label className="block text-xs font-black uppercase tracking-wider mb-1">
+            Published site URL
+          </label>
+          <p className="text-xs text-foreground/60 mb-2">
+            Paste your live <span className="font-mono">.replit.app</span> (or custom domain) address. Every QR code and link below will point there, so visitors can scan them with no Replit login or app — even while you generate them from here.
+          </p>
+          <input
+            type="url"
+            inputMode="url"
+            value={publishedUrl}
+            onChange={(e) => savePublishedUrl(e.target.value)}
+            placeholder="https://your-site.replit.app"
+            className="w-full border-2 border-foreground rounded-md px-3 py-2 font-mono text-sm bg-[hsl(var(--brand-cream))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--brand-yellow))]"
+          />
+          {publishedOrigin ? (
+            <p className="mt-2 inline-flex items-center gap-1 border-2 border-foreground bg-[hsl(var(--brand-lime))] rounded px-2 py-1 text-xs font-black">
+              ✓ QR codes point to <span className="font-mono">{publishedOrigin}</span>
+            </p>
+          ) : enteredPrivate ? (
+            <p className="text-xs font-bold text-[hsl(var(--brand-red))] mt-2">
+              That's a private dev address — paste your public{" "}
+              <span className="font-mono">.replit.app</span> (or custom) domain.
+            </p>
+          ) : publishedUrl.trim() ? (
+            <p className="text-xs font-bold text-[hsl(var(--brand-red))] mt-2">
+              That doesn't look like a valid web address.
+            </p>
+          ) : null}
+        </div>
+
+        {!isPublicHost() && !publishedOrigin && (
           <div className="mb-6 flex items-start gap-3 rounded-xl border-2 border-foreground bg-[hsl(var(--brand-yellow))] p-4 shadow-pop-sm">
             <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" />
             <div className="text-sm font-semibold leading-snug">
               <p className="font-black uppercase tracking-wide">Don't print these QR codes yet</p>
               <p className="mt-1 font-medium">
-                You're viewing the private development preview, so these QR codes point to a Replit URL that asks visitors to log in or install the Replit app. Open your <span className="font-black">published site</span> (your <span className="font-mono">.replit.app</span> address or custom domain) and generate the QR codes from there — then they'll scan publicly with no app or login.
+                You're viewing the private development preview, so these QR codes point to a Replit URL that asks visitors to log in or install the Replit app. Paste your <span className="font-black">published site URL</span> in the box above (or open the published <span className="font-mono">.replit.app</span> site and generate them there) — then they'll scan publicly with no app or login.
               </p>
             </div>
           </div>
@@ -232,7 +309,7 @@ export default function AdminStamps() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {list.map((b) => (
-                <LocationCard key={b.id} business={b} copied={copied} onCopy={copy} />
+                <LocationCard key={b.id} business={b} copied={copied} onCopy={copy} publishedOrigin={publishedOrigin} />
               ))}
             </div>
           </section>
@@ -258,7 +335,7 @@ export default function AdminStamps() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {eventBusinesses.map((b) => (
-                  <LocationCard key={b.id} business={b} copied={copied} onCopy={copy} />
+                  <LocationCard key={b.id} business={b} copied={copied} onCopy={copy} publishedOrigin={publishedOrigin} />
                 ))}
               </div>
             </div>
