@@ -232,7 +232,12 @@
     "results_count_one": "{{count}}개 명소",
     "results_count_other": "{{count}}개 명소",
     "routes_cta_title": "엄선한 루트",
-    "routes_cta_subtitle": "바로 떠나는 {{n}}개 코스, 정류장까지 지도에"
+    "routes_cta_subtitle": "바로 떠나는 {{n}}개 코스, 정류장까지 지도에",
+    "routes_select_placeholder": "지도에 표시할 루트 선택…",
+    "routes_select_label": "엄선한 루트 선택",
+    "routes_view_all": "전체 루트",
+    "routes_clear": "지우기",
+    "route_details": "상세"
   },
   "events_page": {
     "kicker": "★ 추천 이벤트",

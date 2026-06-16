@@ -232,7 +232,12 @@
     "results_count_one": "{{count}} Spot",
     "results_count_other": "{{count}} Spots",
     "routes_cta_title": "Kuratierte Routen",
-    "routes_cta_subtitle": "{{n}} fertige Tage, Stopp für Stopp"
+    "routes_cta_subtitle": "{{n}} fertige Tage, Stopp für Stopp",
+    "routes_select_placeholder": "Route zum Einzeichnen wählen…",
+    "routes_select_label": "Kuratierte Route wählen",
+    "routes_view_all": "Alle Routen",
+    "routes_clear": "Löschen",
+    "route_details": "Details"
   },
   "events_page": {
     "kicker": "★ Highlight-Veranstaltungen",

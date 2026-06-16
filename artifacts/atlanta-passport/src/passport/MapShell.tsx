@@ -151,7 +151,11 @@ export default function MapShell() {
   // must always resolve against the full dataset — otherwise carried-over
   // Explore filters would silently drop the clicked spot).
   const mapBusinesses = useMemo(() => {
-    if (view === "routes") return selectedRoute ? routeBusinesses : businesses;
+    // A picked route (from the Routes tab OR the Explore dropdown) takes over the
+    // map: show only its stops, in order.
+    if (selectedRoute && (view === "routes" || view === "explore"))
+      return routeBusinesses;
+    if (view === "routes") return businesses;
     if (view === "explore" || view === "events") return filteredBusinesses;
     return businesses;
   }, [view, selectedRoute, routeBusinesses, filteredBusinesses]);
@@ -167,7 +171,8 @@ export default function MapShell() {
   }, [mapBusinesses, selectedBizId]);
 
   const routePath = useMemo(() => {
-    if (view !== "routes" || !resolvedSelectedRoute) return undefined;
+    if (!resolvedSelectedRoute || (view !== "routes" && view !== "explore"))
+      return undefined;
     const { startAnchor, stops } = resolvedSelectedRoute;
     if (stops.length === 0) return undefined;
     // Begin the drawn line at the chosen start (MARTA station or parking lot)
@@ -188,7 +193,8 @@ export default function MapShell() {
   // When a route is selected, light up only the neighborhoods its stops pass
   // through (and dim the rest) so the colored areas frame the walk.
   const routeNeighborhoods = useMemo(() => {
-    if (view !== "routes" || !resolvedSelectedRoute) return [];
+    if (!resolvedSelectedRoute || (view !== "routes" && view !== "explore"))
+      return [];
     return Array.from(
       new Set(resolvedSelectedRoute.stops.map((b) => b.neighborhood)),
     );
@@ -229,10 +235,10 @@ export default function MapShell() {
                 routePath={routePath}
                 routeTravelMode={routeTravelMode}
                 highlightNeighborhoods={
-                  view === "explore"
-                    ? activeNeighborhoods
-                    : view === "routes"
-                      ? routeNeighborhoods
+                  selectedRoute && (view === "routes" || view === "explore")
+                    ? routeNeighborhoods
+                    : view === "explore"
+                      ? activeNeighborhoods
                       : []
                 }
               />
@@ -277,6 +283,12 @@ export default function MapShell() {
           onlyOffers={onlyOffers}
           setOnlyOffers={setOnlyOffers}
           onSelectBusiness={setSelectedBizId}
+          selectedRouteId={selectedRouteId}
+          onSelectRoute={(id) => {
+            setSelectedRouteId(id);
+            setSelectedBizId(undefined);
+          }}
+          selectedRouteResolved={resolvedSelectedRoute}
         />
       )}
 

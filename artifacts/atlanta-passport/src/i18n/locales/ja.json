@@ -232,7 +232,12 @@
     "results_count_one": "{{count}} スポット",
     "results_count_other": "{{count}} スポット",
     "routes_cta_title": "厳選ルート",
-    "routes_cta_subtitle": "すぐに使える{{n}}日分、立ち寄り先まで地図に"
+    "routes_cta_subtitle": "すぐに使える{{n}}日分、立ち寄り先まで地図に",
+    "routes_select_placeholder": "なぞるルートを選択…",
+    "routes_select_label": "厳選ルートを選ぶ",
+    "routes_view_all": "すべてのルート",
+    "routes_clear": "クリア",
+    "route_details": "詳細"
   },
   "events_page": {
     "kicker": "★ 注目のイベント",

@@ -1,9 +1,9 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, categories, neighborhoods, isDarkColor, categoryColor, businessCategories, mapRoutes } from "@/data/sample-data";
+import { businesses, categories, neighborhoods, isDarkColor, categoryColor, businessCategories, mapRoutes, type ResolvedRoute } from "@/data/sample-data";
 import BusinessImage from "@/components/BusinessImage";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, X, ChevronDown, Ticket, Map as MapIcon, ArrowRight } from "lucide-react";
+import { MapPin, Search, X, ChevronDown, Ticket, Map as MapIcon, ArrowRight, Clock } from "lucide-react";
 import SoccerBall from "@/components/SoccerBall";
 import CategoryBadge from "@/components/CategoryBadge";
 import { motion } from "framer-motion";
@@ -36,6 +36,9 @@ type ExploreContentProps = {
   onlyOffers: boolean;
   setOnlyOffers: (value: boolean) => void;
   onSelectBusiness: (id: string) => void;
+  selectedRouteId?: string;
+  onSelectRoute: (id?: string) => void;
+  selectedRouteResolved?: ResolvedRoute | null;
 };
 
 export default function ExploreContent({
@@ -51,8 +54,15 @@ export default function ExploreContent({
   onlyOffers,
   setOnlyOffers,
   onSelectBusiness,
+  selectedRouteId,
+  onSelectRoute,
+  selectedRouteResolved,
 }: ExploreContentProps) {
   const { t } = useTranslation();
+
+  const selectedRoute = selectedRouteId
+    ? mapRoutes.find((r) => r.id === selectedRouteId)
+    : undefined;
 
   const chipBase = "px-2.5 py-1 rounded-md text-[11px] font-display tracking-wider uppercase border-2 border-foreground transition-all whitespace-nowrap";
   const chipIdle = "bg-background text-foreground hover:-translate-y-0.5 hover:shadow-pop-sm";
@@ -82,27 +92,76 @@ export default function ExploreContent({
       {/* Scrollable area — filters scroll together with the results */}
       <div className="flex-1 min-h-0 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">
-        {/* Curated routes entry point — jump to the ready-made walking/bike days */}
-        <Link
-          href="/passport/routes"
-          className="group mb-4 flex items-center gap-3 card-pop bg-brand-navy text-brand-cream p-3 hover:-translate-y-0.5 transition-transform"
-        >
-          <span className="shrink-0 w-10 h-10 rounded-full bg-brand-lime text-foreground border-2 border-foreground flex items-center justify-center">
-            <MapIcon className="w-5 h-5" />
-          </span>
-          <span className="flex-1 min-w-0">
-            <span className="block font-display text-sm tracking-wider uppercase">
+        {/* Curated routes picker — pick a route to trace it on the map above */}
+        <div className="mb-4 card-pop bg-brand-navy text-brand-cream p-3">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span className="inline-flex items-center gap-2 font-display text-sm tracking-wider uppercase">
+              <MapIcon className="w-4 h-4 text-brand-lime" />
               {t("explore_page.routes_cta_title", { defaultValue: "Curated Routes" })}
             </span>
-            <span className="block text-xs text-brand-cream/80">
-              {t("explore_page.routes_cta_subtitle", {
-                n: mapRoutes.length,
-                defaultValue: "{{n}} ready-made days, mapped stop by stop",
+            <Link
+              href="/passport/routes"
+              className="inline-flex items-center gap-1 text-[10px] font-display tracking-wider uppercase text-brand-cream/70 hover:text-brand-cream"
+            >
+              {t("explore_page.routes_view_all", { defaultValue: "All routes" })}
+              <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+            </Link>
+          </div>
+
+          <div className="relative">
+            <select
+              value={selectedRouteId ?? ""}
+              onChange={(e) => onSelectRoute(e.target.value || undefined)}
+              aria-label={t("explore_page.routes_select_label", {
+                defaultValue: "Choose a curated route",
               })}
-            </span>
-          </span>
-          <ArrowRight className="w-5 h-5 shrink-0 rtl:rotate-180 ltr:group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
-        </Link>
+              className="w-full appearance-none rounded-md border-2 border-foreground bg-white py-2.5 ltr:pl-3 ltr:pr-9 rtl:pr-3 rtl:pl-9 font-display text-xs tracking-wider uppercase text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red cursor-pointer"
+            >
+              <option value="">
+                {t("explore_page.routes_select_placeholder", {
+                  defaultValue: "Choose a route to trace…",
+                })}
+              </option>
+              {mapRoutes.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute ltr:right-3 rtl:left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/50" />
+          </div>
+
+          {selectedRoute && selectedRouteResolved && (
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-black uppercase tracking-wider text-brand-cream/90">
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="w-3 h-3 text-brand-lime" />
+                {t("home.journey.stops_count", { count: selectedRouteResolved.stopCount })}
+              </span>
+              <span>{selectedRouteResolved.miles}</span>
+              <span className="inline-flex items-center gap-1">
+                <Clock className="w-3 h-3 text-brand-lime" />
+                {selectedRouteResolved.duration}
+              </span>
+              <div className="ltr:ml-auto rtl:mr-auto flex items-center gap-2">
+                <Link
+                  href={`/routes/${selectedRoute.id}`}
+                  className="inline-flex items-center gap-1 rounded-md border-2 border-brand-cream/50 px-2 py-1 text-[10px] text-brand-cream hover:bg-brand-cream/15"
+                >
+                  {t("explore_page.route_details", { defaultValue: "Details" })}
+                  <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => onSelectRoute(undefined)}
+                  className="inline-flex items-center gap-1 rounded-md border-2 border-foreground bg-brand-red px-2 py-1 text-[10px] text-white hover:-translate-y-0.5 transition-transform"
+                >
+                  <X className="w-3 h-3" />
+                  {t("explore_page.routes_clear", { defaultValue: "Clear" })}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Compact filter panel */}
         <div className="space-y-2.5 mb-4 pb-3 border-b-2 border-foreground/10">

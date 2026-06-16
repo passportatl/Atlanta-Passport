@@ -232,7 +232,12 @@
     "results_count_one": "{{count}} posto",
     "results_count_other": "{{count}} posti",
     "routes_cta_title": "Percorsi selezionati",
-    "routes_cta_subtitle": "{{n}} giornate pronte, tappa per tappa"
+    "routes_cta_subtitle": "{{n}} giornate pronte, tappa per tappa",
+    "routes_select_placeholder": "Scegli un percorso da tracciare…",
+    "routes_select_label": "Scegli un percorso selezionato",
+    "routes_view_all": "Tutti i percorsi",
+    "routes_clear": "Cancella",
+    "route_details": "Dettagli"
   },
   "events_page": {
     "kicker": "★ Eventi in Primo Piano",

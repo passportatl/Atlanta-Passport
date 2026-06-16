@@ -145,7 +145,12 @@
     "results_count_one": "{{count}} مكان",
     "results_count_other": "{{count}} أماكن",
     "routes_cta_title": "مسارات مختارة",
-    "routes_cta_subtitle": "{{n}} أيام جاهزة، محطة بمحطة على الخريطة"
+    "routes_cta_subtitle": "{{n}} أيام جاهزة، محطة بمحطة على الخريطة",
+    "routes_select_placeholder": "اختر مسارًا لعرضه…",
+    "routes_select_label": "اختر مسارًا مختارًا",
+    "routes_view_all": "كل المسارات",
+    "routes_clear": "مسح",
+    "route_details": "التفاصيل"
   },
   "events_page": {
     "kicker": "★ الفعاليات المميزة",

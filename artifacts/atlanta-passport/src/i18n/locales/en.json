@@ -232,7 +232,12 @@
     "results_count_one": "{{count}} spot",
     "results_count_other": "{{count}} spots",
     "routes_cta_title": "Curated Routes",
-    "routes_cta_subtitle": "{{n}} ready-made days, mapped stop by stop"
+    "routes_cta_subtitle": "{{n}} ready-made days, mapped stop by stop",
+    "routes_select_placeholder": "Choose a route to trace…",
+    "routes_select_label": "Choose a curated route",
+    "routes_view_all": "All routes",
+    "routes_clear": "Clear",
+    "route_details": "Details"
   },
   "events_page": {
     "kicker": "★ Featured Events",

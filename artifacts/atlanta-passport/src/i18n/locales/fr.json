@@ -232,7 +232,12 @@
     "results_count_one": "{{count}} adresse",
     "results_count_other": "{{count}} adresses",
     "routes_cta_title": "Itinéraires sélectionnés",
-    "routes_cta_subtitle": "{{n}} journées prêtes, étape par étape"
+    "routes_cta_subtitle": "{{n}} journées prêtes, étape par étape",
+    "routes_select_placeholder": "Choisissez un itinéraire à tracer…",
+    "routes_select_label": "Choisir un itinéraire sélectionné",
+    "routes_view_all": "Tous les itinéraires",
+    "routes_clear": "Effacer",
+    "route_details": "Détails"
   },
   "events_page": {
     "kicker": "★ Événements à la Une",

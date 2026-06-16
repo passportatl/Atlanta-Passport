@@ -232,7 +232,12 @@
     "results_count_one": "{{count}} lugar",
     "results_count_other": "{{count}} lugares",
     "routes_cta_title": "Rutas seleccionadas",
-    "routes_cta_subtitle": "{{n}} días listos, parada por parada"
+    "routes_cta_subtitle": "{{n}} días listos, parada por parada",
+    "routes_select_placeholder": "Elige una ruta para trazar…",
+    "routes_select_label": "Elige una ruta seleccionada",
+    "routes_view_all": "Todas las rutas",
+    "routes_clear": "Borrar",
+    "route_details": "Detalles"
   },
   "events_page": {
     "kicker": "★ Eventos Destacados",
