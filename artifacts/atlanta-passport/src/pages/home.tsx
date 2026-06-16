@@ -167,6 +167,23 @@ function JourneySection() {
           <Sticker color="red" rotate="left" className="mb-6">{t("home.journey.kicker")}</Sticker>
           <h2 className="font-serif font-black text-5xl md:text-7xl text-brand-cream mb-4">{t("home.journey.title")}</h2>
           <p className="text-xl md:text-3xl text-brand-cream/80 font-medium">{t("home.journey.subtitle")}</p>
+
+          <div className="mt-6">
+            <span className="block font-display text-[10px] tracking-[0.16em] uppercase text-brand-cream/60 mb-2">
+              {t("home.journey.routes_label")}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {mapRoutes.map((route) => (
+                <Link
+                  key={route.id}
+                  href="/passport/routes"
+                  className="inline-flex items-center gap-1.5 rounded-full border-2 border-brand-cream/40 bg-brand-cream/10 px-3 py-1.5 font-display text-[11px] tracking-wider uppercase text-brand-cream transition-colors hover:border-brand-cream hover:bg-brand-cream/20"
+                >
+                  <MapPin className="w-3 h-3 text-brand-lime shrink-0" /> {route.name}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

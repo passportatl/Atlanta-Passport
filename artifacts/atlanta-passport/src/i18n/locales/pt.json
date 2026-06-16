@@ -58,7 +58,8 @@
       "cta": "para explorar a verdadeira Atlanta",
       "stops_count_one": "{{count}} parada",
       "stops_count_other": "{{count}} paradas",
-      "cta_lead": "Cadastre-se para o seu Passport grátis"
+      "cta_lead": "Cadastre-se para o seu Passport grátis",
+      "routes_label": "Rotas selecionadas"
     },
     "business_cta": {
       "kicker": "Para Negócios em Atlanta",
@@ -229,7 +230,9 @@
     "no_results_subtitle": "Tente limpar um filtro — tem muito mais para descobrir.",
     "clear_filters": "Limpar filtros",
     "results_count_one": "{{count}} lugar",
-    "results_count_other": "{{count}} lugares"
+    "results_count_other": "{{count}} lugares",
+    "routes_cta_title": "Rotas selecionadas",
+    "routes_cta_subtitle": "{{n}} dias prontos, parada por parada"
   },
   "events_page": {
     "kicker": "★ Eventos em Destaque",

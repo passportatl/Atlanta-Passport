@@ -58,7 +58,8 @@
       "cta": "本当のAtlantaを探索",
       "stops_count_one": "{{count}}スポット",
       "stops_count_other": "{{count}}スポット",
-      "cta_lead": "無料のパスポートに登録"
+      "cta_lead": "無料のパスポートに登録",
+      "routes_label": "厳選ルート"
     },
     "business_cta": {
       "kicker": "Atlanta のビジネスオーナーへ",
@@ -229,7 +230,9 @@
     "no_results_subtitle": "フィルターを外してみてください — まだまだたくさんのスポットがあります。",
     "clear_filters": "フィルターをクリア",
     "results_count_one": "{{count}} スポット",
-    "results_count_other": "{{count}} スポット"
+    "results_count_other": "{{count}} スポット",
+    "routes_cta_title": "厳選ルート",
+    "routes_cta_subtitle": "すぐに使える{{n}}日分、立ち寄り先まで地図に"
   },
   "events_page": {
     "kicker": "★ 注目のイベント",

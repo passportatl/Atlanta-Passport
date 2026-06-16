@@ -58,7 +58,8 @@
       "cta": "to explore the real Atlanta",
       "stops_count_one": "{{count}} stop",
       "stops_count_other": "{{count}} stops",
-      "cta_lead": "Sign up for your free Passport"
+      "cta_lead": "Sign up for your free Passport",
+      "routes_label": "Curated routes"
     },
     "events_showcase": {
       "kicker": "What's On Tonight",
@@ -229,7 +230,9 @@
     "no_results_subtitle": "Try clearing a filter — there's plenty more to find.",
     "clear_filters": "Clear filters",
     "results_count_one": "{{count}} spot",
-    "results_count_other": "{{count}} spots"
+    "results_count_other": "{{count}} spots",
+    "routes_cta_title": "Curated Routes",
+    "routes_cta_subtitle": "{{n}} ready-made days, mapped stop by stop"
   },
   "events_page": {
     "kicker": "★ Featured Events",

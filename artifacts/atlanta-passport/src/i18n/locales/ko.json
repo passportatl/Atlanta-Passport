@@ -58,7 +58,8 @@
       "cta": "진짜 Atlanta 탐험하기",
       "stops_count_one": "{{count}}개 스팟",
       "stops_count_other": "{{count}}개 스팟",
-      "cta_lead": "무료 Passport에 가입하세요"
+      "cta_lead": "무료 Passport에 가입하세요",
+      "routes_label": "엄선한 루트"
     },
     "business_cta": {
       "kicker": "Atlanta 사업자분들께",
@@ -229,7 +230,9 @@
     "no_results_subtitle": "필터를 초기화해 보세요 — 아직 찾을 게 많이 있답니다.",
     "clear_filters": "필터 초기화",
     "results_count_one": "{{count}}개 명소",
-    "results_count_other": "{{count}}개 명소"
+    "results_count_other": "{{count}}개 명소",
+    "routes_cta_title": "엄선한 루트",
+    "routes_cta_subtitle": "바로 떠나는 {{n}}개 코스, 정류장까지 지도에"
   },
   "events_page": {
     "kicker": "★ 추천 이벤트",

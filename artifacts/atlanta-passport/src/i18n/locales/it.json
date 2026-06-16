@@ -58,7 +58,8 @@
       "cta": "per esplorare la vera Atlanta",
       "stops_count_one": "{{count}} tappa",
       "stops_count_other": "{{count}} tappe",
-      "cta_lead": "Registrati per il tuo Passport gratuito"
+      "cta_lead": "Registrati per il tuo Passport gratuito",
+      "routes_label": "Percorsi selezionati"
     },
     "business_cta": {
       "kicker": "Per le Attività di Atlanta",
@@ -229,7 +230,9 @@
     "no_results_subtitle": "Prova a rimuovere un filtro — c'è ancora tanto da scoprire.",
     "clear_filters": "Rimuovi filtri",
     "results_count_one": "{{count}} posto",
-    "results_count_other": "{{count}} posti"
+    "results_count_other": "{{count}} posti",
+    "routes_cta_title": "Percorsi selezionati",
+    "routes_cta_subtitle": "{{n}} giornate pronte, tappa per tappa"
   },
   "events_page": {
     "kicker": "★ Eventi in Primo Piano",

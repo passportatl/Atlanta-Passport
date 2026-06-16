@@ -143,7 +143,9 @@
     "no_results_subtitle": "جرّب إزالة فلتر — هناك الكثير لتكتشفه.",
     "clear_filters": "مسح الفلاتر",
     "results_count_one": "{{count}} مكان",
-    "results_count_other": "{{count}} أماكن"
+    "results_count_other": "{{count}} أماكن",
+    "routes_cta_title": "مسارات مختارة",
+    "routes_cta_subtitle": "{{n}} أيام جاهزة، محطة بمحطة على الخريطة"
   },
   "events_page": {
     "kicker": "★ الفعاليات المميزة",
@@ -364,7 +366,8 @@
       "cta": "لاستكشاف Atlanta الحقيقية",
       "stops_count_one": "محطة واحدة",
       "stops_count_other": "{{count}} محطات",
-      "cta_lead": "سجّل للحصول على جوازك المجاني"
+      "cta_lead": "سجّل للحصول على جوازك المجاني",
+      "routes_label": "مسارات مختارة"
     },
     "business_cta": {
       "kicker": "لأصحاب الأعمال في Atlanta",
