@@ -69,6 +69,9 @@ const COLOR_MAP: Record<string, Palette> = {
 interface Props {
   neighborhood: string;
   iconName?: string;
+  // Optional sheet-recovered Stamp Icon image. When present (and not locked) it
+  // replaces the generic lucide icon in the stamp center.
+  iconUrl?: string;
   color?: string;
   size?: number;
   locked?: boolean;
@@ -80,6 +83,7 @@ interface Props {
 export function StampGraphic({
   neighborhood,
   iconName = "coffee",
+  iconUrl,
   color = "yellow",
   size = 168,
   locked = false,
@@ -135,6 +139,13 @@ export function StampGraphic({
       <div className="relative flex flex-col items-center justify-center" style={{ color: palette.ink }}>
         {locked ? (
           <Lock className="w-9 h-9" strokeWidth={2.5} />
+        ) : iconUrl ? (
+          <img
+            src={iconUrl}
+            alt=""
+            className="w-11 h-11 object-contain"
+            draggable={false}
+          />
         ) : (
           <Icon className="w-9 h-9" strokeWidth={2.5} />
         )}

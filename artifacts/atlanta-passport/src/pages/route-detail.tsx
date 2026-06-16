@@ -88,6 +88,14 @@ export default function RouteDetail() {
   const resolved = resolveRoute(route, start, time);
   const PaceIcon = resolved.pace === "Bike Friendly" ? Bike : Footprints;
   const heroTint = heroTints[route.color] ?? heroTints.navy;
+  // Per-stop "Route Info" turn-by-turn notes from the sheet, keyed by business
+  // id. Cast to a plain string map so we can index by any stop id.
+  const stopNotes = ("stopNotes" in route ? route.stopNotes : {}) as Record<
+    string,
+    string
+  >;
+  const routeDescription =
+    "description" in route ? (route.description as string) : "";
 
   const idx = mapRoutes.findIndex((r) => r.id === route.id);
   const prev = idx > 0 ? mapRoutes[idx - 1] : null;
@@ -129,9 +137,17 @@ export default function RouteDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8 md:gap-12">
           <div>
             <div className="section-kicker mb-4">★ About this Route</div>
-            <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-10">
+            <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-6">
               {route.vibe}
             </p>
+            {routeDescription && (
+              <div className="card-pop bg-brand-cream p-4 mb-10 flex gap-2.5 items-start">
+                <Navigation className="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-red" />
+                <p className="text-sm leading-snug text-foreground/80">
+                  {routeDescription}
+                </p>
+              </div>
+            )}
 
             <div className="section-kicker mb-4">★ The Walk</div>
             <ol className="space-y-2.5">
@@ -194,6 +210,12 @@ export default function RouteDetail() {
                             {b.description}
                           </p>
                         )}
+                      {stopNotes[b.id] && (
+                        <p className="mt-1.5 flex gap-1.5 text-[12px] leading-snug text-foreground/70 font-medium">
+                          <Navigation className="w-3.5 h-3.5 flex-shrink-0 mt-[1px] text-brand-red" />
+                          <span>{stopNotes[b.id]}</span>
+                        </p>
+                      )}
                       <div className="mt-1.5 flex flex-wrap gap-1.5">
                         {businessCategories(b).map((cat) => (
                           <CategoryBadge key={cat} category={cat} />

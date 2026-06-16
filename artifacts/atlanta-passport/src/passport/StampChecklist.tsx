@@ -11,6 +11,7 @@ import {
 import { useVisitor } from "@/passport/visitor-context";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { STAMP_SLUG } from "@/passport/data";
+import { STAMP_IMAGE_BY_ID } from "@/data/sample-data";
 
 // A stamp the visitor can collect at this event/location. `spot` targets are
 // sample-data businesses (resolved to their seeded slug via STAMP_SLUG); `event`
@@ -27,6 +28,7 @@ function StampRow({
   detailHref,
   stamp,
   iconName,
+  iconUrl,
   color,
 }: {
   name: string;
@@ -35,6 +37,7 @@ function StampRow({
   detailHref?: string;
   stamp?: Stamp;
   iconName: string;
+  iconUrl?: string;
   color: string;
 }) {
   return (
@@ -65,6 +68,7 @@ function StampRow({
           <StampGraphic
             neighborhood={stamp.neighborhood}
             iconName={iconName}
+            iconUrl={iconUrl}
             color={color}
             collectedAt={stamp.collectedAt as unknown as string}
             size={74}
@@ -132,6 +136,10 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
           detailHref: target.detailHref,
           stamp: slug ? stampBySlug.get(slug) : undefined,
           iconName: api?.icon ?? (target.kind === "event" ? "star" : "coffee"),
+          iconUrl:
+            target.kind === "spot"
+              ? STAMP_IMAGE_BY_ID[target.sampleId]
+              : undefined,
           color: api?.stampColor ?? (target.kind === "event" ? "orange" : "yellow"),
         };
       }),
@@ -164,6 +172,7 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
             detailHref={r.detailHref}
             stamp={r.stamp}
             iconName={r.iconName}
+            iconUrl={r.iconUrl}
             color={r.color}
           />
         ))}

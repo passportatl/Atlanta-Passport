@@ -14,6 +14,7 @@ import {
   businesses as exploreBusinesses,
   events as sampleEvents,
   businessCategories,
+  STAMP_IMAGE_BY_ID,
 } from "@/data/sample-data";
 import { STAMP_SLUG } from "@/passport/data";
 
@@ -44,6 +45,7 @@ function StampListItem({
   detail,
   stamp,
   iconName,
+  iconUrl,
   color,
   onSelect,
   detailHref,
@@ -53,6 +55,7 @@ function StampListItem({
   detail?: string;
   stamp?: Stamp;
   iconName: string;
+  iconUrl?: string;
   color: string;
   onSelect?: () => void;
   detailHref?: string;
@@ -107,6 +110,7 @@ function StampListItem({
           <StampGraphic
             neighborhood={stamp.neighborhood}
             iconName={iconName}
+            iconUrl={iconUrl}
             color={color}
             collectedAt={stamp.collectedAt as unknown as string}
             size={74}
@@ -251,6 +255,7 @@ export default function PassportStamps({
               detail={biz.offer}
               stamp={stamp}
               iconName={api?.icon ?? "coffee"}
+              iconUrl={STAMP_IMAGE_BY_ID[biz.id]}
               color={api?.stampColor ?? "yellow"}
               onSelect={
                 onSelectBusiness ? () => onSelectBusiness(biz.id) : undefined

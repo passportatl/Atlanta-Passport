@@ -390,5 +390,12 @@
     "back_home": "Zurück zur Startseite",
     "view_all": "Alle ansehen",
     "learn_more": "Mehr erfahren"
+  },
+  "prizes": {
+    "kicker": "Sammeln & Gewinnen",
+    "title": "Über die Preise",
+    "description": "Die Preise werden nach dem Prinzip der Reihenfolge des Eingangs vergeben. Von den meisten haben wir genug auf Lager, aber einige, wie die Geschenkkarten und Erlebnisse, sind begrenzt!",
+    "stamps": "{{count}} Stempel",
+    "choose": "Wähle eines:"
   }
 }

@@ -13,6 +13,7 @@ import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
 import Sticker from "@/components/Sticker";
 import { REWARDS, NEIGHBORHOOD_BY_NAME } from "@/passport/data";
+import { STAMP_IMAGE_BY_SLUG } from "@/data/sample-data";
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
@@ -128,6 +129,7 @@ export default function PassportHome() {
                   <StampGraphic
                     neighborhood={def?.short ?? s.neighborhood}
                     iconName={biz?.icon ?? def?.stampIcon ?? "coffee"}
+                    iconUrl={STAMP_IMAGE_BY_SLUG[s.businessSlug]}
                     color={biz?.stampColor ?? def?.stampColor ?? "yellow"}
                     collectedAt={s.collectedAt as unknown as string}
                     size={100}

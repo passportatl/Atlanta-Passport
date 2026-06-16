@@ -390,5 +390,12 @@
     "back_home": "Torna alla home",
     "view_all": "Vedi tutti",
     "learn_more": "Scopri di più"
+  },
+  "prizes": {
+    "kicker": "Colleziona e Vinci",
+    "title": "Informazioni sui premi",
+    "description": "I premi vengono assegnati in ordine di arrivo. Abbiamo buone scorte della maggior parte, ma alcuni, come le carte regalo e le esperienze, sono limitati!",
+    "stamps": "{{count}} Timbri",
+    "choose": "Scegline uno:"
   }
 }

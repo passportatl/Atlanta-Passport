@@ -12,6 +12,7 @@ import { useUser } from "@clerk/react";
 import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
 import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
+import { STAMP_IMAGE_BY_SLUG } from "@/data/sample-data";
 import { CheckCircle2, MapPin } from "lucide-react";
 
 export default function StampPage() {
@@ -199,6 +200,7 @@ export default function StampPage() {
           <StampGraphic
             neighborhood={business.neighborhood}
             iconName={business.icon}
+            iconUrl={STAMP_IMAGE_BY_SLUG[business.slug]}
             color={business.stampColor}
             collectedAt={result.stamp.collectedAt as unknown as string}
             size={220}

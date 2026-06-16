@@ -390,5 +390,12 @@
     "back_home": "Retour à l'accueil",
     "view_all": "Tout voir",
     "learn_more": "En savoir plus"
+  },
+  "prizes": {
+    "kicker": "Collectionne & Gagne",
+    "title": "À propos des prix",
+    "description": "Les prix sont attribués selon le principe du premier arrivé, premier servi. Nous avons un bon stock pour la plupart, mais certains, comme les cartes-cadeaux et les expériences, sont limités !",
+    "stamps": "{{count}} Tampons",
+    "choose": "Choisissez-en un :"
   }
 }

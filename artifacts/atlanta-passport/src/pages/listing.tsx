@@ -16,6 +16,10 @@ export default function Listing() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const business = businesses.find(b => b.id === id);
+  // Logo only exists on a subset of sponsored businesses, so read it off the
+  // heterogeneous union safely.
+  const logo =
+    business && "logo" in business ? (business.logo as string) : undefined;
 
   if (!business) {
     return (
@@ -71,6 +75,18 @@ export default function Listing() {
           className="w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+
+        {/* Brand logo chip (sponsored businesses only) */}
+        {logo && (
+          <div className="absolute top-4 right-4 md:top-6 md:right-6 w-16 h-16 md:w-24 md:h-24 rounded-xl bg-white border-2 border-foreground shadow-pop-sm p-1.5 flex items-center justify-center">
+            <img
+              src={logo}
+              alt={`${business.name} logo`}
+              className="max-w-full max-h-full object-contain"
+              draggable={false}
+            />
+          </div>
+        )}
 
         {/* Hero Bottom Content (badges + desktop title) */}
         <div className="absolute bottom-6 md:bottom-8 left-6 md:left-12 lg:left-24 right-28 md:right-32 text-white">

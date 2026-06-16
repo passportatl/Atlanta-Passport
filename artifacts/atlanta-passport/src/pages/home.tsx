@@ -8,6 +8,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { mapRoutes, resolveRoute, events } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
+import PrizesSection from "@/components/PrizesSection";
 import PassportStamp from "@/components/PassportStamp";
 import { cn } from "@/lib/utils";
 
@@ -155,7 +156,7 @@ function PillarsSection() {
 function JourneySection() {
   const { t } = useTranslation();
 
-  const featuredRoutes = ["soccer-route", "wheelhaus-beltline-ride"]
+  const featuredRoutes = ["trap-music-museum-route", "wheelhaus-route"]
     .map((id) => mapRoutes.find((r) => r.id === id))
     .filter((r): r is (typeof mapRoutes)[number] => Boolean(r));
 
@@ -324,6 +325,7 @@ export default function Home() {
       <JourneySection />
       <EventsShowcase />
       <BusinessCtaSection />
+      <PrizesSection />
     </div>
   );
 }

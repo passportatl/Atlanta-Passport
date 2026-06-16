@@ -390,5 +390,12 @@
     "back_home": "Voltar ao início",
     "view_all": "Ver tudo",
     "learn_more": "Saiba mais"
+  },
+  "prizes": {
+    "kicker": "Colecione e Ganhe",
+    "title": "Sobre os prêmios",
+    "description": "Os prêmios são distribuídos por ordem de chegada. Temos bom estoque da maioria, mas alguns, como os vales-presente e as experiências, são limitados!",
+    "stamps": "{{count}} Selos",
+    "choose": "Escolha um:"
   }
 }

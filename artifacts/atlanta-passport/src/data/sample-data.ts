@@ -63,6 +63,36 @@ import morningsideNaturePreserveImg from "@/assets/images/morningside-nature-pre
 import ormeParkImg from "@/assets/images/orme-park.jpg";
 import enotaParkImg from "@/assets/images/enota-park.jpg";
 import arthurLangfordJrParkImg from "@/assets/images/arthur-langford-jr-park.jpg";
+// Sheet-recovered Featured Photos (override the curated `image`)
+import atlantuckyFeatured from "@/assets/images/sheet/atlantucky-brewing-featured.jpg";
+import peachtreeWellnessFeatured from "@/assets/images/sheet/peachtree-wellness-featured.jpg";
+import wheelhausFeatured from "@/assets/images/sheet/wheelhaus-bikes-featured.png";
+import westwoodFeatured from "@/assets/images/sheet/the-westwood-featured.jpg";
+import vickerysFeatured from "@/assets/images/sheet/vickerys-bar-grill-featured.jpg";
+import boxcarFeatured from "@/assets/images/sheet/boxcar-at-hop-city-featured.jpg";
+import hopCityFeatured from "@/assets/images/sheet/hop-city-at-krog-st-market-featured.jpg";
+import laSemillaFeatured from "@/assets/images/sheet/la-semilla-featured.jpg";
+import trapMuseumFeatured from "@/assets/images/sheet/trap-museum-featured.jpg";
+import nakatoFeatured from "@/assets/images/sheet/nakato-japanese-restaurant-featured.jpg";
+// Sheet-recovered Stamp Icons (rendered in the center of the passport stamp)
+import atlantuckyStamp from "@/assets/images/sheet/atlantucky-brewing-stamp.png";
+import peachtreeWellnessStamp from "@/assets/images/sheet/peachtree-wellness-stamp.png";
+import wheelhausStamp from "@/assets/images/sheet/wheelhaus-bikes-stamp.png";
+import westwoodStamp from "@/assets/images/sheet/the-westwood-stamp.png";
+import vickerysStamp from "@/assets/images/sheet/vickerys-bar-grill-stamp.png";
+import boxcarStamp from "@/assets/images/sheet/boxcar-at-hop-city-stamp.png";
+import hopCityStamp from "@/assets/images/sheet/hop-city-at-krog-st-market-stamp.png";
+import laSemillaStamp from "@/assets/images/sheet/la-semilla-stamp.png";
+import trapMuseumStamp from "@/assets/images/sheet/trap-museum-stamp.png";
+import nakatoStamp from "@/assets/images/sheet/nakato-japanese-restaurant-stamp.png";
+import varasanosStamp from "@/assets/images/sheet/varasanos-stamp.png";
+// Sheet-recovered Logos (shown on the listing page when present)
+import boxcarLogo from "@/assets/images/sheet/boxcar-at-hop-city-logo.jpg";
+import hopCityLogo from "@/assets/images/sheet/hop-city-at-krog-st-market-logo.jpg";
+import nakatoLogo from "@/assets/images/sheet/nakato-japanese-restaurant-logo.png";
+import trapMuseumLogo from "@/assets/images/sheet/trap-museum-logo.jpg";
+import vickerysLogo from "@/assets/images/sheet/vickerys-bar-grill-logo.jpg";
+import { STAMP_SLUG } from "@/passport/data";
 import { BUSINESS_SHEET_DATA } from "./business-sheet-data";
 
 const businessesRaw = [
@@ -80,7 +110,8 @@ const businessesRaw = [
     lng: -84.4016,
     website: "https://atlantucky.com",
     hours: "Wed-Fri: 3pm - 11pm · Sat: 4pm - 11:30pm (subject to change for FIFA)",
-    image: atlantuckyImg,
+    image: atlantuckyFeatured,
+    stampImage: atlantuckyStamp,
     featured: true,
     sponsorTier: "Founding Sponsor",
     about: "Great food, local beer, dope art, and chill vibes. Owned by Nappy Roots, a hip-hop group that's always stayed true to its roots. Not just about good beer, rather, beer that tells a story, brings people together, and honors where they came from. Passion, music, and CULTURE. Located blocks away from Mercedes Benz Stadium. Frequently hosts events and pop-ups!",
@@ -136,7 +167,8 @@ const businessesRaw = [
     lat: 33.7469,
     lng: -84.358,
     hours: "Mon-Sun: 11am - 8pm",
-    image: peachtreeWellnessImg,
+    image: peachtreeWellnessFeatured,
+    stampImage: peachtreeWellnessStamp,
     website: "https://peachtreewellnessatl.com",
     featured: true,
     sponsorTier: "Founding Sponsor",
@@ -154,7 +186,8 @@ const businessesRaw = [
     lat: 33.737,
     lng: -84.3389,
     hours: "Mon-Sun: 9am - 7pm",
-    image: wheelhausImg,
+    image: wheelhausFeatured,
+    stampImage: wheelhausStamp,
     website: "https://wheelhausbikes.com",
     featured: true,
     sponsorTier: "Founding Sponsor",
@@ -175,7 +208,8 @@ const businessesRaw = [
     lng: -84.4257,
     website: "https://www.thewestwoodatl.com",
     hours: "Sun-Thurs: 12pm - 12am · Fri-Sat: 12pm - 2am",
-    image: theWestwoodImg,
+    image: westwoodFeatured,
+    stampImage: westwoodStamp,
     featured: true,
     sponsorTier: "Founding Sponsor",
     about:
@@ -245,7 +279,9 @@ const businessesRaw = [
     website: "https://vickerysatlanta.com",
     hours:
       "Dining Room: Mon 5pm–11pm · Tue–Fri 11:30am–11pm · Sat–Sun 11am–11pm. Bar: Sun–Tue until midnight · Wed–Sat until 2am.",
-    image: vickerysImg,
+    image: vickerysFeatured,
+    stampImage: vickerysStamp,
+    logo: vickerysLogo,
     featured: true,
     sponsorTier: "Founding Sponsor",
     about:
@@ -280,7 +316,9 @@ const businessesRaw = [
   {
     id: "boxcar-at-hop-city",
     name: "BoxCar at Hop City",
-    image: boxcarHopCityImg,
+    image: boxcarFeatured,
+    stampImage: boxcarStamp,
+    logo: boxcarLogo,
     category: "Retail",
     categories: ["Retail","Drink","Food"],
     neighborhood: "West End",
@@ -301,7 +339,9 @@ const businessesRaw = [
   {
     id: "hop-city-at-krog-st-market",
     name: "Hop City at Krog St Market",
-    image: hopCityKrogImg,
+    image: hopCityFeatured,
+    stampImage: hopCityStamp,
+    logo: hopCityLogo,
     category: "Retail",
     categories: ["Retail","Drink"],
     neighborhood: "Krog",
@@ -322,7 +362,8 @@ const businessesRaw = [
   {
     id: "la-semilla",
     name: "La Semilla",
-    image: laSemillaImg,
+    image: laSemillaFeatured,
+    stampImage: laSemillaStamp,
     category: "Food",
     categories: ["Food","Drink"],
     neighborhood: "Reynoldstown",
@@ -359,7 +400,9 @@ const businessesRaw = [
   {
     id: "trap-museum",
     name: "Trap Museum",
-    image: trapMuseumImg,
+    image: trapMuseumFeatured,
+    stampImage: trapMuseumStamp,
+    logo: trapMuseumLogo,
     category: "Experiences",
     categories: ["Experiences","Drink"],
     visitMinutes: 90,
@@ -381,6 +424,7 @@ const businessesRaw = [
   {
     id: "varasanos",
     image: varasanosImg,
+    stampImage: varasanosStamp,
     name: "Varasanos",
     category: "Food",
     categories: ["Food","Drink"],
@@ -402,7 +446,9 @@ const businessesRaw = [
   {
     id: "nakato-japanese-restaurant",
     name: "Nakato Japanese Restaurant",
-    image: nakatoImg,
+    image: nakatoFeatured,
+    stampImage: nakatoStamp,
+    logo: nakatoLogo,
     category: "Food",
     categories: ["Food","Drink"],
     neighborhood: "Piedmont Heights",
@@ -1057,12 +1103,52 @@ const businessesRaw = [
     lat: 33.82362,
     lng: -84.36925,
   },
+  {
+    id: "krog-street-tunnel",
+    image: tinyDoorAtl26Img,
+    name: "Krog Street Tunnel",
+    category: "Public Art",
+    categories: ["Public Art", "Landmarks"],
+    neighborhood: "Inman Park",
+    description: "Atlanta's ever-changing graffiti tunnel connecting Inman Park and Cabbagetown — and the site of Tiny Door #1.",
+    address: "Krog St NE, Atlanta, GA 30307",
+    lat: 33.7538,
+    lng: -84.36384,
+  },
+  {
+    id: "97-estoria",
+    image: tongueAndGrooveImg,
+    name: "97 Estoria",
+    category: "Drink",
+    categories: ["Drink", "Food"],
+    neighborhood: "Cabbagetown",
+    description: "A beloved Cabbagetown dive bar with a big patio, cold beer, and brick-oven pizza — a classic Beltline-adjacent hang.",
+    address: "727 Wylie St SE, Atlanta, GA 30316",
+    lat: 33.75199,
+    lng: -84.36346,
+  },
 ];
 
 export const businesses = businessesRaw.map((b) => {
   const override = BUSINESS_SHEET_DATA[b.id];
   return override ? { ...b, ...override } : b;
 });
+
+// Sheet-recovered Stamp Icon per business id (only sponsored spots have one).
+export const STAMP_IMAGE_BY_ID: Record<string, string> = {};
+for (const b of businessesRaw) {
+  if ("stampImage" in b && b.stampImage) {
+    STAMP_IMAGE_BY_ID[b.id] = b.stampImage;
+  }
+}
+
+// Same Stamp Icons keyed by the seeded backend stamp slug, so the API-driven
+// stamp pages (which only know the DB slug) can render the custom icon.
+export const STAMP_IMAGE_BY_SLUG: Record<string, string> = {};
+for (const [id, slug] of Object.entries(STAMP_SLUG)) {
+  const img = STAMP_IMAGE_BY_ID[id];
+  if (img) STAMP_IMAGE_BY_SLUG[slug] = img;
+}
 
 export const events = [
   {
@@ -1358,220 +1444,247 @@ export const beltlineStops = [
 // shared map. Keep businessIds in visiting order; the map draws the line in
 // that sequence.
 export const mapRoutes = [
-  // ── Trap Museum series ──────────────────────────────────────────────
-  // Three walkable day-routes anchored on the Trap Museum (closed Mon–Thu,
-  // opens afternoons), each curated from real listed spots nearby. Instead of
-  // a single fixed order, each route carries an ordered stop list PER TIME of
-  // day (byTime) so the stops AND their order shift with when you set out — the
-  // Museum is saved for the afternoon/evening on the morning walk and leads the
-  // night walk. Starting at "parking" reverses the order. resolveRoute() sizes
-  // each day to ~4–6 hours using per-stop visit times + walking legs.
+  // ── Sponsored routes (authoritative source: partner Google Sheet, ROUTES
+  // tab) ──────────────────────────────────────────────────────────────────
+  // Each route is a single curated, ordered itinerary built from real listed
+  // spots, anchored on a MARTA station. `byTime` keeps the same shape the rest
+  // of the app expects (morning/noon/night) but each is the SAME sheet order —
+  // these are fixed, hand-curated routes, not time-shuffled. `stopNotes` holds
+  // the per-stop "Route Info" turn-by-turn guidance from the sheet, keyed by
+  // business id; `description` carries the route-level start/transit note.
+  // resolveRoute() still sizes each day from per-stop visit times + legs, and
+  // BusinessMap draws the real street-following path between stops.
   {
-    id: "trap-music-pilgrimage",
-    name: "Trap Music Pilgrimage",
-    area: "Westside → Castleberry Hill",
-    pace: "Walkable",
-    color: "yellow",
-    vibe: "The hip-hop core: the Tiny Door, the Trap City mural, the Trap Museum itself, then Nappy Roots' Atlantucky brews to close the night.",
+    id: "nakato-route",
+    name: "Nakato Route",
+    area: "Midtown → Cheshire Bridge",
+    pace: "Bike Friendly",
+    color: "red",
+    vibe: "A Midtown-to-Cheshire-Bridge ride built around a legendary teppanyaki dinner at third-generation Nakato — with a pub, bowling, and live music along the way.",
+    description:
+      "This route is recommended for biking or driving. Start from the MARTA Midtown station and loop back to it when you're done.",
     starts: {
-      marta: { name: "Vine City Station", lat: 33.7565, lng: -84.4035 },
-      parking: { name: "Northside Dr Lot", lat: 33.7705, lng: -84.4075 },
+      marta: { name: "MARTA Midtown Station", lat: 33.78112, lng: -84.38637 },
+      parking: { name: "Cheshire Bridge parking", lat: 33.8044, lng: -84.365 },
+    },
+    stopNotes: {
+      "smiths-old-bar":
+        "We're at a fork in the road — do we want the classic Smith's Olde Bar, or push on?",
     },
     byTime: {
       morning: [
-        "rodney-cook-sr-park",
-        "tiny-door-atl-26",
-        "mlk-mural-at-trap-city-cafe",
-        "trap-museum",
-        "atlantucky-brewing",
+        "liddel-house",
+        "six-feet-under",
+        "midtown-bowl",
+        "nakato-japanese-restaurant",
+        "smiths-old-bar",
+        "felixs-atlanta",
       ],
       noon: [
-        "tiny-door-atl-26",
-        "mlk-mural-at-trap-city-cafe",
-        "trap-museum",
-        "rodney-cook-sr-park",
-        "atlantucky-brewing",
+        "liddel-house",
+        "six-feet-under",
+        "midtown-bowl",
+        "nakato-japanese-restaurant",
+        "smiths-old-bar",
+        "felixs-atlanta",
       ],
       night: [
-        "trap-museum",
-        "atlantucky-brewing",
-        "rodney-cook-sr-park",
-        "mlk-mural-at-trap-city-cafe",
+        "liddel-house",
+        "six-feet-under",
+        "midtown-bowl",
+        "nakato-japanese-restaurant",
+        "smiths-old-bar",
+        "felixs-atlanta",
       ],
     },
   },
   {
-    id: "wheelhaus-beltline-ride",
+    id: "varasanos-route",
+    name: "Varasano's Route",
+    area: "Lindbergh → Buckhead",
+    pace: "Bike Friendly",
+    color: "lime",
+    vibe: "An Armour/Ottley ride capped by a wood-fired pie at Varasano's: a pickleball stop, an ASW Distillery tasting, then late drinks at Tongue & Groove.",
+    description:
+      "This route is recommended for biking. Start at Lindbergh Center — grab a Zipcar there if you'd rather drive between stops.",
+    starts: {
+      marta: { name: "Lindbergh Center", lat: 33.82318, lng: -84.36944 },
+      parking: { name: "Armour Dr parking", lat: 33.8115, lng: -84.388 },
+    },
+    stopNotes: {},
+    byTime: {
+      morning: [
+        "the-painted-pickle",
+        "asw-distillery",
+        "varasanos",
+        "tongue-and-groove",
+      ],
+      noon: [
+        "the-painted-pickle",
+        "asw-distillery",
+        "varasanos",
+        "tongue-and-groove",
+      ],
+      night: [
+        "the-painted-pickle",
+        "asw-distillery",
+        "varasanos",
+        "tongue-and-groove",
+      ],
+    },
+  },
+  {
+    id: "wheelhaus-route",
     name: "Wheelhaus Route",
-    area: "East Atlanta → Beltline",
+    area: "Glenwood → Grant Park",
     pace: "Bike Friendly",
     color: "sky",
-    vibe: "Grab a set of wheels at Wheelhaus and cover real ground: a Beltline ride linking Grant Park, Oakland Cemetery, the Jackson St Bridge skyline, and the parks up to Piedmont. Long legs — bring or rent a bike.",
+    vibe: "Rent a set of wheels at founding sponsor Wheelhaus and ride the Southeast BeltLine through Grant Park and Zoo Atlanta — with a Waffle House detour to debate.",
+    description:
+      "This route is recommended for biking. Pick up your bike at Wheelhaus, and get it back to drop off before they close at 7pm.",
     starts: {
       marta: { name: "King Memorial Station", lat: 33.7489, lng: -84.3722 },
-      parking: { name: "East Atlanta Village Lot", lat: 33.737, lng: -84.339 },
+      parking: { name: "Wheelhaus (Glenwood)", lat: 33.7401, lng: -84.349 },
+    },
+    stopNotes: {
+      "vickerys-bar-grill":
+        "Take the Southeast Trail of the BeltLine and go north onto Boulevard.",
+      "zoo-atlanta":
+        "Leave the zoo, exit Grant Park, and continue onto Boulevard. Turn right at the CVS onto Hansell St SE.",
+      "waffle-house":
+        "We're at a fork in the road — do we want the iconic Waffle House, or push on?",
     },
     byTime: {
       morning: [
         "wheelhaus-bikes",
-        "boulevard-crossing",
+        "vickerys-bar-grill",
         "grant-park",
-        "oakland-cemetery",
-        "jackson-st-bridge",
-        "historic-fourth-ward-park",
-        "piedmont-park",
+        "zoo-atlanta",
+        "waffle-house",
+        "chick-fil-a",
       ],
       noon: [
         "wheelhaus-bikes",
+        "vickerys-bar-grill",
         "grant-park",
-        "oakland-cemetery",
-        "atlantucky-brewing",
-        "jackson-st-bridge",
-        "piedmont-park",
+        "zoo-atlanta",
+        "waffle-house",
+        "chick-fil-a",
       ],
       night: [
         "wheelhaus-bikes",
-        "oakland-cemetery",
-        "atlantucky-brewing",
-        "historic-fourth-ward-park",
-        "piedmont-park",
+        "vickerys-bar-grill",
+        "grant-park",
+        "zoo-atlanta",
+        "waffle-house",
+        "chick-fil-a",
       ],
     },
   },
   {
-    id: "soccer-route",
-    name: "Soccer Route",
-    area: "Mercedes-Benz Stadium → Castleberry Hill",
-    pace: "Walkable",
-    color: "navy",
-    vibe: "Match-day basecamp by the stadium: skyline shots from the Jackson St Bridge, the Trap Museum and Tiny Door, the Herndon Home, all looping back to a cold one at Atlantucky in Castleberry Hill — steps from the hotels.",
+    id: "trap-music-museum-route",
+    name: "Trap Music Museum Route",
+    area: "West End → Westside BeltLine",
+    pace: "Bike Friendly",
+    color: "yellow",
+    vibe: "A Westside BeltLine ride through Black ATL's culture core: the Trap Music Museum and its Tiny Door, the MLK mural, Nappy Roots' Atlantucky brews, and the AU Center museums.",
+    description:
+      "This route is recommended for biking. Begin at the West End MARTA station, where an ATL Spoke shuttle can take you to the Lee + White BeltLine access point — then follow the Westside BeltLine trail to Lucile Ave SW and turn left.",
     starts: {
-      marta: { name: "Vine City Station", lat: 33.7563, lng: -84.4035 },
-      parking: { name: "Stadium Deck (Castleberry)", lat: 33.751, lng: -84.398 },
+      marta: { name: "West End Station", lat: 33.73676, lng: -84.41376 },
+      parking: { name: "Lee + White lot", lat: 33.748, lng: -84.413 },
+    },
+    stopNotes: {
+      "the-westwood": "Get back on the Westside BeltLine connector.",
+      "tiny-door-atl-26": "At the same address is another cool spot to check out.",
+      "mlk-mural-at-trap-city-cafe":
+        "From here you can either take MARTA to Vine City station or bike directly to the next stop.",
+      "atlantucky-brewing":
+        "While you're here, walk across the street to The Bookstore Gallery.",
+      "boxcar-at-hop-city":
+        "When you're done, take the ATL Spoke shuttle back to the West End MARTA.",
     },
     byTime: {
       morning: [
-        "rodney-cook-sr-park",
+        "the-westwood",
+        "trap-museum",
         "tiny-door-atl-26",
         "mlk-mural-at-trap-city-cafe",
-        "herndon-home-muserum",
-        "jackson-st-bridge",
         "atlantucky-brewing",
+        "hammonds-house-museum",
+        "spelman-college-museum-of-fine-art",
+        "boxcar-at-hop-city",
       ],
       noon: [
-        "herndon-home-muserum",
-        "tiny-door-atl-26",
+        "the-westwood",
         "trap-museum",
-        "jackson-st-bridge",
-        "atlantucky-brewing",
-      ],
-      night: [
-        "atlantucky-brewing",
-        "herndon-home-muserum",
         "tiny-door-atl-26",
         "mlk-mural-at-trap-city-cafe",
-        "jackson-st-bridge",
+        "atlantucky-brewing",
+        "hammonds-house-museum",
+        "spelman-college-museum-of-fine-art",
+        "boxcar-at-hop-city",
+      ],
+      night: [
+        "the-westwood",
+        "trap-museum",
+        "tiny-door-atl-26",
+        "mlk-mural-at-trap-city-cafe",
+        "atlantucky-brewing",
+        "hammonds-house-museum",
+        "spelman-college-museum-of-fine-art",
+        "boxcar-at-hop-city",
       ],
     },
   },
   {
-    id: "parks-and-murals-loop",
-    name: "Parks & Murals Loop",
-    area: "Vine City → Westside",
+    id: "peachtree-wellness-route",
+    name: "Peachtree Wellness Route",
+    area: "Oakland → Cabbagetown",
     pace: "Walkable",
     color: "orange",
-    vibe: "An easy, kid-friendly day: green space at Rodney Cook & Maddox, the Tiny Door and Trap City murals, and the Museum in the middle.",
+    vibe: "A walkable Southeast BeltLine wander from Oakland Cemetery through Cabbagetown — the Krog St Tunnel and Tiny Door #1, a skatepark, Hop City, and a patio beer at 97 Estoria.",
+    description:
+      "This route is recommended for walking. Start at King Memorial Station and follow the Southeast BeltLine trail through Cabbagetown.",
     starts: {
-      marta: { name: "Bankhead Station", lat: 33.772, lng: -84.421 },
-      parking: { name: "Rodney Cook Park Lot", lat: 33.766, lng: -84.404 },
+      marta: { name: "King Memorial Station", lat: 33.7489, lng: -84.3722 },
+      parking: { name: "Oakland Ave parking", lat: 33.747, lng: -84.369 },
+    },
+    stopNotes: {
+      "oakland-cemetery":
+        "Go all the way through the cemetery and say hi to Peachtree Wellness across the street.",
+      "la-semilla":
+        "After this stop, take the Southeast Trail at Memorial & Bill Kennedy, then left onto Wylie St SE.",
+      "krog-street-tunnel":
+        "You'll find Tiny Door #1 off the Atlanta BeltLine SE Trail.",
     },
     byTime: {
       morning: [
-        "maddox-park",
-        "rodney-cook-sr-park",
-        "washington-park",
-        "tiny-door-atl-26",
-        "mlk-mural-at-trap-city-cafe",
-        "trap-museum",
+        "oakland-cemetery",
+        "la-semilla",
+        "krog-street-tunnel",
+        "thomas-taylor-memorial-skatepark",
+        "hop-city-at-krog-st-market",
+        "97-estoria",
+        "peachtree-wellness",
       ],
       noon: [
-        "rodney-cook-sr-park",
-        "tiny-door-atl-26",
-        "mlk-mural-at-trap-city-cafe",
-        "trap-museum",
-        "washington-park",
-        "maddox-park",
+        "oakland-cemetery",
+        "la-semilla",
+        "krog-street-tunnel",
+        "thomas-taylor-memorial-skatepark",
+        "hop-city-at-krog-st-market",
+        "97-estoria",
+        "peachtree-wellness",
       ],
       night: [
-        "trap-museum",
-        "rodney-cook-sr-park",
-        "mlk-mural-at-trap-city-cafe",
-        "jackson-st-bridge",
-        "tiny-door-atl-26",
-      ],
-    },
-  },
-  {
-    id: "nakato-piedmont-heights-walk",
-    name: "Nakato Route",
-    area: "Piedmont Heights → Morningside",
-    pace: "Walkable",
-    color: "red",
-    vibe: "Green space and a legendary dinner: Morningside's woods, Piedmont Park's meadows, and Orme Park — built around teppanyaki and sushi at third-generation Nakato.",
-    starts: {
-      marta: { name: "Lindbergh Center Station", lat: 33.8236, lng: -84.3693 },
-      parking: { name: "Cheshire Bridge Lot", lat: 33.812, lng: -84.362 },
-    },
-    byTime: {
-      morning: [
-        "morningside-nature-preserve",
-        "piedmont-park",
-        "orme-park",
-        "nakato-japanese-restaurant",
-      ],
-      noon: [
-        "piedmont-park",
-        "orme-park",
-        "morningside-nature-preserve",
-        "nakato-japanese-restaurant",
-      ],
-      night: [
-        "nakato-japanese-restaurant",
-        "piedmont-park",
-        "varasanos",
-      ],
-    },
-  },
-  {
-    id: "varasanos-buckhead-green",
-    name: "Veresanos Route",
-    area: "Buckhead → Collier Hills",
-    pace: "Walkable",
-    color: "lime",
-    vibe: "Buckhead's green corridor capped by a legendary pie: the woods of Atlanta Memorial, the creek at Tanyard, and Ardmore Park — built around a wood-fired dinner at Varasano's.",
-    starts: {
-      marta: { name: "Arts Center Station", lat: 33.7892, lng: -84.3875 },
-      parking: { name: "Memorial Park Lot", lat: 33.815, lng: -84.398 },
-    },
-    byTime: {
-      morning: [
-        "atlanta-memorial-park",
-        "tanyard-creek-park",
-        "ardmore-park",
-        "piedmont-park",
-        "varasanos",
-      ],
-      noon: [
-        "piedmont-park",
-        "tanyard-creek-park",
-        "ardmore-park",
-        "atlanta-memorial-park",
-        "varasanos",
-      ],
-      night: [
-        "varasanos",
-        "ardmore-park",
-        "nakato-japanese-restaurant",
+        "oakland-cemetery",
+        "la-semilla",
+        "krog-street-tunnel",
+        "thomas-taylor-memorial-skatepark",
+        "hop-city-at-krog-st-market",
+        "97-estoria",
+        "peachtree-wellness",
       ],
     },
   },

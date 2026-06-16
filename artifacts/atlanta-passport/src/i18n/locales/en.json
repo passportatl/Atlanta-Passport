@@ -390,5 +390,12 @@
     "back_home": "Back to home",
     "view_all": "View all",
     "learn_more": "Learn more"
+  },
+  "prizes": {
+    "kicker": "Collect & Win",
+    "title": "About the prizes",
+    "description": "Prizes come on a first come, first served basis. We have a good stock of most — but some, like the gift cards and experiences, are limited!",
+    "stamps": "{{count}} Stamps",
+    "choose": "Choose one:"
   }
 }

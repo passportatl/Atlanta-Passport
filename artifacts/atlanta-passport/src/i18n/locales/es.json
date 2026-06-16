@@ -390,5 +390,12 @@
     "back_home": "Volver al inicio",
     "view_all": "Ver todo",
     "learn_more": "Saber más"
+  },
+  "prizes": {
+    "kicker": "Colecciona y Gana",
+    "title": "Sobre los premios",
+    "description": "Los premios se entregan por orden de llegada. Tenemos buen stock de la mayoría, ¡pero algunos, como las tarjetas de regalo y las experiencias, son limitados!",
+    "stamps": "{{count}} Sellos",
+    "choose": "Elige uno:"
   }
 }
