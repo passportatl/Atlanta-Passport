@@ -177,6 +177,7 @@ const SEED_EVENTS: InsertBusiness[] = [
   { slug: "event-hot-sauce-market", name: "Hot Sauce Market", icon: "flame", date: "June 20, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
   { slug: "event-post-match-atlantucky", name: "Post-Match Vibes at Atlantucky", icon: "wine", date: "June 21, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
   { slug: "event-soccer-gaming-finals", name: "Soccer Video Game Tournament + Wing Eating Comp", icon: "gamepad", date: "June 22–23, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
+  { slug: "event-mlk-mural", name: "MLK Mural", icon: "palette", date: "World Cup 2026", venue: "MLK Mural, Westside", address: "660 Northside Dr NW, Atlanta, GA 30318" },
 ].map(buildEvent);
 
 const SEED_ALL: InsertBusiness[] = [...SEED_BUSINESSES, ...SEED_EVENTS];

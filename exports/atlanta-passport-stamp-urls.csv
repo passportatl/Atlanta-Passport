@@ -10,3 +10,4 @@ Name,Neighborhood,Slug,Stamp URL,QR Image URL
 "BoxCar at Hop City","West End","boxcar","https://passportatl.com/stamp/boxcar","https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data=https%3A%2F%2Fpassportatl.com%2Fstamp%2Fboxcar"
 "The Westwood","West End","westwood","https://passportatl.com/stamp/westwood","https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data=https%3A%2F%2Fpassportatl.com%2Fstamp%2Fwestwood"
 "Trap Museum","Westside","trap-museum","https://passportatl.com/stamp/trap-museum","https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data=https%3A%2F%2Fpassportatl.com%2Fstamp%2Ftrap-museum"
+"MLK Mural","Westside","event-mlk-mural","https://passportatl.com/stamp/event-mlk-mural","https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&data=https%3A%2F%2Fpassportatl.com%2Fstamp%2Fevent-mlk-mural"
