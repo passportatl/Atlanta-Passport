@@ -19,6 +19,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
 import { neighborhoodColors, categoryColor, businessCategories } from "@/data/sample-data";
+import { STAMP_SLUG } from "@/passport/data";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -299,7 +300,7 @@ function BusinessMarkers({
           position={{ lat: b.lat, lng: b.lng }}
           title={b.name}
           onClick={() => onSelect(b.id)}
-          icon={b.offer ? ballIcon : dotIcon(b)}
+          icon={STAMP_SLUG[b.id] || b.offer ? ballIcon : dotIcon(b)}
         />
       ))}
     </>
