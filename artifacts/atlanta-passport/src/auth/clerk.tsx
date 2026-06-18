@@ -13,6 +13,7 @@ import { useLocation } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLinkVisitor, type Visitor } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
+import logoSrc from "@/assets/images/passport-atl-logo.png";
 
 // REQUIRED — copy verbatim. Resolves the key from window.location.hostname so the
 // same build serves multiple Clerk custom domains.
@@ -52,7 +53,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: "inside" as const,
     logoLinkUrl: basePath || "/",
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: new URL(logoSrc, window.location.origin).href,
     socialButtonsPlacement: "top" as const,
     socialButtonsVariant: "blockButton" as const,
   },
@@ -110,7 +111,7 @@ const clerkAppearance = {
     formFieldErrorText: { color: RED },
     alertText: { color: RED },
     logoBox: "justify-center",
-    logoImage: "h-12 w-auto",
+    logoImage: "h-16 w-auto",
     otpCodeFieldInput: "border-2 border-[#141414] text-[#141414]",
   },
 };
