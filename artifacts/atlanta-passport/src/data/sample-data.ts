@@ -387,6 +387,8 @@ const businessesRaw = [
     category: "Public Art",
     neighborhood: "Westside",
     description: "MLK Mural at Trap City Cafe",
+    offer:
+      "Bonus stamp - take a picture at the mural, post it to your instagram and tag @passport.atl, @atown_art_agency, and @bornartistofficial and show it at {{biz:peachtree-wellness|Peachtree Wellness}} to get your stamp!",
     address: "660 Northside Dr NW Atlanta, GA 30318",
     lat: 33.77445,
     lng: -84.40816,

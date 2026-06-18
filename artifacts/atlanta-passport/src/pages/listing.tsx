@@ -1,3 +1,4 @@
+import { type ReactNode } from "react";
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, businessCategories, events as sampleEvents } from "@/data/sample-data";
@@ -11,6 +12,35 @@ import { MapPin, Gift, Clock, Navigation, ArrowLeft, Bike, Utensils, Train, Glob
 
 const HQ_INTRO =
   "Your stop for all things Passport ATL. It's where you can pick up a physical, stampable copy of your passport and turn in your stamps for physical prize claims.";
+
+// Renders an offer string, turning {{biz:id|Label}} tokens into links that open
+// the referenced location's detail page in a new tab. Plain text passes through
+// untouched, so only explicit tokens ever become links.
+const BIZ_LINK_RE = /\{\{biz:([a-z0-9-]+)\|([^}]+)\}\}/g;
+function renderOffer(offer: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  let last = 0;
+  let match: RegExpExecArray | null;
+  BIZ_LINK_RE.lastIndex = 0;
+  while ((match = BIZ_LINK_RE.exec(offer)) !== null) {
+    if (match.index > last) nodes.push(offer.slice(last, match.index));
+    const [, bizId, label] = match;
+    nodes.push(
+      <a
+        key={match.index}
+        href={`${import.meta.env.BASE_URL}listing/${bizId}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-bold underline decoration-2 underline-offset-2 hover:opacity-80"
+      >
+        {label}
+      </a>,
+    );
+    last = match.index + match[0].length;
+  }
+  if (last < offer.length) nodes.push(offer.slice(last));
+  return nodes;
+}
 
 export default function Listing() {
   const { t } = useTranslation();
@@ -142,7 +172,7 @@ export default function Listing() {
                 <h3 className="font-bold text-accent tracking-wide uppercase text-sm">{t("listing_page.passport_offer_label")}</h3>
               </div>
               <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
-                {business.offer}
+                {renderOffer(business.offer)}
               </p>
             </div>
           </div>
