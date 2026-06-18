@@ -404,6 +404,9 @@
     "title": "Informazioni sui premi",
     "description": "I premi vengono assegnati in ordine di arrivo. Abbiamo buone scorte della maggior parte, ma alcuni, come le carte regalo e le esperienze, sono limitati!",
     "stamps": "{{count}} Timbri",
-    "choose": "Scegline uno:"
+    "choose": "Scegline uno:",
+    "ladderTitle": "Scala dei premi",
+    "unlocked": "Sbloccato",
+    "toGo": "Ancora {{count}}"
   }
 }

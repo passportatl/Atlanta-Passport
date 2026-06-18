@@ -6,7 +6,12 @@ import Sticker from "@/components/Sticker";
 // thresholds + their prize options stay as data here (like sample-data, the
 // brand/specific prize names are intentionally NOT translated); only the
 // wrapper copy is i18n'd under `prizes.*`.
-const PRIZE_TIERS: { stamps: number; options: string[] }[] = [
+export interface PrizeTier {
+  stamps: number;
+  options: string[];
+}
+
+export const PRIZE_TIERS: PrizeTier[] = [
   { stamps: 3, options: ["ATL Sticker Pack"] },
   { stamps: 7, options: ["Small Crystal / Keepsake"] },
   { stamps: 10, options: ["Hot Sauce"] },

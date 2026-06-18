@@ -404,6 +404,9 @@
     "title": "Sobre os prêmios",
     "description": "Os prêmios são distribuídos por ordem de chegada. Temos bom estoque da maioria, mas alguns, como os vales-presente e as experiências, são limitados!",
     "stamps": "{{count}} Selos",
-    "choose": "Escolha um:"
+    "choose": "Escolha um:",
+    "ladderTitle": "Escada de prêmios",
+    "unlocked": "Desbloqueado",
+    "toGo": "Faltam {{count}}"
   }
 }

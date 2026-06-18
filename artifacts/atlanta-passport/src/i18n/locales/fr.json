@@ -404,6 +404,9 @@
     "title": "À propos des prix",
     "description": "Les prix sont attribués selon le principe du premier arrivé, premier servi. Nous avons un bon stock pour la plupart, mais certains, comme les cartes-cadeaux et les expériences, sont limités !",
     "stamps": "{{count}} Tampons",
-    "choose": "Choisissez-en un :"
+    "choose": "Choisissez-en un :",
+    "ladderTitle": "Échelle des prix",
+    "unlocked": "Débloqué",
+    "toGo": "Encore {{count}}"
   }
 }

@@ -10,6 +10,7 @@ import {
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import { StampGraphic } from "@/passport/StampGraphic";
+import { PrizeLadder } from "@/passport/PrizeLadder";
 import {
   businesses as exploreBusinesses,
   events as sampleEvents,
@@ -229,6 +230,8 @@ export default function PassportStamps({
           <div className="progress-fill" style={{ width: `${pct}%` }} />
         </div>
       </div>
+
+      <PrizeLadder collected={collected} />
 
       {!visitorId && (
         <div className="card-pop bg-[hsl(var(--brand-yellow))] p-3 flex items-center justify-between gap-3">
