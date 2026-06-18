@@ -407,6 +407,7 @@
     "choose": "Wähle eines:",
     "ladderTitle": "Preis-Leiter",
     "unlocked": "Freigeschaltet",
-    "toGo": "Noch {{count}}"
+    "toGo": "Noch {{count}}",
+    "limited": "Begrenzter Vorrat · wer zuerst kommt, mahlt zuerst"
   }
 }

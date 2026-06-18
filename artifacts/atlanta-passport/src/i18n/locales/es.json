@@ -407,6 +407,7 @@
     "choose": "Elige uno:",
     "ladderTitle": "Escalera de premios",
     "unlocked": "Desbloqueado",
-    "toGo": "Faltan {{count}}"
+    "toGo": "Faltan {{count}}",
+    "limited": "Existencias limitadas · por orden de llegada"
   }
 }

@@ -407,6 +407,7 @@
     "choose": "Choisissez-en un :",
     "ladderTitle": "Échelle des prix",
     "unlocked": "Débloqué",
-    "toGo": "Encore {{count}}"
+    "toGo": "Encore {{count}}",
+    "limited": "Stock limité · premier arrivé, premier servi"
   }
 }

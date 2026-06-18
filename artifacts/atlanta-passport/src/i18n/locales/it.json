@@ -407,6 +407,7 @@
     "choose": "Scegline uno:",
     "ladderTitle": "Scala dei premi",
     "unlocked": "Sbloccato",
-    "toGo": "Ancora {{count}}"
+    "toGo": "Ancora {{count}}",
+    "limited": "Scorte limitate · chi prima arriva, meglio alloggia"
   }
 }

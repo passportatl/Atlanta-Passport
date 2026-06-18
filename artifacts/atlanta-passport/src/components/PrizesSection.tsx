@@ -73,8 +73,13 @@ export default function PrizesSection() {
                 </div>
 
                 {multi && (
-                  <span className="text-[11px] uppercase tracking-widest font-black text-brand-red mb-2">
-                    {t("prizes.choose")}
+                  <span className="mb-2">
+                    <span className="text-[11px] uppercase tracking-widest font-black text-brand-red">
+                      {t("prizes.choose")}
+                    </span>{" "}
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-foreground/55">
+                      {t("prizes.limited")}
+                    </span>
                   </span>
                 )}
 

@@ -67,8 +67,13 @@ export function PrizeLadder({ collected }: { collected: number }) {
                 </div>
 
                 {multi && (
-                  <span className="block text-[10px] uppercase tracking-widest font-black text-brand-red mt-1">
-                    {t("prizes.choose")}
+                  <span className="block mt-1">
+                    <span className="text-[10px] uppercase tracking-widest font-black text-brand-red">
+                      {t("prizes.choose")}
+                    </span>{" "}
+                    <span className="text-[9px] uppercase tracking-wider font-bold text-foreground/55">
+                      {t("prizes.limited")}
+                    </span>
                   </span>
                 )}
 
