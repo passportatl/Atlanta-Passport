@@ -156,7 +156,11 @@ function PillarsSection() {
 function JourneySection() {
   const { t } = useTranslation();
 
-  const featuredRoutes = ["trap-music-museum-route", "wheelhaus-route"]
+  const featuredRoutes = [
+    "trap-music-museum-route",
+    "wheelhaus-route",
+    "peachtree-wellness-route",
+  ]
     .map((id) => mapRoutes.find((r) => r.id === id))
     .filter((r): r is (typeof mapRoutes)[number] => Boolean(r));
 
@@ -191,7 +195,7 @@ function JourneySection() {
         {featuredRoutes.map((route, i) => {
           const resolved = resolveRoute(route, "marta", "morning");
           return (
-            <Link key={route.id} href="/passport/routes" className="snap-center shrink-0 w-[78vw] sm:w-[360px] md:w-[450px] group cursor-pointer block">
+            <Link key={route.id} href="/passport/routes" className={`snap-center shrink-0 w-[78vw] sm:w-[360px] md:w-[450px] group cursor-pointer ${i === 2 ? "hidden md:block" : "block"}`}>
               <div className="card-pop bg-white text-foreground p-5 md:p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
                 <div className="flex items-center gap-3 mb-4 md:mb-8">
                   <div className="w-11 h-11 md:w-16 md:h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-lg md:text-2xl font-black shadow-pop-sm shrink-0">
