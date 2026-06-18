@@ -12,6 +12,7 @@ import { useVisitor } from "@/passport/visitor-context";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { STAMP_SLUG } from "@/passport/data";
 import { STAMP_IMAGE_BY_ID } from "@/data/sample-data";
+import { formatStampedAt } from "@/passport/stamp-date";
 
 // A stamp the visitor can collect at this event/location. `spot` targets are
 // sample-data businesses (resolved to their seeded slug via STAMP_SLUG); `event`
@@ -40,6 +41,7 @@ function StampRow({
   iconUrl?: string;
   color: string;
 }) {
+  const stampedAt = stamp ? formatStampedAt(stamp.collectedAt as unknown as string) : null;
   return (
     <li className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0">
       <div className="flex-1 min-w-0">
@@ -47,6 +49,11 @@ function StampRow({
         <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
           {meta}
         </div>
+        {stampedAt && (
+          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-brand-lime px-2 py-0.5 font-display text-[9px] tracking-[0.1em] uppercase text-foreground shadow-pop-sm">
+            {stampedAt}
+          </div>
+        )}
         {detail && (
           <div className="text-xs font-semibold text-foreground/80 mt-1">{detail}</div>
         )}

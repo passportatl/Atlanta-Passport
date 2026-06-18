@@ -17,6 +17,7 @@ import {
   STAMP_IMAGE_BY_ID,
 } from "@/data/sample-data";
 import { STAMP_SLUG } from "@/passport/data";
+import { formatStampedAt } from "@/passport/stamp-date";
 
 // Featured events are seeded as DB businesses with no coordinates, so resolve
 // each to a sample-data business (the map only renders the static dataset) by
@@ -61,6 +62,7 @@ function StampListItem({
   detailHref?: string;
 }) {
   const interactive = !!onSelect;
+  const stampedAt = stamp ? formatStampedAt(stamp.collectedAt as unknown as string) : null;
   return (
     <li
       onClick={onSelect}
@@ -88,6 +90,11 @@ function StampListItem({
         <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
           {meta}
         </div>
+        {stampedAt && (
+          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border-2 border-foreground bg-brand-lime px-2 py-0.5 font-display text-[9px] tracking-[0.1em] uppercase text-foreground shadow-pop-sm">
+            {stampedAt}
+          </div>
+        )}
         {detail && (
           <div className="text-xs font-semibold text-foreground/80 mt-1">{detail}</div>
         )}
