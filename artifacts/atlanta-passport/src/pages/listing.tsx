@@ -204,7 +204,7 @@ export default function Listing() {
                   )}
                   <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
                   {business.lat != null && business.lng != null && (
-                    <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} />
+                    <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} isStamp={Boolean(STAMP_SLUG[business.id])} />
                   )}
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
