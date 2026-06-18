@@ -11,6 +11,7 @@ import { useVisitor } from "@/passport/visitor-context";
 import { basePath } from "@/auth/clerk";
 import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
+import { PrizeLadder } from "@/passport/PrizeLadder";
 import Sticker from "@/components/Sticker";
 import { REWARDS, NEIGHBORHOOD_BY_NAME } from "@/passport/data";
 import { STAMP_IMAGE_BY_SLUG } from "@/data/sample-data";
@@ -105,6 +106,8 @@ export default function PassportHome() {
           </div>
         </div>
       </div>
+
+      <PrizeLadder collected={total} />
 
       <div>
         <div className="flex items-center justify-between mb-3">
