@@ -35,6 +35,18 @@ export default function Footer({
       <div className="absolute inset-0 dot-grid opacity-[0.06] pointer-events-none" />
       <div className="container mx-auto px-4 relative">
         <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+          <Logo variant="nav" />
+          <div className="space-y-1 min-w-0">
+            <p className="text-xs sm:text-base text-background/75 break-words">
+              {t("footer.built_by")}
+            </p>
+            <p className="text-[11px] sm:text-xs text-background/55 leading-snug break-words">
+              {t("footer.founding_sponsor")}{" "}
+              <span className="font-display text-brand-yellow tracking-normal sm:tracking-wider">
+                {t("footer.wheelhaus")}
+              </span>
+            </p>
+          </div>
           <ul className="flex flex-wrap items-center gap-2 sm:gap-3" aria-label="Partner logos">
             {PARTNER_LOGOS.map((logo) => (
               <li
@@ -50,18 +62,6 @@ export default function Footer({
               </li>
             ))}
           </ul>
-          <Logo variant="nav" />
-          <div className="space-y-1 min-w-0">
-            <p className="text-xs sm:text-base text-background/75 break-words">
-              {t("footer.built_by")}
-            </p>
-            <p className="text-[11px] sm:text-xs text-background/55 leading-snug break-words">
-              {t("footer.founding_sponsor")}{" "}
-              <span className="font-display text-brand-yellow tracking-normal sm:tracking-wider">
-                {t("footer.wheelhaus")}
-              </span>
-            </p>
-          </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
