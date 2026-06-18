@@ -1,5 +1,20 @@
 import { useTranslation } from "react-i18next";
 import Logo from "@/components/Logo";
+import aurorasImagination from "@/assets/images/partner-logos/auroras-imagination.png";
+import wheelhausBikes from "@/assets/images/partner-logos/wheelhaus-bikes.png";
+import aTownArtAgency from "@/assets/images/partner-logos/a-town-art-agency.jpg";
+import bAwareFoundation from "@/assets/images/partner-logos/b-aware-foundation.jpg";
+import dpAndCo from "@/assets/images/partner-logos/dp-and-co.png";
+import peachtree from "@/assets/images/partner-logos/peachtree.png";
+
+const PARTNER_LOGOS = [
+  { src: wheelhausBikes, alt: "Wheelhaus Bikes" },
+  { src: peachtree, alt: "Peachtree Wellness" },
+  { src: aurorasImagination, alt: "Aurora's Imagination" },
+  { src: aTownArtAgency, alt: "A-Town Art Agency" },
+  { src: bAwareFoundation, alt: "B-Aware Foundation" },
+  { src: dpAndCo, alt: "DP & Co" },
+];
 
 // `clearBottomNav` adds extra bottom padding so the footer clears the fixed
 // PassportBottomNav on the passport/map-shell pages (which have no marketing
@@ -37,6 +52,24 @@ export default function Footer({
         <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
           <p>{t("footer.disclaimer")}</p>
           <p>&copy; {new Date().getFullYear()} Atlanta Passport. {t("footer.rights")}</p>
+        </div>
+
+        <div className="mt-8 pt-8 border-t border-background/15">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            {PARTNER_LOGOS.map((logo) => (
+              <div
+                key={logo.alt}
+                className="flex items-center justify-center bg-white rounded-xl border-2 border-foreground shadow-pop-sm h-16 w-24 sm:h-20 sm:w-28 p-2"
+              >
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

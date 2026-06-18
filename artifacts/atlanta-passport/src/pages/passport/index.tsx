@@ -56,7 +56,6 @@ export default function PassportHome() {
 
   const total = stamps.length;
   const neighborhoods = new Set(stamps.map((s) => s.neighborhood));
-  const collectedSlugs = new Set(stamps.map((s) => s.businessSlug));
 
   // Passport history — keeps a record of past + current passports and what each
   // was redeemed for. Add new seasons here as they launch (mark the live one
