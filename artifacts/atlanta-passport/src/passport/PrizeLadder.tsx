@@ -37,7 +37,7 @@ export function PrizeLadder({ collected }: { collected: number }) {
             >
               <div
                 className={`w-12 h-12 rounded-full border-2 border-foreground shadow-pop-sm flex items-center justify-center flex-shrink-0 ${
-                  unlocked ? "bg-brand-lime text-foreground" : "bg-brand-red text-white"
+                  unlocked ? "bg-brand-lime text-foreground" : "bg-brand-yellow text-foreground"
                 }`}
               >
                 <span
