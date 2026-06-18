@@ -274,11 +274,13 @@ function BusinessMarkers({
 }) {
   const coreLib = useMapsLibrary("core");
 
+  // Stamp/offer spots get the soccer ball, sized noticeably larger than the
+  // plain category dots (18px) so they clearly stand out as collectible spots.
   const ballIcon = coreLib
     ? {
         url: BALL_ICON_URL,
-        scaledSize: new coreLib.Size(18, 18),
-        anchor: new coreLib.Point(9, 9),
+        scaledSize: new coreLib.Size(30, 30),
+        anchor: new coreLib.Point(15, 15),
       }
     : undefined;
 
