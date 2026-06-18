@@ -87,7 +87,14 @@ export default function PrizesSection() {
                   {tier.options.map((opt) => (
                     <li key={opt} className="flex items-start gap-2 text-sm font-semibold leading-snug">
                       <Icon className="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-red" />
-                      <span>{opt}</span>
+                      <span>
+                        {opt}
+                        {multi && (
+                          <span className="ml-1.5 text-[11px] font-black uppercase tracking-wider text-brand-red">
+                            {t("prizes.onlyOneLeft")}
+                          </span>
+                        )}
+                      </span>
                     </li>
                   ))}
                 </ul>

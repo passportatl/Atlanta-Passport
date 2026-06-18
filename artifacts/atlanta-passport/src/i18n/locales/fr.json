@@ -408,6 +408,7 @@
     "ladderTitle": "Échelle des prix",
     "unlocked": "Débloqué",
     "toGo": "Encore {{count}}",
-    "limited": "Stock limité · premier arrivé, premier servi"
+    "limited": "Stock limité · premier arrivé, premier servi",
+    "onlyOneLeft": "Plus qu’un seul"
   }
 }

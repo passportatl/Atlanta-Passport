@@ -408,6 +408,7 @@
     "ladderTitle": "Preis-Leiter",
     "unlocked": "Freigeschaltet",
     "toGo": "Noch {{count}}",
-    "limited": "Begrenzter Vorrat · wer zuerst kommt, mahlt zuerst"
+    "limited": "Begrenzter Vorrat · wer zuerst kommt, mahlt zuerst",
+    "onlyOneLeft": "Nur noch einer"
   }
 }

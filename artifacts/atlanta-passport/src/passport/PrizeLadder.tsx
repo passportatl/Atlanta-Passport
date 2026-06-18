@@ -84,7 +84,14 @@ export function PrizeLadder({ collected }: { collected: number }) {
                       className="flex items-start gap-1.5 text-xs font-semibold leading-snug"
                     >
                       <Icon className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-red" />
-                      <span className={unlocked ? "" : "text-foreground/70"}>{opt}</span>
+                      <span className={unlocked ? "" : "text-foreground/70"}>
+                        {opt}
+                        {multi && (
+                          <span className="ml-1 text-[10px] font-black uppercase tracking-wider text-brand-red">
+                            {t("prizes.onlyOneLeft")}
+                          </span>
+                        )}
+                      </span>
                     </li>
                   ))}
                 </ul>

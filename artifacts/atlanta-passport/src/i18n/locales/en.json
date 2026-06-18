@@ -408,6 +408,7 @@
     "ladderTitle": "Prize Ladder",
     "unlocked": "Unlocked",
     "toGo": "{{count}} to go",
-    "limited": "Limited supply · first come, first served"
+    "limited": "Limited supply · first come, first served",
+    "onlyOneLeft": "Only one left"
   }
 }

@@ -408,6 +408,7 @@
     "ladderTitle": "Escada de prêmios",
     "unlocked": "Desbloqueado",
     "toGo": "Faltam {{count}}",
-    "limited": "Estoque limitado · por ordem de chegada"
+    "limited": "Estoque limitado · por ordem de chegada",
+    "onlyOneLeft": "Resta apenas um"
   }
 }

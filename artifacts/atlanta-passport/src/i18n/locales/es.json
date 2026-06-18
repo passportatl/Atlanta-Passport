@@ -408,6 +408,7 @@
     "ladderTitle": "Escalera de premios",
     "unlocked": "Desbloqueado",
     "toGo": "Faltan {{count}}",
-    "limited": "Existencias limitadas · por orden de llegada"
+    "limited": "Existencias limitadas · por orden de llegada",
+    "onlyOneLeft": "¡Solo queda uno!"
   }
 }
