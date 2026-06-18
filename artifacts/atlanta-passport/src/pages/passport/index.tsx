@@ -107,6 +107,10 @@ export default function PassportHome() {
         </div>
       </div>
 
+      <div className="flex items-center gap-2 pt-1">
+        <span className="sticker-pill sticker-lime">Summer 2026 Passport</span>
+      </div>
+
       <PrizeLadder collected={total} />
 
       <div>
