@@ -34,7 +34,22 @@ export default function Footer({
     >
       <div className="absolute inset-0 dot-grid opacity-[0.06] pointer-events-none" />
       <div className="container mx-auto px-4 relative">
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+          <ul className="flex flex-wrap items-center gap-2 sm:gap-3" aria-label="Partner logos">
+            {PARTNER_LOGOS.map((logo) => (
+              <li
+                key={logo.alt}
+                className="flex items-center justify-center bg-white rounded-lg border-2 border-foreground shadow-pop-sm h-12 w-16 sm:h-14 sm:w-20 p-1.5"
+              >
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              </li>
+            ))}
+          </ul>
           <Logo variant="nav" />
           <div className="space-y-1 min-w-0">
             <p className="text-xs sm:text-base text-background/75 break-words">
@@ -52,24 +67,6 @@ export default function Footer({
         <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
           <p>{t("footer.disclaimer")}</p>
           <p>&copy; {new Date().getFullYear()} Atlanta Passport. {t("footer.rights")}</p>
-        </div>
-
-        <div className="mt-8 pt-8 border-t border-background/15">
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            {PARTNER_LOGOS.map((logo) => (
-              <div
-                key={logo.alt}
-                className="flex items-center justify-center bg-white rounded-xl border-2 border-foreground shadow-pop-sm h-16 w-24 sm:h-20 sm:w-28 p-2"
-              >
-                <img
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="max-h-full max-w-full object-contain"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </footer>
