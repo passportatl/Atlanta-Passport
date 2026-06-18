@@ -47,7 +47,7 @@ export default function Footer({
               </span>
             </p>
           </div>
-          <ul className="flex flex-wrap items-center gap-2 sm:gap-3" aria-label="Partner logos">
+          <ul className="flex flex-1 flex-wrap items-center justify-center gap-2 sm:gap-3" aria-label="Partner logos">
             {PARTNER_LOGOS.map((logo) => (
               <li
                 key={logo.alt}
