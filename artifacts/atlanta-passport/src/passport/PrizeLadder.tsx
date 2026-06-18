@@ -5,7 +5,7 @@ import { PRIZE_TIERS } from "@/components/PrizesSection";
 // Compact, progress-aware prize ladder for the Stamps page. Mirrors the data in
 // <PrizesSection> (the big navy marketing block) but reflects the visitor's live
 // stamp count — each tier reads as unlocked or "N to go".
-export function PrizeLadder({ collected }: { collected: number }) {
+export function PrizeLadder({ collected, title }: { collected: number; title?: string }) {
   const { t } = useTranslation();
   const unlockedCount = PRIZE_TIERS.filter((tier) => collected >= tier.stamps).length;
 
@@ -16,7 +16,7 @@ export function PrizeLadder({ collected }: { collected: number }) {
           className="font-black text-xs tracking-widest uppercase"
           style={{ fontFamily: "Bungee, sans-serif" }}
         >
-          {t("prizes.ladderTitle")}
+          {title ?? t("prizes.ladderTitle")}
         </span>
         <span className="text-[10px] font-black opacity-80">
           {unlockedCount}/{PRIZE_TIERS.length}

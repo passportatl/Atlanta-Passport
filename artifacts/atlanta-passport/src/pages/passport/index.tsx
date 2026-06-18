@@ -127,12 +127,7 @@ export default function PassportHome() {
         </div>
       </div>
 
-      <div>
-        <h2 className="text-xl font-black mb-3" style={{ fontFamily: "Bungee, sans-serif" }}>
-          Summer 2026 Passport
-        </h2>
-        <PrizeLadder collected={total} />
-      </div>
+      <PrizeLadder collected={total} title="Summer 2026 Passport Prize Ladder" />
 
       <div>
         <div className="flex items-center justify-between mb-3">
