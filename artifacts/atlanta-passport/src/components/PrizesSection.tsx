@@ -14,7 +14,7 @@ export interface PrizeTier {
 export const PRIZE_TIERS: PrizeTier[] = [
   { stamps: 3, options: ["ATL Sticker Pack"] },
   { stamps: 7, options: ["Small Crystal / Keepsake"] },
-  { stamps: 10, options: ["Hot Sauce"] },
+  { stamps: 10, options: ["Bottle of Hot Sauce"] },
   {
     stamps: 13,
     options: [
