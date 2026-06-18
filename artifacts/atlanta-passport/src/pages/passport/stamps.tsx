@@ -224,7 +224,8 @@ export default function PassportStamps({
 
       <div>
         <p className="text-sm font-bold text-foreground/70">
-          {collected} of {total} stamps collected · show your Passport to claim each offer
+          {collected} of {total} stamps collected · show your Passport at Peachtree Wellness to
+          claim your prize. One prize per passport, top tier prizes reserved for first claimed.
         </p>
         <div className="progress-track mt-2">
           <div className="progress-fill" style={{ width: `${pct}%` }} />
