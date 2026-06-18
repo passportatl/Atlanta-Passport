@@ -13,7 +13,7 @@ import { StartPassportForm } from "@/passport/StartPassportForm";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { PrizeLadder } from "@/passport/PrizeLadder";
 import Sticker from "@/components/Sticker";
-import { REWARDS, NEIGHBORHOOD_BY_NAME } from "@/passport/data";
+import { NEIGHBORHOOD_BY_NAME } from "@/passport/data";
 import { STAMP_IMAGE_BY_SLUG } from "@/data/sample-data";
 
 export default function PassportHome() {
@@ -58,12 +58,12 @@ export default function PassportHome() {
   const neighborhoods = new Set(stamps.map((s) => s.neighborhood));
   const collectedSlugs = new Set(stamps.map((s) => s.businessSlug));
 
-  // All total-stamp reward levels, lowest threshold first
-  const totalRewards = [...REWARDS]
-    .filter((r) => r.type === "total")
-    .sort((a, b) => a.threshold - b.threshold);
-  // Completed passports = total-reward milestones the visitor has reached
-  const completedPassports = totalRewards.filter((r) => total >= r.threshold).length;
+  // Passport history — keeps a record of past + current passports and what each
+  // was redeemed for. Add new seasons here as they launch (mark the live one
+  // "Current" and set the prior one's `redeemedFor`).
+  const passports: { name: string; status: string; redeemedFor: string | null }[] = [
+    { name: "Summer 2026 Passport", status: "Current", redeemedFor: null },
+  ];
 
   const visited = stamps.slice(0, 6);
 
@@ -100,10 +100,30 @@ export default function PassportHome() {
           </div>
         </div>
         <div className="card-pop bg-white p-4">
-          <div className="text-xs font-black uppercase tracking-wider opacity-60">Completed Passports</div>
-          <div className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-            {completedPassports}
-          </div>
+          <div className="text-xs font-black uppercase tracking-wider opacity-60">Passports</div>
+          <ul className="mt-2 space-y-2">
+            {passports.map((p) => (
+              <li key={p.name}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-black text-sm leading-tight">{p.name}</span>
+                  <span
+                    className={`shrink-0 rounded-full border-2 border-foreground px-2 py-0.5 font-display text-[9px] tracking-[0.1em] uppercase shadow-pop-sm ${
+                      p.status === "Current"
+                        ? "bg-brand-lime text-foreground"
+                        : "bg-white text-foreground/70"
+                    }`}
+                  >
+                    {p.status}
+                  </span>
+                </div>
+                {p.redeemedFor && (
+                  <div className="text-xs font-bold text-foreground/60 mt-0.5">
+                    Redeemed for {p.redeemedFor}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
