@@ -11,7 +11,7 @@ export function PrizeLadder({ collected }: { collected: number }) {
 
   return (
     <section className="card-pop bg-white overflow-hidden">
-      <header className="flex items-center justify-between px-4 py-2.5 bg-brand-red text-white">
+      <header className="flex items-center justify-between px-4 py-2.5 bg-[#a71930] text-white">
         <span
           className="font-black text-xs tracking-widest uppercase"
           style={{ fontFamily: "Bungee, sans-serif" }}
