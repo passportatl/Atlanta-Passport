@@ -303,6 +303,11 @@ function BusinessMarkers({
           title={b.name}
           onClick={() => onSelect(b.id)}
           icon={STAMP_SLUG[b.id] || b.offer ? ballIcon : dotIcon(b)}
+          // Stamp/offer soccer balls sit ABOVE plain category dots so that when
+          // a dot shares the exact same coordinates (e.g. a Public Art spot at
+          // the same address) the larger soccer ball covers it instead of the
+          // purple dot stacking on top.
+          zIndex={STAMP_SLUG[b.id] || b.offer ? 1000 : 1}
         />
       ))}
     </>
