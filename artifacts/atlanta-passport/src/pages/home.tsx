@@ -9,7 +9,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { mapRoutes, resolveRoute, events } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
-import PrizesSection, { PRIZE_TIERS } from "@/components/PrizesSection";
+import { PRIZE_TIERS } from "@/components/PrizesSection";
 import PassportStamp from "@/components/PassportStamp";
 import { StampGraphic } from "@/passport/StampGraphic";
 import { cn } from "@/lib/utils";
@@ -624,7 +624,6 @@ export default function Home() {
       <HowItWorksSection />
       <PhysicalPassportSection />
       <BusinessCtaSection />
-      <PrizesSection />
     </div>
   );
 }
