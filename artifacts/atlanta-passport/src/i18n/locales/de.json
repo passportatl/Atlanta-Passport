@@ -77,6 +77,7 @@
       "redeem_pill": "Zum Einlösen zeigen",
       "stamp_collected": "Stempel Erhalten!",
       "prize_title": "Wähle deinen Preis",
+      "redeem_stamps": "Löse {{count}} Stempel für einen Preis ein",
       "cta": "Starte deinen kostenlosen Pass"
     },
     "business_cta": {

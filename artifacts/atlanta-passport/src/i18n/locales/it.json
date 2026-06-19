@@ -77,6 +77,7 @@
       "redeem_pill": "Mostra per riscattare",
       "stamp_collected": "Timbro Ottenuto!",
       "prize_title": "Scegli il tuo premio",
+      "redeem_stamps": "Riscatta {{count}} timbri per un premio",
       "cta": "Inizia il tuo passaporto gratuito"
     },
     "business_cta": {

@@ -77,6 +77,7 @@
       "redeem_pill": "Montrez pour profiter",
       "stamp_collected": "Tampon Obtenu !",
       "prize_title": "Choisissez votre prix",
+      "redeem_stamps": "Échangez {{count}} tampons contre un prix",
       "cta": "Commencez votre passeport gratuit"
     },
     "business_cta": {

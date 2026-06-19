@@ -415,8 +415,8 @@ function HowItWorksSection() {
               </span>
               <div className="w-full max-w-[230px] card-pop bg-white border-2 p-0 overflow-hidden -rotate-1">
                 <div className="bg-brand-navy text-white px-3 py-2 flex items-center justify-between border-b-2 border-foreground">
-                  <span className="font-display text-[10px] tracking-widest truncate">
-                    Wheelhaus Bikes
+                  <span className="font-display text-[9px] tracking-widest">
+                    Atlanta Trap Museum
                   </span>
                   <MapPin className="w-3.5 h-3.5 shrink-0" />
                 </div>
@@ -481,11 +481,10 @@ function HowItWorksSection() {
                 {t("home.how_it_works.step")} 03
               </span>
               <div className="w-full max-w-[230px] card-pop bg-white border-2 p-0 overflow-hidden rotate-1">
-                <div className="bg-brand-navy text-white px-3 py-2 flex items-center justify-between border-b-2 border-foreground">
-                  <span className="font-display text-[10px] tracking-widest truncate">
+                <div className="bg-brand-navy text-white px-3 py-2 flex items-center justify-center border-b-2 border-foreground">
+                  <span className="font-display text-[9px] tracking-widest">
                     Peachtree Wellness
                   </span>
-                  <Trophy className="w-3.5 h-3.5 shrink-0" />
                 </div>
                 <div className="p-3">
                   <div className="font-display text-[9px] tracking-widest text-center mb-2">
@@ -497,8 +496,8 @@ function HowItWorksSection() {
                         <span className="shrink-0 w-7 h-7 rounded-md bg-brand-lime border-2 border-foreground font-display text-[10px] flex items-center justify-center">
                           {tier.stamps}
                         </span>
-                        <span className="font-bold text-xs leading-tight min-w-0 truncate">
-                          {tier.options[0]}
+                        <span className="font-bold text-xs leading-tight min-w-0">
+                          {t("home.how_it_works.redeem_stamps", { count: tier.stamps })}
                         </span>
                         <Gift className="w-3.5 h-3.5 ml-auto shrink-0 text-brand-red" />
                       </li>

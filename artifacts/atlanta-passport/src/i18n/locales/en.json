@@ -86,6 +86,7 @@
       "redeem_pill": "Show to redeem",
       "stamp_collected": "Stamp Collected!",
       "prize_title": "Choose your prize",
+      "redeem_stamps": "Redeem {{count}} stamps for prize",
       "cta": "Start your free passport"
     },
     "business_cta": {

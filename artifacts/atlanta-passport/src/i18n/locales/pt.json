@@ -77,6 +77,7 @@
       "redeem_pill": "Mostre para resgatar",
       "stamp_collected": "Carimbo Conquistado!",
       "prize_title": "Escolha seu prêmio",
+      "redeem_stamps": "Troque {{count}} selos por um prêmio",
       "cta": "Comece seu passaporte grátis"
     },
     "business_cta": {

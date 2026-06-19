@@ -390,6 +390,7 @@
       "redeem_pill": "أظهره للاستبدال",
       "stamp_collected": "تم الحصول على الختم!",
       "prize_title": "اختر جائزتك",
+      "redeem_stamps": "استبدل {{count}} طوابع بجائزة",
       "cta": "ابدأ جوازك المجاني"
     },
     "business_cta": {
