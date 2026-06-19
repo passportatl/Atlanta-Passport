@@ -6,9 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface CollectStampInput {
-  visitorId: string;
-  businessSlug: string;
-  latitude?: number;
-  longitude?: number;
+export interface ExportQrResult {
+  url: string;
+  fileName: string;
 }

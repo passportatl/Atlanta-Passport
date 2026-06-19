@@ -13,6 +13,7 @@ import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
 import Listing from "@/pages/listing";
 import StampPage from "@/pages/stamp";
+import RedeemPage from "@/pages/redeem";
 import PassportContact from "@/pages/passport/contact";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
@@ -51,7 +52,7 @@ const ALLOW_PUBLIC_ACCESS = false;
 function isProtectedRoute(location: string) {
   const publicExact = ["/", "/partners", "/apply", "/passport/contact"];
   if (publicExact.includes(location)) return false;
-  const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/admin/"];
+  const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/redeem/", "/admin/"];
   if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
     return false;
   }
@@ -202,6 +203,13 @@ function Router() {
     return (
       <Switch>
         <Route path="/stamp/:businessSlug" component={StampPage} />
+      </Switch>
+    );
+  }
+  if (location.startsWith("/redeem/")) {
+    return (
+      <Switch>
+        <Route path="/redeem/:tier" component={RedeemPage} />
       </Switch>
     );
   }

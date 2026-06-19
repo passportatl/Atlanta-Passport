@@ -427,6 +427,7 @@
     "unlocked": "Sbloccato",
     "toGo": "Ancora {{count}}",
     "limited": "Scorte limitate · chi prima arriva, meglio alloggia",
-    "onlyOneLeft": "Ne resta solo uno"
+    "onlyOneLeft": "Ne resta solo uno",
+    "redeemed": "Riscattato"
   }
 }

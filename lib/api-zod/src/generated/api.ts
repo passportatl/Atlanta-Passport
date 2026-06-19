@@ -96,6 +96,8 @@ export const ListBusinessesResponseItem = zod.object({
   stampName: zod.string(),
   stampColor: zod.string(),
   icon: zod.string(),
+  latitude: zod.number().nullish(),
+  longitude: zod.number().nullish(),
   isActive: zod.boolean(),
 });
 export const ListBusinessesResponse = zod.array(ListBusinessesResponseItem);
@@ -119,6 +121,8 @@ export const GetBusinessBySlugResponse = zod.object({
   stampName: zod.string(),
   stampColor: zod.string(),
   icon: zod.string(),
+  latitude: zod.number().nullish(),
+  longitude: zod.number().nullish(),
   isActive: zod.boolean(),
 });
 
@@ -128,6 +132,8 @@ export const GetBusinessBySlugResponse = zod.object({
 export const CollectStampBody = zod.object({
   visitorId: zod.string(),
   businessSlug: zod.string(),
+  latitude: zod.number().optional(),
+  longitude: zod.number().optional(),
 });
 
 export const CollectStampResponse = zod.object({
@@ -142,6 +148,55 @@ export const CollectStampResponse = zod.object({
     collectedAt: zod.coerce.date(),
   }),
   alreadyCollected: zod.boolean(),
+});
+
+/**
+ * @summary Redeem a prize tier (location-locked to Peachtree Wellness)
+ */
+export const RedeemPrizeBody = zod.object({
+  visitorId: zod.string(),
+  tier: zod.number(),
+  latitude: zod.number().optional(),
+  longitude: zod.number().optional(),
+});
+
+export const RedeemPrizeResponse = zod.object({
+  redemption: zod.object({
+    id: zod.string(),
+    visitorId: zod.string(),
+    tierStamps: zod.number(),
+    redeemedAt: zod.coerce.date(),
+  }),
+  effectiveBalance: zod.number(),
+});
+
+/**
+ * @summary List a visitor's prize redemptions
+ */
+export const ListVisitorRedemptionsParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const ListVisitorRedemptionsResponseItem = zod.object({
+  id: zod.string(),
+  visitorId: zod.string(),
+  tierStamps: zod.number(),
+  redeemedAt: zod.coerce.date(),
+});
+export const ListVisitorRedemptionsResponse = zod.array(
+  ListVisitorRedemptionsResponseItem,
+);
+
+/**
+ * @summary Build and upload the QR-code Excel workbook to Google Drive
+ */
+export const ExportQrCodesBody = zod.object({
+  publishedOrigin: zod.string(),
+});
+
+export const ExportQrCodesResponse = zod.object({
+  url: zod.string(),
+  fileName: zod.string(),
 });
 
 /**

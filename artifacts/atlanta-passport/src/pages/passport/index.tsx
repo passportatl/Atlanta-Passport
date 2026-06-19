@@ -3,9 +3,12 @@ import { useClerk, useUser } from "@clerk/react";
 import {
   useListVisitorStamps,
   useListBusinesses,
+  useListVisitorRedemptions,
   getListVisitorStampsQueryKey,
+  getListVisitorRedemptionsQueryKey,
   type Stamp,
   type Business,
+  type Redemption,
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import { basePath } from "@/auth/clerk";
@@ -31,6 +34,16 @@ export default function PassportHome() {
 
   const { data: businessesRaw } = useListBusinesses();
   const businesses = (businessesRaw as Business[] | undefined) ?? [];
+
+  const { data: redemptionsRaw } = useListVisitorRedemptions(visitorId ?? "", {
+    query: {
+      queryKey: getListVisitorRedemptionsQueryKey(visitorId ?? ""),
+      enabled: !!visitorId,
+    },
+  });
+  const redeemedTiers = ((redemptionsRaw as Redemption[] | undefined) ?? []).map(
+    (r) => r.tierStamps,
+  );
 
   if (!visitorId) {
     return (
@@ -126,7 +139,11 @@ export default function PassportHome() {
         </div>
       </div>
 
-      <PrizeLadder collected={total} title="Summer 2026 Passport Prize Ladder" />
+      <PrizeLadder
+        collected={total}
+        redeemedTiers={redeemedTiers}
+        title="Summer 2026 Passport Prize Ladder"
+      />
 
       <div>
         <div className="flex items-center justify-between mb-3">

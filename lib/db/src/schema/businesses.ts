@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, boolean, uuid, doublePrecision } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -15,6 +15,10 @@ export const businessesTable = pgTable("businesses", {
   stampName: text("stamp_name").notNull(),
   stampColor: text("stamp_color").notNull(),
   icon: text("icon").notNull(),
+  // Optional geofence anchor. When set, stamp collection requires the visitor's
+  // device to be physically near these coordinates. Null = no location check.
+  latitude: doublePrecision("latitude"),
+  longitude: doublePrecision("longitude"),
   isActive: boolean("is_active").notNull().default(true),
 });
 

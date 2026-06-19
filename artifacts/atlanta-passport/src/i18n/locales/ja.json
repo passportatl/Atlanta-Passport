@@ -427,6 +427,7 @@
     "unlocked": "解除済み",
     "toGo": "あと{{count}}",
     "limited": "数量限定・先着順",
-    "onlyOneLeft": "残り1個"
+    "onlyOneLeft": "残り1個",
+    "redeemed": "引き換え済み"
   }
 }

@@ -36,6 +36,8 @@ export interface Business {
   stampName: string;
   stampColor: string;
   icon: string;
+  latitude?: number | null;
+  longitude?: number | null;
   isActive: boolean;
 }
 
@@ -57,6 +59,38 @@ export type StampList = Stamp[];
 export interface CollectStampInput {
   visitorId: string;
   businessSlug: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface Redemption {
+  id: string;
+  visitorId: string;
+  tierStamps: number;
+  redeemedAt: string;
+}
+
+export type RedemptionList = Redemption[];
+
+export interface RedeemPrizeInput {
+  visitorId: string;
+  tier: number;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface RedeemPrizeResult {
+  redemption: Redemption;
+  effectiveBalance: number;
+}
+
+export interface ExportQrInput {
+  publishedOrigin: string;
+}
+
+export interface ExportQrResult {
+  url: string;
+  fileName: string;
 }
 
 export interface StampCollection {

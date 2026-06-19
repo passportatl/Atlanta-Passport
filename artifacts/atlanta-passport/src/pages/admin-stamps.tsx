@@ -1,10 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   useListBusinesses,
+  useExportQrCodes,
   getListBusinessesQueryKey,
+  ApiError,
   type Business,
+  type ExportQrResult,
 } from "@workspace/api-client-react";
-import { AlertTriangle, Copy, ExternalLink, Lock, QrCode, Star } from "lucide-react";
+import {
+  AlertTriangle,
+  Copy,
+  ExternalLink,
+  FileSpreadsheet,
+  Lock,
+  QrCode,
+  Star,
+} from "lucide-react";
 import { NEIGHBORHOODS } from "@/passport/data";
 import AdminNav from "@/components/AdminNav";
 
@@ -159,6 +170,77 @@ function LocationCard({ business: b, copied, onCopy, publishedOrigin }: Location
   );
 }
 
+// Generates an Excel workbook of QR codes (11 sponsor offers + 6 bonus events +
+// 5 prize-tier redemption codes) on Google Drive, named "Summer 2026 passport qr
+// codes". Re-running overwrites the same file. QR images encode the live public
+// origin the admin pasted above, so they scan with no Replit login.
+function ExportCard({ publishedOrigin }: { publishedOrigin: string | null }) {
+  const { mutateAsync: exportQr, isPending } = useExportQrCodes();
+  const [result, setResult] = useState<ExportQrResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async () => {
+    if (!publishedOrigin) return;
+    setError(null);
+    setResult(null);
+    try {
+      const r = (await exportQr({
+        data: { publishedOrigin },
+      })) as ExportQrResult;
+      setResult(r);
+    } catch (e) {
+      const msg =
+        e instanceof ApiError &&
+        e.data &&
+        typeof e.data === "object" &&
+        "error" in e.data
+          ? String((e.data as { error?: unknown }).error)
+          : "Export failed. Please try again.";
+      setError(msg);
+    }
+  };
+
+  return (
+    <div className="mb-6 card-pop bg-white p-4">
+      <label className="block text-xs font-black uppercase tracking-wider mb-1">
+        Export QR codes to Google Drive
+      </label>
+      <p className="text-xs text-foreground/60 mb-3">
+        Generates an Excel sheet named{" "}
+        <span className="font-mono">Summer 2026 passport qr codes</span> with every
+        scannable QR (sponsor offers, bonus events, and the 5 prize-tier redemption
+        codes). Re-running overwrites the same file.
+        {!publishedOrigin && (
+          <span className="block mt-1 font-bold text-[hsl(var(--brand-red))]">
+            Paste your published site URL above first so the QR codes are publicly
+            scannable.
+          </span>
+        )}
+      </p>
+      <button
+        type="button"
+        onClick={run}
+        disabled={isPending}
+        className="button-pop button-pop-yellow inline-flex items-center gap-2 disabled:opacity-60"
+      >
+        <FileSpreadsheet className="w-4 h-4" />
+        {isPending ? "Generating…" : "Export to Google Drive"}
+      </button>
+      {result && (
+        <p className="mt-3 inline-flex items-center gap-1 border-2 border-foreground bg-[hsl(var(--brand-lime))] rounded px-2 py-1 text-xs font-black">
+          ✓ Saved <span className="font-mono">{result.fileName}</span> —{" "}
+          <a href={result.url} target="_blank" rel="noreferrer" className="underline">
+            open in Drive
+          </a>
+        </p>
+      )}
+      {error && (
+        <p className="text-xs font-bold text-[hsl(var(--brand-red))] mt-3">{error}</p>
+      )}
+    </div>
+  );
+}
+
 export default function AdminStamps() {
   const [unlocked, setUnlocked] = useState(false);
 
@@ -281,6 +363,8 @@ export default function AdminStamps() {
             </p>
           ) : null}
         </div>
+
+        <ExportCard publishedOrigin={publishedOrigin} />
 
         {!isPublicHost() && !publishedOrigin && (
           <div className="mb-6 flex items-start gap-3 rounded-xl border-2 border-foreground bg-[hsl(var(--brand-yellow))] p-4 shadow-pop-sm">

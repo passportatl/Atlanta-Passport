@@ -5,10 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { Redemption } from "./redemption";
 
-export interface CollectStampInput {
-  visitorId: string;
-  businessSlug: string;
-  latitude?: number;
-  longitude?: number;
-}
+export type RedemptionList = Redemption[];

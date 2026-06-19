@@ -1,6 +1,31 @@
-import { inArray } from "drizzle-orm";
+import { inArray, eq } from "drizzle-orm";
 import { db, businessesTable, type InsertBusiness } from "@workspace/db";
 import { logger } from "./logger";
+
+// Geofence anchors keyed by DB slug — only the 11 sponsor offers, the 6 bonus
+// events. Stamp collection at these spots requires the visitor to be physically
+// near (see routes/stamps.ts). Every other spot stays unrestricted (no coords).
+const COORDS_BY_SLUG: Record<string, { lat: number; lng: number }> = {
+  // 11 sponsor offers
+  atlantucky: { lat: 33.7531, lng: -84.4016 },
+  "peachtree-wellness": { lat: 33.7469, lng: -84.358 },
+  wheelhaus: { lat: 33.737, lng: -84.3389 },
+  westwood: { lat: 33.7343, lng: -84.4257 },
+  vickerys: { lat: 33.7432, lng: -84.3522 },
+  boxcar: { lat: 33.7321, lng: -84.4203 },
+  "hop-city-krog": { lat: 33.757, lng: -84.364 },
+  "la-semilla": { lat: 33.7473, lng: -84.3618 },
+  "trap-museum": { lat: 33.7718, lng: -84.4087 },
+  varasanos: { lat: 33.8138, lng: -84.3921 },
+  nakato: { lat: 33.8087, lng: -84.3647 },
+  // 6 bonus-stamp events (all at Atlantucky Brewing except the MLK Mural)
+  "event-battle-of-the-bands": { lat: 33.7531, lng: -84.4016 },
+  "event-video-game-prelims": { lat: 33.7531, lng: -84.4016 },
+  "event-hot-sauce-market": { lat: 33.7531, lng: -84.4016 },
+  "event-post-match-atlantucky": { lat: 33.7531, lng: -84.4016 },
+  "event-soccer-gaming-finals": { lat: 33.7531, lng: -84.4016 },
+  "event-mlk-mural": { lat: 33.7745, lng: -84.4082 },
+};
 
 // Old demo businesses from the v1 seed — flip them to isActive=false so they
 // disappear from the admin grid and tourist surfaces, but historical stamps
@@ -25,6 +50,7 @@ interface BizInput {
 }
 
 function build(b: BizInput): InsertBusiness {
+  const coords = COORDS_BY_SLUG[b.slug];
   return {
     slug: b.slug,
     name: b.name,
@@ -37,6 +63,8 @@ function build(b: BizInput): InsertBusiness {
     stampName: b.name,
     stampColor: b.stampColor,
     icon: b.icon,
+    latitude: coords?.lat ?? null,
+    longitude: coords?.lng ?? null,
     isActive: true,
   };
 }
@@ -155,6 +183,7 @@ interface EventInput {
 }
 
 function buildEvent(e: EventInput): InsertBusiness {
+  const coords = COORDS_BY_SLUG[e.slug];
   return {
     slug: e.slug,
     name: e.name,
@@ -167,6 +196,8 @@ function buildEvent(e: EventInput): InsertBusiness {
     stampName: e.name,
     stampColor: "orange",
     icon: e.icon,
+    latitude: coords?.lat ?? null,
+    longitude: coords?.lng ?? null,
     isActive: true,
   };
 }
@@ -198,6 +229,15 @@ export async function seedBusinesses(): Promise<void> {
       .insert(businessesTable)
       .values(SEED_ALL)
       .onConflictDoNothing({ target: businessesTable.slug });
+
+    // Backfill geofence coordinates. onConflictDoNothing leaves already-seeded
+    // rows untouched, so set lat/lng explicitly for every in-scope slug.
+    for (const [slug, c] of Object.entries(COORDS_BY_SLUG)) {
+      await db
+        .update(businessesTable)
+        .set({ latitude: c.lat, longitude: c.lng })
+        .where(eq(businessesTable.slug, slug));
+    }
 
     logger.info(
       {

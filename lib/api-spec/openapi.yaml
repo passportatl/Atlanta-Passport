@@ -16,6 +16,10 @@ tags:
     description: Participating businesses
   - name: stamps
     description: Stamp collection
+  - name: redemptions
+    description: Prize tier redemptions
+  - name: admin
+    description: Admin operations
   - name: applications
     description: Partner applications
 paths:
@@ -162,6 +166,69 @@ paths:
               schema:
                 $ref: "#/components/schemas/StampCollection"
 
+  /redemptions:
+    post:
+      operationId: redeemPrize
+      tags: [redemptions]
+      summary: Redeem a prize tier (location-locked to Peachtree Wellness)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RedeemPrizeInput"
+      responses:
+        "200":
+          description: Redeemed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedeemPrizeResult"
+        "404":
+          description: Visitor or tier not found
+        "409":
+          description: Tier already redeemed
+        "422":
+          description: Too far from Peachtree Wellness, or not enough stamps
+
+  /visitors/{id}/redemptions:
+    get:
+      operationId: listVisitorRedemptions
+      tags: [redemptions]
+      summary: List a visitor's prize redemptions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Redemptions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedemptionList"
+
+  /admin/export-qr:
+    post:
+      operationId: exportQrCodes
+      tags: [admin]
+      summary: Build and upload the QR-code Excel workbook to Google Drive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportQrInput"
+      responses:
+        "200":
+          description: Exported
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportQrResult"
+
   /applications:
     post:
       operationId: submitApplication
@@ -276,6 +343,12 @@ components:
           type: string
         icon:
           type: string
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
         isActive:
           type: boolean
       required:
@@ -338,7 +411,68 @@ components:
           type: string
         businessSlug:
           type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
       required: [visitorId, businessSlug]
+
+    Redemption:
+      type: object
+      properties:
+        id:
+          type: string
+        visitorId:
+          type: string
+        tierStamps:
+          type: integer
+        redeemedAt:
+          type: string
+          format: date-time
+      required: [id, visitorId, tierStamps, redeemedAt]
+
+    RedemptionList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Redemption"
+
+    RedeemPrizeInput:
+      type: object
+      properties:
+        visitorId:
+          type: string
+        tier:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+      required: [visitorId, tier]
+
+    RedeemPrizeResult:
+      type: object
+      properties:
+        redemption:
+          $ref: "#/components/schemas/Redemption"
+        effectiveBalance:
+          type: integer
+      required: [redemption, effectiveBalance]
+
+    ExportQrInput:
+      type: object
+      properties:
+        publishedOrigin:
+          type: string
+      required: [publishedOrigin]
+
+    ExportQrResult:
+      type: object
+      properties:
+        url:
+          type: string
+        fileName:
+          type: string
+      required: [url, fileName]
 
     StampCollection:
       type: object

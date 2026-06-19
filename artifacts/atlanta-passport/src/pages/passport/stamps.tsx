@@ -4,9 +4,12 @@ import { ArrowUpRight } from "lucide-react";
 import {
   useListVisitorStamps,
   useListBusinesses,
+  useListVisitorRedemptions,
   getListVisitorStampsQueryKey,
+  getListVisitorRedemptionsQueryKey,
   type Stamp,
   type Business,
+  type Redemption,
 } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import { StampGraphic } from "@/passport/StampGraphic";
@@ -150,8 +153,17 @@ export default function PassportStamps({
     },
   });
   const { data: businessesRaw } = useListBusinesses();
+  const { data: redemptionsRaw } = useListVisitorRedemptions(visitorId ?? "", {
+    query: {
+      queryKey: getListVisitorRedemptionsQueryKey(visitorId ?? ""),
+      enabled: !!visitorId,
+    },
+  });
   const stamps = (stampsRaw as Stamp[] | undefined) ?? [];
   const apiBusinesses = (businessesRaw as Business[] | undefined) ?? [];
+  const redeemedTiers = ((redemptionsRaw as Redemption[] | undefined) ?? []).map(
+    (r) => r.tierStamps,
+  );
 
   const stampBySlug = useMemo(() => {
     const m = new Map<string, Stamp>();
@@ -235,7 +247,7 @@ export default function PassportStamps({
         </div>
       </div>
 
-      <PrizeLadder collected={collected} />
+      <PrizeLadder collected={collected} redeemedTiers={redeemedTiers} />
 
       {!visitorId && (
         <div className="card-pop bg-[hsl(var(--brand-yellow))] p-3 flex items-center justify-between gap-3">

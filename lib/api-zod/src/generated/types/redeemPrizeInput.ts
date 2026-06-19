@@ -6,9 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface CollectStampInput {
+export interface RedeemPrizeInput {
   visitorId: string;
-  businessSlug: string;
+  tier: number;
   latitude?: number;
   longitude?: number;
 }

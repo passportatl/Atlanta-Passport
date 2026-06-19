@@ -427,6 +427,7 @@
     "unlocked": "Freigeschaltet",
     "toGo": "Noch {{count}}",
     "limited": "Begrenzter Vorrat · wer zuerst kommt, mahlt zuerst",
-    "onlyOneLeft": "Nur noch einer"
+    "onlyOneLeft": "Nur noch einer",
+    "redeemed": "Eingelöst"
   }
 }

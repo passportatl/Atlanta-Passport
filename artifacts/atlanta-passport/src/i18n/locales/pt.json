@@ -427,6 +427,7 @@
     "unlocked": "Desbloqueado",
     "toGo": "Faltam {{count}}",
     "limited": "Estoque limitado · por ordem de chegada",
-    "onlyOneLeft": "Resta apenas um"
+    "onlyOneLeft": "Resta apenas um",
+    "redeemed": "Resgatado"
   }
 }

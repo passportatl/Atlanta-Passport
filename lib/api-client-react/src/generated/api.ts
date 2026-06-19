@@ -24,7 +24,12 @@ import type {
   CollectStampInput,
   ContactReceipt,
   CreateVisitorInput,
+  ExportQrInput,
+  ExportQrResult,
   HealthStatus,
+  RedeemPrizeInput,
+  RedeemPrizeResult,
+  RedemptionList,
   StampCollection,
   StampList,
   SubmitApplicationInput,
@@ -703,6 +708,266 @@ export const useCollectStamp = <
   TContext
 > => {
   return useMutation(getCollectStampMutationOptions(options));
+};
+
+/**
+ * @summary Redeem a prize tier (location-locked to Peachtree Wellness)
+ */
+export const getRedeemPrizeUrl = () => {
+  return `/api/redemptions`;
+};
+
+export const redeemPrize = async (
+  redeemPrizeInput: RedeemPrizeInput,
+  options?: RequestInit,
+): Promise<RedeemPrizeResult> => {
+  return customFetch<RedeemPrizeResult>(getRedeemPrizeUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(redeemPrizeInput),
+  });
+};
+
+export const getRedeemPrizeMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof redeemPrize>>,
+    TError,
+    { data: BodyType<RedeemPrizeInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof redeemPrize>>,
+  TError,
+  { data: BodyType<RedeemPrizeInput> },
+  TContext
+> => {
+  const mutationKey = ["redeemPrize"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof redeemPrize>>,
+    { data: BodyType<RedeemPrizeInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return redeemPrize(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RedeemPrizeMutationResult = NonNullable<
+  Awaited<ReturnType<typeof redeemPrize>>
+>;
+export type RedeemPrizeMutationBody = BodyType<RedeemPrizeInput>;
+export type RedeemPrizeMutationError = ErrorType<void>;
+
+/**
+ * @summary Redeem a prize tier (location-locked to Peachtree Wellness)
+ */
+export const useRedeemPrize = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof redeemPrize>>,
+    TError,
+    { data: BodyType<RedeemPrizeInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof redeemPrize>>,
+  TError,
+  { data: BodyType<RedeemPrizeInput> },
+  TContext
+> => {
+  return useMutation(getRedeemPrizeMutationOptions(options));
+};
+
+/**
+ * @summary List a visitor's prize redemptions
+ */
+export const getListVisitorRedemptionsUrl = (id: string) => {
+  return `/api/visitors/${id}/redemptions`;
+};
+
+export const listVisitorRedemptions = async (
+  id: string,
+  options?: RequestInit,
+): Promise<RedemptionList> => {
+  return customFetch<RedemptionList>(getListVisitorRedemptionsUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListVisitorRedemptionsQueryKey = (id: string) => {
+  return [`/api/visitors/${id}/redemptions`] as const;
+};
+
+export const getListVisitorRedemptionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listVisitorRedemptions>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listVisitorRedemptions>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListVisitorRedemptionsQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listVisitorRedemptions>>
+  > = ({ signal }) => listVisitorRedemptions(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listVisitorRedemptions>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListVisitorRedemptionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listVisitorRedemptions>>
+>;
+export type ListVisitorRedemptionsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List a visitor's prize redemptions
+ */
+
+export function useListVisitorRedemptions<
+  TData = Awaited<ReturnType<typeof listVisitorRedemptions>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listVisitorRedemptions>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListVisitorRedemptionsQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Build and upload the QR-code Excel workbook to Google Drive
+ */
+export const getExportQrCodesUrl = () => {
+  return `/api/admin/export-qr`;
+};
+
+export const exportQrCodes = async (
+  exportQrInput: ExportQrInput,
+  options?: RequestInit,
+): Promise<ExportQrResult> => {
+  return customFetch<ExportQrResult>(getExportQrCodesUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(exportQrInput),
+  });
+};
+
+export const getExportQrCodesMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof exportQrCodes>>,
+    TError,
+    { data: BodyType<ExportQrInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof exportQrCodes>>,
+  TError,
+  { data: BodyType<ExportQrInput> },
+  TContext
+> => {
+  const mutationKey = ["exportQrCodes"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof exportQrCodes>>,
+    { data: BodyType<ExportQrInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return exportQrCodes(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ExportQrCodesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof exportQrCodes>>
+>;
+export type ExportQrCodesMutationBody = BodyType<ExportQrInput>;
+export type ExportQrCodesMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Build and upload the QR-code Excel workbook to Google Drive
+ */
+export const useExportQrCodes = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof exportQrCodes>>,
+    TError,
+    { data: BodyType<ExportQrInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof exportQrCodes>>,
+  TError,
+  { data: BodyType<ExportQrInput> },
+  TContext
+> => {
+  return useMutation(getExportQrCodesMutationOptions(options));
 };
 
 /**

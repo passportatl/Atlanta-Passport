@@ -18,5 +18,7 @@ export interface Business {
   stampName: string;
   stampColor: string;
   icon: string;
+  latitude?: number | null;
+  longitude?: number | null;
   isActive: boolean;
 }
