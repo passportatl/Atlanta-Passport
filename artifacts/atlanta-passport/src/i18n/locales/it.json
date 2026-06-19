@@ -428,6 +428,8 @@
     "toGo": "Ancora {{count}}",
     "limited": "Scorte limitate · chi prima arriva, meglio alloggia",
     "onlyOneLeft": "Ne resta solo uno",
-    "redeemed": "Riscattato"
+    "redeemed": "Riscattato",
+    "ready": "Pronto da riscattare",
+    "redeemedOn": "Riscattato il {{date}}"
   }
 }

@@ -123,6 +123,15 @@ async function buildRows(origin: string): Promise<ExportRow[]> {
   return [...businessRows, ...prizeRows];
 }
 
+// The workbook is laid out as three clearly labeled sections, in order:
+// Sponsor Offers, Bonus Events, then Prize Redemption Codes. Each section gets a
+// bold merged title row before its rows.
+const SECTIONS: { title: string; type: string }[] = [
+  { title: "Sponsor Offers", type: "Sponsor Offer" },
+  { title: "Bonus Events", type: "Bonus Event" },
+  { title: "Prize Redemption Codes", type: "Prize Redemption" },
+];
+
 async function buildWorkbook(rows: ExportRow[]): Promise<Buffer> {
   const wb = new ExcelJS.Workbook();
   wb.creator = "Atlanta Passport";
@@ -137,20 +146,39 @@ async function buildWorkbook(rows: ExportRow[]): Promise<Buffer> {
   ];
   ws.getRow(1).font = { bold: true };
 
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const excelRow = ws.addRow({ label: row.label, type: row.type, url: row.url });
-    excelRow.height = 130;
-    excelRow.alignment = { vertical: "middle", wrapText: true };
+  for (const section of SECTIONS) {
+    const sectionRows = rows.filter((r) => r.type === section.type);
+    if (sectionRows.length === 0) continue;
 
-    const dataUrl = await QRCode.toDataURL(row.url, { margin: 1, width: 256 });
-    const base64 = dataUrl.split(",")[1] ?? "";
-    const imageId = wb.addImage({ base64, extension: "png" });
-    // Column index 3 (0-based) = "QR Code"; row index is excelRow.number - 1.
-    ws.addImage(imageId, {
-      tl: { col: 3.1, row: excelRow.number - 1 + 0.1 },
-      ext: { width: 120, height: 120 },
-    });
+    // Bold merged section header spanning all four columns.
+    const headerRow = ws.addRow([section.title]);
+    ws.mergeCells(`A${headerRow.number}:D${headerRow.number}`);
+    headerRow.font = { bold: true, size: 13 };
+    headerRow.alignment = { vertical: "middle" };
+    headerRow.getCell(1).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFFFE680" },
+    };
+
+    for (const row of sectionRows) {
+      const excelRow = ws.addRow({
+        label: row.label,
+        type: row.type,
+        url: row.url,
+      });
+      excelRow.height = 130;
+      excelRow.alignment = { vertical: "middle", wrapText: true };
+
+      const dataUrl = await QRCode.toDataURL(row.url, { margin: 1, width: 256 });
+      const base64 = dataUrl.split(",")[1] ?? "";
+      const imageId = wb.addImage({ base64, extension: "png" });
+      // Column index 3 (0-based) = "QR Code"; row index is excelRow.number - 1.
+      ws.addImage(imageId, {
+        tl: { col: 3.1, row: excelRow.number - 1 + 0.1 },
+        ext: { width: 120, height: 120 },
+      });
+    }
   }
 
   const arrayBuffer = await wb.xlsx.writeBuffer();

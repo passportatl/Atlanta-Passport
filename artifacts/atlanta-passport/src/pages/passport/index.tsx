@@ -42,7 +42,7 @@ export default function PassportHome() {
     },
   });
   const redeemedTiers = ((redemptionsRaw as Redemption[] | undefined) ?? []).map(
-    (r) => r.tierStamps,
+    (r) => ({ tierStamps: r.tierStamps, redeemedAt: r.redeemedAt }),
   );
 
   if (!visitorId) {

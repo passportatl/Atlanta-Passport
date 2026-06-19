@@ -5,6 +5,21 @@ import { PRIZE_TIERS } from "@/components/PrizesSection";
 // Compact, progress-aware prize ladder for the Stamps page. Mirrors the data in
 // <PrizesSection> (the big navy marketing block) but reflects the visitor's live
 // stamp count — each tier reads as redeemed, ready, or "N to go".
+// A redeemed prize tier: its stamp cost (= tier identity) and when it was
+// redeemed (ISO timestamp from the server).
+export type RedeemedTier = { tierStamps: number; redeemedAt: string };
+
+function formatRedeemedAt(iso: string, locale: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString(locale, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export function PrizeLadder({
   collected,
   title,
@@ -12,15 +27,16 @@ export function PrizeLadder({
 }: {
   collected: number;
   title?: string;
-  // Stamp thresholds (tier identities) the visitor has already redeemed.
-  redeemedTiers?: number[];
+  // Tiers the visitor has already redeemed, with their redemption timestamps.
+  redeemedTiers?: RedeemedTier[];
 }) {
-  const { t } = useTranslation();
-  const redeemed = new Set(redeemedTiers);
+  const { t, i18n } = useTranslation();
+  const redeemedAtByTier = new Map(redeemedTiers.map((r) => [r.tierStamps, r.redeemedAt]));
+  const redeemed = new Set(redeemedTiers.map((r) => r.tierStamps));
   // Effective balance = stamps collected minus the cost of tiers already
   // redeemed. Readiness is gauged against this, NOT the raw count, so a tier
-  // can't read as "Unlocked" once its stamps have been spent on a redemption.
-  const spent = redeemedTiers.reduce((sum, n) => sum + n, 0);
+  // can't read as "Ready" once its stamps have been spent on a redemption.
+  const spent = redeemedTiers.reduce((sum, r) => sum + r.tierStamps, 0);
   const effective = collected - spent;
   const unlockedCount = PRIZE_TIERS.filter(
     (tier) => !redeemed.has(tier.stamps) && effective >= tier.stamps,
@@ -83,7 +99,7 @@ export function PrizeLadder({
                   ) : unlocked ? (
                     <span className="inline-flex items-center gap-1 rounded-full border-2 border-foreground bg-brand-lime px-2 py-0.5 font-display text-[9px] tracking-[0.1em] uppercase text-foreground shadow-pop-sm shrink-0">
                       <Check className="w-3 h-3" />
-                      {t("prizes.unlocked")}
+                      {t("prizes.ready")}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-foreground/45 shrink-0">
@@ -92,6 +108,17 @@ export function PrizeLadder({
                     </span>
                   )}
                 </div>
+
+                {isRedeemed && redeemedAtByTier.get(tier.stamps) && (
+                  <span className="block mt-0.5 text-[10px] font-bold text-foreground/55">
+                    {t("prizes.redeemedOn", {
+                      date: formatRedeemedAt(
+                        redeemedAtByTier.get(tier.stamps)!,
+                        i18n.language,
+                      ),
+                    })}
+                  </span>
+                )}
 
                 {multi && (
                   <span className="block mt-1">

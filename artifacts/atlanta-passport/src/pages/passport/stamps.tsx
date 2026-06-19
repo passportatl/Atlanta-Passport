@@ -162,7 +162,7 @@ export default function PassportStamps({
   const stamps = (stampsRaw as Stamp[] | undefined) ?? [];
   const apiBusinesses = (businessesRaw as Business[] | undefined) ?? [];
   const redeemedTiers = ((redemptionsRaw as Redemption[] | undefined) ?? []).map(
-    (r) => r.tierStamps,
+    (r) => ({ tierStamps: r.tierStamps, redeemedAt: r.redeemedAt }),
   );
 
   const stampBySlug = useMemo(() => {

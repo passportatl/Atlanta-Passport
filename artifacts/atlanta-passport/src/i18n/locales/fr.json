@@ -428,6 +428,8 @@
     "toGo": "Encore {{count}}",
     "limited": "Stock limité · premier arrivé, premier servi",
     "onlyOneLeft": "Plus qu’un seul",
-    "redeemed": "Échangé"
+    "redeemed": "Échangé",
+    "ready": "Prêt à échanger",
+    "redeemedOn": "Échangé le {{date}}"
   }
 }

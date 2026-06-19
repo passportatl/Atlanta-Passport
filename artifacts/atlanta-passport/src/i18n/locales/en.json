@@ -428,6 +428,8 @@
     "toGo": "{{count}} to go",
     "limited": "Limited supply · first come, first served",
     "onlyOneLeft": "Only one left",
-    "redeemed": "Redeemed"
+    "redeemed": "Redeemed",
+    "ready": "Ready to redeem",
+    "redeemedOn": "Redeemed {{date}}"
   }
 }

@@ -428,6 +428,8 @@
     "toGo": "{{count}}개 남음",
     "limited": "수량 한정 · 선착순",
     "onlyOneLeft": "단 하나 남음",
-    "redeemed": "사용 완료"
+    "redeemed": "사용 완료",
+    "ready": "교환 가능",
+    "redeemedOn": "{{date}} 교환됨"
   }
 }

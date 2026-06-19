@@ -428,6 +428,8 @@
     "toGo": "Noch {{count}}",
     "limited": "Begrenzter Vorrat · wer zuerst kommt, mahlt zuerst",
     "onlyOneLeft": "Nur noch einer",
-    "redeemed": "Eingelöst"
+    "redeemed": "Eingelöst",
+    "ready": "Bereit zum Einlösen",
+    "redeemedOn": "Eingelöst am {{date}}"
   }
 }
