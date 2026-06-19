@@ -6,12 +6,11 @@ import {
   Map, SlidersHorizontal, Navigation
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { mapRoutes, resolveRoute, events } from "@/data/sample-data";
+import { mapRoutes, resolveRoute, events, STAMP_IMAGE_BY_ID } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
 import { PRIZE_TIERS } from "@/components/PrizesSection";
 import PassportStamp from "@/components/PassportStamp";
-import { StampGraphic } from "@/passport/StampGraphic";
 import { cn } from "@/lib/utils";
 
 import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
@@ -452,13 +451,10 @@ function HowItWorksSection() {
               <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
                 {t("home.how_it_works.step")} 02
               </span>
-              <StampGraphic
-                neighborhood="Old Fourth Ward"
-                iconName="bike"
-                color="yellow"
-                collectedAt={new Date()}
-                size={140}
-                rotate={-4}
+              <img
+                src={STAMP_IMAGE_BY_ID["trap-museum"]}
+                alt="Trap Museum stamp"
+                className="w-[140px] h-[140px] object-contain -rotate-[4deg]"
               />
               <div className="mt-3 font-display text-xs tracking-widest text-brand-red">
                 {t("home.how_it_works.stamp_collected")}
