@@ -102,6 +102,20 @@
       "screen_title": "Ce Soir à Atlanta",
       "live_badge": "En Direct Ce Soir",
       "cta_lead": "Obtenez votre Passport gratuit"
+    },
+    "explore": {
+      "kicker": "Explorez la ville",
+      "title": "Découvrez le vrai Atlanta, à votre façon.",
+      "subtitle": "Ouvrez la carte en direct et filtrez la ville selon vos envies — restos, bars, vie nocturne, balades, fresques et plus — puis touchez un lieu pour ses offres exclusives et un tampon.",
+      "f1_title": "Carte interactive en direct",
+      "f1_desc": "Voyez chaque lieu répertorié épinglé là où il se trouve.",
+      "f2_title": "Filtrez par ambiance et quartier",
+      "f2_desc": "Affinez par catégorie ou zone selon votre humeur et votre destination.",
+      "f3_title": "Touchez pour offres et tampons",
+      "f3_desc": "Chaque lieu affiche son offre réservée aux locaux et le tampon qui vous attend.",
+      "card_label": "Parcourir par catégorie",
+      "cta_lead": "Gratuit avec votre passeport",
+      "cta": "Commencer à explorer"
     }
   },
   "lang": {

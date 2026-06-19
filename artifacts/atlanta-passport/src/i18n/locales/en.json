@@ -102,6 +102,20 @@
       "stamp_hero": "ATL 26 Stamp",
       "stamp_local": "Local Only",
       "stamp_year": "ATL 2026"
+    },
+    "explore": {
+      "kicker": "Explore the City",
+      "title": "Find the real Atlanta, your way.",
+      "subtitle": "Open the live map and filter the city by what you're into — food, drinks, nightlife, rides, murals and more — then tap any spot for local-only offers and a stamp.",
+      "f1_title": "Live interactive map",
+      "f1_desc": "See every listed spot pinned across the city, right where it is.",
+      "f2_title": "Filter by vibe & neighborhood",
+      "f2_desc": "Narrow by category or area to match your mood and where you're headed.",
+      "f3_title": "Tap for offers & stamps",
+      "f3_desc": "Each spot shows its local's-only deal and the stamp waiting for you.",
+      "card_label": "Browse by category",
+      "cta_lead": "Free with your passport",
+      "cta": "Start exploring"
     }
   },
   "lang": {

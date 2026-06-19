@@ -102,6 +102,20 @@
       "screen_title": "Heute Abend in Atlanta",
       "live_badge": "Heute Abend live",
       "cta_lead": "Hol dir dein gratis Passport"
+    },
+    "explore": {
+      "kicker": "Erkunde die Stadt",
+      "title": "Finde das echte Atlanta, auf deine Art.",
+      "subtitle": "Öffne die Live-Karte und filtere die Stadt nach deinen Interessen — Essen, Drinks, Nachtleben, Touren, Wandbilder und mehr — und tippe auf einen Ort für exklusive Angebote und einen Stempel.",
+      "f1_title": "Interaktive Live-Karte",
+      "f1_desc": "Sieh jeden gelisteten Ort genau dort, wo er ist.",
+      "f2_title": "Filtere nach Vibe und Viertel",
+      "f2_desc": "Grenze nach Kategorie oder Gegend ein – passend zu Laune und Ziel.",
+      "f3_title": "Tippen für Angebote und Stempel",
+      "f3_desc": "Jeder Ort zeigt sein Insider-Angebot und den Stempel, der auf dich wartet.",
+      "card_label": "Nach Kategorie stöbern",
+      "cta_lead": "Kostenlos mit deinem Pass",
+      "cta": "Jetzt erkunden"
     }
   },
   "lang": {

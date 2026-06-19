@@ -2,9 +2,11 @@
 export const GEOFENCE_RADIUS_M = 200;
 
 // Temporary testing escape hatch: when DISABLE_GEOFENCE is truthy, the server
-// skips all location checks for stamp collection and prize redemption. Leave
-// this unset (or "false") in production.
+// skips all location checks for stamp collection and prize redemption.
+// Hard guard: geofencing can NEVER be disabled in production, regardless of the
+// env var — the flag is only honored outside production.
 export function geofenceDisabled(): boolean {
+  if (process.env.NODE_ENV === "production") return false;
   const v = (process.env.DISABLE_GEOFENCE ?? "").toLowerCase();
   return v === "1" || v === "true" || v === "yes";
 }

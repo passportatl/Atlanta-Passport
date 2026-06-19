@@ -102,6 +102,20 @@
       "screen_title": "Hoje à Noite em Atlanta",
       "live_badge": "Acontecendo Hoje",
       "cta_lead": "Pegue o seu Passport grátis"
+    },
+    "explore": {
+      "kicker": "Explore a cidade",
+      "title": "Encontre a verdadeira Atlanta, do seu jeito.",
+      "subtitle": "Abra o mapa ao vivo e filtre a cidade pelo que você curte — comida, bebidas, vida noturna, passeios, murais e mais — e toque em qualquer lugar para ofertas exclusivas e um carimbo.",
+      "f1_title": "Mapa interativo ao vivo",
+      "f1_desc": "Veja cada lugar listado fixado exatamente onde fica.",
+      "f2_title": "Filtre por estilo e bairro",
+      "f2_desc": "Refine por categoria ou área conforme seu astral e para onde vai.",
+      "f3_title": "Toque para ofertas e carimbos",
+      "f3_desc": "Cada lugar mostra sua oferta só para locais e o carimbo à sua espera.",
+      "card_label": "Navegar por categoria",
+      "cta_lead": "Grátis com seu passaporte",
+      "cta": "Começar a explorar"
     }
   },
   "lang": {

@@ -2,10 +2,12 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import {
   MapPin, Stamp, Bike, Calendar,
-  MoveRight, Gift, Ticket, Landmark, Compass, Trophy
+  MoveRight, Gift, Ticket, Landmark, Compass, Trophy,
+  Utensils, Beer, Coffee, ShoppingBag, Music, Sparkles, Gamepad2, Trees,
+  Map, SlidersHorizontal, Navigation, Search
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { mapRoutes, resolveRoute, events } from "@/data/sample-data";
+import { mapRoutes, resolveRoute, events, exploreCategories } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
 import PrizesSection, { PRIZE_TIERS } from "@/components/PrizesSection";
@@ -152,6 +154,122 @@ function PillarsSection() {
       </div>
     </section>
   )
+}
+
+const EXPLORE_ICONS: Record<string, typeof MapPin> = {
+  Utensils, Beer, Coffee, ShoppingBag, Music, Bike, Calendar, Sparkles,
+  Gamepad2, Landmark, Trees,
+};
+
+const EXPLORE_BADGE: Record<string, string> = {
+  red: "bg-brand-red text-white",
+  navy: "bg-brand-navy text-brand-cream",
+  cream: "bg-brand-cream text-foreground",
+  lime: "bg-brand-lime text-foreground",
+  sky: "bg-brand-sky text-white",
+  orange: "bg-brand-orange text-white",
+  yellow: "bg-brand-yellow text-foreground",
+};
+
+function ExploreSection() {
+  const { t } = useTranslation();
+
+  const features = [
+    { icon: Map, title: t("home.explore.f1_title"), desc: t("home.explore.f1_desc") },
+    { icon: SlidersHorizontal, title: t("home.explore.f2_title"), desc: t("home.explore.f2_desc") },
+    { icon: Navigation, title: t("home.explore.f3_title"), desc: t("home.explore.f3_desc") },
+  ];
+
+  return (
+    <section className="bg-brand-sky text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+      <div className="hidden md:block absolute -bottom-16 -right-12 opacity-20 scale-[1.6] pointer-events-none">
+        <PassportStamp size="lg" tone="navy" rotate={18}>
+          {t("home.explore.kicker")}
+        </PassportStamp>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Copy */}
+          <div>
+            <Sticker color="yellow" rotate="left" className="mb-6">
+              {t("home.explore.kicker")}
+            </Sticker>
+            <h2 className="font-serif font-black text-5xl md:text-7xl mb-5 leading-[0.95]">
+              {t("home.explore.title")}
+            </h2>
+            <p className="text-xl md:text-2xl text-white/90 font-medium mb-8 max-w-xl">
+              {t("home.explore.subtitle")}
+            </p>
+
+            <ul className="space-y-5 mb-10">
+              {features.map((f) => (
+                <li key={f.title} className="flex gap-4 items-start">
+                  <div className="w-12 h-12 rounded-full bg-white text-brand-sky border-4 border-foreground shadow-pop-sm flex items-center justify-center shrink-0">
+                    <f.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-display uppercase tracking-wide text-lg font-black leading-tight">
+                      {f.title}
+                    </h3>
+                    <p className="text-white/85 font-medium">{f.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/sign-up"
+              className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 inline-flex hover:bg-brand-red hover:text-white transition-colors"
+            >
+              <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
+                <span>{t("home.explore.cta_lead")}</span>
+                <span className="flex items-center justify-center">
+                  {t("home.explore.cta")}
+                  <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+                </span>
+              </span>
+            </Link>
+          </div>
+
+          {/* Category card */}
+          <div className="card-pop bg-white text-foreground p-5 md:p-7">
+            <div className="flex items-center justify-between mb-5">
+              <span className="font-display uppercase tracking-widest text-xs font-black flex items-center gap-2">
+                <Search className="w-4 h-4 text-brand-red" />
+                {t("home.explore.card_label")}
+              </span>
+              <MapPin className="w-5 h-5 text-brand-red" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {exploreCategories.map((c) => {
+                const Icon = EXPLORE_ICONS[c.icon] ?? MapPin;
+                return (
+                  <Link
+                    key={c.id}
+                    href="/sign-up"
+                    className="flex items-center gap-3 rounded-xl border-2 border-foreground bg-brand-cream px-3 py-2.5 shadow-pop-sm transition-transform hover:-translate-y-0.5"
+                  >
+                    <span
+                      className={cn(
+                        "w-9 h-9 rounded-full border-2 border-foreground flex items-center justify-center shrink-0",
+                        EXPLORE_BADGE[c.color] ?? "bg-brand-yellow text-foreground",
+                      )}
+                    >
+                      <Icon className="w-4 h-4" />
+                    </span>
+                    <span className="font-display uppercase tracking-wide text-[11px] font-black leading-tight">
+                      {c.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function JourneySection() {
@@ -497,6 +615,7 @@ export default function Home() {
       <Marquee items={marqueeKeys.map((k) => t(`marquee.${k}`))} />
       <HeroSection />
       <PillarsSection />
+      <ExploreSection />
       <JourneySection />
       <EventsShowcase />
       <HowItWorksSection />

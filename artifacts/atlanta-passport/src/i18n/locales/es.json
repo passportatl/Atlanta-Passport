@@ -102,6 +102,20 @@
       "screen_title": "Esta noche en Atlanta",
       "live_badge": "En vivo esta noche",
       "cta_lead": "Obtén tu Passport gratis"
+    },
+    "explore": {
+      "kicker": "Explora la ciudad",
+      "title": "Encuentra la verdadera Atlanta, a tu manera.",
+      "subtitle": "Abre el mapa en vivo y filtra la ciudad por lo que te gusta — comida, bebidas, vida nocturna, paseos, murales y más — y toca cualquier lugar para ver ofertas exclusivas y un sello.",
+      "f1_title": "Mapa interactivo en vivo",
+      "f1_desc": "Mira cada lugar listado en el mapa, justo donde está.",
+      "f2_title": "Filtra por estilo y barrio",
+      "f2_desc": "Acota por categoría o zona según tu ánimo y a dónde vas.",
+      "f3_title": "Toca para ofertas y sellos",
+      "f3_desc": "Cada lugar muestra su oferta exclusiva y el sello que te espera.",
+      "card_label": "Explora por categoría",
+      "cta_lead": "Gratis con tu pasaporte",
+      "cta": "Empieza a explorar"
     }
   },
   "lang": {
