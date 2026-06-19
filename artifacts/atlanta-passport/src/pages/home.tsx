@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
 import piedmontParkImg from "@/assets/images/piedmont-park.jpg";
+import physicalPassportImg from "@/assets/images/physical-passport.png";
 
 const marqueeKeys = [
   "real_atl", "local_picks", "no_tourist_traps",
@@ -531,6 +532,60 @@ function HowItWorksSection() {
   );
 }
 
+function PhysicalPassportSection() {
+  const { t } = useTranslation();
+  return (
+    <section className="bg-brand-navy text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Image */}
+          <div className="relative">
+            <div className="card-pop bg-white p-3 -rotate-2">
+              <img
+                src={physicalPassportImg}
+                alt={t("home.physical.alt")}
+                className="w-full h-auto rounded-lg border-2 border-foreground"
+                loading="lazy"
+              />
+            </div>
+            <div className="absolute -top-5 -right-3 sm:-right-5 rotate-6">
+              <span className="badge-sticker bg-brand-red text-white text-base md:text-lg px-5 py-2">
+                {t("home.physical.badge")}
+              </span>
+            </div>
+          </div>
+
+          {/* Copy */}
+          <div>
+            <Sticker color="yellow" rotate="left" className="mb-6">
+              {t("home.physical.kicker")}
+            </Sticker>
+            <h2 className="font-serif font-black text-5xl md:text-7xl mb-5 leading-[0.95]">
+              {t("home.physical.title")}
+            </h2>
+            <p className="text-xl md:text-2xl text-white/90 font-medium mb-8 max-w-xl leading-relaxed">
+              {t("home.physical.body")}
+            </p>
+            <div className="flex flex-col gap-3">
+              <span className="font-display uppercase tracking-widest text-xs font-black text-brand-yellow">
+                {t("home.physical.pickup_label")}
+              </span>
+              <div className="flex flex-wrap gap-3">
+                <span className="sticker-pill sticker-cream inline-flex items-center gap-2">
+                  <MapPin className="w-4 h-4" /> {t("home.physical.loc1")}
+                </span>
+                <span className="sticker-pill sticker-cream inline-flex items-center gap-2">
+                  <MapPin className="w-4 h-4" /> {t("home.physical.loc2")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function BusinessCtaSection() {
   const { t } = useTranslation();
   return (
@@ -567,6 +622,7 @@ export default function Home() {
       <JourneySection />
       <EventsShowcase />
       <HowItWorksSection />
+      <PhysicalPassportSection />
       <BusinessCtaSection />
       <PrizesSection />
     </div>

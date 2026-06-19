@@ -116,6 +116,16 @@
       "card_label": "Nach Kategorie stöbern",
       "cta_lead": "Kostenlos mit deinem Pass",
       "cta": "Jetzt erkunden"
+    },
+    "physical": {
+      "kicker": "Hol dir die Printausgabe",
+      "title": "Doppelte Stempel gefällig?",
+      "body": "Hol dir ein gedrucktes Exemplar des Passes bei Peachtree Wellness oder im Atlanta Trap Museum und erhalte doppelt so viele Angebote — plus Spiele, Rätsel und mehr Stempelchancen für noch mehr Preise sowie ein Souvenir deiner Atlanta-Abenteuer.",
+      "badge": "2× Stempel",
+      "pickup_label": "Erhältlich bei",
+      "loc1": "Peachtree Wellness",
+      "loc2": "Atlanta Trap Museum",
+      "alt": "Das gedruckte Atlanta-Passport-Heft"
     }
   },
   "lang": {

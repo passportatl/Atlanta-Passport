@@ -108,6 +108,12 @@ uri = "file://artifacts/atlanta-passport/src/assets/images/vickerys-bar-grill.pn
 type = "image"
 title = "vickerys bar grill"
 
+[[generated]]
+id = "2VCcaZU9wzJF3z2bKxdSE"
+uri = "file://artifacts/atlanta-passport/src/assets/images/physical-passport.png"
+type = "image"
+title = "physical atlanta passport booklet"
+
 [[outputs]]
 id = "1G3Tc1XWZuZUVFVu3MqaM"
 uri = "file://exports/atlanta-passport-qr-codes.xlsx"

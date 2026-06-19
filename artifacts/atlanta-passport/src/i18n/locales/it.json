@@ -116,6 +116,16 @@
       "card_label": "Sfoglia per categoria",
       "cta_lead": "Gratis con il tuo passaporto",
       "cta": "Inizia a esplorare"
+    },
+    "physical": {
+      "kicker": "Prendi l’edizione cartacea",
+      "title": "Vuoi il doppio dei timbri?",
+      "body": "Ritira una copia cartacea del passaporto da Peachtree Wellness o all’Atlanta Trap Museum per ottenere il doppio delle offerte — oltre a giochi, rompicapi e più occasioni di timbri per vincere più premi, e un souvenir delle tue avventure ad Atlanta.",
+      "badge": "2× timbri",
+      "pickup_label": "Ritiralo da",
+      "loc1": "Peachtree Wellness",
+      "loc2": "Atlanta Trap Museum",
+      "alt": "Il libretto fisico dell’Atlanta Passport"
     }
   },
   "lang": {
