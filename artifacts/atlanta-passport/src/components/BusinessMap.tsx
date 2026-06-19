@@ -18,6 +18,7 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
+import martaStopIcon from "@/assets/images/marta-stop.png";
 import { neighborhoodColors, categoryColor, businessCategories } from "@/data/sample-data";
 import { STAMP_SLUG } from "@/passport/data";
 
@@ -211,16 +212,9 @@ const MARTA_STATIONS: { lat: number; lng: number; name?: string }[] = (() => {
   return out;
 })();
 
-// MARTA station badge — blue roundel with a white "M", white ring for contrast on
-// the dark map. Inline SVG data URI so it ships without an extra asset request.
-const MARTA_ICON_SRC =
-  "data:image/svg+xml;charset=UTF-8," +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">` +
-      `<circle cx="13" cy="13" r="11" fill="#0067B1" stroke="#ffffff" stroke-width="2.5"/>` +
-      `<text x="13" y="18" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">M</text>` +
-      `</svg>`,
-  );
+// MARTA station badge — blue roundel with a white transit icon, recolored from the
+// original yellow to MARTA blue (#0067B1) to match the rail-line branding.
+const MARTA_ICON_SRC = martaStopIcon;
 
 export type MapBusiness = {
   id: string;
