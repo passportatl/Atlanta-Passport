@@ -236,9 +236,9 @@ export default function PassportStamps({
 
       <div>
         <p className="text-sm font-bold text-foreground/70">
-          Show your Passport at Peachtree Wellness to claim your prize. Arcade style, redeem
-          collected stamps for prizes and use your remaining stamps on multiple prizes for that
-          passport. Stamp totals reset every quarter with the new passport.
+          Show your Passport at Peachtree Wellness to claim your prize. Use your collected stamps
+          like arcade tickets: choose one prize or mix and match multiple prizes based on your
+          stamp total. Stamp totals reset every quarter with the new passport.
         </p>
         <p className="text-sm font-bold text-foreground/70 mt-2">
           {collected} of {total} stamps collected
