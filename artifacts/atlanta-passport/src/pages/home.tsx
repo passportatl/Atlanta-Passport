@@ -200,18 +200,20 @@ function ExploreSection() {
             ))}
           </ul>
 
-          <Link
-            href="/sign-up"
-            className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 inline-flex hover:bg-brand-red hover:text-white transition-colors"
-          >
-            <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
-              <span>{t("home.explore.cta_lead")}</span>
-              <span className="flex items-center justify-center">
-                {t("home.explore.cta")}
-                <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+          <div className="flex justify-center">
+            <Link
+              href="/sign-up"
+              className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 inline-flex hover:bg-brand-red hover:text-white transition-colors"
+            >
+              <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
+                <span>{t("home.explore.cta_lead")}</span>
+                <span className="flex items-center justify-center">
+                  {t("home.explore.cta")}
+                  <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+                </span>
               </span>
-            </span>
-          </Link>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
