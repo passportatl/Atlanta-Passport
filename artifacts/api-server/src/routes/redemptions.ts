@@ -8,7 +8,7 @@ import {
   businessesTable,
 } from "@workspace/db";
 import { RedeemPrizeBody } from "@workspace/api-zod";
-import { isWithin } from "../lib/geofence";
+import { isWithin, geofenceDisabled } from "../lib/geofence";
 
 const router: IRouter = Router();
 
@@ -51,17 +51,19 @@ router.post("/redemptions", async (req, res) => {
     res.status(404).json({ error: "Redemption location not configured" });
     return;
   }
-  if (latitude == null || longitude == null) {
-    res
-      .status(422)
-      .json({ error: "location_required", message: "Location is required to redeem a prize." });
-    return;
-  }
-  if (!isWithin(latitude, longitude, anchor.latitude, anchor.longitude)) {
-    res
-      .status(422)
-      .json({ error: "too_far", message: "You must be at Peachtree Wellness to redeem this prize." });
-    return;
+  if (!geofenceDisabled()) {
+    if (latitude == null || longitude == null) {
+      res
+        .status(422)
+        .json({ error: "location_required", message: "Location is required to redeem a prize." });
+      return;
+    }
+    if (!isWithin(latitude, longitude, anchor.latitude, anchor.longitude)) {
+      res
+        .status(422)
+        .json({ error: "too_far", message: "You must be at Peachtree Wellness to redeem this prize." });
+      return;
+    }
   }
 
   // Already redeemed this tier?

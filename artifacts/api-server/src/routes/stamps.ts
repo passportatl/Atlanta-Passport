@@ -3,7 +3,7 @@ import { eq, and, desc } from "drizzle-orm";
 import { db, stampsTable, businessesTable, visitorsTable } from "@workspace/db";
 import { CollectStampBody } from "@workspace/api-zod";
 import { scheduleSignupSync } from "../lib/googleSheetSync";
-import { isWithin } from "../lib/geofence";
+import { isWithin, geofenceDisabled } from "../lib/geofence";
 
 const router: IRouter = Router();
 
@@ -49,7 +49,11 @@ router.post("/stamps", async (req, res) => {
   // Geofence: in-scope spots (sponsor offers + bonus events) carry lat/lng.
   // For those, the visitor must be physically near to collect a NEW stamp.
   // Out-of-scope spots have null coords and stay unrestricted.
-  if (business.latitude != null && business.longitude != null) {
+  if (
+    !geofenceDisabled() &&
+    business.latitude != null &&
+    business.longitude != null
+  ) {
     if (latitude == null || longitude == null) {
       res
         .status(422)
