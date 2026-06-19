@@ -61,6 +61,24 @@
       "cta_lead": "Registrati per il tuo Passport gratuito",
       "routes_label": "Percorsi selezionati"
     },
+    "how_it_works": {
+      "kicker": "Come Funziona",
+      "title": "Il tuo passaporto, dall'inizio alla fine.",
+      "subtitle": "Tre semplici passi dalla tua prima tappa a un vero premio in mano.",
+      "step": "Passo",
+      "step1_title": "Riscatta un'offerta",
+      "step1_body": "Apri il tuo passaporto digitale in qualsiasi locale in elenco e mostralo per ottenere l'offerta riservata ai locali.",
+      "step2_title": "Colleziona il tuo timbro",
+      "step2_body": "Ogni locale che visiti aggiunge un timbro ATL unico al tuo passaporto: guarda crescere la tua collezione.",
+      "step3_title": "Vinci il tuo premio",
+      "step3_body": "Raggiungi un traguardo di timbri, poi riscatta il tuo premio di persona da Peachtree Wellness.",
+      "offer_label": "Offerta del Passaporto",
+      "offer_example": "10% di sconto su qualsiasi noleggio bici",
+      "redeem_pill": "Mostra per riscattare",
+      "stamp_collected": "Timbro Ottenuto!",
+      "prize_title": "Scegli il tuo premio",
+      "cta": "Inizia il tuo passaporto gratuito"
+    },
     "business_cta": {
       "kicker": "Per le Attività di Atlanta",
       "title": "Fatti trovare prima che arrivi il mondo.",

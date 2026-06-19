@@ -70,6 +70,24 @@
       "live_badge": "Live Tonight",
       "cta_lead": "Get your free Passport"
     },
+    "how_it_works": {
+      "kicker": "How It Works",
+      "title": "Your passport, start to finish.",
+      "subtitle": "Three simple steps from your first stop to a real prize in hand.",
+      "step": "Step",
+      "step1_title": "Redeem an offer",
+      "step1_body": "Open your digital passport at any listed spot and show it to claim the local's-only offer.",
+      "step2_title": "Collect your stamp",
+      "step2_body": "Every spot you visit drops a one-of-a-kind ATL stamp into your passport — watch your collection grow.",
+      "step3_title": "Win your prize",
+      "step3_body": "Hit a stamp milestone, then redeem your reward in person at Peachtree Wellness.",
+      "offer_label": "Passport Offer",
+      "offer_example": "10% off any bike rental",
+      "redeem_pill": "Show to redeem",
+      "stamp_collected": "Stamp Collected!",
+      "prize_title": "Choose your prize",
+      "cta": "Start your free passport"
+    },
     "business_cta": {
       "kicker": "For Atlanta Businesses",
       "title": "Get on the map before the world arrives.",

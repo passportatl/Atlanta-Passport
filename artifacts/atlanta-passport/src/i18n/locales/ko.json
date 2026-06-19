@@ -61,6 +61,24 @@
       "cta_lead": "무료 Passport에 가입하세요",
       "routes_label": "엄선한 루트"
     },
+    "how_it_works": {
+      "kicker": "이용 방법",
+      "title": "여권을 처음부터 끝까지.",
+      "subtitle": "첫 방문지부터 실제 상품을 손에 넣기까지, 세 가지 간단한 단계.",
+      "step": "단계",
+      "step1_title": "혜택 사용하기",
+      "step1_body": "등록된 장소에서 디지털 여권을 열어 보여주면 현지인 전용 혜택을 받을 수 있습니다.",
+      "step2_title": "스탬프 모으기",
+      "step2_body": "방문하는 모든 장소마다 고유한 ATL 스탬프가 여권에 추가됩니다 — 컬렉션이 늘어나는 걸 지켜보세요.",
+      "step3_title": "상품 받기",
+      "step3_body": "스탬프 목표에 도달한 뒤 Peachtree Wellness에서 직접 보상을 받으세요.",
+      "offer_label": "여권 혜택",
+      "offer_example": "모든 자전거 대여 10% 할인",
+      "redeem_pill": "보여주고 사용",
+      "stamp_collected": "스탬프 획득!",
+      "prize_title": "상품 선택",
+      "cta": "무료 여권 시작하기"
+    },
     "business_cta": {
       "kicker": "Atlanta 사업자분들께",
       "title": "세계가 오기 전에 지도에 올라타세요.",

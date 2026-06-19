@@ -61,6 +61,24 @@
       "cta_lead": "Regístrate para tu Passport gratis",
       "routes_label": "Rutas seleccionadas"
     },
+    "how_it_works": {
+      "kicker": "Cómo Funciona",
+      "title": "Tu pasaporte, de principio a fin.",
+      "subtitle": "Tres pasos sencillos desde tu primera parada hasta un premio real en la mano.",
+      "step": "Paso",
+      "step1_title": "Canjea una oferta",
+      "step1_body": "Abre tu pasaporte digital en cualquier lugar listado y muéstralo para reclamar la oferta exclusiva para locales.",
+      "step2_title": "Colecciona tu sello",
+      "step2_body": "Cada lugar que visitas deja un sello único de ATL en tu pasaporte: mira crecer tu colección.",
+      "step3_title": "Gana tu premio",
+      "step3_body": "Alcanza un hito de sellos y luego canjea tu recompensa en persona en Peachtree Wellness.",
+      "offer_label": "Oferta del Pasaporte",
+      "offer_example": "10% de descuento en cualquier alquiler de bicicletas",
+      "redeem_pill": "Muestra para canjear",
+      "stamp_collected": "¡Sello Conseguido!",
+      "prize_title": "Elige tu premio",
+      "cta": "Comienza tu pasaporte gratis"
+    },
     "business_cta": {
       "kicker": "Para Negocios en Atlanta",
       "title": "Ponte en el mapa antes de que llegue el mundo.",

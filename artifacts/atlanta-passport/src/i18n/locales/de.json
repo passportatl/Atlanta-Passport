@@ -61,6 +61,24 @@
       "cta_lead": "Melde dich für dein gratis Passport an",
       "routes_label": "Kuratierte Routen"
     },
+    "how_it_works": {
+      "kicker": "So Funktioniert's",
+      "title": "Dein Pass, von Anfang bis Ende.",
+      "subtitle": "Drei einfache Schritte von deinem ersten Stopp bis zum echten Preis in der Hand.",
+      "step": "Schritt",
+      "step1_title": "Angebot einlösen",
+      "step1_body": "Öffne deinen digitalen Pass an jedem gelisteten Ort und zeige ihn, um das Angebot nur für Locals zu erhalten.",
+      "step2_title": "Stempel sammeln",
+      "step2_body": "Jeder besuchte Ort fügt deinem Pass einen einzigartigen ATL-Stempel hinzu — sieh deiner Sammlung beim Wachsen zu.",
+      "step3_title": "Preis gewinnen",
+      "step3_body": "Erreiche eine Stempel-Marke und löse deine Belohnung persönlich bei Peachtree Wellness ein.",
+      "offer_label": "Pass-Angebot",
+      "offer_example": "10% Rabatt auf jeden Fahrradverleih",
+      "redeem_pill": "Zum Einlösen zeigen",
+      "stamp_collected": "Stempel Erhalten!",
+      "prize_title": "Wähle deinen Preis",
+      "cta": "Starte deinen kostenlosen Pass"
+    },
     "business_cta": {
       "kicker": "Für Atlanta-Unternehmen",
       "title": "Setz dich auf die Karte, bevor die Welt ankommt.",

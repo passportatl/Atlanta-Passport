@@ -61,6 +61,24 @@
       "cta_lead": "Cadastre-se para o seu Passport grátis",
       "routes_label": "Rotas selecionadas"
     },
+    "how_it_works": {
+      "kicker": "Como Funciona",
+      "title": "Seu passaporte, do início ao fim.",
+      "subtitle": "Três passos simples, da sua primeira parada até um prêmio de verdade na mão.",
+      "step": "Passo",
+      "step1_title": "Resgate uma oferta",
+      "step1_body": "Abra seu passaporte digital em qualquer local listado e mostre-o para garantir a oferta exclusiva para locais.",
+      "step2_title": "Colecione seu carimbo",
+      "step2_body": "Cada local que você visita adiciona um carimbo único de ATL ao seu passaporte: veja sua coleção crescer.",
+      "step3_title": "Ganhe seu prêmio",
+      "step3_body": "Alcance uma meta de carimbos e resgate sua recompensa pessoalmente na Peachtree Wellness.",
+      "offer_label": "Oferta do Passaporte",
+      "offer_example": "10% de desconto em qualquer aluguel de bicicleta",
+      "redeem_pill": "Mostre para resgatar",
+      "stamp_collected": "Carimbo Conquistado!",
+      "prize_title": "Escolha seu prêmio",
+      "cta": "Comece seu passaporte grátis"
+    },
     "business_cta": {
       "kicker": "Para Negócios em Atlanta",
       "title": "Apareça no mapa antes que o mundo chegue.",

@@ -61,6 +61,24 @@
       "cta_lead": "Inscrivez-vous pour votre Passport gratuit",
       "routes_label": "Itinéraires sélectionnés"
     },
+    "how_it_works": {
+      "kicker": "Comment Ça Marche",
+      "title": "Votre passeport, du début à la fin.",
+      "subtitle": "Trois étapes simples, de votre premier arrêt à un vrai prix en main.",
+      "step": "Étape",
+      "step1_title": "Utilisez une offre",
+      "step1_body": "Ouvrez votre passeport numérique dans n'importe quel lieu référencé et montrez-le pour profiter de l'offre réservée aux locaux.",
+      "step2_title": "Collectionnez votre tampon",
+      "step2_body": "Chaque lieu visité ajoute un tampon ATL unique à votre passeport : regardez votre collection grandir.",
+      "step3_title": "Gagnez votre prix",
+      "step3_body": "Atteignez un palier de tampons, puis récupérez votre récompense en personne chez Peachtree Wellness.",
+      "offer_label": "Offre du Passeport",
+      "offer_example": "10% de réduction sur toute location de vélo",
+      "redeem_pill": "Montrez pour profiter",
+      "stamp_collected": "Tampon Obtenu !",
+      "prize_title": "Choisissez votre prix",
+      "cta": "Commencez votre passeport gratuit"
+    },
     "business_cta": {
       "kicker": "Pour les Commerces d'Atlanta",
       "title": "Faites-vous connaître avant que le monde entier arrive.",

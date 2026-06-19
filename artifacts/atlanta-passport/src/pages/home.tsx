@@ -8,8 +8,9 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { mapRoutes, resolveRoute, events } from "@/data/sample-data";
 import Marquee from "@/components/Marquee";
 import Sticker from "@/components/Sticker";
-import PrizesSection from "@/components/PrizesSection";
+import PrizesSection, { PRIZE_TIERS } from "@/components/PrizesSection";
 import PassportStamp from "@/components/PassportStamp";
+import { StampGraphic } from "@/passport/StampGraphic";
 import { cn } from "@/lib/utils";
 
 import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
@@ -311,6 +312,159 @@ function EventsShowcase() {
   )
 }
 
+function HowItWorksSection() {
+  const { t } = useTranslation();
+  const prizeSamples = [PRIZE_TIERS[0], PRIZE_TIERS[2], PRIZE_TIERS[4]].filter(
+    (tier): tier is (typeof PRIZE_TIERS)[number] => Boolean(tier),
+  );
+
+  return (
+    <section className="bg-background texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+      <div className="hidden md:block absolute -top-10 -right-10 opacity-20 scale-[2] pointer-events-none">
+        <PassportStamp size="lg" tone="navy" rotate={20}>
+          {t("home.how_it_works.kicker")}
+        </PassportStamp>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <Sticker color="yellow" rotate="left" className="mb-6">
+            {t("home.how_it_works.kicker")}
+          </Sticker>
+          <h2 className="font-serif font-black text-5xl md:text-7xl text-foreground leading-[0.95] mb-6">
+            {t("home.how_it_works.title")}
+          </h2>
+          <p className="text-xl md:text-2xl text-foreground/80 font-medium leading-relaxed">
+            {t("home.how_it_works.subtitle")}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Step 1 — Redeem an offer */}
+          <div className="card-pop bg-white p-0 overflow-hidden flex flex-col">
+            <div className="relative bg-brand-cream/60 px-5 pt-10 pb-8 flex items-center justify-center min-h-[230px] border-b-4 border-foreground">
+              <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
+                {t("home.how_it_works.step")} 01
+              </span>
+              <div className="w-full max-w-[230px] card-pop bg-white border-2 p-0 overflow-hidden -rotate-1">
+                <div className="bg-brand-navy text-white px-3 py-2 flex items-center justify-between border-b-2 border-foreground">
+                  <span className="font-display text-[10px] tracking-widest truncate">
+                    Wheelhaus Bikes
+                  </span>
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
+                </div>
+                <div className="p-3 text-center">
+                  <span className="inline-flex w-10 h-10 rounded-full bg-brand-yellow border-2 border-foreground items-center justify-center shadow-pop-sm mb-2">
+                    <Ticket className="w-5 h-5" />
+                  </span>
+                  <div className="font-display text-[9px] tracking-widest text-brand-red mb-1">
+                    {t("home.how_it_works.offer_label")}
+                  </div>
+                  <div className="font-serif font-black text-sm leading-tight mb-3">
+                    {t("home.how_it_works.offer_example")}
+                  </div>
+                  <span className="inline-block border-2 border-dashed border-foreground rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wide">
+                    {t("home.how_it_works.redeem_pill")}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="p-5">
+              <h3 className="font-serif font-black text-2xl leading-tight mb-2">
+                {t("home.how_it_works.step1_title")}
+              </h3>
+              <p className="text-foreground/75 font-medium leading-relaxed">
+                {t("home.how_it_works.step1_body")}
+              </p>
+            </div>
+          </div>
+
+          {/* Step 2 — Collect your stamp */}
+          <div className="card-pop bg-white p-0 overflow-hidden flex flex-col">
+            <div className="relative bg-brand-cream/60 px-5 pt-10 pb-8 flex flex-col items-center justify-center min-h-[230px] border-b-4 border-foreground">
+              <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
+                {t("home.how_it_works.step")} 02
+              </span>
+              <StampGraphic
+                neighborhood="Old Fourth Ward"
+                iconName="bike"
+                color="yellow"
+                collectedAt={new Date()}
+                size={140}
+                rotate={-4}
+              />
+              <div className="mt-3 font-display text-xs tracking-widest text-brand-red">
+                {t("home.how_it_works.stamp_collected")}
+              </div>
+            </div>
+            <div className="p-5">
+              <h3 className="font-serif font-black text-2xl leading-tight mb-2">
+                {t("home.how_it_works.step2_title")}
+              </h3>
+              <p className="text-foreground/75 font-medium leading-relaxed">
+                {t("home.how_it_works.step2_body")}
+              </p>
+            </div>
+          </div>
+
+          {/* Step 3 — Win your prize */}
+          <div className="card-pop bg-white p-0 overflow-hidden flex flex-col">
+            <div className="relative bg-brand-cream/60 px-5 pt-10 pb-8 flex items-center justify-center min-h-[230px] border-b-4 border-foreground">
+              <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
+                {t("home.how_it_works.step")} 03
+              </span>
+              <div className="w-full max-w-[230px] card-pop bg-white border-2 p-0 overflow-hidden rotate-1">
+                <div className="bg-brand-navy text-white px-3 py-2 flex items-center justify-between border-b-2 border-foreground">
+                  <span className="font-display text-[10px] tracking-widest truncate">
+                    Peachtree Wellness
+                  </span>
+                  <Trophy className="w-3.5 h-3.5 shrink-0" />
+                </div>
+                <div className="p-3">
+                  <div className="font-display text-[9px] tracking-widest text-center mb-2">
+                    {t("home.how_it_works.prize_title")}
+                  </div>
+                  <ul className="space-y-1.5">
+                    {prizeSamples.map((tier) => (
+                      <li key={tier.stamps} className="flex items-center gap-2 text-left">
+                        <span className="shrink-0 w-7 h-7 rounded-md bg-brand-lime border-2 border-foreground font-display text-[10px] flex items-center justify-center">
+                          {tier.stamps}
+                        </span>
+                        <span className="font-bold text-xs leading-tight min-w-0 truncate">
+                          {tier.options[0]}
+                        </span>
+                        <Gift className="w-3.5 h-3.5 ml-auto shrink-0 text-brand-red" />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="p-5">
+              <h3 className="font-serif font-black text-2xl leading-tight mb-2">
+                {t("home.how_it_works.step3_title")}
+              </h3>
+              <p className="text-foreground/75 font-medium leading-relaxed">
+                {t("home.how_it_works.step3_body")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            href="/sign-up"
+            className="button-pop bg-brand-yellow text-foreground text-xl px-10 py-5 border-4 hover:bg-brand-navy hover:text-white transition-colors shadow-pop-lg"
+          >
+            <Stamp className="w-6 h-6 mr-2" /> {t("home.how_it_works.cta")}
+            <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function BusinessCtaSection() {
   const { t } = useTranslation();
   return (
@@ -345,6 +499,7 @@ export default function Home() {
       <PillarsSection />
       <JourneySection />
       <EventsShowcase />
+      <HowItWorksSection />
       <BusinessCtaSection />
       <PrizesSection />
     </div>
