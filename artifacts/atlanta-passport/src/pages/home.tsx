@@ -68,7 +68,7 @@ function HeroSection() {
             {t("home.new_hero.headline_3")}
           </h1>
           
-          <p className="font-sans text-lg md:text-2xl text-foreground max-w-2xl mx-auto mb-10 leading-relaxed font-semibold bg-brand-cream/80 p-4 rounded-xl border-2 border-foreground backdrop-blur-sm shadow-pop-sm">
+          <p className="font-sans text-lg md:text-2xl text-foreground max-w-2xl mx-auto mb-10 leading-relaxed font-semibold bg-brand-orange p-4 rounded-xl border-2 border-foreground shadow-pop-sm">
             {t("home.new_hero.subtitle")}
           </p>
 
