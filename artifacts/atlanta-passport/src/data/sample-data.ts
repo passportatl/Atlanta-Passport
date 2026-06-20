@@ -1607,7 +1607,7 @@ export const mapRoutes = [
     area: "West End → Westside BeltLine",
     pace: "Bike Friendly",
     color: "yellow",
-    vibe: "A Westside BeltLine ride through Black ATL's culture core: the Trap Music Museum and its Tiny Door, the MLK mural, Nappy Roots' Atlantucky brews, and the AU Center museums.",
+    vibe: "A Westside BeltLine ride through Black ATL's culture core: brunch at The Westwood, the Trap Music Museum and its Tiny Door, the MLK mural at Trap City Cafe, Nappy Roots' Atlantucky brews, the Hammond's House and Spelman art museums, and a finish at BoxCar at Hop City.",
     description:
       "This route is recommended for biking. Begin at the West End MARTA station, where an ATL Spoke shuttle can take you to the Lee + White BeltLine access point — then follow the Westside BeltLine trail to Lucile Ave SW and turn left.",
     starts: {

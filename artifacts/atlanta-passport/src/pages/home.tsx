@@ -276,6 +276,7 @@ function JourneySection() {
 
                   <div className="flex items-center gap-5 md:gap-6 font-display text-xs md:text-sm tracking-wide bg-brand-cream px-4 py-3 md:p-4 border-2 border-foreground rounded-xl">
                     <span className="flex items-center gap-2"><MapPin className="w-4 h-4 md:w-5 md:h-5 text-brand-red shrink-0"/> {t("home.journey.stops_count", { count: resolved.stopCount })}</span>
+                    <span className="flex items-center gap-2"><Bike className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0"/> {resolved.miles}</span>
                     <span className="flex items-center gap-2"><Clock className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0"/> {resolved.duration}</span>
                     <MoveRight className="w-4 h-4 ml-auto text-brand-red rtl:rotate-180"/>
                   </div>
