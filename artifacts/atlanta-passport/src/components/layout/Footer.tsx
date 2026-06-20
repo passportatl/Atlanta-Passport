@@ -1,19 +1,15 @@
 import { useTranslation } from "react-i18next";
 import Logo from "@/components/Logo";
-import aurorasImagination from "@/assets/images/partner-logos/auroras-imagination.png";
 import wheelhausBikes from "@/assets/images/partner-logos/wheelhaus-bikes.png";
-import aTownArtAgency from "@/assets/images/partner-logos/a-town-art-agency.jpg";
-import bAwareFoundation from "@/assets/images/partner-logos/b-aware-foundation.jpg";
 import dpAndCo from "@/assets/images/partner-logos/dp-and-co.png";
 import peachtree from "@/assets/images/partner-logos/peachtree.png";
+import trapMuseum from "@/assets/images/sheet/trap-museum-logo.jpg";
 
 const PARTNER_LOGOS = [
+  { src: dpAndCo, alt: "DP & Co" },
   { src: wheelhausBikes, alt: "Wheelhaus Bikes" },
   { src: peachtree, alt: "Peachtree Wellness" },
-  { src: aurorasImagination, alt: "Aurora's Imagination" },
-  { src: aTownArtAgency, alt: "A-Town Art Agency" },
-  { src: bAwareFoundation, alt: "B-Aware Foundation" },
-  { src: dpAndCo, alt: "DP & Co" },
+  { src: trapMuseum, alt: "The Atlanta Trap Museum" },
 ];
 
 // `clearBottomNav` adds extra bottom padding so the footer clears the fixed
