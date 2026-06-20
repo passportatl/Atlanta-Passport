@@ -88,6 +88,7 @@ export default function Listing() {
       eventName: e.name,
       name: e.name,
       meta: "Featured Event",
+      detail: [e.date, e.time].filter(Boolean).join(" · "),
       detailHref: `/events/${e.id}`,
     });
   }
