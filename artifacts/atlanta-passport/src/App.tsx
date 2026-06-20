@@ -37,7 +37,10 @@ function MarketingRoutes() {
         <Route path="/partners" component={PartnersComingSoon} />
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/routes/:id" component={RouteDetail} />
-        <Route path="/apply" component={Apply} />
+        {/* TEMPORARY: applications paused — /apply shows the same holding page
+            as /partners. To revert, change `PartnersComingSoon` back to `Apply`
+            (the real page is still imported above and fully intact). */}
+        <Route path="/apply" component={PartnersComingSoon} />
         <Route path="/listing/:id" component={Listing} />
         <Route component={NotFound} />
       </Switch>
