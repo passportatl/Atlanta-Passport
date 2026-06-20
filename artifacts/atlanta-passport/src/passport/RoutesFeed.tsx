@@ -92,7 +92,7 @@ export default function RoutesFeed({
         </div>
         <p className="text-sm text-foreground/70 mb-3">
           Pick where you start and the time of day — the stops, order, and
-          timing adjust into a 4–6 hour walking day, factoring in how long you'll
+          timing adjust into a 4–6+ hour walking or biking day, factoring in how long you'll
           spend at each spot. Tap a route to trace it across the map, or tap a
           stop for details.
         </p>
