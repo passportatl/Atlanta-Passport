@@ -77,7 +77,7 @@
       "redeem_pill": "Muestra para canjear",
       "stamp_collected": "¡Sello Conseguido!",
       "prize_title": "Elige tu premio",
-      "redeem_stamps": "Canjea {{count}} sellos por un premio",
+      "tier_stamps": "Nivel {{tier}}: {{count}} sellos",
       "cta": "Comienza tu pasaporte gratis"
     },
     "business_cta": {

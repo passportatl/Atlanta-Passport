@@ -77,7 +77,7 @@
       "redeem_pill": "見せて利用",
       "stamp_collected": "スタンプ獲得！",
       "prize_title": "賞品を選ぶ",
-      "redeem_stamps": "{{count}}個のスタンプを賞品と交換",
+      "tier_stamps": "ティア{{tier}}：スタンプ{{count}}個",
       "cta": "無料パスポートを始める"
     },
     "business_cta": {

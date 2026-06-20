@@ -507,13 +507,13 @@ function HowItWorksSection() {
                     {t("home.how_it_works.prize_title")}
                   </div>
                   <ul className="space-y-1.5">
-                    {prizeSamples.map((tier) => (
+                    {prizeSamples.map((tier, i) => (
                       <li key={tier.stamps} className="flex items-center gap-2 text-left">
                         <span className="shrink-0 w-7 h-7 rounded-md bg-brand-lime border-2 border-foreground font-display text-[10px] flex items-center justify-center">
                           {tier.stamps}
                         </span>
                         <span className="font-bold text-xs leading-tight min-w-0">
-                          {t("home.how_it_works.redeem_stamps", { count: tier.stamps })}
+                          {t("home.how_it_works.tier_stamps", { tier: i + 1, count: tier.stamps })}
                         </span>
                         <Gift className="w-3.5 h-3.5 ml-auto shrink-0 text-brand-red" />
                       </li>
