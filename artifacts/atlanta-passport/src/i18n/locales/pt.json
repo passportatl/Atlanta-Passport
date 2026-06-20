@@ -4,7 +4,7 @@
       "kicker": "★ A Vantagem do Passport",
       "title": "Descubra Atlanta como um morador, não como turista.",
       "discounts_title": "Ofertas Exclusivas",
-      "discounts_desc": "Mostre seu passport e ganhe o benefício. Bebidas grátis, 10% de desconto nas refeições e presentes especiais em estabelecimentos locais.",
+      "discounts_desc": "Mostre seu passport e ganhe o benefício. Bebidas com desconto, 10% de desconto nas refeições e presentes especiais em estabelecimentos locais.",
       "events_title": "Eventos Locais",
       "events_desc": "Acesse pop-ups da semana dos jogos e festivais de bairro que você não vai encontrar em sites de viagem genéricos.",
       "planning_title": "Planejamento Sem Estresse",
@@ -39,7 +39,7 @@
       "kicker": "Por Que Você Precisa Disso",
       "title": "Seu ingresso para a cidade.",
       "p1_title": "Descontos Exclusivos",
-      "p1_desc": "Mostre seu passport e ganhe o benefício. Drinks gratuitos, 10% de desconto nas refeições e brindes especiais em estabelecimentos locais.",
+      "p1_desc": "Mostre seu passport e ganhe o benefício. Drinks com desconto, 10% de desconto nas refeições e brindes especiais em estabelecimentos locais.",
       "p2_title": "Eventos Exclusivos",
       "p2_desc": "Acesse pop-ups e festivais de bairro, e explore Atlanta como um local.",
       "p3_title": "Zero Planejamento",
@@ -232,7 +232,7 @@
     "step3_title": "Colecione carimbos",
     "step3_desc": "Cada visita garante um carimbo no seu passport.",
     "step4_title": "Desbloqueie benefícios",
-    "step4_desc": "Bebidas grátis, descontos e itens exclusivos em lugares participantes."
+    "step4_desc": "Bebidas com desconto e itens exclusivos em lugares participantes."
   },
   "manifesto": {
     "kicker": "★ Manifesto",

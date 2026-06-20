@@ -4,7 +4,7 @@
       "kicker": "★ L'Avantage Atlanta Passport",
       "title": "Découvrez Atlanta comme un habitant, pas comme un touriste.",
       "discounts_title": "Bons Plans Exclusifs",
-      "discounts_desc": "Montrez votre passeport, profitez de l'avantage. Boissons offertes, 10% de réduction sur les repas et cadeaux spéciaux dans les adresses locales.",
+      "discounts_desc": "Montrez votre passeport, profitez de l'avantage. Boissons à prix réduit, 10% de réduction sur les repas et cadeaux spéciaux dans les adresses locales.",
       "events_title": "Événements Locaux",
       "events_desc": "Accédez aux pop-ups de la semaine des matchs et aux festivals de quartier introuvables sur les sites de voyage classiques.",
       "planning_title": "Planification Sans Effort",
@@ -39,7 +39,7 @@
       "kicker": "Pourquoi Vous en Avez Besoin",
       "title": "Votre sésame pour la ville.",
       "p1_title": "Offres Exclusives",
-      "p1_desc": "Montrez votre passport, profitez de l'avantage. Boissons offertes, 10% de réduction sur les repas et cadeaux spéciaux dans les adresses locales.",
+      "p1_desc": "Montrez votre passport, profitez de l'avantage. Boissons à prix réduit, 10% de réduction sur les repas et cadeaux spéciaux dans les adresses locales.",
       "p2_title": "Événements Exclusifs",
       "p2_desc": "Accédez à des pop-ups et des festivals de quartier, et explorez Atlanta comme un local.",
       "p3_title": "Zéro Planification",
@@ -232,7 +232,7 @@
     "step3_title": "Collectez des tampons",
     "step3_desc": "Chaque visite vous rapporte un tampon dans votre passeport.",
     "step4_title": "Débloquez des avantages",
-    "step4_desc": "Boissons offertes, réductions et articles exclusifs dans les adresses participantes."
+    "step4_desc": "Boissons à prix réduit et articles exclusifs dans les adresses participantes."
   },
   "manifesto": {
     "kicker": "★ Manifeste",

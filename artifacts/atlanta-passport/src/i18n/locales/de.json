@@ -4,7 +4,7 @@
       "kicker": "★ Der Passport-Vorteil",
       "title": "Erlebe Atlanta wie ein Einheimischer, nicht wie ein Tourist.",
       "discounts_title": "Exklusive Angebote",
-      "discounts_desc": "Zeig deinen Passport, genieß die Vorteile. Gratis-Getränke, 10 % Rabatt auf Speisen und besondere Geschenke bei lokalen Spots.",
+      "discounts_desc": "Zeig deinen Passport, genieß die Vorteile. Vergünstigte Getränke, 10 % Rabatt auf Speisen und besondere Geschenke bei lokalen Spots.",
       "events_title": "Lokale Veranstaltungen",
       "events_desc": "Zugang zu Spielwoche-Pop-ups und Nachbarschaftsfestivals, die du auf keiner normalen Reise-Website findest.",
       "planning_title": "Müheloses Planen",
@@ -39,7 +39,7 @@
       "kicker": "Warum du das brauchst",
       "title": "Dein Schlüssel zur Stadt.",
       "p1_title": "Exklusive Angebote",
-      "p1_desc": "Passport zeigen, Vorteil kassieren. Gratis-Getränke, 10 % Rabatt auf Essen und besondere Geschenke in lokalen Läden.",
+      "p1_desc": "Passport zeigen, Vorteil kassieren. Vergünstigte Getränke, 10 % Rabatt auf Essen und besondere Geschenke in lokalen Läden.",
       "p2_title": "Exklusive Events",
       "p2_desc": "Erlebe Pop-ups und Nachbarschaftsfeste und entdecke Atlanta wie ein Local.",
       "p3_title": "Null Planung",
@@ -232,7 +232,7 @@
     "step3_title": "Sammle Stempel",
     "step3_desc": "Jeder Besuch bringt dir einen Stempel in deinem Passport ein.",
     "step4_title": "Schalte Vorteile frei",
-    "step4_desc": "Gratis-Getränke, Rabatte und exklusive Artikel bei teilnehmenden Spots."
+    "step4_desc": "Vergünstigte Getränke und exklusive Artikel bei teilnehmenden Spots."
   },
   "manifesto": {
     "kicker": "★ Manifest",

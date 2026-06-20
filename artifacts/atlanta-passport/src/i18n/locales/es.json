@@ -4,7 +4,7 @@
       "kicker": "★ La Ventaja del Pasaporte",
       "title": "Vive Atlanta como un local, no como un turista.",
       "discounts_title": "Ofertas Exclusivas",
-      "discounts_desc": "Muestra tu pasaporte y disfruta el beneficio. Bebidas gratis, 10% de descuento en comidas y regalos especiales en locales de la ciudad.",
+      "discounts_desc": "Muestra tu pasaporte y disfruta el beneficio. Bebidas con descuento, 10% de descuento en comidas y regalos especiales en locales de la ciudad.",
       "events_title": "Eventos Locales",
       "events_desc": "Accede a pop-ups de la semana del partido y festivales barriales que no encontrarás en ninguna guía de viajes genérica.",
       "planning_title": "Planificación Sin Esfuerzo",
@@ -39,7 +39,7 @@
       "kicker": "Por Qué Lo Necesitas",
       "title": "Tu llave para la ciudad.",
       "p1_title": "Descuentos Exclusivos",
-      "p1_desc": "Muestra tu passport y llévate el beneficio. Bebidas gratis, 10% de descuento en comidas y regalos especiales en negocios locales.",
+      "p1_desc": "Muestra tu passport y llévate el beneficio. Bebidas con descuento, 10% de descuento en comidas y regalos especiales en negocios locales.",
       "p2_title": "Eventos Exclusivos",
       "p2_desc": "Accede a pop-ups y festivales de barrio, y explora Atlanta como un local.",
       "p3_title": "Cero Planificación",
@@ -232,7 +232,7 @@
     "step3_title": "Colecciona sellos",
     "step3_desc": "Cada visita te gana un sello en tu pasaporte.",
     "step4_title": "Desbloquea beneficios",
-    "step4_desc": "Bebidas gratis, descuentos y artículos exclusivos en los lugares participantes."
+    "step4_desc": "Bebidas con descuento y artículos exclusivos en los lugares participantes."
   },
   "manifesto": {
     "kicker": "★ Manifiesto",

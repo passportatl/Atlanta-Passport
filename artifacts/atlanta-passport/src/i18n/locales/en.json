@@ -4,7 +4,7 @@
       "kicker": "★ The Passport Advantage",
       "title": "Experience Atlanta like a local, not a tourist.",
       "discounts_title": "Exclusive Deals",
-      "discounts_desc": "Show your passport, get the perk. Free drinks, 10% off meals, and special gifts at local spots.",
+      "discounts_desc": "Show your passport, get the perk. Discounted drinks, 10% off meals, and special gifts at local spots.",
       "events_title": "Local Events",
       "events_desc": "Access match-week pop-ups and neighborhood festivals you won't find on generic travel sites.",
       "planning_title": "Effortless Planning",
@@ -39,7 +39,7 @@
       "kicker": "Why You Need This",
       "title": "Your ticket to the city.",
       "p1_title": "Exclusive Deals",
-      "p1_desc": "Show your passport, get the perk. Free drinks, 10% off meals, and special gifts at local spots.",
+      "p1_desc": "Show your passport, get the perk. Discounted drinks, 10% off meals, and special gifts at local spots.",
       "p2_title": "Exclusive Events",
       "p2_desc": "Access pop-ups and neighborhood festivals, and explore Atlanta like a local.",
       "p3_title": "Zero Planning",
@@ -232,7 +232,7 @@
     "step3_title": "Collect stamps",
     "step3_desc": "Each visit earns a stamp in your passport.",
     "step4_title": "Unlock perks",
-    "step4_desc": "Free drinks, discounts, and exclusive items at participating spots."
+    "step4_desc": "Discounted drinks and exclusive items at participating spots."
   },
   "manifesto": {
     "kicker": "★ Manifesto",

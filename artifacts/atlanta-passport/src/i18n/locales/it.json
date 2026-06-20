@@ -4,7 +4,7 @@
       "kicker": "★ Il Vantaggio del Passaporto",
       "title": "Scopri Atlanta come un abitante del posto, non come un turista.",
       "discounts_title": "Offerte Esclusive",
-      "discounts_desc": "Mostra il tuo passaporto e ottieni il tuo vantaggio. Bevande gratis, 10% di sconto sui pasti e regali speciali nei locali del posto.",
+      "discounts_desc": "Mostra il tuo passaporto e ottieni il tuo vantaggio. Bevande scontate, 10% di sconto sui pasti e regali speciali nei locali del posto.",
       "events_title": "Eventi Locali",
       "events_desc": "Accedi ai pop-up della settimana delle partite e ai festival di quartiere che non troverai sui soliti siti di viaggio.",
       "planning_title": "Pianificazione Senza Pensieri",
@@ -39,7 +39,7 @@
       "kicker": "Perché Ne Hai Bisogno",
       "title": "Il tuo biglietto per la città.",
       "p1_title": "Offerte Esclusive",
-      "p1_desc": "Mostra il tuo passport e ottieni il vantaggio. Drink gratis, 10% di sconto sui pasti e regali speciali nei locali del posto.",
+      "p1_desc": "Mostra il tuo passport e ottieni il vantaggio. Drink scontati, 10% di sconto sui pasti e regali speciali nei locali del posto.",
       "p2_title": "Eventi Esclusivi",
       "p2_desc": "Accedi a pop-up e festival di quartiere ed esplora Atlanta come un local.",
       "p3_title": "Zero Pianificazione",
@@ -232,7 +232,7 @@
     "step3_title": "Colleziona timbri",
     "step3_desc": "Ogni visita guadagna un timbro nel tuo passaporto.",
     "step4_title": "Sblocca vantaggi",
-    "step4_desc": "Bevande gratis, sconti e articoli esclusivi nei posti partecipanti."
+    "step4_desc": "Bevande scontate e articoli esclusivi nei posti partecipanti."
   },
   "manifesto": {
     "kicker": "★ Manifesto",
