@@ -585,11 +585,6 @@ function PhysicalPassportSection() {
                 {t("home.physical.badge")}
               </span>
             </div>
-            <div className="absolute -bottom-4 -left-3 sm:-left-5 -rotate-6 z-10">
-              <span className="badge-sticker bg-brand-yellow text-foreground text-sm md:text-base px-4 py-2">
-                {t("home.physical.pages")}
-              </span>
-            </div>
           </div>
 
           {/* Copy */}
