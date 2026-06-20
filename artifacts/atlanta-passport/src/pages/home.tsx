@@ -401,9 +401,10 @@ function EventsShowcase() {
 
 function HowItWorksSection() {
   const { t } = useTranslation();
-  const prizeSamples = [PRIZE_TIERS[0], PRIZE_TIERS[2], PRIZE_TIERS[4]].filter(
-    (tier): tier is (typeof PRIZE_TIERS)[number] => Boolean(tier),
-  );
+  const prizeSampleIndexes = [0, 2, 4];
+  const prizeSamples = prizeSampleIndexes
+    .map((idx) => PRIZE_TIERS[idx])
+    .filter((tier): tier is (typeof PRIZE_TIERS)[number] => Boolean(tier));
 
   return (
     <section className="bg-background texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
@@ -514,7 +515,7 @@ function HowItWorksSection() {
                           {tier.stamps}
                         </span>
                         <span className="font-bold text-xs leading-tight min-w-0">
-                          {t("home.how_it_works.tier_stamps", { tier: i + 1, count: tier.stamps })}
+                          {t("home.how_it_works.tier_stamps", { tier: prizeSampleIndexes[i] + 1, count: tier.stamps })}
                         </span>
                         <Gift className="w-3.5 h-3.5 ml-auto shrink-0 text-brand-red" />
                       </li>
