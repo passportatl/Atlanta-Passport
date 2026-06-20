@@ -455,7 +455,7 @@ const businessesRaw = [
     categories: ["Food","Drink"],
     neighborhood: "Piedmont Heights",
     description: "Atlanta's Legacy Japanese Restaurant",
-    offer: "BOGO: Spicy Tuna Roll",
+    offer: "BOGO: Spicy Tuna Roll or California Roll",
     address: "1776 Cheshire Bridge Road Northeast",
     lat: 33.80872,
     lng: -84.36473,

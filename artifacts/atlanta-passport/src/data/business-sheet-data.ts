@@ -153,7 +153,7 @@
   "nakato-japanese-restaurant": {
     description: "Atlanta's Legacy Japanese Restaurant",
     about: "Nakato Japanese Restaurant is a third-generation, family-owned destination for authentic Japanese cuisine. Guests can enjoy expertly crafted sushi, traditional Japanese dining, and an energetic teppanyaki experience—all delivered with the hospitality and heritage that have defined Nakato for generations. Combining time-honored recipes with vibrant tableside entertainment, Nakato offers a memorable dining experience for every occasion.",
-    offer: "BOGO: Spicy Tuna Roll",
+    offer: "BOGO: Spicy Tuna Roll or California Roll",
     hours: "4pm-9pm EVERYDAY extended hours on Fridays and Saturdays til 10pm",
     address: "1776 Cheshire Bridge Road Northeast",
   },
