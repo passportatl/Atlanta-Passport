@@ -550,28 +550,30 @@ function HowItWorksSection() {
 function PhysicalPassportSection() {
   const { t } = useTranslation();
   return (
-    <section className="bg-brand-navy text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+    <section className="bg-background text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Image */}
-          <div className="relative">
-            <div className="card-pop bg-white p-3 -rotate-2">
-              <img
-                src={physicalPassportImg}
-                alt={t("home.physical.alt")}
-                className="w-full h-auto rounded-lg border-2 border-foreground"
-                loading="lazy"
-              />
-            </div>
-            <div className="absolute -top-5 -right-3 sm:-right-5 rotate-6">
-              <span className="badge-sticker bg-brand-red text-white text-base md:text-lg px-5 py-2">
-                {t("home.physical.badge")}
-              </span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-stretch">
+          {/* Image — orange bubble */}
+          <div className="relative bg-brand-orange border-4 border-foreground rounded-3xl shadow-pop-lg p-6 md:p-10 flex items-center justify-center">
+            <div className="relative">
+              <div className="card-pop bg-white p-3 -rotate-2">
+                <img
+                  src={physicalPassportImg}
+                  alt={t("home.physical.alt")}
+                  className="w-full h-auto rounded-lg border-2 border-foreground"
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute -top-5 -right-3 sm:-right-5 rotate-6">
+                <span className="badge-sticker bg-brand-red text-white text-base md:text-lg px-5 py-2">
+                  {t("home.physical.badge")}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Copy */}
-          <div>
+          {/* Copy — nav-bar red bubble */}
+          <div className="bg-[#a71930] border-4 border-foreground rounded-3xl shadow-pop-lg p-7 md:p-10 flex flex-col justify-center">
             <Sticker color="yellow" rotate="left" className="mb-6">
               {t("home.physical.kicker")}
             </Sticker>
