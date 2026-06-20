@@ -8,3 +8,4 @@
 - [Route gating & screenshots](atlanta-passport-auth-gating.md) — most routes are Clerk-gated; signed-out deep-links (e.g. /listing/:id) redirect to home, so app_preview screenshots of gated pages show the home hero, not the page.
 - [Account stamp linkedReady gate](account-stamp-linkedready.md) — account-scoped collect must wait for a "link confirmed" flag (not just isSignedIn+visitorId) or it writes into the stale anon visitor; effects reading the flag must list it in deps.
 - [CSV location import](csv-location-import.md) — adding "CSV FOR REPLIT" rows to businesses: omit image (BusinessImage placeholder), dedupe by name not slug, map categories, only YES stamp-spots need seed.ts.
+- [Large PDF assets](large-pdf-assets.md) — PDFs >50MB can't load in the read tool but stay on disk in attached_assets/; render pages with pdftoppm (+ magick to optimize).

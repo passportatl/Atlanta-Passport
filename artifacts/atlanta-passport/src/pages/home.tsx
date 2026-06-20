@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import ExploreMapPreview from "@/components/ExploreMapPreview";
 import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
 import piedmontParkImg from "@/assets/images/piedmont-park.jpg";
-import physicalPassportImg from "@/assets/images/physical-passport.png";
+import physicalPassportCover from "@/assets/images/physical-passport-cover.jpg";
 
 const marqueeKeys = [
   "real_atl", "local_picks", "no_tourist_traps",
@@ -553,19 +553,41 @@ function PhysicalPassportSection() {
     <section className="bg-brand-navy text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Image */}
+          {/* Booklet */}
           <div className="relative">
-            <div className="card-pop bg-white p-3 -rotate-2">
-              <img
-                src={physicalPassportImg}
-                alt={t("home.physical.alt")}
-                className="w-full h-auto rounded-lg border-2 border-foreground"
-                loading="lazy"
+            <div className="relative mx-auto w-full max-w-sm -rotate-2">
+              {/* page stack peeking out the right edge */}
+              <div
+                aria-hidden
+                className="absolute top-3 bottom-3 -right-2.5 w-5 rounded-r-md bg-brand-cream border-4 border-foreground"
               />
+              <div
+                aria-hidden
+                className="absolute top-1.5 bottom-1.5 -right-1.5 w-5 rounded-r-md bg-white border-4 border-foreground"
+              />
+              {/* front cover */}
+              <div className="relative rounded-md overflow-hidden border-4 border-foreground shadow-pop-lg">
+                <img
+                  src={physicalPassportCover}
+                  alt={t("home.physical.alt")}
+                  className="block w-full h-auto"
+                  loading="lazy"
+                />
+                {/* bound spine shading */}
+                <div
+                  aria-hidden
+                  className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-black/45 via-black/15 to-transparent"
+                />
+              </div>
             </div>
-            <div className="absolute -top-5 -right-3 sm:-right-5 rotate-6">
+            <div className="absolute -top-5 -right-3 sm:-right-5 rotate-6 z-10">
               <span className="badge-sticker bg-brand-red text-white text-base md:text-lg px-5 py-2">
                 {t("home.physical.badge")}
+              </span>
+            </div>
+            <div className="absolute -bottom-4 -left-3 sm:-left-5 -rotate-6 z-10">
+              <span className="badge-sticker bg-brand-yellow text-foreground text-sm md:text-base px-4 py-2">
+                {t("home.physical.pages")}
               </span>
             </div>
           </div>
