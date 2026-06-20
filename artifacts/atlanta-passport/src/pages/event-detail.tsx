@@ -40,12 +40,13 @@ export default function EventDetail() {
 
   // Match the event's venue to a listed business so we can deep-link to its
   // location detail page and reuse its coordinates for the map snapshot.
+  const address: string = "address" in event ? event.address : "";
   const venueBusiness = businesses.find(
-    (b) => b.name === event.venue || (event.address && b.address === event.address),
+    (b) => b.name === event.venue || (address !== "" && b.address === address),
   );
   const mapsQuery = encodeURIComponent(
-    event.address
-      ? `${event.address}, Atlanta, GA`
+    address !== ""
+      ? `${address}, Atlanta, GA`
       : `${event.venue}, ${event.neighborhood}, Atlanta, GA`,
   );
 

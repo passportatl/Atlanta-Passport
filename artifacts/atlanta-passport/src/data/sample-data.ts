@@ -1244,6 +1244,24 @@ export const events = [
     ],
     instagram: ["@dp.and.co_atl", "@atlantucky", "@peachtreewellnessatl", "@passport.atl"],
   },
+  {
+    id: "skate-and-graffiti",
+    name: "Skate & Graffiti",
+    date: "June 27, 2026",
+    time: "4pm – 9pm",
+    venue: "Peachtree Wellness",
+    address: "585 Memorial Dr SE, Atlanta, GA 30312",
+    neighborhood: "Grant Park",
+    category: "Art & Culture",
+    description: "A skate and graffiti session at Peachtree Wellness — live spray-paint art, skating, and Atlanta's creative community coming together ahead of the matches.",
+    highlights: [
+      "Live graffiti and spray-paint art",
+      "Open skate session",
+      "Free to attend",
+      "Stamps available for Passport holders",
+    ],
+    instagram: ["@peachtreewellnessatl", "@passport.atl"],
+  },
 ] as const;
 
 export const neighborhoods = [
