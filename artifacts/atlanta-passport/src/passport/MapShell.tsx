@@ -19,6 +19,7 @@ import RoutesFeed from "@/passport/RoutesFeed";
 import PassportStamps from "@/pages/passport/stamps";
 import PassportHome from "@/pages/passport/index";
 import EventDetailBody from "@/pages/event-detail-body";
+import RouteDetailBody from "@/pages/route-detail-body";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import Footer from "@/components/layout/Footer";
 
@@ -44,17 +45,20 @@ export default function MapShell() {
   const [location] = useLocation();
   const { t } = useTranslation();
   const [isEventDetail, eventDetailParams] = useRoute("/passport/events/:id");
+  const [isRouteDetail, routeDetailParams] = useRoute("/passport/routes/:id");
   const view = isEventDetail
     ? "event-detail"
-    : location === "/passport"
-      ? "profile"
-      : location === "/passport/events"
-        ? "events"
-        : location === "/passport/stamps"
-          ? "stamps"
-          : location === "/passport/routes"
-            ? "routes"
-            : "explore";
+    : isRouteDetail
+      ? "route-detail"
+      : location === "/passport"
+        ? "profile"
+        : location === "/passport/events"
+          ? "events"
+          : location === "/passport/stamps"
+            ? "stamps"
+            : location === "/passport/routes"
+              ? "routes"
+              : "explore";
 
   const params =
     typeof window !== "undefined"
@@ -114,6 +118,15 @@ export default function MapShell() {
   useEffect(() => {
     if (eventDetailVenueId) setSelectedBizId(eventDetailVenueId);
   }, [eventDetailVenueId]);
+
+  // Entering a route detail highlights that route on the map: select it so the
+  // map shows only its ordered stops, draws the route line, and fits bounds.
+  useEffect(() => {
+    if (isRouteDetail && routeDetailParams?.id) {
+      setSelectedRouteId(routeDetailParams.id);
+      setSelectedBizId(undefined);
+    }
+  }, [isRouteDetail, routeDetailParams?.id]);
 
   const toggleCategory = (cat: string) => {
     setActiveCategories((prev) =>
@@ -179,7 +192,10 @@ export default function MapShell() {
   const mapBusinesses = useMemo(() => {
     // A picked route (from the Routes tab OR the Explore dropdown) takes over the
     // map: show only its stops, in order.
-    if (selectedRoute && (view === "routes" || view === "explore"))
+    if (
+      selectedRoute &&
+      (view === "routes" || view === "explore" || view === "route-detail")
+    )
       return routeBusinesses;
     if (view === "routes") return businesses;
     if (view === "explore" || view === "events") return filteredBusinesses;
@@ -197,7 +213,10 @@ export default function MapShell() {
   }, [mapBusinesses, selectedBizId]);
 
   const routePath = useMemo(() => {
-    if (!resolvedSelectedRoute || (view !== "routes" && view !== "explore"))
+    if (
+      !resolvedSelectedRoute ||
+      (view !== "routes" && view !== "explore" && view !== "route-detail")
+    )
       return undefined;
     const { startAnchor, stops } = resolvedSelectedRoute;
     if (stops.length === 0) return undefined;
@@ -219,7 +238,10 @@ export default function MapShell() {
   // When a route is selected, light up only the neighborhoods its stops pass
   // through (and dim the rest) so the colored areas frame the walk.
   const routeNeighborhoods = useMemo(() => {
-    if (!resolvedSelectedRoute || (view !== "routes" && view !== "explore"))
+    if (
+      !resolvedSelectedRoute ||
+      (view !== "routes" && view !== "explore" && view !== "route-detail")
+    )
       return [];
     return Array.from(
       new Set(resolvedSelectedRoute.stops.map((b) => b.neighborhood)),
@@ -261,7 +283,10 @@ export default function MapShell() {
                 routePath={routePath}
                 routeTravelMode={routeTravelMode}
                 highlightNeighborhoods={
-                  selectedRoute && (view === "routes" || view === "explore")
+                  selectedRoute &&
+                  (view === "routes" ||
+                    view === "explore" ||
+                    view === "route-detail")
                     ? routeNeighborhoods
                     : view === "explore"
                       ? activeNeighborhoods
@@ -285,6 +310,31 @@ export default function MapShell() {
           <EventDetailBody
             id={eventDetailParams?.id}
             hrefBase="/passport/events"
+          />
+        </PassportPanel>
+      )}
+      {view === "route-detail" && (
+        <PassportPanel>
+          <Link
+            href="/passport/routes"
+            className="inline-flex items-center gap-1.5 font-display text-[10px] tracking-[0.16em] text-brand-red uppercase hover:underline mb-4"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            Back to routes
+          </Link>
+          <RouteDetailBody
+            id={routeDetailParams?.id}
+            hrefBase="/passport/routes"
+            start={getRouteOptions(routeDetailParams?.id ?? "").start}
+            time={getRouteOptions(routeDetailParams?.id ?? "").time}
+            onChangeStart={(v) =>
+              routeDetailParams?.id &&
+              setRouteOption(routeDetailParams.id, { start: v })
+            }
+            onChangeTime={(v) =>
+              routeDetailParams?.id &&
+              setRouteOption(routeDetailParams.id, { time: v })
+            }
           />
         </PassportPanel>
       )}

@@ -263,7 +263,7 @@ export default function RoutesFeed({
 
                   <div className="border-t-[3px] border-foreground p-3">
                     <Link
-                      href={`/routes/${route.id}`}
+                      href={`/passport/routes/${route.id}`}
                       className="button-pop button-pop-cream w-full inline-flex items-center justify-center gap-2 text-xs"
                     >
                       View route details
