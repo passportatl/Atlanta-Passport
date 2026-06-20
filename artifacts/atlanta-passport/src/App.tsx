@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
 import Home from "@/pages/home";
 import Partners from "@/pages/partners";
+import PartnersComingSoon from "@/pages/partners-coming-soon";
 import EventDetail from "@/pages/event-detail";
 import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
@@ -30,7 +31,10 @@ function MarketingRoutes() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/partners" component={Partners} />
+        {/* TEMPORARY: partner applications paused — /partners shows a holding page.
+            To revert, change `PartnersComingSoon` back to `Partners` (the real page
+            is still imported above and fully intact). */}
+        <Route path="/partners" component={PartnersComingSoon} />
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/routes/:id" component={RouteDetail} />
         <Route path="/apply" component={Apply} />

@@ -387,7 +387,11 @@
     "step4_title": "Launch",
     "step4_desc": "Printed booklets ship May 2026. Digital site goes live with you on it.",
     "faq_kicker": "★ FAQ",
-    "faq_title": "Common questions."
+    "faq_title": "Common questions.",
+    "coming_soon_kicker": "★ Partner Applications",
+    "coming_soon_title": "Accepting applications for Fall 2026 soon",
+    "coming_soon_subtitle": "We've paused new partner applications while we finish curating our founding lineup. Check back soon — or reach out and we'll keep you posted.",
+    "coming_soon_cta": "Get in touch"
   },
   "apply_page": {
     "kicker": "★ Apply",
