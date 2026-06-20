@@ -550,7 +550,7 @@ function HowItWorksSection() {
 function PhysicalPassportSection() {
   const { t } = useTranslation();
   return (
-    <section className="bg-muted text-foreground texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+    <section className="bg-brand-navy text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Booklet */}
@@ -595,11 +595,11 @@ function PhysicalPassportSection() {
             <h2 className="font-serif font-black text-5xl md:text-7xl mb-5 leading-[0.95]">
               {t("home.physical.title")}
             </h2>
-            <p className="text-xl md:text-2xl text-foreground/80 font-medium mb-8 max-w-xl leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 font-medium mb-8 max-w-xl leading-relaxed">
               {t("home.physical.body")}
             </p>
             <div className="flex flex-col gap-3">
-              <span className="font-display uppercase tracking-widest text-xs font-black text-brand-red">
+              <span className="font-display uppercase tracking-widest text-xs font-black text-brand-yellow">
                 {t("home.physical.pickup_label")}
               </span>
               <div className="flex flex-wrap gap-3">
