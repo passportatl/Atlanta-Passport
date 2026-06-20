@@ -289,7 +289,8 @@
     "title": "What's on in Atlanta.",
     "subtitle": "Match-week pop-ups, neighborhood festivals, and one-off Atlanta moments. Curated by locals.",
     "view_event": "View event",
-    "no_events": "No events posted yet — check back soon."
+    "no_events": "No events posted yet — check back soon.",
+    "back_to_events": "Back to events"
   },
   "about_page": {
     "kicker": "★ About",

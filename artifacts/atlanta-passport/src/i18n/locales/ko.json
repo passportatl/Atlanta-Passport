@@ -289,7 +289,8 @@
     "title": "Atlanta에서 열리는 행사들.",
     "subtitle": "경기 주간 팝업, 동네 축제, 그리고 특별한 Atlanta만의 순간들. 현지인이 엄선했습니다.",
     "view_event": "이벤트 보기",
-    "no_events": "아직 등록된 이벤트가 없어요 — 곧 다시 확인해주세요."
+    "no_events": "아직 등록된 이벤트가 없어요 — 곧 다시 확인해주세요.",
+    "back_to_events": "이벤트로 돌아가기"
   },
   "about_page": {
     "kicker": "★ 소개",

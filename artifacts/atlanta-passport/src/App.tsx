@@ -140,6 +140,7 @@ function isMapShellRoute(location: string) {
     location === "/passport" ||
     location === "/passport/explore" ||
     location === "/passport/events" ||
+    location.startsWith("/passport/events/") ||
     location === "/passport/stamps" ||
     location === "/passport/routes"
   );

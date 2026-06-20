@@ -289,7 +289,8 @@
     "title": "Qué hay en Atlanta.",
     "subtitle": "Pop-ups de la semana del partido, festivales barriales y momentos únicos en Atlanta. Curados por locales.",
     "view_event": "Ver evento",
-    "no_events": "Aún no hay eventos publicados — vuelve pronto."
+    "no_events": "Aún no hay eventos publicados — vuelve pronto.",
+    "back_to_events": "Volver a eventos"
   },
   "about_page": {
     "kicker": "★ Acerca de",

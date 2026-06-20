@@ -289,7 +289,8 @@
     "title": "Ce qui se passe à Atlanta.",
     "subtitle": "Pop-ups de la semaine des matchs, festivals de quartier et moments uniques à Atlanta. Sélectionnés par des locaux.",
     "view_event": "Voir l'événement",
-    "no_events": "Aucun événement publié pour l'instant — revenez bientôt."
+    "no_events": "Aucun événement publié pour l'instant — revenez bientôt.",
+    "back_to_events": "Retour aux événements"
   },
   "about_page": {
     "kicker": "★ À Propos",

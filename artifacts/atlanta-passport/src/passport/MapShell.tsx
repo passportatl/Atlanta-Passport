@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect, type ReactNode } from "react";
-import { useLocation, useSearch } from "wouter";
+import { useLocation, useSearch, useRoute, Link } from "wouter";
+import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   businesses,
   neighborhoods,
@@ -15,6 +17,7 @@ import EventsFeed from "@/passport/EventsFeed";
 import RoutesFeed from "@/passport/RoutesFeed";
 import PassportStamps from "@/pages/passport/stamps";
 import PassportHome from "@/pages/passport/index";
+import EventDetailBody from "@/pages/event-detail-body";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import Footer from "@/components/layout/Footer";
 
@@ -38,8 +41,11 @@ function PassportPanel({ children }: { children: ReactNode }) {
 // them.
 export default function MapShell() {
   const [location] = useLocation();
-  const view =
-    location === "/passport"
+  const { t } = useTranslation();
+  const [isEventDetail, eventDetailParams] = useRoute("/passport/events/:id");
+  const view = isEventDetail
+    ? "event-detail"
+    : location === "/passport"
       ? "profile"
       : location === "/passport/events"
         ? "events"
@@ -247,6 +253,21 @@ export default function MapShell() {
         </div>
       </div>
 
+      {view === "event-detail" && (
+        <PassportPanel>
+          <Link
+            href="/passport/events"
+            className="inline-flex items-center gap-1.5 font-display text-[10px] tracking-[0.16em] text-brand-red uppercase hover:underline mb-4"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            {t("events_page.back_to_events")}
+          </Link>
+          <EventDetailBody
+            id={eventDetailParams?.id}
+            hrefBase="/passport/events"
+          />
+        </PassportPanel>
+      )}
       {view === "events" && <EventsFeed onSelectBusiness={setSelectedBizId} />}
       {view === "routes" && (
         <RoutesFeed

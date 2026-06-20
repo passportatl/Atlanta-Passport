@@ -289,7 +289,8 @@
     "title": "Cosa c'è in programma ad Atlanta.",
     "subtitle": "Pop-up della settimana delle partite, festival di quartiere e momenti unici ad Atlanta. Curati dai locali.",
     "view_event": "Vedi evento",
-    "no_events": "Nessun evento pubblicato ancora — torna presto a controllare."
+    "no_events": "Nessun evento pubblicato ancora — torna presto a controllare.",
+    "back_to_events": "Torna agli eventi"
   },
   "about_page": {
     "kicker": "★ Chi Siamo",
