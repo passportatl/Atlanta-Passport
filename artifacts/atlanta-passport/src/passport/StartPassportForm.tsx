@@ -29,6 +29,7 @@ export function StartPassportForm({
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const submitForm = async (e: FormEvent) => {
@@ -46,6 +47,8 @@ export function StartPassportForm({
         },
       });
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      setCode("");
+      setNotice(null);
       setStep("verify");
     } catch (err) {
       setError(
@@ -60,17 +63,38 @@ export function StartPassportForm({
   const submitCode = async (e: FormEvent) => {
     e.preventDefault();
     if (!isLoaded || !signUp) return;
+    // Email codes are numeric — strip whitespace that autofill/paste often
+    // inserts (e.g. "123 456") so a valid code isn't wrongly rejected and the
+    // user burns their limited attempts.
+    const cleanedCode = code.replace(/\s+/g, "");
+    if (cleanedCode.length === 0) {
+      setError("Enter the 6-digit code we emailed you.");
+      return;
+    }
     setError(null);
+    setNotice(null);
     setBusy(true);
     try {
-      const res = await signUp.attemptEmailAddressVerification({ code });
-      if (res.status === "complete" && res.createdSessionId) {
-        // Signs the user in. ClerkVisitorBridge then links/creates the
-        // passport visitor and the page swaps to the profile view.
-        await setActive({ session: res.createdSessionId });
-      } else {
-        setError("Verification incomplete. Please check the code and retry.");
+      const res = await signUp.attemptEmailAddressVerification({
+        code: cleanedCode,
+      });
+      // A "complete" status means the code was accepted and the account exists.
+      // Activate the created session — never tell the user to re-enter an
+      // already-consumed code, which only leads to "too many attempts".
+      if (res.status === "complete") {
+        const sessionId = res.createdSessionId ?? signUp.createdSessionId;
+        if (sessionId) {
+          // ClerkVisitorBridge then links/creates the passport visitor and the
+          // page swaps to the profile view.
+          await setActive({ session: sessionId });
+          return;
+        }
+        setError(
+          "Your account was verified but we couldn't sign you in. Please refresh and sign in.",
+        );
+        return;
       }
+      setError("Verification incomplete. Please check the code and retry.");
     } catch (err) {
       setError(
         clerkErrorMessage(err) ?? "That code didn't work. Please try again.",
@@ -83,11 +107,19 @@ export function StartPassportForm({
   const resendCode = async () => {
     if (!isLoaded || !signUp || busy) return;
     setError(null);
+    setNotice(null);
     setBusy(true);
     try {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      // A fresh code resets Clerk's per-code attempt counter — clear the old
+      // entry so the user doesn't resubmit a stale code.
+      setCode("");
+      setNotice("New code sent — check your email.");
     } catch (err) {
-      setError(clerkErrorMessage(err) ?? "Could not resend the code.");
+      setError(
+        clerkErrorMessage(err) ??
+          "Could not resend the code. Please wait a moment and try again.",
+      );
     } finally {
       setBusy(false);
     }
@@ -196,6 +228,11 @@ export function StartPassportForm({
           {error && (
             <div className="text-sm text-[hsl(var(--brand-red))] font-bold">
               {error}
+            </div>
+          )}
+          {notice && !error && (
+            <div className="text-sm text-[hsl(var(--brand-navy))] font-bold">
+              {notice}
             </div>
           )}
           <button
