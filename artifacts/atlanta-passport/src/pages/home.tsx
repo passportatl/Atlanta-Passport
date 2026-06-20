@@ -435,7 +435,7 @@ function HowItWorksSection() {
               <div className="w-full max-w-[230px] card-pop bg-white border-2 p-0 overflow-hidden -rotate-1">
                 <div className="bg-brand-navy text-white px-3 py-2 flex items-center justify-between border-b-2 border-foreground">
                   <span className="font-display text-[9px] tracking-widest">
-                    Atlanta Trap Museum
+                    Varasanos
                   </span>
                   <MapPin className="w-3.5 h-3.5 shrink-0" />
                 </div>
@@ -472,8 +472,8 @@ function HowItWorksSection() {
                 {t("home.how_it_works.step")} 02
               </span>
               <img
-                src={STAMP_IMAGE_BY_ID["trap-museum"]}
-                alt="Trap Museum stamp"
+                src={STAMP_IMAGE_BY_ID["varasanos"]}
+                alt="Varasanos stamp"
                 className="w-[140px] h-[140px] object-contain -rotate-[4deg]"
               />
               <div className="mt-3 font-display text-xs tracking-widest text-foreground">
