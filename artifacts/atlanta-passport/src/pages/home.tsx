@@ -13,6 +13,7 @@ import { PRIZE_TIERS } from "@/components/PrizesSection";
 import PassportStamp from "@/components/PassportStamp";
 import { cn } from "@/lib/utils";
 
+import ExploreMapPreview from "@/components/ExploreMapPreview";
 import jacksonStBridgeImg from "@/assets/images/jackson-st-bridge.jpg";
 import piedmontParkImg from "@/assets/images/piedmont-park.jpg";
 import physicalPassportImg from "@/assets/images/physical-passport.png";
@@ -165,7 +166,7 @@ function ExploreSection() {
   ];
 
   return (
-    <section className="bg-brand-sky text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
+    <section className="bg-brand-orange text-white texture-paper section-hero relative overflow-hidden border-b-4 border-foreground">
       <div className="hidden md:block absolute -bottom-16 -right-12 opacity-20 scale-[1.6] pointer-events-none">
         <PassportStamp size="lg" tone="navy" rotate={18}>
           {t("home.explore.kicker")}
@@ -173,46 +174,57 @@ function ExploreSection() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-2xl">
-          <Sticker color="yellow" rotate="left" className="mb-6">
-            {t("home.explore.kicker")}
-          </Sticker>
-          <h2 className="font-serif font-black text-5xl md:text-7xl mb-5 leading-[0.95]">
-            {t("home.explore.title")}
-          </h2>
-          <p className="text-xl md:text-2xl text-white/90 font-medium mb-8 max-w-xl">
-            {t("home.explore.subtitle")}
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Info column (left) */}
+          <div className="max-w-2xl">
+            <Sticker color="yellow" rotate="left" className="mb-6">
+              {t("home.explore.kicker")}
+            </Sticker>
+            <h2 className="font-serif font-black text-5xl md:text-7xl mb-5 leading-[0.95]">
+              {t("home.explore.title")}
+            </h2>
+            <p className="text-xl md:text-2xl text-white/90 font-medium mb-8 max-w-xl">
+              {t("home.explore.subtitle")}
+            </p>
 
-          <ul className="space-y-5 mb-10">
-            {features.map((f) => (
-              <li key={f.title} className="flex gap-4 items-start">
-                <div className="w-12 h-12 rounded-full bg-white text-brand-sky border-4 border-foreground shadow-pop-sm flex items-center justify-center shrink-0">
-                  <f.icon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-display uppercase tracking-wide text-lg font-black leading-tight">
-                    {f.title}
-                  </h3>
-                  <p className="text-white/85 font-medium">{f.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+            <ul className="space-y-5 mb-10">
+              {features.map((f) => (
+                <li key={f.title} className="flex gap-4 items-start">
+                  <div className="w-12 h-12 rounded-full bg-white text-brand-orange border-4 border-foreground shadow-pop-sm flex items-center justify-center shrink-0">
+                    <f.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-display uppercase tracking-wide text-lg font-black leading-tight">
+                      {f.title}
+                    </h3>
+                    <p className="text-white/85 font-medium">{f.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-          <div className="flex justify-center">
-            <Link
-              href="/sign-up"
-              className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 inline-flex hover:bg-brand-red hover:text-white transition-colors"
-            >
-              <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
-                <span>{t("home.explore.cta_lead")}</span>
-                <span className="flex items-center justify-center">
-                  {t("home.explore.cta")}
-                  <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+            <div className="flex justify-center lg:justify-start">
+              <Link
+                href="/sign-up"
+                className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 inline-flex hover:bg-brand-red hover:text-white transition-colors"
+              >
+                <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
+                  <span>{t("home.explore.cta_lead")}</span>
+                  <span className="flex items-center justify-center">
+                    {t("home.explore.cta")}
+                    <MoveRight className="w-5 h-5 ml-2 rtl:rotate-180" />
+                  </span>
                 </span>
-              </span>
-            </Link>
+              </Link>
+            </div>
+          </div>
+
+          {/* Explore page example (right) */}
+          <div className="relative">
+            <Sticker color="red" rotate="right" className="absolute -top-4 right-2 z-20 shadow-pop-sm">
+              {t("home.explore.preview_badge")}
+            </Sticker>
+            <ExploreMapPreview />
           </div>
         </div>
       </div>
