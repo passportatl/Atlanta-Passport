@@ -125,3 +125,9 @@ id = "2hud0yT-YjQuTHhOTdmyz"
 uri = "file://exports/atlanta-passport-stamp-urls.csv"
 type = "table"
 title = "Stamp QR Codes — passportatl.com (12)"
+
+[[outputs]]
+id = "ddJWDdB4P2t6uXMPoX4fH"
+uri = "file://exports/atlanta-passport-export.zip"
+type = "unspecified"
+title = "Atlanta Passport — source export (.zip)"
