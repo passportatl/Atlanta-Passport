@@ -428,7 +428,7 @@ function HowItWorksSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Step 1 — Redeem an offer */}
           <div className="card-pop bg-white p-0 overflow-hidden flex flex-col">
-            <div className="relative bg-brand-cream/60 px-5 pt-10 pb-8 flex items-center justify-center min-h-[230px] border-b-4 border-foreground">
+            <div className="relative bg-brand-orange px-5 pt-10 pb-8 flex items-center justify-center min-h-[230px] border-b-4 border-foreground">
               <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
                 {t("home.how_it_works.step")} 01
               </span>
@@ -455,11 +455,11 @@ function HowItWorksSection() {
                 </div>
               </div>
             </div>
-            <div className="p-5">
-              <h3 className="font-serif font-black text-2xl leading-tight mb-2">
+            <div className="p-5 bg-[#a71930] text-white flex-grow">
+              <h3 className="font-serif font-black text-2xl leading-tight mb-2 text-white">
                 {t("home.how_it_works.step1_title")}
               </h3>
-              <p className="text-foreground/75 font-medium leading-relaxed">
+              <p className="text-white/80 font-medium leading-relaxed">
                 {t("home.how_it_works.step1_body")}
               </p>
             </div>
@@ -467,7 +467,7 @@ function HowItWorksSection() {
 
           {/* Step 2 — Collect your stamp */}
           <div className="card-pop bg-white p-0 overflow-hidden flex flex-col">
-            <div className="relative bg-brand-cream/60 px-5 pt-10 pb-8 flex flex-col items-center justify-center min-h-[230px] border-b-4 border-foreground">
+            <div className="relative bg-brand-orange px-5 pt-10 pb-8 flex flex-col items-center justify-center min-h-[230px] border-b-4 border-foreground">
               <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
                 {t("home.how_it_works.step")} 02
               </span>
@@ -476,15 +476,15 @@ function HowItWorksSection() {
                 alt="Trap Museum stamp"
                 className="w-[140px] h-[140px] object-contain -rotate-[4deg]"
               />
-              <div className="mt-3 font-display text-xs tracking-widest text-brand-red">
+              <div className="mt-3 font-display text-xs tracking-widest text-foreground">
                 {t("home.how_it_works.stamp_collected")}
               </div>
             </div>
-            <div className="p-5">
-              <h3 className="font-serif font-black text-2xl leading-tight mb-2">
+            <div className="p-5 bg-[#a71930] text-white flex-grow">
+              <h3 className="font-serif font-black text-2xl leading-tight mb-2 text-white">
                 {t("home.how_it_works.step2_title")}
               </h3>
-              <p className="text-foreground/75 font-medium leading-relaxed">
+              <p className="text-white/80 font-medium leading-relaxed">
                 {t("home.how_it_works.step2_body")}
               </p>
             </div>
@@ -492,7 +492,7 @@ function HowItWorksSection() {
 
           {/* Step 3 — Win your prize */}
           <div className="card-pop bg-white p-0 overflow-hidden flex flex-col">
-            <div className="relative bg-brand-cream/60 px-5 pt-10 pb-8 flex items-center justify-center min-h-[230px] border-b-4 border-foreground">
+            <div className="relative bg-brand-orange px-5 pt-10 pb-8 flex items-center justify-center min-h-[230px] border-b-4 border-foreground">
               <span className="absolute top-3 left-3 sticker-pill sticker-navy text-[10px]">
                 {t("home.how_it_works.step")} 03
               </span>
@@ -522,11 +522,11 @@ function HowItWorksSection() {
                 </div>
               </div>
             </div>
-            <div className="p-5">
-              <h3 className="font-serif font-black text-2xl leading-tight mb-2">
+            <div className="p-5 bg-[#a71930] text-white flex-grow">
+              <h3 className="font-serif font-black text-2xl leading-tight mb-2 text-white">
                 {t("home.how_it_works.step3_title")}
               </h3>
-              <p className="text-foreground/75 font-medium leading-relaxed">
+              <p className="text-white/80 font-medium leading-relaxed">
                 {t("home.how_it_works.step3_body")}
               </p>
             </div>
