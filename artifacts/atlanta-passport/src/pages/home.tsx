@@ -250,19 +250,55 @@ function JourneySection() {
           <Sticker color="red" rotate="left" className="mb-6">{t("home.journey.kicker")}</Sticker>
           <h2 className="font-serif font-black text-5xl md:text-7xl text-brand-cream mb-4">{t("home.journey.title")}</h2>
           <p className="text-xl md:text-3xl text-brand-cream/80 font-medium">{t("home.journey.subtitle")}</p>
+        </div>
+      </div>
 
-          <div className="mt-6">
-            <span className="block font-display text-[10px] tracking-[0.16em] uppercase text-brand-cream/60 mb-2">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+          {/* One example route card */}
+          {(() => {
+            const route = featuredRoutes[0];
+            if (!route) return null;
+            const resolved = resolveRoute(route, "marta", "morning");
+            return (
+              <Link href="/passport/routes" className="group block">
+                <div className="card-pop bg-white text-foreground p-6 md:p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col rotate-1">
+                  <div className="flex items-center gap-3 mb-6 md:mb-8">
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-xl md:text-2xl font-black shadow-pop-sm shrink-0">
+                      1
+                    </div>
+                    <div className="font-display text-[9px] md:text-xs leading-tight tracking-tight uppercase text-brand-red font-bold bg-brand-cream px-3 py-1.5 border-2 border-foreground rounded-full shadow-pop-sm">
+                      {route.area}
+                    </div>
+                  </div>
+                  <h3 className="font-serif font-black text-3xl md:text-4xl mb-3 md:mb-4 leading-tight">{route.name}</h3>
+                  <p className="text-foreground/75 mb-6 md:mb-8 text-base md:text-lg font-medium flex-grow">{route.vibe}</p>
+
+                  <div className="flex items-center gap-5 md:gap-6 font-display text-xs md:text-sm tracking-wide bg-brand-cream px-4 py-3 md:p-4 border-2 border-foreground rounded-xl">
+                    <span className="flex items-center gap-2"><MapPin className="w-4 h-4 md:w-5 md:h-5 text-brand-red shrink-0"/> {t("home.journey.stops_count", { count: resolved.stopCount })}</span>
+                    <span className="flex items-center gap-2"><Bike className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0"/> {resolved.miles}</span>
+                    <MoveRight className="w-4 h-4 ml-auto text-brand-red rtl:rotate-180"/>
+                  </div>
+                </div>
+              </Link>
+            );
+          })()}
+
+          {/* Curated routes list */}
+          <div className="flex flex-col">
+            <span className="block font-display text-[10px] tracking-[0.16em] uppercase text-brand-cream/60 mb-3">
               {t("home.journey.routes_label")}
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-2.5">
               {mapRoutes.map((route) => (
                 <Link
                   key={route.id}
                   href="/passport/routes"
-                  className="inline-flex items-center gap-1.5 rounded-full border-2 border-brand-cream/40 bg-brand-cream/10 px-3 py-1.5 font-display text-[11px] tracking-wider uppercase text-brand-cream transition-colors hover:border-brand-cream hover:bg-brand-cream/20"
+                  className="group flex items-center gap-3 rounded-2xl border-2 border-brand-cream/40 bg-brand-cream/10 px-4 py-3 font-display text-sm tracking-wide uppercase text-brand-cream transition-colors hover:border-brand-cream hover:bg-brand-cream/20"
                 >
-                  <MapPin className="w-3 h-3 text-brand-lime shrink-0" /> {route.name}
+                  <MapPin className="w-4 h-4 text-brand-lime shrink-0" />
+                  <span className="flex-grow">{route.name}</span>
+                  <MoveRight className="w-4 h-4 shrink-0 text-brand-cream/40 transition-colors group-hover:text-brand-cream rtl:rotate-180" />
                 </Link>
               ))}
             </div>
@@ -270,35 +306,7 @@ function JourneySection() {
         </div>
       </div>
 
-      <div className="flex gap-4 md:gap-6 overflow-x-auto pb-12 px-4 md:px-8 scrollbar-none snap-x snap-mandatory">
-        {featuredRoutes.map((route, i) => {
-          const resolved = resolveRoute(route, "marta", "morning");
-          return (
-            <Link key={route.id} href="/passport/routes" className={`snap-center shrink-0 w-[78vw] sm:w-[360px] md:w-[450px] group cursor-pointer ${i === 2 ? "hidden md:block" : "block"}`}>
-              <div className="card-pop bg-white text-foreground p-5 md:p-8 h-full transition-transform hover:-translate-y-2 border-4 flex flex-col">
-                <div className="flex items-center gap-3 mb-4 md:mb-8">
-                  <div className="w-11 h-11 md:w-16 md:h-16 rounded-full bg-brand-lime border-4 border-foreground flex items-center justify-center font-display text-lg md:text-2xl font-black shadow-pop-sm shrink-0">
-                    {i + 1}
-                  </div>
-                  <div className="font-display text-[9px] md:text-xs leading-tight tracking-tight uppercase text-brand-red font-bold bg-brand-cream px-3 py-1.5 border-2 border-foreground rounded-full shadow-pop-sm">
-                    {route.area}
-                  </div>
-                </div>
-                <h3 className="font-serif font-black text-2xl md:text-4xl mb-2 md:mb-4 leading-tight">{route.name}</h3>
-                <p className="text-foreground/75 mb-5 md:mb-8 text-base md:text-lg font-medium flex-grow line-clamp-3 md:line-clamp-none">{route.vibe}</p>
-                
-                <div className="flex items-center gap-5 md:gap-6 font-display text-xs md:text-sm tracking-wide bg-brand-cream px-4 py-3 md:p-4 border-2 border-foreground rounded-xl">
-                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4 md:w-5 md:h-5 text-brand-red shrink-0"/> {t("home.journey.stops_count", { count: resolved.stopCount })}</span>
-                  <span className="flex items-center gap-2"><Bike className="w-4 h-4 md:w-5 md:h-5 text-primary shrink-0"/> {resolved.miles}</span>
-                  <MoveRight className="w-4 h-4 ml-auto text-brand-red rtl:rotate-180 md:hidden"/>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10 mt-10 flex justify-center">
+      <div className="container mx-auto px-4 relative z-10 mt-12 flex justify-center">
         <Link href="/sign-up" className="button-pop bg-brand-yellow text-foreground border-4 border-foreground !rounded-2xl text-lg px-8 py-5 shrink-0 hover:bg-brand-red hover:text-white transition-colors">
           <span className="flex flex-col items-center justify-center text-center leading-snug [white-space:normal]">
             <span>{t("home.journey.cta_lead")}</span>
