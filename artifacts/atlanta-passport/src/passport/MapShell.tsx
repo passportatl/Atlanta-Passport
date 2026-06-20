@@ -7,6 +7,7 @@ import {
   neighborhoods,
   exploreCategories,
   mapRoutes,
+  events,
   resolveRoute,
   type RouteStart,
   type RouteTime,
@@ -94,6 +95,25 @@ export default function MapShell() {
       ...prev,
       [id]: { ...(prev[id] ?? DEFAULT_ROUTE_OPTIONS), ...patch },
     }));
+
+  // On the in-shell event detail, resolve the event's venue to a listed
+  // business (by name/address) so we can focus the persistent map on it.
+  const eventDetailVenueId = useMemo(() => {
+    if (!isEventDetail) return undefined;
+    const ev = events.find((e) => e.id === eventDetailParams?.id);
+    if (!ev) return undefined;
+    const evAddress = "address" in ev ? ev.address : "";
+    const venue = businesses.find(
+      (b) => b.name === ev.venue || (evAddress !== "" && b.address === evAddress),
+    );
+    return venue?.id;
+  }, [isEventDetail, eventDetailParams?.id]);
+
+  // Entering an event detail zooms the map to the venue and opens its highlight
+  // (PanToSelected in BusinessMap pans + zooms to the selected business).
+  useEffect(() => {
+    if (eventDetailVenueId) setSelectedBizId(eventDetailVenueId);
+  }, [eventDetailVenueId]);
 
   const toggleCategory = (cat: string) => {
     setActiveCategories((prev) =>
