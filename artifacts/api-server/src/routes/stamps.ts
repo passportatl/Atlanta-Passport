@@ -3,7 +3,6 @@ import { eq, and, desc } from "drizzle-orm";
 import { db, stampsTable, businessesTable, visitorsTable } from "@workspace/db";
 import { CollectStampBody } from "@workspace/api-zod";
 import { scheduleSignupSync } from "../lib/googleSheetSync";
-import { isWithin, geofenceDisabled } from "../lib/geofence";
 
 const router: IRouter = Router();
 
@@ -13,7 +12,7 @@ router.post("/stamps", async (req, res) => {
     res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
     return;
   }
-  const { visitorId, businessSlug, latitude, longitude } = parsed.data;
+  const { visitorId, businessSlug } = parsed.data;
 
   const visitorRows = await db
     .select()
@@ -44,28 +43,6 @@ router.post("/stamps", async (req, res) => {
   if (existing[0]) {
     res.json({ stamp: existing[0], alreadyCollected: true });
     return;
-  }
-
-  // Geofence: in-scope spots (sponsor offers + bonus events) carry lat/lng.
-  // For those, the visitor must be physically near to collect a NEW stamp.
-  // Out-of-scope spots have null coords and stay unrestricted.
-  if (
-    !geofenceDisabled() &&
-    business.latitude != null &&
-    business.longitude != null
-  ) {
-    if (latitude == null || longitude == null) {
-      res
-        .status(422)
-        .json({ error: "location_required", message: "Location is required to collect this stamp." });
-      return;
-    }
-    if (!isWithin(latitude, longitude, business.latitude, business.longitude)) {
-      res
-        .status(422)
-        .json({ error: "too_far", message: "You must be at this location to collect its stamp." });
-      return;
-    }
   }
 
   const [stamp] = await db
