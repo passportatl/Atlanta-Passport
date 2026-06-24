@@ -131,3 +131,9 @@ id = "ddJWDdB4P2t6uXMPoX4fH"
 uri = "file://exports/atlanta-passport-export.zip"
 type = "unspecified"
 title = "Atlanta Passport — source export (.zip)"
+
+[[outputs]]
+id = "cuT0_U-5Qmi8LGZqPaIYf"
+uri = "file://.backups/atlanta-passport-db.sql.gz"
+type = "unspecified"
+title = "Atlanta Passport database backup (SQL dump, gzipped)"
