@@ -94,12 +94,12 @@ export default function Navbar() {
           {/* Mobile logo — horizontally centered, bottom-aligned with the
               language + menu bubble buttons (their bottom sits 12px above the
               header bottom). The logo PNG has ~7.5% transparent padding below
-              the stamp, which at h-9 (36px) is ~2.7px; so it's offset to 9px
+              the stamp, which at h-14 (56px) is ~4px; so it's offset to 8px
               (12px − padding) to make the VISIBLE circle bottom line up. */}
           <Link
             href="/"
             aria-label="Atlanta Passport home"
-            className="md:hidden absolute left-1/2 bottom-[7px] -translate-x-1/2 inline-flex items-end pointer-events-none"
+            className="md:hidden absolute left-1/2 bottom-[8px] -translate-x-1/2 inline-flex items-end pointer-events-none"
           >
             <Logo
               variant="mini"
