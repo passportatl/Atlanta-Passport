@@ -179,7 +179,7 @@ export default function Navbar() {
                 <span className="sr-only">{t("nav.toggle_menu")}</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="flex flex-col bg-brand-orange p-0">
+            <SheetContent side="right" className="flex flex-col bg-paper p-0">
               <div className="flex flex-col gap-5 px-6 pt-10 pb-6">
                 {mobileTouristLinks.map((link, i) => (
                   <Link
