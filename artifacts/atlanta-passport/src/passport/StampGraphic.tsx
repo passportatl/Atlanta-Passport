@@ -108,6 +108,30 @@ export function StampGraphic({
   // Scale arc text down a bit when the label is long
   const topFontSize = upperText.length > 14 ? 11 : 14;
 
+  // When a business has a full custom stamp design from the partner sheet, that
+  // PNG IS the entire stamp (circular art, arc text, border, neighborhood name) —
+  // render it full-bleed at `size` instead of cramming it into the center of the
+  // generated stamp. This keeps every collected stamp the same size and centered.
+  if (iconUrl && !locked) {
+    return (
+      <div
+        className="relative inline-flex items-center justify-center select-none"
+        style={{
+          width: size,
+          height: size,
+          transform: `rotate(${rotate}deg)`,
+        }}
+      >
+        <img
+          src={iconUrl}
+          alt={`${neighborhood} stamp`}
+          className="w-full h-full object-contain"
+          draggable={false}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className="relative inline-flex items-center justify-center select-none"
