@@ -132,22 +132,25 @@ export function PrizeLadder({
                 )}
 
                 <ul className="mt-1 space-y-1">
-                  {tier.options.map((opt) => (
-                    <li
-                      key={opt}
-                      className="flex items-start gap-1.5 text-xs font-semibold leading-snug"
-                    >
-                      <Icon className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-red" />
-                      <span className={unlocked ? "" : "text-foreground/70"}>
-                        {opt}
-                        {multi && (
-                          <span className="ml-1 text-[10px] font-black uppercase tracking-wider text-brand-red">
-                            {t("prizes.onlyOneLeft")}
-                          </span>
-                        )}
-                      </span>
-                    </li>
-                  ))}
+                  {tier.options.map((opt) => {
+                    const isHotSauceFest = opt.includes("Hot Sauce Fest");
+                    return (
+                      <li
+                        key={opt}
+                        className="flex items-start gap-1.5 text-xs font-semibold leading-snug"
+                      >
+                        <Icon className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-brand-red" />
+                        <span className={unlocked ? "" : "text-foreground/70"}>
+                          {opt}
+                          {multi && !isHotSauceFest && (
+                            <span className="ml-1 text-[10px] font-black uppercase tracking-wider text-brand-red">
+                              {t("prizes.onlyOneLeft")}
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </li>
