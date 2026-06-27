@@ -152,7 +152,7 @@ export function PassportBottomNav() {
       <nav className="fixed bottom-0 inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop z-40">
         {/* Mobile pop-up menu (above the bar) */}
         {menuOpen && (
-          <div className="md:hidden absolute bottom-full inset-x-0 bg-[#a71930] border-t-4 border-foreground shadow-pop max-h-[90vh] overflow-y-auto">
+          <div className="md:hidden absolute bottom-full inset-x-0 bg-n border-t-4 border-foreground shadow-pop max-h-[90vh] overflow-y-auto">
             <div className="max-w-3xl mx-auto px-3 pt-3 pb-28">
               <div className="grid grid-cols-1 gap-1.5">
                 {TABS.map((tab) => {
@@ -161,7 +161,7 @@ export function PassportBottomNav() {
                   const itemClass = `flex items-center gap-3 px-3 py-3 rounded-xl border-2 border-foreground text-sm font-black tracking-wider transition-colors ${
                     active
                       ? "bg-[#f9c629] text-foreground"
-                      : "bg-[#a71930] text-[#f9c629] hover:bg-white/10"
+                      : "bg-transparent text-white hover:bg-white/15"
                   }`;
                   // Contact opens in a new tab so the map shell never reloads.
                   if (tab.href === "/passport/contact") {
@@ -196,7 +196,7 @@ export function PassportBottomNav() {
                 })}
               </div>
 
-              <div className="mt-3 pt-3 border-t border-[#f9c629]/25 flex justify-center">
+              <div className="mt-3 pt-3 border-t border-white/30 flex justify-center">
                 <div className="px-1 inline-flex items-center border-2 border-foreground bg-brand-cream rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]">
                   <SocialLinks linkClassName="h-9 w-9 text-foreground/80 hover:text-brand-red hover:bg-foreground/10" />
                 </div>
