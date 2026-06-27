@@ -197,7 +197,7 @@ export default function RoutesFeed({
                           <PaceIcon className="w-3 h-3" /> {resolved.pace}
                         </span>
                       </div>
-                      <p className="text-muted-foreground text-xs line-clamp-3">
+                      <p className="text-muted-foreground text-xs">
                         {route.vibe}
                       </p>
                       <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-2 uppercase">
