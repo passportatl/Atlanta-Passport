@@ -207,7 +207,7 @@ export default function RouteDetailBody({
                       >
                         {b.name}
                       </Link>
-                      <span className="text-foreground/50 truncate">
+                      <span className="text-foreground/50 md:truncate">
                         · {b.neighborhood}
                       </span>
                       {resolved.visits[i] != null && (
@@ -218,7 +218,7 @@ export default function RouteDetailBody({
                     </div>
                     {b.description &&
                       b.description.trim() !== b.name.trim() && (
-                        <p className="mt-0.5 text-[13px] leading-snug text-foreground/60 line-clamp-2">
+                        <p className="mt-0.5 text-[13px] leading-snug text-foreground/60 md:line-clamp-2">
                           {b.description}
                         </p>
                       )}

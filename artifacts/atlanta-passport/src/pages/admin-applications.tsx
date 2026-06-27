@@ -126,7 +126,7 @@ function ApplicationCard({ app }: { app: Application }) {
         <div className="font-bold">{app.contactName}</div>
         <a
           href={`mailto:${app.email}`}
-          className="flex items-center gap-1.5 hover:underline truncate"
+          className="flex items-center gap-1.5 hover:underline md:truncate"
         >
           <Mail className="w-3.5 h-3.5 shrink-0" />
           {app.email}
@@ -138,25 +138,25 @@ function ApplicationCard({ app }: { app: Application }) {
           <Phone className="w-3.5 h-3.5 shrink-0" />
           {app.phone}
         </a>
-        <div className="flex items-center gap-1.5 truncate">
+        <div className="flex items-center gap-1.5 md:truncate">
           <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span className="truncate">{app.address}</span>
+          <span className="md:truncate">{app.address}</span>
         </div>
         {app.website && (
           <a
             href={app.website}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 hover:underline truncate"
+            className="flex items-center gap-1.5 hover:underline md:truncate"
           >
             <Globe className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{app.website}</span>
+            <span className="md:truncate">{app.website}</span>
           </a>
         )}
         {app.instagram && (
-          <div className="flex items-center gap-1.5 truncate">
+          <div className="flex items-center gap-1.5 md:truncate">
             <Instagram className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">{app.instagram}</span>
+            <span className="md:truncate">{app.instagram}</span>
           </div>
         )}
       </div>

@@ -106,10 +106,10 @@ export default function ExploreMapPreview() {
                 className="h-12 w-12 shrink-0 rounded-lg border-2 border-foreground object-cover"
               />
               <div className="min-w-0 flex-grow text-left">
-                <h4 className="truncate font-serif text-sm font-black leading-tight text-foreground">
+                <h4 className="md:truncate font-serif text-sm font-black leading-tight text-foreground">
                   Atlantucky Brewing
                 </h4>
-                <p className="flex items-center gap-1 truncate text-[11px] font-medium text-foreground/70">
+                <p className="flex items-center gap-1 md:truncate text-[11px] font-medium text-foreground/70">
                   <MapPin className="h-3 w-3 shrink-0" /> Castleberry Hill
                 </p>
               </div>

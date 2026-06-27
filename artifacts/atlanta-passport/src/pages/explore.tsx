@@ -186,7 +186,7 @@ export default function ExploreContent({
                     type="button"
                     className="flex h-10 w-full items-center justify-between gap-1 rounded-md border-2 border-foreground bg-white px-3 font-display text-[11px] tracking-wider uppercase"
                   >
-                    <span className="truncate">
+                    <span className="md:truncate">
                       {activeCategories.length > 0
                         ? `${catLabel} (${activeCategories.length})`
                         : catLabel}
@@ -223,7 +223,7 @@ export default function ExploreContent({
                     type="button"
                     className="flex h-10 w-full items-center justify-between gap-1 rounded-md border-2 border-foreground bg-white px-3 font-display text-[11px] tracking-wider uppercase"
                   >
-                    <span className="truncate">
+                    <span className="md:truncate">
                       {activeNeighborhoods.length > 0
                         ? `${areaLabel} (${activeNeighborhoods.length})`
                         : areaLabel}
@@ -454,9 +454,9 @@ export default function ExploreContent({
                       </div>
                       <div className="flex items-center text-muted-foreground text-xs mb-1">
                         <MapPin className="w-3 h-3 mr-1 shrink-0" />
-                        <span className="truncate">{biz.neighborhood}</span>
+                        <span className="md:truncate">{biz.neighborhood}</span>
                       </div>
-                      <p className="text-muted-foreground line-clamp-2 text-xs mb-2">
+                      <p className="text-muted-foreground md:line-clamp-2 text-xs mb-2">
                         {biz.description}
                       </p>
                       <div className="mt-auto flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">

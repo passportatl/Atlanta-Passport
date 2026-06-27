@@ -375,8 +375,8 @@ function EventsShowcase() {
                         <span className="font-serif font-black text-2xl text-foreground leading-none mt-0.5">{day}</span>
                       </div>
                       <div className="min-w-0 flex-grow text-left rtl:text-right">
-                        <h3 className="font-serif font-black text-lg leading-tight truncate">{evt.name}</h3>
-                        <p className="text-foreground/70 text-sm font-medium truncate">{evt.venue} · {evt.time}</p>
+                        <h3 className="font-serif font-black text-lg leading-tight md:truncate">{evt.name}</h3>
+                        <p className="text-foreground/70 text-sm font-medium md:truncate">{evt.venue} · {evt.time}</p>
                       </div>
                     </div>
                   );

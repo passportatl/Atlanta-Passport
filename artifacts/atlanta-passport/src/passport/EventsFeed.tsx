@@ -347,7 +347,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
           <div className="flex-1 min-w-0 flex flex-col min-h-0">
             <div className="shrink-0 mb-1.5 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-brand-red shrink-0" />
-              <span className="font-display text-[11px] tracking-wide text-foreground truncate">
+              <span className="font-display text-[11px] tracking-wide text-foreground md:truncate">
                 {selectedLabel}
               </span>
             </div>
@@ -369,16 +369,16 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     aria-label={venueBiz ? `Show ${event.venue} on the map` : undefined}
                     className="card-pop bg-card p-2 cursor-pointer hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
                   >
-                    <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight line-clamp-2">
+                    <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight md:line-clamp-2">
                       {event.name}
                     </h4>
                     <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0 mt-0.5">
                       <Clock className="w-3 h-3 text-brand-red shrink-0" />
-                      <span className="truncate">{event.time}</span>
+                      <span className="md:truncate">{event.time}</span>
                     </div>
                     <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
                       <MapPin className="w-3 h-3 text-brand-red shrink-0" />
-                      <span className="truncate">{event.venue}</span>
+                      <span className="md:truncate">{event.venue}</span>
                     </div>
                     <Link
                       href={`/passport/events/${event.id}`}
