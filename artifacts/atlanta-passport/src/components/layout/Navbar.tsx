@@ -91,15 +91,14 @@ export default function Navbar() {
             </button>
           )}
 
-          {/* Mobile logo — horizontally centered, bottom-aligned with the
-              language + menu bubble buttons (their bottom sits 12px above the
-              header bottom). The logo PNG has ~7.5% transparent padding below
-              the stamp, which at h-14 (56px) is ~4px; so it's offset to 8px
-              (12px − padding) to make the VISIBLE circle bottom line up. */}
+          {/* Mobile logo — horizontally centered medallion that hangs below the
+              red header bar for prominence. Anchored near the top of the 64px
+              (h-16) bar so the bulk of the 84px stamp overflows downward; z-50 +
+              drop-shadow keep it sitting above the marquee strip below. */}
           <Link
             href="/"
             aria-label="Atlanta Passport home"
-            className="md:hidden absolute left-1/2 bottom-[8px] -translate-x-1/2 inline-flex items-end pointer-events-none"
+            className="md:hidden absolute left-1/2 top-[6px] -translate-x-1/2 inline-flex items-start pointer-events-none z-50"
           >
             <Logo
               variant="mini"
