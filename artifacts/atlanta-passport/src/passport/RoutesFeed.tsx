@@ -207,15 +207,15 @@ export default function RoutesFeed({
 
                   <div className="flex flex-1 flex-col px-3 pb-3">
                       <ol className="mt-auto space-y-1.5">
-                        <li className="flex items-center gap-2 text-xs text-foreground/85">
-                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-red text-white font-black text-[9px] flex items-center justify-center uppercase">
+                        <li className="flex items-start gap-2 text-xs text-foreground/85">
+                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand-red text-white font-black text-[9px] flex items-center justify-center uppercase mt-0.5">
                             ●
                           </span>
-                          <span className="font-semibold truncate">
-                            {resolved.startAnchor.name}
-                          </span>
-                          <span className="text-foreground/50 truncate">
-                            · Start
+                          <span className="min-w-0 leading-snug">
+                            <span className="font-semibold break-words">
+                              {resolved.startAnchor.name}
+                            </span>
+                            <span className="text-foreground/50"> · Start</span>
                           </span>
                         </li>
                         {stops.map((b, idx) => (
@@ -229,26 +229,28 @@ export default function RoutesFeed({
                                 {resolved.legs[idx].miles}
                               </li>
                             )}
-                            <li className="flex items-center gap-2 text-xs text-foreground/85">
-                              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-foreground text-brand-yellow font-black text-[10px] flex items-center justify-center">
+                            <li className="flex items-start gap-2 text-xs text-foreground/85">
+                              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-foreground text-brand-yellow font-black text-[10px] flex items-center justify-center mt-0.5">
                                 {idx + 1}
                               </span>
-                              <Link
-                                href={`/listing/${b.id}`}
-                                className="font-semibold truncate text-foreground hover:text-brand-red hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded-sm"
-                              >
-                                {b.name}
-                              </Link>
-                              <span className="text-foreground/50 truncate">
-                                · {b.neighborhood} ·{" "}
-                                {("categories" in b && b.categories
-                                  ? b.categories
-                                  : [b.category]
-                                ).join(", ")}
+                              <span className="flex-1 min-w-0 leading-snug">
+                                <Link
+                                  href={`/listing/${b.id}`}
+                                  className="font-semibold break-words text-foreground hover:text-brand-red hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red rounded-sm"
+                                >
+                                  {b.name}
+                                </Link>
+                                <span className="text-foreground/50">
+                                  {" "}· {b.neighborhood} ·{" "}
+                                  {("categories" in b && b.categories
+                                    ? b.categories
+                                    : [b.category]
+                                  ).join(", ")}
+                                </span>
                               </span>
                               {resolved.visits[idx] != null && (
                                 <span
-                                  className="ml-auto flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-foreground/55"
+                                  className="flex-shrink-0 mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-foreground/55"
                                   title="Average time spent here"
                                 >
                                   <Clock className="w-2.5 h-2.5" />~
