@@ -84,19 +84,22 @@ export default function PrizesSection() {
                 )}
 
                 <ul className="space-y-2 flex-1">
-                  {tier.options.map((opt) => (
-                    <li key={opt} className="flex items-start gap-2 text-sm font-semibold leading-snug">
-                      <Icon className="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-red" />
-                      <span>
-                        {opt}
-                        {multi && (
-                          <span className="ml-1.5 text-[11px] font-black uppercase tracking-wider text-brand-red">
-                            {t("prizes.onlyOneLeft")}
-                          </span>
-                        )}
-                      </span>
-                    </li>
-                  ))}
+                  {tier.options.map((opt) => {
+                    const isHotSauceFest = opt.includes("Hot Sauce Fest");
+                    return (
+                      <li key={opt} className="flex items-start gap-2 text-sm font-semibold leading-snug">
+                        <Icon className="w-4 h-4 flex-shrink-0 mt-0.5 text-brand-red" />
+                        <span>
+                          {opt}
+                          {multi && !isHotSauceFest && (
+                            <span className="ml-1.5 text-[11px] font-black uppercase tracking-wider text-brand-red">
+                              {t("prizes.onlyOneLeft")}
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );
