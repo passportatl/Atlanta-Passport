@@ -26,10 +26,15 @@ function coordsOf(b: { lat?: number; lng?: number }) {
 // stops in any time-of-day list) OR passes NEAR it (within NEAR_ROUTE_MILES of
 // any of the route's stops, even when the spot isn't itself a stop). Through
 // routes are listed first. Renders nothing when no route qualifies.
+// `routeHrefBase` controls where route cards link: the marketing pages use the
+// standalone `/routes/:id` page, while views inside the passport map shell pass
+// `/passport/routes` so the route opens beneath the persistent map.
 export default function NearbyRoutes({
   business,
+  routeHrefBase = "/routes",
 }: {
   business: { id: string; lat?: number; lng?: number };
+  routeHrefBase?: string;
 }) {
   const here = coordsOf(business);
   const nearbyRoutes = mapRoutes
@@ -66,7 +71,7 @@ export default function NearbyRoutes({
         {nearbyRoutes.map(({ route, near }) => (
           <Link
             key={route.id}
-            href={`/routes/${route.id}`}
+            href={`${routeHrefBase}/${route.id}`}
             className="card-pop bg-card overflow-hidden flex flex-col hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
           >
             <div className={`border-b-[3px] border-foreground p-3 ${routeTints[route.color] ?? routeTints.yellow}`}>

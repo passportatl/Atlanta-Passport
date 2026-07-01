@@ -202,7 +202,14 @@ export default function EventDetailBody({
             <StampChecklist targets={stampTargets} />
           </div>
 
-          {venueBusiness && <NearbyRoutes business={venueBusiness} />}
+          {venueBusiness && (
+            <NearbyRoutes
+              business={venueBusiness}
+              routeHrefBase={
+                hrefBase.startsWith("/passport") ? "/passport/routes" : "/routes"
+              }
+            />
+          )}
         </aside>
       </div>
 
