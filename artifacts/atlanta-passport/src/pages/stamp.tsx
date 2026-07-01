@@ -227,7 +227,7 @@ export default function StampPage() {
         )}
 
         <div className="grid grid-cols-1 sm:flex gap-3 justify-center">
-          <Link href="/passport" className="button-pop button-pop-yellow">
+          <Link href="/passport/stamps" className="button-pop button-pop-yellow">
             View my passport
           </Link>
           <Link href="/passport/explore" className="button-pop button-pop-cream">
