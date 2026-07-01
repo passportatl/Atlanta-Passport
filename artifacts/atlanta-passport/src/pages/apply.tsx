@@ -69,6 +69,7 @@ const formSchema = z
     eventVenue: z.string().optional().default(""),
     eventCost: z.string().optional(),
     eventUrl: z.string().optional(),
+    promoContact: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     if (val.submissionType === "event") {
@@ -142,6 +143,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
       eventVenue: "",
       eventCost: "",
       eventUrl: "",
+      promoContact: false,
     },
   });
 
@@ -157,10 +159,20 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
   const submitMutation = useSubmitApplication();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // The API has no dedicated field for the promo-contact opt-in, so fold it
+    // into the notes text where the team reads submissions.
+    const { promoContact, ...rest } = values;
+    const promoNote =
+      values.submissionType === "event" && promoContact
+        ? "[Wants to be contacted about promotional options for this event]"
+        : "";
+    const notes = [promoNote, rest.notes?.trim() ?? ""]
+      .filter(Boolean)
+      .join("\n");
     const payload =
-      values.submissionType === "event"
-        ? { ...values, package: "event" as const }
-        : values;
+      rest.submissionType === "event"
+        ? { ...rest, notes, package: "event" as const }
+        : rest;
     submitMutation.mutate(
       { data: payload },
       {
@@ -226,7 +238,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
           </h1>
           <p className="text-lg text-muted-foreground mt-4 mb-3">
             {eventOnly
-              ? "Tell us about your event. We review every submission by hand and respond within a few days."
+              ? "List your event with basic info for FREE! Fill out the form and we'll have it posted within 24 hours. If you would like more information and marketing options, check \u201cContact me about promotional options for my event\u201d and we'll reach out with plans and pricing."
               : t("apply_page.subtitle")}
           </p>
           {!eventOnly && (
@@ -478,6 +490,28 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                         )}
                       />
                     </div>
+                    <FormField
+                      control={form.control}
+                      name="promoContact"
+                      render={({ field }) => (
+                        <FormItem className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-4 shadow-pop-sm">
+                          <label className="flex items-start gap-3 cursor-pointer">
+                            <Checkbox
+                              checked={field.value ?? false}
+                              onCheckedChange={(v) => field.onChange(v === true)}
+                              className="mt-0.5"
+                            />
+                            <span className="text-sm font-medium leading-snug">
+                              Contact me about promotional options for my event
+                              <span className="block font-normal text-muted-foreground mt-0.5">
+                                We'll reach out with marketing plans and pricing.
+                              </span>
+                            </span>
+                          </label>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </>
                 )}
 
