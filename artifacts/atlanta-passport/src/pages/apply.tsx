@@ -105,7 +105,10 @@ const packageOptions: PackageOption[] = [
   { value: "route", title: "Neighborhood Route Sponsor", price: "$250", cls: "bg-brand-cream text-foreground", badge: "NEW" },
 ];
 
-export default function Apply() {
+// `eventOnly` locks the form to event submissions (used by /list-event while
+// partner/business applications are paused): it preselects "event" and hides
+// the business/event picker so visitors can't switch back to a business app.
+export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
   const [neighborhoodOther, setNeighborhoodOther] = useState(false);
@@ -114,7 +117,7 @@ export default function Apply() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      submissionType: "business",
+      submissionType: eventOnly ? "event" : "business",
       businessName: "",
       contactName: "",
       email: "",
@@ -219,14 +222,18 @@ export default function Apply() {
             {t("apply_page.kicker")}
           </div>
           <h1 className="hero-title text-primary mb-6">
-            {t("apply_page.title")}
+            {eventOnly ? "List your event in Atlanta Passport." : t("apply_page.title")}
           </h1>
           <p className="text-lg text-muted-foreground mt-4 mb-3">
-            {t("apply_page.subtitle")}
+            {eventOnly
+              ? "Tell us about your event. We review every submission by hand and respond within a few days."
+              : t("apply_page.subtitle")}
           </p>
-          <p className="font-display text-xs tracking-[0.18em] text-brand-red uppercase">
-            ★ {t("partners_page.limited_kicker")}
-          </p>
+          {!eventOnly && (
+            <p className="font-display text-xs tracking-[0.18em] text-brand-red uppercase">
+              ★ {t("partners_page.limited_kicker")}
+            </p>
+          )}
         </div>
 
         {/* Sticky progress strip — confidence + orientation while filling */}
@@ -247,6 +254,7 @@ export default function Apply() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
 
+              {!eventOnly && (
               <FormField
                 control={form.control}
                 name="submissionType"
@@ -271,6 +279,7 @@ export default function Apply() {
                   </FormItem>
                 )}
               />
+              )}
 
               <div className="space-y-6">
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">

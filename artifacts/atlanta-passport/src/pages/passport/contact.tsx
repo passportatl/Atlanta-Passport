@@ -21,13 +21,22 @@ export default function PassportContact() {
         <p className="text-sm text-foreground/70 mt-4">
           If you're interested in having your event or venue featured, or advertising with us, please visit our partners page.
         </p>
-        <Link
-          href="/partners"
-          className="button-pop button-pop-yellow inline-flex items-center gap-2 mt-4"
-        >
-          Partners Page
-          <ArrowRight className="w-5 h-5 rtl:rotate-180" />
-        </Link>
+        <div className="flex flex-wrap gap-3 mt-4">
+          <Link
+            href="/partners"
+            className="button-pop button-pop-yellow inline-flex items-center gap-2"
+          >
+            Partners Page
+            <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+          </Link>
+          <Link
+            href="/list-event"
+            className="button-pop inline-flex items-center gap-2"
+          >
+            List an Event
+            <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+          </Link>
+        </div>
       </div>
 
       <ContactForm doneHref="/passport" doneLabel="Back to passport" />
