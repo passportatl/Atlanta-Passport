@@ -93,6 +93,37 @@ type EventItem = (typeof events)[number];
 // ticket cost: $ is $20 and under, $$ is $20–60, $$$ is $60+ (the tier meaning
 // is intentionally not shown in the dropdown).
 const PRICE_TIERS = ["Free", "$", "$$", "$$$"] as const;
+// Event Type options mirror the dropdown on the "CSV FOR REPLIT" sheet's
+// Events tab (Type column), in the same order. "Performing Arts" is spelled
+// "Perfprming arts" in the sheet; both spellings match when filtering.
+const EVENT_TYPES = [
+  "Concert",
+  "Festival",
+  "Pop Up",
+  "Party",
+  "Market",
+  "Convention",
+  "Sports",
+  "Political",
+  "Parade",
+  "Comedy",
+  "Gaming",
+  "Charity",
+  "Karaoke",
+  "Trivia",
+  "Tasting",
+  "Art Exhibit",
+  "Performing Arts",
+  "Workshops",
+  "After Hours",
+] as const;
+
+// Case/typo-tolerant comparison between an event's category and a Type option.
+function matchesEventType(category: string, activeTypes: string[]): boolean {
+  const norm = (s: string) => s.toLowerCase().replace(/perfprming/g, "performing").trim();
+  const c = norm(category);
+  return activeTypes.some((tpe) => norm(tpe) === c);
+}
 const TIME_BUCKETS = [
   { id: "morning", start: 5, end: 12 },
   { id: "afternoon", start: 12, end: 17 },
@@ -240,12 +271,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     setActiveTypes([]);
   };
 
-  // Type options come from the event categories (the sheet's Type column);
   // Area options are the same neighborhoods the Explore page lists.
-  const eventTypes = useMemo(
-    () => [...new Set(events.map((e) => e.category))].sort((a, b) => a.localeCompare(b)),
-    [],
-  );
   const sortedAreas = useMemo(
     () => [...neighborhoods].sort((a, b) => a.name.localeCompare(b.name)),
     [],
@@ -255,7 +281,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     if (activeTimes.length > 0 && !matchesTimeBucket(ev.time, activeTimes)) return false;
     if (activeAreas.length > 0 && !activeAreas.includes(ev.neighborhood)) return false;
     if (activePrices.length > 0 && !activePrices.includes(ev.price)) return false;
-    if (activeTypes.length > 0 && !activeTypes.includes(ev.category)) return false;
+    if (activeTypes.length > 0 && !matchesEventType(ev.category, activeTypes)) return false;
     return true;
   });
 
@@ -550,7 +576,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="max-h-72">
-                    {eventTypes.map((cat) => (
+                    {EVENT_TYPES.map((cat) => (
                       <DropdownMenuCheckboxItem
                         key={cat}
                         checked={activeTypes.includes(cat)}
