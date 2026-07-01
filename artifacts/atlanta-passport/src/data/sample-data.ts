@@ -86,6 +86,8 @@ import laSemillaStamp from "@/assets/images/sheet/la-semilla-stamp.png";
 import trapMuseumStamp from "@/assets/images/sheet/trap-museum-stamp.png";
 import nakatoStamp from "@/assets/images/sheet/nakato-japanese-restaurant-stamp.png";
 import varasanosStamp from "@/assets/images/sheet/varasanos-stamp.png";
+import oaklandCemeteryStamp from "@/assets/images/sheet/oakland-cemetery-stamp.png";
+import mlkMuralStamp from "@/assets/images/sheet/mlk-mural-stamp.png";
 // Sheet-recovered Logos (shown on the listing page when present)
 import boxcarLogo from "@/assets/images/sheet/boxcar-at-hop-city-logo.jpg";
 import hopCityLogo from "@/assets/images/sheet/hop-city-at-krog-st-market-logo.jpg";
@@ -305,6 +307,7 @@ const businessesRaw = [
     website: "https://www.oaklandcemetery.com",
     hours: "Visitor Center: 10am - 5pm · Cemetery Grounds: 6am - 8pm",
     image: oaklandCemeteryImg,
+    stampImage: oaklandCemeteryStamp,
     featured: true,
     about:
       "Oakland is the final resting place of 70,000 people from all walks of life, including author Margaret Mitchell and golfing legend Bobby Jones, 27 Atlanta mayors including Maynard Jackson, six former governors, unmarked graves of paupers, and Union and Confederate soldiers. Founded in 1850 during a time when burial grounds were often placed in park-like settings, today Oakland Cemetery is an arboretum, an outdoor sculpture museum with monuments recognized by the Smithsonian, and an Audubon wildlife sanctuary.",
@@ -383,6 +386,7 @@ const businessesRaw = [
   {
     id: "mlk-mural-at-trap-city-cafe",
     image: mlkMuralAtTrapCityCafeImg,
+    stampImage: mlkMuralStamp,
     name: "MLK Mural at Trap City Cafe",
     category: "Public Art",
     neighborhood: "Westside",
