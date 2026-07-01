@@ -1175,7 +1175,7 @@ export const events = [
     venue: "Atlantucky Brewing",
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
-    category: "Music",
+    category: "Concert",
     price: "Free",
     description: "Live music, ice cream, vendors, and vibes — a kickoff block party from the Atlantucky crew ahead of the matches.",
     highlights: [
@@ -1194,7 +1194,7 @@ export const events = [
     venue: "Atlantucky Brewing",
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
-    category: "Tournament",
+    category: "Gaming",
     price: "Free",
     description: "Kickoff of the FIFA-style video game prelims and a small outdoor soccer tourney. Sign up at the door or just come hang.",
     highlights: [
@@ -1213,7 +1213,7 @@ export const events = [
     venue: "Atlantucky Brewing",
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
-    category: "Food & Culture",
+    category: "Market",
     price: "Free",
     description: "Atlanta's spiciest pop-up — local hot sauce makers, vendors, tastings, and a couple of dares.",
     highlights: [
@@ -1232,7 +1232,7 @@ export const events = [
     venue: "Atlantucky Brewing",
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
-    category: "Watch Party",
+    category: "Party",
     price: "Free",
     description: "Post-match hang at Atlantucky — slow down, grab a beer, and celebrate (or commiserate) with the Atlanta soccer community.",
     highlights: [
@@ -1251,7 +1251,7 @@ export const events = [
     venue: "Atlantucky Brewing",
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
-    category: "Tournament",
+    category: "Gaming",
     price: "Free",
     description: "Two-day finals weekend — gaming bracket finals, the wing eating comp, plus a full block of vendors and activations.",
     highlights: [
@@ -1271,7 +1271,7 @@ export const events = [
     venue: "Peachtree Wellness",
     address: "585 Memorial Dr SE, Atlanta, GA 30312",
     neighborhood: "Grant Park",
-    category: "Art & Culture",
+    category: "Art Exhibit",
     price: "Free",
     description: "A skate and graffiti session at Peachtree Wellness — live spray-paint art, skating, and Atlanta's creative community coming together ahead of the matches.",
     highlights: [
@@ -1380,6 +1380,11 @@ export const categoryColors: Record<string, string> = {
   Tournament: "#B91C1C",
   "Food & Culture": "#C2410C",
   "Watch Party": "#2563EB",
+  Concert: "#9333EA",
+  Gaming: "#B91C1C",
+  Market: "#C2410C",
+  Party: "#2563EB",
+  "Art Exhibit": "#C026D3",
 };
 
 // Resolve a category's color, falling back to a neutral slate for any unmapped
