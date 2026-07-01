@@ -39,6 +39,14 @@ function resolveEventDetailId(name: string): string | undefined {
   return sampleEvents.find((e) => e.name === name)?.id;
 }
 
+// A few bonus stamps are real places (not just events), so they link to their
+// location detail page at /listing/:id instead of an event page. Keyed by the
+// seeded DB slug -> the sample-data business (listing) id.
+const EVENT_LOCATION_LISTING: Record<string, string> = {
+  "event-mlk-mural": "mlk-mural-at-trap-city-cafe",
+  "oakland-cemetery": "oakland-cemetery",
+};
+
 // Drive the list off STAMP_SLUG (not a broad offer filter) so it stays exactly
 // these participating spots even if other Explore businesses gain an offer later.
 const PARTICIPATING = Object.keys(STAMP_SLUG)
@@ -55,6 +63,7 @@ function StampListItem({
   color,
   onSelect,
   detailHref,
+  detailLabel = "View details",
 }: {
   name: string;
   meta: string;
@@ -65,6 +74,7 @@ function StampListItem({
   color: string;
   onSelect?: () => void;
   detailHref?: string;
+  detailLabel?: string;
 }) {
   const interactive = !!onSelect;
   const stampedAt = stamp ? formatStampedAt(stamp.collectedAt as unknown as string) : null;
@@ -109,10 +119,10 @@ function StampListItem({
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            aria-label={`View details for ${name}`}
+            aria-label={`${detailLabel} for ${name}`}
             className="mt-2 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
           >
-            View details
+            {detailLabel}
             <ArrowUpRight className="w-3 h-3" />
           </Link>
         )}
@@ -310,7 +320,15 @@ export default function PassportStamps({
           <ul>
             {eventRows.map(({ api, stamp }) => {
               const mapId = resolveEventMapId(api.name);
+              const locationId = EVENT_LOCATION_LISTING[api.slug];
               const detailId = resolveEventDetailId(api.name);
+              // Location-based bonus stamps link to their listing page; the rest
+              // link to their event page.
+              const detailHref = locationId
+                ? `/listing/${locationId}`
+                : detailId
+                  ? `/events/${detailId}`
+                  : undefined;
               return (
                 <StampListItem
                   key={api.id}
@@ -326,7 +344,8 @@ export default function PassportStamps({
                       ? () => onSelectBusiness(mapId)
                       : undefined
                   }
-                  detailHref={detailId ? `/events/${detailId}` : undefined}
+                  detailHref={detailHref}
+                  detailLabel={locationId ? "View location" : "View details"}
                 />
               );
             })}
