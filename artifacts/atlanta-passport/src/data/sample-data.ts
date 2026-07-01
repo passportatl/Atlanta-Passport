@@ -1311,6 +1311,7 @@ export const neighborhoods = [
   { id: "washington-park", name: "Washington Park", description: "Atlanta's first planned Black neighborhood, with a namesake park.", color: "yellow", hex: "#DB2777" },
   { id: "west-midtown", name: "West Midtown", description: "Warehouses turned galleries, food halls, and design studios.", color: "yellow", hex: "#CA8A04" },
   { id: "westside", name: "Westside", description: "Industrial-cool blocks of breweries, makers, and Beltline access.", color: "yellow", hex: "#15803D" },
+  { id: "beltline", name: "Beltline", description: "The iconic 22-mile loop of trails, art, and patios connecting Atlanta's neighborhoods.", color: "lime", hex: "#5A9E3F" },
 ];
 
 // Single source of truth: each neighborhood's display color (name → hex). Used by
