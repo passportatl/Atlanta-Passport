@@ -223,8 +223,6 @@ export const STAMP_SLUG: Record<string, string> = {
   varasanos: "varasanos",
   "nakato-japanese-restaurant": "nakato",
   "trap-museum": "trap-museum",
-  "oakland-cemetery": "oakland-cemetery",
-  "mlk-mural-at-trap-city-cafe": "event-mlk-mural",
 };
 
 export const CATEGORY_LABEL: Record<string, string> = {

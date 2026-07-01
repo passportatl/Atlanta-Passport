@@ -19,6 +19,7 @@ import {
   events as sampleEvents,
   businessCategories,
   STAMP_IMAGE_BY_ID,
+  STAMP_IMAGE_BY_SLUG,
 } from "@/data/sample-data";
 import { STAMP_SLUG } from "@/passport/data";
 import { formatStampedAt } from "@/passport/stamp-date";
@@ -318,6 +319,7 @@ export default function PassportStamps({
                   detail={api.description ?? undefined}
                   stamp={stamp}
                   iconName={api.icon ?? "star"}
+                  iconUrl={STAMP_IMAGE_BY_SLUG[api.slug]}
                   color={api.stampColor ?? "orange"}
                   onSelect={
                     onSelectBusiness && mapId

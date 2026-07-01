@@ -88,6 +88,7 @@ import nakatoStamp from "@/assets/images/sheet/nakato-japanese-restaurant-stamp.
 import varasanosStamp from "@/assets/images/sheet/varasanos-stamp.png";
 import oaklandCemeteryStamp from "@/assets/images/sheet/oakland-cemetery-stamp.png";
 import mlkMuralStamp from "@/assets/images/sheet/mlk-mural-stamp.png";
+import skateGraffitiStamp from "@/assets/images/sheet/skate-graffiti-stamp.png";
 // Sheet-recovered Logos (shown on the listing page when present)
 import boxcarLogo from "@/assets/images/sheet/boxcar-at-hop-city-logo.jpg";
 import hopCityLogo from "@/assets/images/sheet/hop-city-at-krog-st-market-logo.jpg";
@@ -1155,6 +1156,15 @@ for (const [id, slug] of Object.entries(STAMP_SLUG)) {
   const img = STAMP_IMAGE_BY_ID[id];
   if (img) STAMP_IMAGE_BY_SLUG[slug] = img;
 }
+
+// Bonus / Featured-Event stamps are seeded as DB businesses (category "events")
+// and are not in STAMP_SLUG, so map their custom stamp art by DB slug directly.
+export const BONUS_STAMP_IMAGE_BY_SLUG: Record<string, string> = {
+  "oakland-cemetery": oaklandCemeteryStamp,
+  "event-mlk-mural": mlkMuralStamp,
+  "event-skate-graffiti": skateGraffitiStamp,
+};
+Object.assign(STAMP_IMAGE_BY_SLUG, BONUS_STAMP_IMAGE_BY_SLUG);
 
 export const events = [
   {

@@ -97,7 +97,6 @@ const SEED_BUSINESSES: InsertBusiness[] = [
   { slug: "mannys", name: "Manny's", category: "food", neighborhood: "Grant Park", stampColor: "green", icon: "utensils" },
   { slug: "jenchans", name: "JenChan's", category: "food", neighborhood: "Grant Park", stampColor: "green", icon: "utensils" },
   { slug: "littles", name: "Little's", category: "food", neighborhood: "Grant Park", stampColor: "green", icon: "utensils" },
-  { slug: "oakland-cemetery", name: "Oakland Cemetery", category: "arts", neighborhood: "Grant Park", stampColor: "green", icon: "tree" },
   { slug: "vickerys", name: "Vickery's", category: "drinks", neighborhood: "Grant Park", stampColor: "green", icon: "wine" },
   { slug: "fernbank", name: "Fernbank", category: "arts", neighborhood: "Grant Park", stampColor: "green", icon: "sparkles" },
   { slug: "la-semilla", name: "La Semilla", category: "food", neighborhood: "Grant Park", stampColor: "green", icon: "utensils" },
@@ -209,6 +208,8 @@ const SEED_EVENTS: InsertBusiness[] = [
   { slug: "event-post-match-atlantucky", name: "Post-Match Vibes at Atlantucky", icon: "wine", date: "June 21, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
   { slug: "event-soccer-gaming-finals", name: "Soccer Video Game Tournament + Wing Eating Comp", icon: "gamepad", date: "June 22–23, 2026", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313" },
   { slug: "event-mlk-mural", name: "MLK Mural", icon: "palette", date: "World Cup 2026", venue: "MLK Mural, Westside", address: "660 Northside Dr NW, Atlanta, GA 30318" },
+  { slug: "oakland-cemetery", name: "Oakland Cemetery", icon: "tree", date: "Summer 2026", venue: "Oakland Cemetery", address: "248 Oakland Ave SE, Atlanta, GA 30312" },
+  { slug: "event-skate-graffiti", name: "Skate & Graffiti", icon: "palette", date: "June 27, 2026", venue: "Peachtree Wellness", address: "585 Memorial Dr SE, Atlanta, GA 30312" },
 ].map(buildEvent);
 
 const SEED_ALL: InsertBusiness[] = [...SEED_BUSINESSES, ...SEED_EVENTS];
@@ -237,6 +238,20 @@ export async function seedBusinesses(): Promise<void> {
         .update(businessesTable)
         .set({ latitude: c.lat, longitude: c.lng })
         .where(eq(businessesTable.slug, slug));
+    }
+
+    // Reclassify bonus-event slugs that may have been seeded earlier as regular
+    // businesses (onConflictDoNothing leaves the old category/neighborhood in
+    // place, so flip them to the Featured Events bonus-stamp group explicitly).
+    for (const e of SEED_EVENTS) {
+      await db
+        .update(businessesTable)
+        .set({
+          category: "events",
+          neighborhood: "Featured Events",
+          stampColor: "orange",
+        })
+        .where(eq(businessesTable.slug, e.slug));
     }
 
     logger.info(
