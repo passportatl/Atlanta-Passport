@@ -290,7 +290,16 @@
     "subtitle": "試合週のポップアップ、地域フェスティバル、一度限りのAtlantaの瞬間。地元民がキュレーション。",
     "view_event": "イベントを見る",
     "no_events": "まだイベントは掲載されていません — またチェックしてみてください。",
-    "back_to_events": "イベントに戻る"
+    "back_to_events": "イベントに戻る",
+    "filter_time": "時間",
+    "filter_area": "エリア",
+    "filter_price": "料金",
+    "filter_type": "タイプ",
+    "price_free": "無料",
+    "time_morning": "午前",
+    "time_afternoon": "午後",
+    "time_evening": "夜",
+    "no_filter_match": "条件に合うイベントはありません。"
   },
   "about_page": {
     "kicker": "★ について",

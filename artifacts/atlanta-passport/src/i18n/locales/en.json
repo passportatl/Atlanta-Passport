@@ -290,7 +290,16 @@
     "subtitle": "Match-week pop-ups, neighborhood festivals, and one-off Atlanta moments. Curated by locals.",
     "view_event": "View event",
     "no_events": "No events posted yet — check back soon.",
-    "back_to_events": "Back to events"
+    "back_to_events": "Back to events",
+    "filter_time": "Time",
+    "filter_area": "Area",
+    "filter_price": "Price",
+    "filter_type": "Type",
+    "price_free": "Free",
+    "time_morning": "Morning",
+    "time_afternoon": "Afternoon",
+    "time_evening": "Evening",
+    "no_filter_match": "No events match those filters."
   },
   "about_page": {
     "kicker": "★ About",

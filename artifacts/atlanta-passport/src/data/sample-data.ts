@@ -1176,6 +1176,7 @@ export const events = [
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
     category: "Music",
+    price: "Free",
     description: "Live music, ice cream, vendors, and vibes — a kickoff block party from the Atlantucky crew ahead of the matches.",
     highlights: [
       "Live local bands all afternoon",
@@ -1194,6 +1195,7 @@ export const events = [
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
     category: "Tournament",
+    price: "Free",
     description: "Kickoff of the FIFA-style video game prelims and a small outdoor soccer tourney. Sign up at the door or just come hang.",
     highlights: [
       "Open video game prelims — bracket play",
@@ -1212,6 +1214,7 @@ export const events = [
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
     category: "Food & Culture",
+    price: "Free",
     description: "Atlanta's spiciest pop-up — local hot sauce makers, vendors, tastings, and a couple of dares.",
     highlights: [
       "20+ local hot sauce makers",
@@ -1230,6 +1233,7 @@ export const events = [
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
     category: "Watch Party",
+    price: "Free",
     description: "Post-match hang at Atlantucky — slow down, grab a beer, and celebrate (or commiserate) with the Atlanta soccer community.",
     highlights: [
       "Drink specials post-match",
@@ -1248,6 +1252,7 @@ export const events = [
     address: "170 Northside Dr SW, Atlanta, GA 30313",
     neighborhood: "Castleberry Hill",
     category: "Tournament",
+    price: "Free",
     description: "Two-day finals weekend — gaming bracket finals, the wing eating comp, plus a full block of vendors and activations.",
     highlights: [
       "Video game tournament finals",
@@ -1267,6 +1272,7 @@ export const events = [
     address: "585 Memorial Dr SE, Atlanta, GA 30312",
     neighborhood: "Grant Park",
     category: "Art & Culture",
+    price: "Free",
     description: "A skate and graffiti session at Peachtree Wellness — live spray-paint art, skating, and Atlanta's creative community coming together ahead of the matches.",
     highlights: [
       "Live graffiti and spray-paint art",

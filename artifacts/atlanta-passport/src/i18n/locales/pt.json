@@ -290,7 +290,16 @@
     "subtitle": "Pop-ups da semana dos jogos, festivais de bairro e momentos únicos em Atlanta. Curados por moradores.",
     "view_event": "Ver evento",
     "no_events": "Nenhum evento publicado ainda — volte em breve.",
-    "back_to_events": "Voltar aos eventos"
+    "back_to_events": "Voltar aos eventos",
+    "filter_time": "Horário",
+    "filter_area": "Área",
+    "filter_price": "Preço",
+    "filter_type": "Tipo",
+    "price_free": "Grátis",
+    "time_morning": "Manhã",
+    "time_afternoon": "Tarde",
+    "time_evening": "Noite",
+    "no_filter_match": "Nenhum evento corresponde a esses filtros."
   },
   "about_page": {
     "kicker": "★ Sobre",

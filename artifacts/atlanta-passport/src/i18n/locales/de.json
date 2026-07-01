@@ -290,7 +290,16 @@
     "subtitle": "Spielwoche-Pop-ups, Nachbarschaftsfestivals und einmalige Atlanta-Momente. Kuratiert von Einheimischen.",
     "view_event": "Veranstaltung ansehen",
     "no_events": "Noch keine Veranstaltungen eingetragen – schau bald wieder vorbei.",
-    "back_to_events": "Zurück zu Veranstaltungen"
+    "back_to_events": "Zurück zu Veranstaltungen",
+    "filter_time": "Zeit",
+    "filter_area": "Gegend",
+    "filter_price": "Preis",
+    "filter_type": "Typ",
+    "price_free": "Kostenlos",
+    "time_morning": "Morgens",
+    "time_afternoon": "Nachmittags",
+    "time_evening": "Abends",
+    "no_filter_match": "Keine Events entsprechen diesen Filtern."
   },
   "about_page": {
     "kicker": "★ Über uns",

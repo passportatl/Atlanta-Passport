@@ -290,7 +290,16 @@
     "subtitle": "Pop-ups de la semana del partido, festivales barriales y momentos únicos en Atlanta. Curados por locales.",
     "view_event": "Ver evento",
     "no_events": "Aún no hay eventos publicados — vuelve pronto.",
-    "back_to_events": "Volver a eventos"
+    "back_to_events": "Volver a eventos",
+    "filter_time": "Hora",
+    "filter_area": "Zona",
+    "filter_price": "Precio",
+    "filter_type": "Tipo",
+    "price_free": "Gratis",
+    "time_morning": "Mañana",
+    "time_afternoon": "Tarde",
+    "time_evening": "Noche",
+    "no_filter_match": "Ningún evento coincide con esos filtros."
   },
   "about_page": {
     "kicker": "★ Acerca de",
