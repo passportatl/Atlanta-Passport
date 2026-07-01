@@ -104,6 +104,15 @@ export default function PassportHome() {
             </span>
           )}
         </div>
+        {visitor?.createdAt && (
+          <p className="text-sm font-medium text-foreground/60 mt-1">
+            Member since{" "}
+            {new Date(visitor.createdAt as unknown as string).toLocaleDateString(
+              undefined,
+              { month: "long", year: "numeric" },
+            )}
+          </p>
+        )}
         <p className="text-sm text-foreground/70 mt-1">
           {total === 0
             ? "Your passport is ready. Scan a QR at any participating spot to start."
