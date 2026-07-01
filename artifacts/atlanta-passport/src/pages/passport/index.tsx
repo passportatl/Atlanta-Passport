@@ -21,7 +21,7 @@ import { STAMP_IMAGE_BY_SLUG } from "@/data/sample-data";
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const { signOut } = useClerk();
 
   const { data: stampsRaw } = useListVisitorStamps(visitorId ?? "", {
@@ -88,13 +88,20 @@ export default function PassportHome() {
             Hey, {visitor?.firstName ?? "Explorer"}.
           </h1>
           {isSignedIn && (
-            <button
-              type="button"
-              onClick={() => signOut({ redirectUrl: `${basePath}/` })}
-              className="text-sm font-bold text-[hsl(var(--brand-red))] underline underline-offset-2 hover:text-[hsl(var(--brand-red))]/80"
-            >
-              Not you? Sign out
-            </button>
+            <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              {user?.primaryEmailAddress?.emailAddress && (
+                <span className="text-sm font-medium text-foreground/70 break-all">
+                  {user.primaryEmailAddress.emailAddress}
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => signOut({ redirectUrl: `${basePath}/` })}
+                className="text-sm font-bold text-[hsl(var(--brand-red))] underline underline-offset-2 hover:text-[hsl(var(--brand-red))]/80"
+              >
+                Not you? Sign out
+              </button>
+            </span>
           )}
         </div>
         <p className="text-sm text-foreground/70 mt-1">
