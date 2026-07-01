@@ -87,6 +87,15 @@ export default function PassportHome() {
           <h1 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
             Hey, {visitor?.firstName ?? "Explorer"}.
           </h1>
+          {visitor?.createdAt && (
+            <span className="text-sm font-medium text-foreground/60">
+              Member since{" "}
+              {new Date(visitor.createdAt as unknown as string).toLocaleDateString(
+                undefined,
+                { month: "long", day: "numeric", year: "numeric" },
+              )}
+            </span>
+          )}
           {isSignedIn && (
             <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
               {user?.primaryEmailAddress?.emailAddress && (
@@ -104,15 +113,6 @@ export default function PassportHome() {
             </span>
           )}
         </div>
-        {visitor?.createdAt && (
-          <p className="text-sm font-medium text-foreground/60 mt-1">
-            Member since{" "}
-            {new Date(visitor.createdAt as unknown as string).toLocaleDateString(
-              undefined,
-              { month: "long", year: "numeric" },
-            )}
-          </p>
-        )}
         <p className="text-sm text-foreground/70 mt-1">
           {total === 0
             ? "Your passport is ready. Scan a QR at any participating spot to start."
