@@ -88,7 +88,7 @@ export default function PassportHome() {
             Hey, {visitor?.firstName ?? "Explorer"}.
           </h1>
           {visitor?.createdAt && (
-            <span className="text-sm font-medium text-foreground/60">
+            <span className="text-sm font-bold text-[hsl(var(--brand-gold))]">
               Member since{" "}
               {new Date(visitor.createdAt as unknown as string).toLocaleDateString(
                 undefined,
