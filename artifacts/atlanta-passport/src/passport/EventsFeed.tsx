@@ -563,16 +563,16 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              {hasActiveFilters && (
-                <button
-                  type="button"
-                  onClick={clearFilters}
-                  className="mt-1.5 inline-flex items-center gap-1 font-display text-[10px] tracking-[0.14em] text-brand-red uppercase hover:underline"
-                >
-                  <X className="w-3 h-3" />
-                  {t("explore_page.clear_filters", { defaultValue: "Clear filters" })}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={clearFilters}
+                className={`mt-1.5 inline-flex items-center gap-1 font-display text-[10px] tracking-[0.14em] text-brand-red uppercase hover:underline ${
+                  hasActiveFilters ? "" : "opacity-60"
+                }`}
+              >
+                <X className="w-3 h-3" />
+                {t("explore_page.clear_filters", { defaultValue: "Clear filters" })}
+              </button>
             </div>
 
             <div className="flex-1 md:min-h-0 md:overflow-y-auto space-y-1.5 pr-0.5">
