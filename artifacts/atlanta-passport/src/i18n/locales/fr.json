@@ -458,6 +458,7 @@
     "onlyOneLeft": "Plus qu’un seul",
     "redeemed": "Échangé",
     "ready": "Prêt à échanger",
-    "redeemedOn": "Échangé le {{date}}"
+    "redeemedOn": "Échangé le {{date}}",
+    "viewAll": "Voir tous les prix"
   }
 }

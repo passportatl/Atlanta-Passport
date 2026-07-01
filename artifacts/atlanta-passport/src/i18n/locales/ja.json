@@ -458,6 +458,7 @@
     "onlyOneLeft": "残り1個",
     "redeemed": "引き換え済み",
     "ready": "引き換え可能",
-    "redeemedOn": "引き換え日：{{date}}"
+    "redeemedOn": "引き換え日：{{date}}",
+    "viewAll": "すべての賞品を見る"
   }
 }

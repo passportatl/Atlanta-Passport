@@ -458,6 +458,7 @@
     "onlyOneLeft": "Resta apenas um",
     "redeemed": "Resgatado",
     "ready": "Pronto para resgatar",
-    "redeemedOn": "Resgatado em {{date}}"
+    "redeemedOn": "Resgatado em {{date}}",
+    "viewAll": "Ver todos os prêmios"
   }
 }

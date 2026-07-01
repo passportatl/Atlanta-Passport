@@ -462,6 +462,7 @@
     "onlyOneLeft": "Only one left",
     "redeemed": "Redeemed",
     "ready": "Ready to redeem",
-    "redeemedOn": "Redeemed {{date}}"
+    "redeemedOn": "Redeemed {{date}}",
+    "viewAll": "View all prizes"
   }
 }

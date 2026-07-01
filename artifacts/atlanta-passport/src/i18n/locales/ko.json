@@ -458,6 +458,7 @@
     "onlyOneLeft": "단 하나 남음",
     "redeemed": "사용 완료",
     "ready": "교환 가능",
-    "redeemedOn": "{{date}} 교환됨"
+    "redeemedOn": "{{date}} 교환됨",
+    "viewAll": "모든 상품 보기"
   }
 }

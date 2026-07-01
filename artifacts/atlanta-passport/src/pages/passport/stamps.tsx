@@ -249,7 +249,7 @@ export default function PassportStamps({
         </div>
       </div>
 
-      <PrizeLadder collected={collected} redeemedTiers={redeemedTiers} />
+      <PrizeLadder collected={collected} redeemedTiers={redeemedTiers} compact />
 
       {!visitorId && (
         <div className="card-pop bg-[hsl(var(--brand-yellow))] p-3 flex items-center justify-between gap-3">

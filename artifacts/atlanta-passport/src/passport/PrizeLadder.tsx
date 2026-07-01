@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Gift, Ticket, Star, Check, Lock } from "lucide-react";
+import { Link } from "wouter";
+import { Gift, Ticket, Star, Check, Lock, ArrowUpRight } from "lucide-react";
 import { PRIZE_TIERS } from "@/components/PrizesSection";
 
 // Compact, progress-aware prize ladder for the Stamps page. Mirrors the data in
@@ -24,11 +25,15 @@ export function PrizeLadder({
   collected,
   title,
   redeemedTiers = [],
+  compact = false,
 }: {
   collected: number;
   title?: string;
   // Tiers the visitor has already redeemed, with their redemption timestamps.
   redeemedTiers?: RedeemedTier[];
+  // Compact: a single row of tier bubbles + a "view all prizes" link (used on
+  // the Stamps page). Default: the full, detailed ladder (used on Profile).
+  compact?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const redeemedAtByTier = new Map(redeemedTiers.map((r) => [r.tierStamps, r.redeemedAt]));
@@ -41,6 +46,82 @@ export function PrizeLadder({
   const unlockedCount = PRIZE_TIERS.filter(
     (tier) => !redeemed.has(tier.stamps) && effective >= tier.stamps,
   ).length;
+
+  if (compact) {
+    return (
+      <section className="card-pop bg-white overflow-hidden">
+        <header className="flex items-center justify-between px-4 py-2.5 bg-brand-lime text-foreground">
+          <span
+            className="font-black text-xs tracking-widest uppercase"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
+            {title ?? t("prizes.ladderTitle")}
+          </span>
+          <span className="text-[10px] font-black opacity-80">
+            {unlockedCount}/{PRIZE_TIERS.length}
+          </span>
+        </header>
+
+        <div className="px-3 py-4">
+          <ol className="flex items-start justify-between gap-1">
+            {PRIZE_TIERS.map((tier) => {
+              const isRedeemed = redeemed.has(tier.stamps);
+              const unlocked = !isRedeemed && effective >= tier.stamps;
+              const remaining = Math.max(tier.stamps - effective, 0);
+              return (
+                <li
+                  key={tier.stamps}
+                  className="flex flex-col items-center gap-1.5 flex-1 min-w-0"
+                >
+                  <div
+                    className={`w-11 h-11 rounded-full border-2 border-foreground flex items-center justify-center ${
+                      isRedeemed
+                        ? "bg-brand-navy text-brand-cream shadow-pop-sm"
+                        : unlocked
+                          ? "bg-brand-lime text-foreground shadow-pop-sm"
+                          : "bg-brand-cream/60 text-foreground/45"
+                    }`}
+                  >
+                    <span
+                      className="font-black text-base leading-none"
+                      style={{ fontFamily: "Bungee, sans-serif" }}
+                    >
+                      {tier.stamps}
+                    </span>
+                  </div>
+                  {isRedeemed ? (
+                    <span className="inline-flex items-center gap-0.5 text-[8px] font-black uppercase tracking-wider text-brand-navy text-center leading-tight">
+                      <Check className="w-2.5 h-2.5" />
+                      {t("prizes.redeemed")}
+                    </span>
+                  ) : unlocked ? (
+                    <span className="inline-flex items-center gap-0.5 text-[8px] font-black uppercase tracking-wider text-foreground text-center leading-tight">
+                      <Check className="w-2.5 h-2.5" />
+                      {t("prizes.ready")}
+                    </span>
+                  ) : (
+                    <span className="text-[8px] font-black uppercase tracking-wider text-foreground/50 text-center leading-tight">
+                      {t("prizes.toGo", { count: remaining })}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+
+          <div className="mt-3 pt-3 border-t-2 border-dashed border-foreground/15 flex justify-center">
+            <Link
+              href="/passport"
+              className="inline-flex items-center gap-1 font-display text-[10px] tracking-[0.14em] uppercase text-brand-red hover:underline"
+            >
+              {t("prizes.viewAll")}
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="card-pop bg-white overflow-hidden">
