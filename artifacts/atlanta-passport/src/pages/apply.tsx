@@ -79,8 +79,6 @@ const formSchema = z
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventDate"], message: "Please enter the event date." });
       if (!val.eventVenue || val.eventVenue.trim().length < 2)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventVenue"], message: "Please enter the venue." });
-      if (!val.offer || val.offer.trim().length < 10)
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["offer"], message: "Please describe your event." });
       if (!val.eventTime || val.eventTime.trim().length < 1)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventTime"], message: "Please enter the event time." });
       if (!val.eventCost || val.eventCost.trim().length < 1)
@@ -176,9 +174,19 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
     const notes = [promoNote, rest.notes?.trim() ?? ""]
       .filter(Boolean)
       .join("\n");
+    // The event form no longer shows a description box, but the API requires
+    // a non-trivial `offer` value — send a placeholder for event submissions.
     const payload =
       rest.submissionType === "event"
-        ? { ...rest, notes, package: "event" as const }
+        ? {
+            ...rest,
+            notes,
+            offer:
+              rest.offer.trim().length >= 5
+                ? rest.offer
+                : "Free event listing submission — see notes.",
+            package: "event" as const,
+          }
         : rest;
     submitMutation.mutate(
       { data: payload },
@@ -195,7 +203,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
     ? [
         "businessName", "category", "eventDate", "eventTime", "eventVenue",
         "eventCost", "neighborhood", "address", "contactName", "phone",
-        "email", "website", "offer", "notes",
+        "email", "website", "notes",
       ]
     : [
         "businessName", "category", "neighborhood", "address",
@@ -796,14 +804,15 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
 
               <div className="space-y-6">
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
-                  {isEvent ? "03" : "04"} · {isEvent ? "Event description" : t("apply_page.section_offer_title")}
+                  {isEvent ? "03" : "04"} · {isEvent ? "Additional info" : t("apply_page.section_offer_title")}
                 </h3>
+                {!isEvent && (
                 <FormField
                   control={form.control}
                   name="offer"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{isEvent ? "Describe your event" : t("apply_page.field_offer_desc")} *</FormLabel>
+                      <FormLabel>{t("apply_page.field_offer_desc")} *</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder={t("apply_page.field_offer_placeholder")}
@@ -815,6 +824,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                     </FormItem>
                   )}
                 />
+                )}
 
                 {!isEvent && (
                 <FormField
