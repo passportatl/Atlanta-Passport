@@ -1399,6 +1399,8 @@ export const categoryColors: Record<string, string> = {
   "Performing Arts": "#65A30D",
   Workshops: "#0D9488",
   "After Hours": "#4338CA",
+  "Family Friendly": "#059669",
+  Wellness: "#0891B2",
 };
 
 // Resolve a category's color, falling back to a neutral slate for any unmapped

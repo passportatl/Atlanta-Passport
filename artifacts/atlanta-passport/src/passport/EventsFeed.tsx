@@ -116,6 +116,8 @@ export const EVENT_TYPES = [
   "Performing Arts",
   "Workshops",
   "After Hours",
+  "Family Friendly",
+  "Wellness",
 ] as const;
 
 // Case/typo-tolerant comparison between an event's category and a Type option.
