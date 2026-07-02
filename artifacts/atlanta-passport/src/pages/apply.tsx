@@ -458,7 +458,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                           <FormItem>
                             <FormLabel>Time *</FormLabel>
                             <FormControl>
-                              <Input type="time" {...field} />
+                              <Input placeholder="e.g. 7:00 PM or 6:00 PM – 10:00 PM" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
