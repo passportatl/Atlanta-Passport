@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { MapPin, Calendar, Clock, ArrowRight, ChevronDown, X } from "lucide-react";
+import { MapPin, Calendar, Clock, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses, neighborhoods } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
@@ -188,31 +188,55 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
 
   const current = groups[page] ?? [];
 
-  // Build the calendar from the event dates: pick the month/year of the first
-  // event and map each day-of-month to the events happening that day.
-  const calendar = useMemo(() => {
-    const byDay = new Map<number, EventItem[]>();
-    let month = new Date().getMonth();
-    let year = new Date().getFullYear();
-    let seeded = false;
+  // Group events by calendar month so the calendar can be navigated month to
+  // month. Each entry maps a day-of-month to the events happening that day.
+  const monthsData = useMemo(() => {
+    const map = new Map<
+      string,
+      { month: number; year: number; byDay: Map<number, EventItem[]> }
+    >();
     for (const ev of events) {
       const parsed = parseEventDays(ev.date);
       if (!parsed) continue;
-      if (!seeded) {
-        month = parsed.month;
-        year = parsed.year;
-        seeded = true;
+      const key = `${parsed.year}-${parsed.month}`;
+      let entry = map.get(key);
+      if (!entry) {
+        entry = { month: parsed.month, year: parsed.year, byDay: new Map() };
+        map.set(key, entry);
       }
-      if (parsed.month !== month || parsed.year !== year) continue;
       for (const day of parsed.days) {
-        const list = byDay.get(day) ?? [];
+        const list = entry.byDay.get(day) ?? [];
         list.push(ev);
-        byDay.set(day, list);
+        entry.byDay.set(day, list);
       }
     }
-    const eventDays = [...byDay.keys()].sort((a, b) => a - b);
-    return { byDay, month, year, eventDays };
+    return [...map.values()].sort(
+      (a, b) => a.year - b.year || a.month - b.month,
+    );
   }, []);
+
+  const [viewIndex, setViewIndex] = useState(0);
+  const canPrevMonth = viewIndex > 0;
+  const canNextMonth = viewIndex < monthsData.length - 1;
+
+  const calendar = useMemo(() => {
+    const entry = monthsData[viewIndex];
+    if (!entry) {
+      return {
+        byDay: new Map<number, EventItem[]>(),
+        month: new Date().getMonth(),
+        year: new Date().getFullYear(),
+        eventDays: [] as number[],
+      };
+    }
+    const eventDays = [...entry.byDay.keys()].sort((a, b) => a - b);
+    return {
+      byDay: entry.byDay,
+      month: entry.month,
+      year: entry.year,
+      eventDays,
+    };
+  }, [monthsData, viewIndex]);
 
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   useEffect(() => {
@@ -409,8 +433,36 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         <div className="shrink-0 mt-3 flex flex-col md:flex-row gap-2.5 md:h-[44dvh]">
           {/* Calendar — full width on mobile, half the map width on md+ */}
           <div className="w-full md:w-1/2 shrink-0 self-start card-pop bg-card flex flex-col overflow-hidden">
-            <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 text-center font-display text-[10px] tracking-[0.1em] uppercase">
-              {monthLabel}
+            <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 flex items-center justify-between gap-1">
+              {canPrevMonth ? (
+                <button
+                  type="button"
+                  onClick={() => setViewIndex((i) => Math.max(0, i - 1))}
+                  aria-label="Previous month"
+                  className="shrink-0 rounded p-0.5 hover:bg-brand-yellow-foreground/10 transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              ) : (
+                <span className="w-5 shrink-0" aria-hidden />
+              )}
+              <span className="flex-1 text-center font-display text-[10px] tracking-[0.1em] uppercase">
+                {monthLabel}
+              </span>
+              {canNextMonth ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setViewIndex((i) => Math.min(monthsData.length - 1, i + 1))
+                  }
+                  aria-label="Next month"
+                  className="shrink-0 rounded p-0.5 hover:bg-brand-yellow-foreground/10 transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <span className="w-5 shrink-0" aria-hidden />
+              )}
             </div>
             <div className="flex-1 min-h-0 p-1.5 flex flex-col">
               <div className="grid grid-cols-7 gap-0.5 mb-0.5 shrink-0">
