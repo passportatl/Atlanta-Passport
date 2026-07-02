@@ -1385,6 +1385,20 @@ export const categoryColors: Record<string, string> = {
   Market: "#C2410C",
   Party: "#2563EB",
   "Art Exhibit": "#C026D3",
+  Festival: "#DB2777",
+  "Pop Up": "#0EA5E9",
+  Convention: "#1E3A8A",
+  Sports: "#16A34A",
+  Political: "#DC2626",
+  Parade: "#F59E0B",
+  Comedy: "#EA580C",
+  Charity: "#BE185D",
+  Karaoke: "#7C3AED",
+  Trivia: "#0891B2",
+  Tasting: "#CA8A04",
+  "Performing Arts": "#65A30D",
+  Workshops: "#0D9488",
+  "After Hours": "#4338CA",
 };
 
 // Resolve a category's color, falling back to a neutral slate for any unmapped
