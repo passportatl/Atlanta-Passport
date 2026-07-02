@@ -26,7 +26,7 @@ export const SOCIALS: {
   { name: "Instagram", href: "https://instagram.com/passport.atl", Icon: Instagram },
   { name: "Facebook", href: "https://facebook.com/passport.atl", Icon: Facebook },
   { name: "X", href: "https://x.com/passport.atl", Icon: XGlyph },
-  { name: "TikTok", href: "https://tiktok.com/@passport.atl", Icon: TikTokGlyph },
+  { name: "TikTok", href: "https://tiktok.com/@passportatl", Icon: TikTokGlyph },
   { name: "YouTube", href: "https://youtube.com/@passport.atl", Icon: Youtube },
 ];
 
