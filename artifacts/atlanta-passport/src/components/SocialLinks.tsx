@@ -24,7 +24,7 @@ export const SOCIALS: {
   Icon: ComponentType<{ className?: string }>;
 }[] = [
   { name: "Instagram", href: "https://instagram.com/passport.atl", Icon: Instagram },
-  { name: "Facebook", href: "https://facebook.com/passport.atl", Icon: Facebook },
+  { name: "Facebook", href: "https://facebook.com/passportatl", Icon: Facebook },
   { name: "X", href: "https://x.com/passport.atl", Icon: XGlyph },
   { name: "TikTok", href: "https://tiktok.com/@passportatl", Icon: TikTokGlyph },
   { name: "YouTube", href: "https://youtube.com/@passportatl", Icon: Youtube },
