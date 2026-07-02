@@ -85,8 +85,6 @@ const formSchema = z
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventCost"], message: "Please enter the cost (or write Free)." });
       if (!val.website || val.website.trim().length < 1)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["website"], message: "Please enter a website or event page link." });
-      if (!val.notes || val.notes.trim().length < 1)
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["notes"], message: "Please add a note (or write N/A)." });
     } else {
       if (!val.businessName || val.businessName.trim().length < 2)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["businessName"], message: "Business name must be at least 2 characters." });
@@ -203,7 +201,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
     ? [
         "businessName", "category", "eventDate", "eventTime", "eventVenue",
         "eventCost", "neighborhood", "address", "contactName", "phone",
-        "email", "website", "notes",
+        "email", "website",
       ]
     : [
         "businessName", "category", "neighborhood", "address",
@@ -802,11 +800,11 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
               </div>
               )}
 
+              {!isEvent && (
               <div className="space-y-6">
                 <h3 className="font-display text-sm tracking-[0.18em] text-foreground border-b-[3px] border-foreground pb-3 uppercase">
-                  {isEvent ? "03" : "04"} · {isEvent ? "Additional info" : t("apply_page.section_offer_title")}
+                  04 · {t("apply_page.section_offer_title")}
                 </h3>
-                {!isEvent && (
                 <FormField
                   control={form.control}
                   name="offer"
@@ -824,9 +822,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                     </FormItem>
                   )}
                 />
-                )}
 
-                {!isEvent && (
                 <FormField
                   control={form.control}
                   name="prizeSponsorship"
@@ -847,17 +843,16 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                     </FormItem>
                   )}
                 />
-                )}
 
                 <FormField
                   control={form.control}
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("apply_page.field_notes")} {isEvent ? "*" : `(${t("apply_page.optional")})`}</FormLabel>
+                      <FormLabel>{t("apply_page.field_notes")} ({t("apply_page.optional")})</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={isEvent ? "Parking tips, age limits, what to bring…" : t("apply_page.field_notes_placeholder")}
+                          placeholder={t("apply_page.field_notes_placeholder")}
                           className="resize-none min-h-[100px]"
                           {...field}
                         />
@@ -867,6 +862,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                   )}
                 />
               </div>
+              )}
 
               {submitMutation.isError && (
                 <div className="card-pop bg-brand-red text-white p-4 text-sm font-medium">
