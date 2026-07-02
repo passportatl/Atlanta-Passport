@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { Instagram, Facebook } from "lucide-react";
+import { Instagram, Facebook, Youtube } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function XGlyph({ className }: { className?: string }) {
@@ -27,6 +27,7 @@ export const SOCIALS: {
   { name: "Facebook", href: "https://facebook.com/passport.atl", Icon: Facebook },
   { name: "X", href: "https://x.com/passport.atl", Icon: XGlyph },
   { name: "TikTok", href: "https://tiktok.com/@passport.atl", Icon: TikTokGlyph },
+  { name: "YouTube", href: "https://youtube.com/@passport.atl", Icon: Youtube },
 ];
 
 interface SocialLinksProps {
