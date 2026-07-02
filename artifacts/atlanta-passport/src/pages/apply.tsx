@@ -26,6 +26,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { categories, categoryColor, isDarkColor, neighborhoods } from "@/data/sample-data";
+import { EVENT_TYPES } from "@/passport/EventsFeed";
 import Marquee from "@/components/Marquee";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +69,6 @@ const formSchema = z
     eventTime: z.string().optional(),
     eventVenue: z.string().optional().default(""),
     eventCost: z.string().optional(),
-    eventUrl: z.string().optional(),
     promoContact: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
@@ -81,6 +81,14 @@ const formSchema = z
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventVenue"], message: "Please enter the venue." });
       if (!val.offer || val.offer.trim().length < 10)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["offer"], message: "Please describe your event." });
+      if (!val.eventTime || val.eventTime.trim().length < 1)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventTime"], message: "Please enter the event time." });
+      if (!val.eventCost || val.eventCost.trim().length < 1)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventCost"], message: "Please enter the cost (or write Free)." });
+      if (!val.website || val.website.trim().length < 1)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["website"], message: "Please enter a website or event page link." });
+      if (!val.notes || val.notes.trim().length < 1)
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["notes"], message: "Please add a note (or write N/A)." });
     } else {
       if (!val.businessName || val.businessName.trim().length < 2)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["businessName"], message: "Business name must be at least 2 characters." });
@@ -142,7 +150,6 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
       eventTime: "",
       eventVenue: "",
       eventCost: "",
-      eventUrl: "",
       promoContact: false,
     },
   });
@@ -186,8 +193,9 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
   const isEvent = watched.submissionType === "event";
   const requiredFields: Array<keyof z.infer<typeof formSchema>> = isEvent
     ? [
-        "businessName", "category", "eventDate", "eventVenue", "neighborhood",
-        "address", "contactName", "phone", "email", "offer",
+        "businessName", "category", "eventDate", "eventTime", "eventVenue",
+        "eventCost", "neighborhood", "address", "contactName", "phone",
+        "email", "website", "offer", "notes",
       ]
     : [
         "businessName", "category", "neighborhood", "address",
@@ -320,7 +328,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                         <span className="font-normal normal-case text-muted-foreground">— check all that apply</span>
                       </FormLabel>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
-                        {categories.map((cat) => {
+                        {(isEvent ? EVENT_TYPES : categories).map((cat) => {
                           const checked = field.value?.includes(cat) ?? false;
                           const hex = categoryColor(cat);
                           return (
@@ -440,7 +448,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                         name="eventTime"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Time ({t("apply_page.optional")})</FormLabel>
+                            <FormLabel>Time *</FormLabel>
                             <FormControl>
                               <Input type="time" {...field} />
                             </FormControl>
@@ -462,34 +470,19 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                         </FormItem>
                       )}
                     />
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="eventUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Tickets / info link ({t("apply_page.optional")})</FormLabel>
-                            <FormControl>
-                              <Input placeholder="https://…" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="eventCost"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Cost ({t("apply_page.optional")})</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Free · $15 · $20–$40" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="eventCost"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cost *</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Free · $15 · $20–$40" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="promoContact"
@@ -717,7 +710,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("apply_page.field_website")} ({t("apply_page.optional")})</FormLabel>
+                        <FormLabel>{t("apply_page.field_website")} {isEvent ? "*" : `(${t("apply_page.optional")})`}</FormLabel>
                         <FormControl>
                           <Input placeholder="https://example.com" {...field} />
                         </FormControl>
@@ -851,10 +844,10 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                   name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("apply_page.field_notes")} ({t("apply_page.optional")})</FormLabel>
+                      <FormLabel>{t("apply_page.field_notes")} {isEvent ? "*" : `(${t("apply_page.optional")})`}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={t("apply_page.field_notes_placeholder")}
+                          placeholder={isEvent ? "Parking tips, age limits, what to bring…" : t("apply_page.field_notes_placeholder")}
                           className="resize-none min-h-[100px]"
                           {...field}
                         />

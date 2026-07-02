@@ -96,7 +96,7 @@ const PRICE_TIERS = ["Free", "$", "$$", "$$$"] as const;
 // Event Type options mirror the dropdown on the "CSV FOR REPLIT" sheet's
 // Events tab (Type column), in the same order. "Performing Arts" is spelled
 // "Perfprming arts" in the sheet; both spellings match when filtering.
-const EVENT_TYPES = [
+export const EVENT_TYPES = [
   "Concert",
   "Festival",
   "Pop Up",
