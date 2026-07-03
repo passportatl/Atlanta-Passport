@@ -38,12 +38,18 @@ export default function EventDetailBody({
 }) {
   const { t } = useTranslation();
   const event = events.find((e) => e.id === id);
-  if (!event) return <NotFound />;
+  // Listing-only events (imported for the calendar) intentionally have no
+  // detail page — treat a direct visit as not found.
+  if (!event || ("listingOnly" in event && event.listingOnly)) return <NotFound />;
 
   const tile = parseDateTile(event.date);
-  const idx = events.findIndex((e) => e.id === event.id);
-  const prev = idx > 0 ? events[idx - 1] : null;
-  const next = idx < events.length - 1 ? events[idx + 1] : null;
+  // Prev/next navigate only among events that actually have a detail page.
+  const navEvents = events.filter(
+    (e) => !("listingOnly" in e && e.listingOnly),
+  );
+  const idx = navEvents.findIndex((e) => e.id === event.id);
+  const prev = idx > 0 ? navEvents[idx - 1] : null;
+  const next = idx < navEvents.length - 1 ? navEvents[idx + 1] : null;
 
   // Match the event's venue to a listed business so we can deep-link to its
   // location detail page and reuse its coordinates for the map snapshot.

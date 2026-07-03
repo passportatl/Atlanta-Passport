@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { MapPin, Calendar, Clock, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events, businesses, neighborhoods } from "@/data/sample-data";
 import CategoryBadge from "@/components/CategoryBadge";
@@ -410,15 +410,17 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                           <MapPin className="w-3 h-3 text-brand-red shrink-0 mt-[1px]" />
                           <span>{event.venue}</span>
                         </div>
-                        <Link
-                          href={`/passport/events/${event.id}`}
-                          onClick={(e) => e.stopPropagation()}
-                          aria-label={`${t("events_page.view_event")}: ${event.name}`}
-                          className="mt-auto inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
-                        >
-                          {t("events_page.view_event")}
-                          <ArrowRight className="w-3 h-3 rtl:rotate-180" />
-                        </Link>
+                        {!("listingOnly" in event && event.listingOnly) && (
+                          <Link
+                            href={`/passport/events/${event.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={`${t("events_page.view_event")}: ${event.name}`}
+                            className="mt-auto inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
+                          >
+                            {t("events_page.view_event")}
+                            <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -665,6 +667,13 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
               )}
               {filteredSelectedEvents.map((event) => {
                 const venueBiz = businesses.find((b) => b.name === event.venue);
+                const isListingOnly =
+                  "listingOnly" in event && event.listingOnly;
+                const areaHex = neighborhoods.find(
+                  (n) => n.name === event.neighborhood,
+                )?.hex;
+                const ticketPrice =
+                  "ticketPrice" in event ? event.ticketPrice : undefined;
                 return (
                   <div
                     key={event.id}
@@ -691,15 +700,46 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                       <MapPin className="w-3 h-3 text-brand-red shrink-0" />
                       <span className="md:truncate">{event.venue}</span>
                     </div>
-                    <Link
-                      href={`/passport/events/${event.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      aria-label={`${t("events_page.view_event")}: ${event.name}`}
-                      className="mt-1 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
-                    >
-                      {t("events_page.view_event")}
-                      <ArrowRight className="w-3 h-3 rtl:rotate-180" />
-                    </Link>
+                    <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                      <Tag className="w-3 h-3 text-brand-red shrink-0" />
+                      <span className="md:truncate">
+                        {ticketPrice
+                          ? ticketPrice
+                          : event.price === "Free"
+                            ? t("events_page.price_free", { defaultValue: "Free" })
+                            : event.price}
+                      </span>
+                    </div>
+                    {/* Colored bubbles for type (category) and area (neighborhood) */}
+                    <div className="mt-1 flex flex-wrap items-center gap-1">
+                      <CategoryBadge
+                        category={event.category}
+                        className="text-[8px] px-1.5 py-0.5"
+                      />
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full border border-foreground/40 px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground"
+                        style={{
+                          backgroundColor: areaHex ? `${areaHex}22` : undefined,
+                        }}
+                      >
+                        <span
+                          className="inline-block h-2 w-2 rounded-full border border-foreground/40"
+                          style={{ backgroundColor: areaHex }}
+                        />
+                        {event.neighborhood}
+                      </span>
+                    </div>
+                    {!isListingOnly && (
+                      <Link
+                        href={`/passport/events/${event.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={`${t("events_page.view_event")}: ${event.name}`}
+                        className="mt-1 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
+                      >
+                        {t("events_page.view_event")}
+                        <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                      </Link>
+                    )}
                   </div>
                 );
               })}
