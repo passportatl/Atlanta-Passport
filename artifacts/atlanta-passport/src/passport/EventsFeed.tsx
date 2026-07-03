@@ -166,11 +166,11 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const [page, setPage] = useState(0);
   const groupSize = useResponsiveGroupSize();
 
-  // The featured carousel only spotlights events that carry a Passport bonus
-  // stamp (Passport Bonus Stamp = YES). Events flagged bonusStamp:false are
+  // The featured carousel only spotlights events explicitly marked with a
+  // Passport bonus stamp (Passport Bonus Stamp = YES). Every other event is
   // still listed on the calendar below, just not featured up top.
   const carouselEvents = events.filter(
-    (e) => !("bonusStamp" in e && e.bonusStamp === false),
+    (e) => "bonusStamp" in e && e.bonusStamp === true,
   );
   const groups: EventItem[][] = [];
   for (let i = 0; i < carouselEvents.length; i += groupSize) {
@@ -680,6 +680,11 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                 )?.hex;
                 const ticketPrice =
                   "ticketPrice" in event ? event.ticketPrice : undefined;
+                const priceText = ticketPrice
+                  ? ticketPrice
+                  : event.price === "Free"
+                    ? t("events_page.price_free", { defaultValue: "Free" })
+                    : event.price;
                 return (
                   <div
                     key={event.id}
@@ -706,34 +711,32 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                       <MapPin className="w-3 h-3 text-brand-red shrink-0" />
                       <span className="md:truncate">{event.venue}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
-                      <Tag className="w-3 h-3 text-brand-red shrink-0" />
-                      <span className="md:truncate">
-                        {ticketPrice
-                          ? ticketPrice
-                          : event.price === "Free"
-                            ? t("events_page.price_free", { defaultValue: "Free" })
-                            : event.price}
-                      </span>
-                    </div>
+                    {priceText && (
+                      <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                        <Tag className="w-3 h-3 text-brand-red shrink-0" />
+                        <span className="md:truncate">{priceText}</span>
+                      </div>
+                    )}
                     {/* Colored bubbles for type (category) and area (neighborhood) */}
                     <div className="mt-1 flex flex-wrap items-center gap-1">
                       <CategoryBadge
                         category={event.category}
                         className="text-[8px] px-1.5 py-0.5"
                       />
-                      <span
-                        className="inline-flex items-center gap-1 rounded-full border border-foreground/40 px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground"
-                        style={{
-                          backgroundColor: areaHex ? `${areaHex}22` : undefined,
-                        }}
-                      >
+                      {event.neighborhood && (
                         <span
-                          className="inline-block h-2 w-2 rounded-full border border-foreground/40"
-                          style={{ backgroundColor: areaHex }}
-                        />
-                        {event.neighborhood}
-                      </span>
+                          className="inline-flex items-center gap-1 rounded-full border border-foreground/40 px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground"
+                          style={{
+                            backgroundColor: areaHex ? `${areaHex}22` : undefined,
+                          }}
+                        >
+                          <span
+                            className="inline-block h-2 w-2 rounded-full border border-foreground/40"
+                            style={{ backgroundColor: areaHex }}
+                          />
+                          {event.neighborhood}
+                        </span>
+                      )}
                     </div>
                     {!isListingOnly && (
                       <Link
