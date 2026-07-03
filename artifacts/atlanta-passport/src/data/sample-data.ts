@@ -1296,6 +1296,7 @@ export const events = [
     highlights: [],
     instagram: [],
     listingOnly: true,
+    bonusStamp: false,
   },
   {
     id: "slow-and-low",
@@ -1312,6 +1313,7 @@ export const events = [
     highlights: [],
     instagram: [],
     listingOnly: true,
+    bonusStamp: false,
   },
   {
     id: "fizz-ed-creature-comforts",
@@ -1328,6 +1330,7 @@ export const events = [
     highlights: [],
     instagram: [],
     listingOnly: true,
+    bonusStamp: false,
   },
   {
     id: "west-coast-classics-wine-tasting",
@@ -1344,6 +1347,7 @@ export const events = [
     highlights: [],
     instagram: [],
     listingOnly: true,
+    bonusStamp: false,
   },
 ] as const;
 

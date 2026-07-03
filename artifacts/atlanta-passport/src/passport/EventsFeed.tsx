@@ -166,9 +166,15 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const [page, setPage] = useState(0);
   const groupSize = useResponsiveGroupSize();
 
+  // The featured carousel only spotlights events that carry a Passport bonus
+  // stamp (Passport Bonus Stamp = YES). Events flagged bonusStamp:false are
+  // still listed on the calendar below, just not featured up top.
+  const carouselEvents = events.filter(
+    (e) => !("bonusStamp" in e && e.bonusStamp === false),
+  );
   const groups: EventItem[][] = [];
-  for (let i = 0; i < events.length; i += groupSize) {
-    groups.push(events.slice(i, i + groupSize));
+  for (let i = 0; i < carouselEvents.length; i += groupSize) {
+    groups.push(carouselEvents.slice(i, i + groupSize));
   }
   const count = groups.length;
 
