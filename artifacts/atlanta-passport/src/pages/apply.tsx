@@ -45,11 +45,7 @@ const formSchema = z
     website: z
       .string()
       .optional()
-      .transform((v) => (v ?? "").trim())
-      .refine(
-        (v) => v === "" || /^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(v.replace(/^https?:\/\//i, "")),
-        "Please enter a website like yoursite.com"
-      ),
+      .transform((v) => (v ?? "").trim()),
     instagram: z.string().optional(),
     category: z.array(z.string()).min(1, "Please select at least one category."),
     neighborhood: z.string().min(1, "Please select a neighborhood."),
@@ -83,8 +79,6 @@ const formSchema = z
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventTime"], message: "Please enter the event time." });
       if (!val.eventCost || val.eventCost.trim().length < 1)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["eventCost"], message: "Please enter the cost (or write Free)." });
-      if (!val.website || val.website.trim().length < 1)
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["website"], message: "Please enter a website or event page link." });
     } else {
       if (!val.businessName || val.businessName.trim().length < 2)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["businessName"], message: "Business name must be at least 2 characters." });
@@ -92,6 +86,11 @@ const formSchema = z
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["package"], message: "Please select a package." });
       if (!val.offer || val.offer.trim().length < 10)
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["offer"], message: "Please describe your offer or experience." });
+      if (
+        val.website !== "" &&
+        !/^([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i.test(val.website.replace(/^https?:\/\//i, ""))
+      )
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["website"], message: "Please enter a website like yoursite.com" });
     }
   });
 
@@ -179,6 +178,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
         ? {
             ...rest,
             notes,
+            website: "",
             offer:
               rest.offer.trim().length >= 5
                 ? rest.offer
@@ -201,7 +201,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
     ? [
         "businessName", "category", "eventDate", "eventTime", "eventVenue",
         "eventCost", "neighborhood", "address", "contactName", "phone",
-        "email", "website",
+        "email",
       ]
     : [
         "businessName", "category", "neighborhood", "address",
@@ -711,19 +711,21 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="website"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("apply_page.field_website")} {isEvent ? "*" : `(${t("apply_page.optional")})`}</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {!isEvent && (
+                    <FormField
+                      control={form.control}
+                      name="website"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("apply_page.field_website")} ({t("apply_page.optional")})</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://example.com" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
               </div>
 
