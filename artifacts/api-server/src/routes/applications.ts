@@ -73,6 +73,8 @@ router.post("/applications", async (req, res) => {
       eventVenue: isEvent ? data.eventVenue ?? null : null,
       eventCost: isEvent ? data.eventCost ?? null : null,
       eventUrl: isEvent ? data.eventUrl ?? null : null,
+      promoContact: isEvent ? data.promoContact ?? null : null,
+      promoContactMethod: isEvent ? data.promoContactMethod ?? null : null,
     })
     .returning();
 
@@ -108,6 +110,8 @@ router.post("/applications", async (req, res) => {
         ${isEvent ? "" : renderRow("Prize Sponsorship", data.prizeSponsorship)}
         ${isEvent ? "" : renderRow("Walk to MARTA", typeof data.nearMarta === "boolean" ? (data.nearMarta ? "Yes" : "No") : "")}
         ${isEvent ? "" : renderRow("Walk to Beltline", typeof data.nearBeltline === "boolean" ? (data.nearBeltline ? "Yes" : "No") : "")}
+        ${isEvent && data.promoContact ? renderRow("Wants promo contact", "Yes") : ""}
+        ${isEvent && data.promoContact ? renderRow("Preferred contact method", data.promoContactMethod || "Not specified") : ""}
         ${renderRow("Notes", data.notes)}
         ${data.logoUrl ? `<tr><td style="padding:6px 12px;font-weight:bold;background:#fef3c7;border:1px solid #111;">Logo</td><td style="padding:6px 12px;border:1px solid #111;"><img src="${data.logoUrl}" alt="logo" style="max-width:160px;max-height:160px;border:1px solid #111;" /></td></tr>` : ""}
       </table>
@@ -143,6 +147,7 @@ router.post("/applications", async (req, res) => {
     !isEvent && data.prizeSponsorship ? `Prize Sponsorship: ${data.prizeSponsorship}` : "",
     !isEvent && typeof data.nearMarta === "boolean" ? `Walk to MARTA: ${data.nearMarta ? "Yes" : "No"}` : "",
     !isEvent && typeof data.nearBeltline === "boolean" ? `Walk to Beltline: ${data.nearBeltline ? "Yes" : "No"}` : "",
+    isEvent && data.promoContact ? `Wants promo contact: Yes (preferred: ${data.promoContactMethod || "not specified"})` : "",
     data.notes ? `Notes: ${data.notes}` : "",
     ``,
     `Application id: ${row!.id}`,

@@ -36,6 +36,8 @@ export interface Application {
   eventVenue?: string | null;
   eventCost?: string | null;
   eventUrl?: string | null;
+  promoContact?: boolean | null;
+  promoContactMethod?: string | null;
   emailDelivered: string;
   createdAt: Date;
 }

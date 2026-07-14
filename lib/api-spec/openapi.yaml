@@ -521,6 +521,8 @@ components:
         eventVenue: { type: string }
         eventCost: { type: string }
         eventUrl: { type: string }
+        promoContact: { type: boolean }
+        promoContactMethod: { type: string }
       required:
         - submissionType
         - businessName
@@ -566,6 +568,8 @@ components:
         eventVenue: { type: string, nullable: true }
         eventCost: { type: string, nullable: true }
         eventUrl: { type: string, nullable: true }
+        promoContact: { type: boolean, nullable: true }
+        promoContactMethod: { type: string, nullable: true }
         emailDelivered: { type: string }
         createdAt: { type: string, format: date-time }
       required:

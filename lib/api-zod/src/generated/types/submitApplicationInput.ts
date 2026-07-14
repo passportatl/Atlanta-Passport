@@ -44,4 +44,6 @@ export interface SubmitApplicationInput {
   eventVenue?: string;
   eventCost?: string;
   eventUrl?: string;
+  promoContact?: boolean;
+  promoContactMethod?: string;
 }

@@ -30,6 +30,8 @@ export const applicationsTable = pgTable("applications", {
   eventVenue: text("event_venue"),
   eventCost: text("event_cost"),
   eventUrl: text("event_url"),
+  promoContact: boolean("promo_contact"),
+  promoContactMethod: text("promo_contact_method"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

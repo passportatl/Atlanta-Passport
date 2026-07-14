@@ -66,6 +66,8 @@ const formSchema = z
     eventVenue: z.string().optional().default(""),
     eventCost: z.string().optional(),
     promoContact: z.boolean().optional(),
+    promoByPhone: z.boolean().optional(),
+    promoByEmail: z.boolean().optional(),
   })
   .superRefine((val, ctx) => {
     if (val.submissionType === "event") {
@@ -146,6 +148,8 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
       eventVenue: "",
       eventCost: "",
       promoContact: false,
+      promoByPhone: false,
+      promoByEmail: false,
     },
   });
 
@@ -161,9 +165,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
   const submitMutation = useSubmitApplication();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // The API has no dedicated field for the promo-contact opt-in, so fold it
-    // into the notes text where the team reads submissions.
-    const { promoContact, ...rest } = values;
+    const { promoContact, promoByPhone, promoByEmail, ...rest } = values;
     const promoNote =
       values.submissionType === "event" && promoContact
         ? "[Wants to be contacted about promotional options for this event]"
@@ -171,6 +173,13 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
     const notes = [promoNote, rest.notes?.trim() ?? ""]
       .filter(Boolean)
       .join("\n");
+    // Preferred contact method(s) as a readable string, e.g. "phone, email".
+    const promoContactMethod =
+      promoContact
+        ? [promoByPhone ? "phone" : "", promoByEmail ? "email" : ""]
+            .filter(Boolean)
+            .join(", ")
+        : "";
     // The event form no longer shows a description box, but the API requires
     // a non-trivial `offer` value — send a placeholder for event submissions.
     const payload =
@@ -184,6 +193,8 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                 ? rest.offer
                 : "Free event listing submission — see notes.",
             package: "event" as const,
+            promoContact: promoContact ?? false,
+            promoContactMethod,
           }
         : rest;
     submitMutation.mutate(
@@ -510,6 +521,39 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                               </span>
                             </span>
                           </label>
+                          {field.value && (
+                            <div className="mt-3 ml-8 space-y-2">
+                              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                Preferred contact method
+                              </div>
+                              <FormField
+                                control={form.control}
+                                name="promoByPhone"
+                                render={({ field: phoneField }) => (
+                                  <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                                    <Checkbox
+                                      checked={phoneField.value ?? false}
+                                      onCheckedChange={(v) => phoneField.onChange(v === true)}
+                                    />
+                                    Phone
+                                  </label>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name="promoByEmail"
+                                render={({ field: emailField }) => (
+                                  <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                                    <Checkbox
+                                      checked={emailField.value ?? false}
+                                      onCheckedChange={(v) => emailField.onChange(v === true)}
+                                    />
+                                    Email
+                                  </label>
+                                )}
+                              />
+                            </div>
+                          )}
                           <FormMessage />
                         </FormItem>
                       )}

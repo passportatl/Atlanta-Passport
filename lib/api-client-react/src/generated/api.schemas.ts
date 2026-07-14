@@ -154,6 +154,8 @@ export interface SubmitApplicationInput {
   eventVenue?: string;
   eventCost?: string;
   eventUrl?: string;
+  promoContact?: boolean;
+  promoContactMethod?: string;
 }
 
 export interface Application {
@@ -186,6 +188,8 @@ export interface Application {
   eventVenue?: string | null;
   eventCost?: string | null;
   eventUrl?: string | null;
+  promoContact?: boolean | null;
+  promoContactMethod?: string | null;
   emailDelivered: string;
   createdAt: string;
 }

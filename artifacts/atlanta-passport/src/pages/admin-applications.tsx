@@ -170,6 +170,14 @@ function EventCard({ app }: { app: Application }) {
         )}
       </div>
 
+      {app.promoContact && (
+        <div className="text-sm mb-3 rounded-xl border-2 border-foreground bg-brand-cream px-3 py-2">
+          <span className="font-bold">Wants promo contact</span>
+          {" · Preferred: "}
+          {app.promoContactMethod || "not specified"}
+        </div>
+      )}
+
       <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm mb-3 border-t-2 border-dashed border-foreground/20 pt-3">
         <div className="font-bold">{app.contactName}</div>
         <a

@@ -243,6 +243,8 @@ export const SubmitApplicationBody = zod.object({
   eventVenue: zod.string().optional(),
   eventCost: zod.string().optional(),
   eventUrl: zod.string().optional(),
+  promoContact: zod.boolean().optional(),
+  promoContactMethod: zod.string().optional(),
 });
 
 export const SubmitApplicationResponse = zod.object({
@@ -283,6 +285,8 @@ export const ListApplicationsResponseItem = zod.object({
   eventVenue: zod.string().nullish(),
   eventCost: zod.string().nullish(),
   eventUrl: zod.string().nullish(),
+  promoContact: zod.boolean().nullish(),
+  promoContactMethod: zod.string().nullish(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),
 });
