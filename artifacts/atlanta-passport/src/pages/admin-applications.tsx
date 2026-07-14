@@ -4,7 +4,18 @@ import {
   getListApplicationsQueryKey,
   type Application,
 } from "@workspace/api-client-react";
-import { Lock, Mail, Phone, Globe, Instagram, MapPin, Inbox } from "lucide-react";
+import {
+  Lock,
+  Mail,
+  Phone,
+  Globe,
+  Instagram,
+  MapPin,
+  Inbox,
+  Calendar,
+  Clock,
+  Ticket,
+} from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 
 const ADMIN_PASSWORD =
@@ -50,7 +61,7 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
           </h1>
         </div>
         <p className="text-sm text-foreground/70 mb-4">
-          Enter the admin password to view partner applications.
+          Enter the admin password to view submissions.
         </p>
         <label className="block text-xs font-black uppercase tracking-wider mb-1">
           Password
@@ -88,6 +99,132 @@ function formatDate(iso: string): string {
     hour: "numeric",
     minute: "2-digit",
   });
+}
+
+function EventCard({ app }: { app: Application }) {
+  const badge = DELIVERY_BADGE[app.emailDelivered] ?? DELIVERY_BADGE.pending!;
+  return (
+    <div className="card-pop bg-white p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+        <div className="min-w-0">
+          <div className="text-[10px] uppercase tracking-widest font-bold opacity-60 mb-1">
+            Submitted {formatDate(app.createdAt)}
+          </div>
+          <h3
+            className="text-xl font-black leading-tight"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
+            {app.businessName}
+          </h3>
+          <div className="text-xs uppercase tracking-wider font-bold opacity-70 mt-0.5">
+            {app.category.join(", ")}
+            {app.neighborhood ? ` · ${app.neighborhood}` : ""}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 items-start">
+          <span
+            className="badge-sticker bg-brand-lime text-foreground text-[10px]"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
+            EVENT
+          </span>
+          <span className={`badge-sticker ${badge.cls} text-[10px]`}>{badge.label}</span>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm mb-3">
+        {app.eventDate && (
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 shrink-0" />
+            {app.eventDate}
+          </div>
+        )}
+        {app.eventTime && (
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 shrink-0" />
+            {app.eventTime}
+          </div>
+        )}
+        {app.eventVenue && (
+          <div className="flex items-center gap-1.5 md:truncate">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="md:truncate">{app.eventVenue}</span>
+          </div>
+        )}
+        {app.eventCost && (
+          <div className="flex items-center gap-1.5">
+            <Ticket className="w-3.5 h-3.5 shrink-0" />
+            {app.eventCost}
+          </div>
+        )}
+        {app.eventUrl && (
+          <a
+            href={app.eventUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 hover:underline md:truncate"
+          >
+            <Globe className="w-3.5 h-3.5 shrink-0" />
+            <span className="md:truncate">{app.eventUrl}</span>
+          </a>
+        )}
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm mb-3 border-t-2 border-dashed border-foreground/20 pt-3">
+        <div className="font-bold">{app.contactName}</div>
+        <a
+          href={`mailto:${app.email}`}
+          className="flex items-center gap-1.5 hover:underline md:truncate"
+        >
+          <Mail className="w-3.5 h-3.5 shrink-0" />
+          {app.email}
+        </a>
+        <a href={`tel:${app.phone}`} className="flex items-center gap-1.5 hover:underline">
+          <Phone className="w-3.5 h-3.5 shrink-0" />
+          {app.phone}
+        </a>
+        {app.address && (
+          <div className="flex items-center gap-1.5 md:truncate">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="md:truncate">{app.address}</span>
+          </div>
+        )}
+        {app.website && (
+          <a
+            href={app.website}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 hover:underline md:truncate"
+          >
+            <Globe className="w-3.5 h-3.5 shrink-0" />
+            <span className="md:truncate">{app.website}</span>
+          </a>
+        )}
+        {app.instagram && (
+          <div className="flex items-center gap-1.5 md:truncate">
+            <Instagram className="w-3.5 h-3.5 shrink-0" />
+            <span className="md:truncate">{app.instagram}</span>
+          </div>
+        )}
+      </div>
+
+      <div className="bg-[hsl(var(--brand-cream))] border-2 border-foreground rounded-lg p-3 text-sm">
+        <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">
+          Description
+        </div>
+        <p className="whitespace-pre-wrap leading-snug">{app.offer}</p>
+      </div>
+
+      {app.notes && (
+        <div className="mt-2 bg-white border-2 border-foreground rounded-lg p-3 text-sm">
+          <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">
+            Notes
+          </div>
+          <p className="whitespace-pre-wrap leading-snug">{app.notes}</p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function ApplicationCard({ app }: { app: Application }) {
@@ -182,6 +319,7 @@ function ApplicationCard({ app }: { app: Application }) {
 
 export default function AdminApplications() {
   const [unlocked, setUnlocked] = useState(false);
+  const [tab, setTab] = useState<"business" | "event">("business");
 
   useEffect(() => {
     if (sessionStorage.getItem(UNLOCK_KEY) === "1") setUnlocked(true);
@@ -196,62 +334,102 @@ export default function AdminApplications() {
   });
   const applications = (appsRaw as Application[] | undefined) ?? [];
 
+  const businessApps = useMemo(
+    () => applications.filter((a) => a.submissionType !== "event"),
+    [applications],
+  );
+  const eventApps = useMemo(
+    () => applications.filter((a) => a.submissionType === "event"),
+    [applications],
+  );
+
   const counts = useMemo(() => {
     return {
-      total: applications.length,
-      starter: applications.filter((a) => a.package === "starter").length,
-      featured: applications.filter((a) => a.package === "featured").length,
-      premier: applications.filter((a) => a.package === "premier").length,
-      route: applications.filter((a) => a.package === "route").length,
-      custom: applications.filter((a) => a.package === "custom").length,
+      starter: businessApps.filter((a) => a.package === "starter").length,
+      featured: businessApps.filter((a) => a.package === "featured").length,
+      premier: businessApps.filter((a) => a.package === "premier").length,
+      route: businessApps.filter((a) => a.package === "route").length,
+      custom: businessApps.filter((a) => a.package === "custom").length,
     };
-  }, [applications]);
+  }, [businessApps]);
 
   if (!unlocked) return <AdminGate onUnlock={() => setUnlocked(true)} />;
+
+  const shown = tab === "business" ? businessApps : eventApps;
 
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <AdminNav onLock={() => setUnlocked(false)} />
-        <div className="mb-6">
+        <div className="mb-4">
           <h1
             className="text-3xl font-black"
             style={{ fontFamily: "Bungee, sans-serif" }}
           >
-            Partner Applications
+            Submissions
           </h1>
-          <p className="text-sm text-foreground/70 mt-1">
-            {counts.total} total · Starter {counts.starter} · Featured {counts.featured} ·
-            Premier {counts.premier} · Route {counts.route} · Custom {counts.custom}
-          </p>
           <p className="text-xs text-foreground/60 mt-1">
             Notifications send to <strong>touristpassportatl@gmail.com</strong>.
           </p>
         </div>
 
+        <div className="flex gap-2 mb-5">
+          <button
+            type="button"
+            onClick={() => setTab("business")}
+            className={`button-pop text-sm px-4 py-2 ${
+              tab === "business" ? "button-pop-yellow" : "bg-white"
+            }`}
+          >
+            Partner Applications ({businessApps.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab("event")}
+            className={`button-pop text-sm px-4 py-2 ${
+              tab === "event" ? "button-pop-yellow" : "bg-white"
+            }`}
+          >
+            Event Submissions ({eventApps.length})
+          </button>
+        </div>
+
+        {tab === "business" && businessApps.length > 0 && (
+          <p className="text-sm text-foreground/70 mb-4">
+            Starter {counts.starter} · Featured {counts.featured} · Premier{" "}
+            {counts.premier} · Route {counts.route} · Custom {counts.custom}
+          </p>
+        )}
+
         {isLoading && (
           <div className="card-pop bg-white p-8 text-center text-sm">Loading…</div>
         )}
 
-        {!isLoading && applications.length === 0 && (
+        {!isLoading && shown.length === 0 && (
           <div className="card-pop bg-white p-10 text-center">
             <Inbox className="w-10 h-10 mx-auto mb-3 opacity-50" />
             <p
               className="font-black text-lg"
               style={{ fontFamily: "Bungee, sans-serif" }}
             >
-              No applications yet
+              {tab === "business" ? "No applications yet" : "No event submissions yet"}
             </p>
             <p className="text-sm text-foreground/70 mt-1">
-              They'll show up here the moment someone submits the apply form.
+              {tab === "business"
+                ? "They'll show up here the moment someone submits the apply form."
+                : "They'll show up here the moment someone submits the List Your Event form."}
             </p>
           </div>
         )}
 
         <div className="space-y-4">
-          {applications.map((a) => (
-            <ApplicationCard key={a.id} app={a} />
-          ))}
+          {shown.map((a) =>
+            a.submissionType === "event" ? (
+              <EventCard key={a.id} app={a} />
+            ) : (
+              <ApplicationCard key={a.id} app={a} />
+            ),
+          )}
         </div>
       </div>
     </div>
