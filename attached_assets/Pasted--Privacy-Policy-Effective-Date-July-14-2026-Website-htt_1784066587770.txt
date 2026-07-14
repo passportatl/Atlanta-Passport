@@ -1,0 +1,104 @@
+# Privacy Policy
+
+**Effective Date:** July 14, 2026
+**Website:** https://passportatl.com
+**Business:** Passport ATL
+
+Passport ATL helps users discover Atlanta neighborhoods, events, local businesses, routes, rewards, and passport stamp experiences. This Privacy Policy explains how we collect, use, store, and protect information when you use our website, digital passport, event listings, route pages, forms, and related services.
+
+## Information We Collect
+
+We may collect the following types of information:
+
+**Information you provide directly:**
+This may include your name, email address, phone number, business name, event details, vendor information, partnership inquiries, contest or reward submissions, and messages submitted through forms on our website.
+
+**Passport and participation information:**
+If you use Passport ATL features, we may collect information related to digital stamp activity, event check-ins, reward redemptions, route engagement, and participating business interactions.
+
+**Website usage information:**
+We may collect general technical information such as browser type, device type, pages visited, referral source, approximate location, and other analytics data to help us improve the website and user experience.
+
+**Google user data, if applicable:**
+If Passport ATL uses Google services such as Google Sign-In, Google Maps, Google Sheets, Google Drive, or other Google API services, we only request access to the information needed to provide the feature being used. This may include basic profile information, email address, map/location-related functionality, or data needed to submit, organize, or display event or business information.
+
+## How We Use Information
+
+We use collected information to:
+
+* Provide and improve Passport ATL services
+* Display local events, routes, business listings, and passport offers
+* Manage passport stamps, rewards, and participation records
+* Respond to user, vendor, sponsor, and business inquiries
+* Review submitted events, business listings, or partnership requests
+* Improve website performance, content, and user experience
+* Communicate updates about Passport ATL, events, routes, rewards, or partner opportunities
+* Maintain security and prevent misuse of our website or services
+* Comply with legal, technical, or platform requirements
+
+## Use of Google User Data
+
+Passport ATL’s use of information received from Google APIs will comply with the Google API Services User Data Policy, including the Limited Use requirements.
+
+We do not sell Google user data.
+We do not use Google user data for advertising, retargeting, or credit-worthiness decisions.
+We do not transfer Google user data to third parties except when necessary to provide user-facing Passport ATL features, comply with the law, protect security, or with the user’s consent.
+
+Google user data is only used for the purpose disclosed at the time access is requested.
+
+## How We Share Information
+
+We may share limited information with:
+
+* Service providers that help operate our website, forms, analytics, email, maps, hosting, or digital tools
+* Passport ATL business partners when necessary to fulfill rewards, offers, event listings, or stamp-related experiences
+* Legal or regulatory authorities if required by law
+* Internal team members, contractors, or approved collaborators who need access to support Passport ATL operations
+
+We do not sell personal information.
+
+## Data Storage and Security
+
+We take reasonable steps to protect information from unauthorized access, misuse, loss, disclosure, or alteration. No online system is completely secure, but we aim to use appropriate safeguards for the type of information collected.
+
+Information may be stored in website systems, form tools, email platforms, spreadsheets, analytics tools, or other services used to operate Passport ATL.
+
+## Data Retention
+
+We keep information only as long as reasonably needed to provide services, manage business operations, comply with legal obligations, resolve disputes, and improve Passport ATL. Users may request deletion of their personal information by contacting us.
+
+## Cookies and Analytics
+
+Passport ATL may use cookies, analytics tools, pixels, or similar technologies to understand site traffic, improve content, measure engagement, and support website functionality. Users can adjust browser settings to limit or block cookies.
+
+## Third-Party Links
+
+Our website may link to third-party websites, including event pages, ticketing platforms, social media pages, restaurants, venues, sponsors, and local businesses. Passport ATL is not responsible for the privacy practices or content of third-party websites.
+
+## Children’s Privacy
+
+Passport ATL is intended for a general audience and is not directed primarily to children under 13. We do not knowingly collect personal information from children under 13. If we learn that we have collected such information, we will take reasonable steps to delete it.
+
+## Your Choices
+
+You may request to:
+
+* Access the personal information we have about you
+* Correct inaccurate information
+* Request deletion of your personal information
+* Opt out of non-essential communications
+* Ask questions about how your information is used
+
+To make a request, contact us using the information below.
+
+## Contact Us
+
+For questions about this Privacy Policy or your data, contact:
+
+**Passport ATL**
+Email: [touristpassportatl@gmail.com](mailto:touristpassportatl@gmail.com)
+Website: https://passportatl.com
+
+## Updates to This Policy
+
+We may update this Privacy Policy from time to time. Updates will be posted on this page with a revised effective date. Continued use of Passport ATL after updates means you accept the revised policy.

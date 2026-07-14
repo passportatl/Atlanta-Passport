@@ -16,6 +16,7 @@ import Listing from "@/pages/listing";
 import StampPage from "@/pages/stamp";
 import RedeemPage from "@/pages/redeem";
 import PassportContact from "@/pages/passport/contact";
+import PrivacyPolicy from "@/pages/privacy-policy";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import { VisitorProvider } from "@/passport/VisitorProvider";
@@ -45,6 +46,7 @@ function MarketingRoutes() {
             /list-event renders the Apply form locked to event mode. */}
         <Route path="/list-event">{() => <Apply eventOnly />}</Route>
         <Route path="/listing/:id" component={Listing} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
@@ -60,7 +62,7 @@ const ALLOW_PUBLIC_ACCESS = false;
 // partners, and apply pages stay open to signed-out visitors. Sign-in/up,
 // the /stamp QR landing, and admin are functional routes that must also stay reachable.
 function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/partners", "/apply", "/list-event", "/passport/contact"];
+  const publicExact = ["/", "/partners", "/apply", "/list-event", "/passport/contact", "/privacy-policy"];
   if (publicExact.includes(location)) return false;
   const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/redeem/", "/admin/"];
   if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {

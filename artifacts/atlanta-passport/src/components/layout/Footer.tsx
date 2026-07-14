@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "wouter";
 import Logo from "@/components/Logo";
 import wheelhausBikes from "@/assets/images/partner-logos/wheelhaus-bikes.png";
 import dpAndCo from "@/assets/images/partner-logos/dp-and-co.png";
@@ -65,6 +66,11 @@ export default function Footer({
 
         <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
           <p>{t("footer.disclaimer")}</p>
+          <p>
+            <Link href="/privacy-policy" className="underline hover:text-background/80">
+              Privacy Policy
+            </Link>
+          </p>
           <p>&copy; {new Date().getFullYear()} Atlanta Passport. {t("footer.rights")}</p>
         </div>
       </div>
