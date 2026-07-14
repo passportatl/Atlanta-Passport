@@ -112,7 +112,9 @@ export function PassportBottomNav() {
             </button>
           </div>
 
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+          {/* The centered logo overlaps the bar's text on narrow screens, so it
+              only renders from md up where there's room for it. */}
+          <div className="hidden md:block absolute bottom-0 left-1/2 -translate-x-1/2">
             <Logo
               asLink={false}
               variant="nav"
