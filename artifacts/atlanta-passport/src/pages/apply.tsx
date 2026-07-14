@@ -259,7 +259,7 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
             {t("apply_page.kicker")}
           </div>
           <h1 className="hero-title text-primary mb-6">
-            {eventOnly ? "List your event in Atlanta Passport." : t("apply_page.title")}
+            {eventOnly ? "List your event in Passport ATL." : t("apply_page.title")}
           </h1>
           <p className="text-lg text-muted-foreground mt-4 mb-3">
             {eventOnly

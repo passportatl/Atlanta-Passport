@@ -83,7 +83,7 @@
     "business_cta": {
       "kicker": "Para Negocios en Atlanta",
       "title": "Ponte en el mapa antes de que llegue el mundo.",
-      "subtitle": "Atlanta Passport pone tu negocio o evento frente a visitantes que buscan la ciudad de verdad, no las cadenas. Listados fundadores limitados para Summer 2026.",
+      "subtitle": "Passport ATL pone tu negocio o evento frente a visitantes que buscan la ciudad de verdad, no las cadenas. Listados fundadores limitados para Summer 2026.",
       "cta": "Únete al Mapa"
     },
     "decor": {
@@ -98,7 +98,7 @@
     "events_showcase": {
       "kicker": "Lo que hay esta noche",
       "title": "Siempre al tanto de lo que pasa esta noche.",
-      "subtitle": "Local o visitante — el calendario en vivo de Atlanta Passport te mantiene al día con cada partido, concierto, mercado y pop-up de la ciudad.",
+      "subtitle": "Local o visitante — el calendario en vivo de Passport ATL te mantiene al día con cada partido, concierto, mercado y pop-up de la ciudad.",
       "cta": "Ver el calendario completo",
       "screen_title": "Esta noche en Atlanta",
       "live_badge": "En vivo esta noche",
@@ -128,7 +128,7 @@
       "pickup_label": "Recógelo en",
       "loc1": "Peachtree Wellness",
       "loc2": "Atlanta Trap Museum",
-      "alt": "El folleto físico del Atlanta Passport"
+      "alt": "El folleto físico del Passport ATL"
     }
   },
   "lang": {
@@ -165,7 +165,7 @@
     "title_line1": "La guía no oficial",
     "title_line2": "del verdadero",
     "title_highlight": "Atlanta",
-    "subtitle": "Comida. Bebidas. Paseos. Terrazas. Pop-ups. Joyas de barrio. Atlanta Passport ayuda a los visitantes a descubrir la ciudad que los locales realmente aman.",
+    "subtitle": "Comida. Bebidas. Paseos. Terrazas. Pop-ups. Joyas de barrio. Passport ATL ayuda a los visitantes a descubrir la ciudad que los locales realmente aman.",
     "cta_explore": "Explorar",
     "cta_routes": "Rutas",
     "chip_food": "Comida",
@@ -197,7 +197,7 @@
     "kicker": "★ Experiencia Destacada",
     "title": "Recorre el Beltline en bici.",
     "title_highlight": "Sella tu Pasaporte.",
-    "subtitle": "Un recorrido de 22 millas entre murales, cervecerías, taquerías y vistas al skyline — con paradas locales curadas por el equipo de Atlanta Passport.",
+    "subtitle": "Un recorrido de 22 millas entre murales, cervecerías, taquerías y vistas al skyline — con paradas locales curadas por el equipo de Passport ATL.",
     "stops_label": "Paradas numeradas a lo largo de la ruta",
     "cta": "Vista Previa de la Ruta"
   },
@@ -237,7 +237,7 @@
   "manifesto": {
     "kicker": "★ Manifiesto",
     "title": "Atlanta es mucho más que un estadio y una escala.",
-    "body": "La mayoría de los visitantes solo ven el aeropuerto, el estadio y un hotel de cadena. Creamos Atlanta Passport para cambiar eso — para poner los negocios locales de verdad frente a millones de miradas nuevas, y darles a los visitantes una razón para recordar la ciudad después del pitido final."
+    "body": "La mayoría de los visitantes solo ven el aeropuerto, el estadio y un hotel de cadena. Creamos Passport ATL para cambiar eso — para poner los negocios locales de verdad frente a millones de miradas nuevas, y darles a los visitantes una razón para recordar la ciudad después del pitido final."
   },
   "business_cta": {
     "kicker": "★ Para Negocios",
@@ -253,12 +253,12 @@
     "explore_heading": "Explorar",
     "all_spots": "Todos los Lugares",
     "for_businesses": "★ Únete al Mapa",
-    "get_listed": "Regístrate en Atlanta Passport →",
+    "get_listed": "Regístrate en Passport ATL →",
     "sponsor_route": "Patrocina una ruta →",
     "partnership_info": "Solicita información de alianza →",
     "founding_sponsor": "Patrocinador fundador:",
     "wheelhaus": "WHEELHAUS BIKES",
-    "disclaimer": "Atlanta Passport es una guía local independiente y no tiene ninguna afiliación con FIFA, el World Cup oficial, Waffle House, Coca-Cola ni con ningún equipo deportivo profesional. Todas las marcas son propiedad de sus respectivos dueños.",
+    "disclaimer": "Passport ATL es una guía local independiente y no tiene ninguna afiliación con FIFA, el World Cup oficial, Waffle House, Coca-Cola ni con ningún equipo deportivo profesional. Todas las marcas son propiedad de sus respectivos dueños.",
     "rights": "Todos los derechos reservados.",
     "sticker_local_picks": "★ Favoritos Locales",
     "sticker_match_day": "Planes del Día del Partido",
@@ -303,8 +303,8 @@
   },
   "about_page": {
     "kicker": "★ Acerca de",
-    "title": "Por qué creamos Atlanta Passport.",
-    "intro": "Atlanta Passport es una guía independiente creada por locales de Atlanta que aman esta ciudad. Con la llegada del World Cup 2026, millones de visitantes pasarán por el aeropuerto, el estadio y un hotel de cadena — y se perderán la ciudad por completo. Existimos para cambiar eso.",
+    "title": "Por qué creamos Passport ATL.",
+    "intro": "Passport ATL es una guía independiente creada por locales de Atlanta que aman esta ciudad. Con la llegada del World Cup 2026, millones de visitantes pasarán por el aeropuerto, el estadio y un hotel de cadena — y se perderán la ciudad por completo. Existimos para cambiar eso.",
     "story_kicker": "★ Nuestra Historia",
     "story_title": "De un boceto en una servilleta a una libreta impresa.",
     "story_p1": "Todo empezó con una frustración: cada ciudad anfitriona del World Cup construye infraestructura para los visitantes pero pierde el alma. Atlanta tiene demasiado carácter para ser solo una escala.",
@@ -346,7 +346,7 @@
     "offers_subtitle": "Cada negocio participante crea una oferta especial y propia — algo memorable que le dé a los portadores del pasaporte una razón para entrar.",
     "offer_examples_title": "Ejemplos de ofertas",
     "what_you_get_title": "Lo que obtienes",
-    "what_you_get_p1": "Una ficha destacada en la página de la ruta Beltline, el sello de tu negocio en cada pasaporte impreso, publicaciones en el canal de Atlanta Passport y tráfico directo de portadores de pasaporte.",
+    "what_you_get_p1": "Una ficha destacada en la página de la ruta Beltline, el sello de tu negocio en cada pasaporte impreso, publicaciones en el canal de Passport ATL y tráfico directo de portadores de pasaporte.",
     "cta_join": "Únete a la Ruta"
   },
   "partners_page": {
@@ -355,7 +355,7 @@
     "title_line2": "World Cup",
     "title_highlight": "de Atlanta.",
     "title_line3": "",
-    "subtitle": "Estamos curado un grupo limitado de restaurantes, bares, tiendas, espacios y experiencias locales para Atlanta Passport.",
+    "subtitle": "Estamos curado un grupo limitado de restaurantes, bares, tiendas, espacios y experiencias locales para Passport ATL.",
     "cta_apply": "Aplica Ahora",
     "limited_kicker": "★ Lugares Limitados",
     "limited_title": "Solo quedan algunos cupos por barrio y categoría.",
@@ -401,7 +401,7 @@
   },
   "apply_page": {
     "kicker": "★ Aplica",
-    "title": "Regístrate en Atlanta Passport.",
+    "title": "Regístrate en Passport ATL.",
     "subtitle": "Cuéntanos sobre tu negocio. Revisamos cada solicitud a mano y respondemos en pocos días.",
     "progress_label": "{{completed}}/{{total}} campos requeridos",
     "section_about_title": "Sobre tu negocio",

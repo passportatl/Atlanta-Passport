@@ -83,7 +83,7 @@
     "business_cta": {
       "kicker": "Atlanta のビジネスオーナーへ",
       "title": "世界が来る前に、地図に載ろう。",
-      "subtitle": "Atlanta Passportは、チェーン店ではなく本物の街を探している旅行者にあなたのお店やイベントを届けます。Summer 2026の創業メンバー掲載枠は残りわずか。",
+      "subtitle": "Passport ATLは、チェーン店ではなく本物の街を探している旅行者にあなたのお店やイベントを届けます。Summer 2026の創業メンバー掲載枠は残りわずか。",
       "cta": "掲載する"
     },
     "decor": {
@@ -98,7 +98,7 @@
     "events_showcase": {
       "kicker": "今夜のおすすめ",
       "title": "今夜何があるか、いつでもチェック。",
-      "subtitle": "地元の方も旅行者も — Atlanta Passportのライブカレンダーで、試合観戦イベント、コンサート、マーケット、ポップアップまで、街中のあらゆる情報をリアルタイムでお届け。",
+      "subtitle": "地元の方も旅行者も — Passport ATLのライブカレンダーで、試合観戦イベント、コンサート、マーケット、ポップアップまで、街中のあらゆる情報をリアルタイムでお届け。",
       "cta": "カレンダーをすべて見る",
       "screen_title": "Tonight in Atlanta",
       "live_badge": "今夜開催中",
@@ -165,7 +165,7 @@
     "title_line1": "非公式の",
     "title_line2": "ガイドへようこそ —",
     "title_highlight": "リアルなAtlanta",
-    "subtitle": "グルメ。ドリンク。ライド。テラス。ポップアップ。地元の宝スポット。Atlanta Passportは、地元の人が本当に愛する街を訪問者にご案内します。",
+    "subtitle": "グルメ。ドリンク。ライド。テラス。ポップアップ。地元の宝スポット。Passport ATLは、地元の人が本当に愛する街を訪問者にご案内します。",
     "cta_explore": "探索する",
     "cta_routes": "ルート",
     "chip_food": "フード",
@@ -197,7 +197,7 @@
     "kicker": "★ 注目の体験",
     "title": "Beltlineをサイクリング。",
     "title_highlight": "パスポートにスタンプを押そう。",
-    "subtitle": "壁画、ブルワリー、タコス屋、そして絶景のスカイライン — Atlanta Passportチームが厳選した地元スポットが点在する22マイルのループコース。",
+    "subtitle": "壁画、ブルワリー、タコス屋、そして絶景のスカイライン — Passport ATLチームが厳選した地元スポットが点在する22マイルのループコース。",
     "stops_label": "ルート上の番号付きスポット",
     "cta": "ルートをプレビューする"
   },
@@ -237,7 +237,7 @@
   "manifesto": {
     "kicker": "★ マニフェスト",
     "title": "Atlantaはスタジアムと乗り換え地点だけじゃない。",
-    "body": "多くの訪問者は空港、会場、チェーンホテルしか見ずに去っていきます。私たちはAtlanta Passportを作りました — 何百万もの新しい目に本物の地元ビジネスを届け、試合終了後も街を記憶に残してもらうために。"
+    "body": "多くの訪問者は空港、会場、チェーンホテルしか見ずに去っていきます。私たちはPassport ATLを作りました — 何百万もの新しい目に本物の地元ビジネスを届け、試合終了後も街を記憶に残してもらうために。"
   },
   "business_cta": {
     "kicker": "★ ビジネスオーナーの方へ",
@@ -253,12 +253,12 @@
     "explore_heading": "探索する",
     "all_spots": "すべてのスポット",
     "for_businesses": "★ マップに掲載する",
-    "get_listed": "Atlanta Passportに掲載申請する →",
+    "get_listed": "Passport ATLに掲載申請する →",
     "sponsor_route": "ルートをスポンサーする →",
     "partnership_info": "パートナーシップ情報を問い合わせる →",
     "founding_sponsor": "創設スポンサー：",
     "wheelhaus": "WHEELHAUS BIKES",
-    "disclaimer": "Atlanta Passportは独立した地元ガイドであり、FIFA、公式 World Cup、Waffle House、Coca-Cola、またはいかなるプロスポーツチームとも提携関係にありません。すべてのブランド名はそれぞれの所有者に帰属します。",
+    "disclaimer": "Passport ATLは独立した地元ガイドであり、FIFA、公式 World Cup、Waffle House、Coca-Cola、またはいかなるプロスポーツチームとも提携関係にありません。すべてのブランド名はそれぞれの所有者に帰属します。",
     "rights": "All rights reserved.",
     "sticker_local_picks": "★ 地元のおすすめ",
     "sticker_match_day": "試合日のおすすめ",
@@ -303,8 +303,8 @@
   },
   "about_page": {
     "kicker": "★ について",
-    "title": "Atlanta Passportを作った理由。",
-    "intro": "Atlanta Passportは、この街を愛するAtlantaの地元民が作った独立ガイドです。2026年のWorld Cupに向けて、何百万もの訪問者が空港、会場、チェーンホテルを通り過ぎ、街そのものを見逃してしまいます。それを変えるために、私たちは存在しています。",
+    "title": "Passport ATLを作った理由。",
+    "intro": "Passport ATLは、この街を愛するAtlantaの地元民が作った独立ガイドです。2026年のWorld Cupに向けて、何百万もの訪問者が空港、会場、チェーンホテルを通り過ぎ、街そのものを見逃してしまいます。それを変えるために、私たちは存在しています。",
     "story_kicker": "★ ストーリー",
     "story_title": "ナプキンのスケッチから印刷された冊子へ。",
     "story_p1": "あるフラストレーションから始まりました：World Cupの開催都市はどこも訪問者のためのインフラを整えるが、魂を失ってしまう。Atlantaはただの乗り換え地点にするにはキャラクターが豊かすぎます。",
@@ -346,7 +346,7 @@
     "offers_subtitle": "参加する各ビジネスは、パスポートホルダーが立ち寄りたくなるような、記憶に残るシグネチャーオファーを一つ用意します。",
     "offer_examples_title": "オファーの例",
     "what_you_get_title": "あなたが得られるもの",
-    "what_you_get_p1": "Beltlineルートページへの掲載、印刷されたすべてのパスポートへのお店スタンプ、Atlanta Passportチャンネルでのソーシャル投稿、そしてパスポートホルダーからの直接の集客。",
+    "what_you_get_p1": "Beltlineルートページへの掲載、印刷されたすべてのパスポートへのお店スタンプ、Passport ATLチャンネルでのソーシャル投稿、そしてパスポートホルダーからの直接の集客。",
     "cta_join": "ルートに参加する"
   },
   "partners_page": {
@@ -355,7 +355,7 @@
     "title_line2": "",
     "title_highlight": "World Cup",
     "title_line3": "マップに載せよう。",
-    "subtitle": "Atlanta Passportに掲載する、地元のレストラン、バー、ショップ、会場、体験スポットを限定数で厳選しています。",
+    "subtitle": "Passport ATLに掲載する、地元のレストラン、バー、ショップ、会場、体験スポットを限定数で厳選しています。",
     "cta_apply": "今すぐ申請する",
     "limited_kicker": "★ 限定枠",
     "limited_title": "エリアとカテゴリーごとに、わずかな枠のみ。",
@@ -401,7 +401,7 @@
   },
   "apply_page": {
     "kicker": "★ 申請する",
-    "title": "Atlanta Passportに掲載申請しよう。",
+    "title": "Passport ATLに掲載申請しよう。",
     "subtitle": "お店について教えてください。すべての申請を手作業で確認し、数日以内にご返答します。",
     "progress_label": "{{completed}}/{{total}} 必須項目",
     "section_about_title": "お店について",

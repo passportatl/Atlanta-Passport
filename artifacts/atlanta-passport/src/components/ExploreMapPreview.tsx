@@ -68,7 +68,7 @@ export default function ExploreMapPreview() {
           {showLiveMap ? (
             <img
               src={url}
-              alt="Atlanta Passport Explore map with business pins"
+              alt="Passport ATL Explore map with business pins"
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"
               onError={() => setFailed(true)}
@@ -76,7 +76,7 @@ export default function ExploreMapPreview() {
           ) : (
             <img
               src={neighborhoodsMap}
-              alt="Atlanta Passport Explore map"
+              alt="Passport ATL Explore map"
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"
             />

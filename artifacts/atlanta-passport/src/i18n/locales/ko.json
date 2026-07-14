@@ -83,7 +83,7 @@
     "business_cta": {
       "kicker": "Atlanta 사업자분들께",
       "title": "세계가 오기 전에 지도에 올라타세요.",
-      "subtitle": "Atlanta Passport는 체인점이 아닌 진짜 도시를 찾는 방문객들에게 당신의 공간이나 이벤트를 소개합니다. Summer 2026 창립 입점은 한정되어 있습니다.",
+      "subtitle": "Passport ATL는 체인점이 아닌 진짜 도시를 찾는 방문객들에게 당신의 공간이나 이벤트를 소개합니다. Summer 2026 창립 입점은 한정되어 있습니다.",
       "cta": "입점 신청하기"
     },
     "decor": {
@@ -98,7 +98,7 @@
     "events_showcase": {
       "kicker": "오늘 밤 뭐 있어요?",
       "title": "오늘 밤 어디서 뭘 하는지, 항상 놓치지 마세요.",
-      "subtitle": "Atlanta 주민이든 방문객이든 — Atlanta Passport의 실시간 캘린더 하나로 도시 곳곳의 경기 상영, 콘서트, 마켓, 팝업까지 전부 한눈에 확인하세요.",
+      "subtitle": "Atlanta 주민이든 방문객이든 — Passport ATL의 실시간 캘린더 하나로 도시 곳곳의 경기 상영, 콘서트, 마켓, 팝업까지 전부 한눈에 확인하세요.",
       "cta": "전체 캘린더 보기",
       "screen_title": "오늘 밤, Atlanta에서",
       "live_badge": "오늘 밤 Live",
@@ -165,7 +165,7 @@
     "title_line1": "비공식",
     "title_line2": "가이드,",
     "title_highlight": "진짜 Atlanta",
-    "subtitle": "음식. 음료. 라이딩. 테라스. 팝업. 동네 숨은 보석들. Atlanta Passport는 현지인들이 사랑하는 도시의 진짜 모습을 여행자들에게 알려줍니다.",
+    "subtitle": "음식. 음료. 라이딩. 테라스. 팝업. 동네 숨은 보석들. Passport ATL는 현지인들이 사랑하는 도시의 진짜 모습을 여행자들에게 알려줍니다.",
     "cta_explore": "탐험하기",
     "cta_routes": "경로 보기",
     "chip_food": "음식",
@@ -197,7 +197,7 @@
     "kicker": "★ 추천 체험",
     "title": "Beltline을 자전거로 달리며",
     "title_highlight": "패스포트에 스탬프를 찍어보세요.",
-    "subtitle": "벽화, 양조장, 타케리아, 스카이라인 전망을 따라 이어지는 22마일 루프 — Atlanta Passport 팀이 엄선한 현지 명소들과 함께.",
+    "subtitle": "벽화, 양조장, 타케리아, 스카이라인 전망을 따라 이어지는 22마일 루프 — Passport ATL 팀이 엄선한 현지 명소들과 함께.",
     "stops_label": "경로를 따라 번호가 매겨진 정류장",
     "cta": "경로 미리 보기"
   },
@@ -237,7 +237,7 @@
   "manifesto": {
     "kicker": "★ 우리의 이야기",
     "title": "Atlanta는 경기장과 경유지 그 이상입니다.",
-    "body": "대부분의 방문객은 공항, 경기장, 그리고 체인 호텔만 보고 떠납니다. 저희는 그걸 바꾸기 위해 Atlanta Passport를 만들었습니다 — 수백만 명의 새로운 눈앞에 진짜 현지 비즈니스를 소개하고, 마지막 휘슬이 울린 후에도 이 도시를 기억할 이유를 여행자들에게 드리기 위해서요."
+    "body": "대부분의 방문객은 공항, 경기장, 그리고 체인 호텔만 보고 떠납니다. 저희는 그걸 바꾸기 위해 Passport ATL를 만들었습니다 — 수백만 명의 새로운 눈앞에 진짜 현지 비즈니스를 소개하고, 마지막 휘슬이 울린 후에도 이 도시를 기억할 이유를 여행자들에게 드리기 위해서요."
   },
   "business_cta": {
     "kicker": "★ 사업자 안내",
@@ -253,12 +253,12 @@
     "explore_heading": "탐험하기",
     "all_spots": "전체 명소",
     "for_businesses": "★ 지도에 등록하기",
-    "get_listed": "Atlanta Passport에 등록 신청하기 →",
+    "get_listed": "Passport ATL에 등록 신청하기 →",
     "sponsor_route": "경로 스폰서 신청 →",
     "partnership_info": "파트너십 정보 요청 →",
     "founding_sponsor": "창립 스폰서:",
     "wheelhaus": "WHEELHAUS BIKES",
-    "disclaimer": "Atlanta Passport는 독립적인 현지 가이드로, FIFA, 공식 World Cup, Waffle House, Coca-Cola, 또는 어떤 프로 스포츠 팀과도 제휴 관계가 없습니다. 모든 브랜드명은 해당 소유자의 재산입니다.",
+    "disclaimer": "Passport ATL는 독립적인 현지 가이드로, FIFA, 공식 World Cup, Waffle House, Coca-Cola, 또는 어떤 프로 스포츠 팀과도 제휴 관계가 없습니다. 모든 브랜드명은 해당 소유자의 재산입니다.",
     "rights": "모든 권리 보유.",
     "sticker_local_picks": "★ 현지인 추천",
     "sticker_match_day": "경기날 추천 명소",
@@ -303,8 +303,8 @@
   },
   "about_page": {
     "kicker": "★ 소개",
-    "title": "우리가 Atlanta Passport를 만든 이유.",
-    "intro": "Atlanta Passport는 이 도시를 사랑하는 Atlanta 현지인들이 만든 독립 가이드입니다. 2026 World Cup을 앞두고 수백만 명의 방문객이 공항, 경기장, 체인 호텔을 지나쳐 도시를 전혀 경험하지 못하고 떠날 것입니다. 저희는 그걸 바꾸기 위해 존재합니다.",
+    "title": "우리가 Passport ATL를 만든 이유.",
+    "intro": "Passport ATL는 이 도시를 사랑하는 Atlanta 현지인들이 만든 독립 가이드입니다. 2026 World Cup을 앞두고 수백만 명의 방문객이 공항, 경기장, 체인 호텔을 지나쳐 도시를 전혀 경험하지 못하고 떠날 것입니다. 저희는 그걸 바꾸기 위해 존재합니다.",
     "story_kicker": "★ 우리의 이야기",
     "story_title": "냅킨 스케치에서 인쇄된 소책자까지.",
     "story_p1": "하나의 불만에서 시작됐습니다: 모든 World Cup 개최 도시는 방문객을 위한 인프라를 만들지만, 그 과정에서 도시의 영혼을 잃어버립니다. Atlanta는 경유지로 전락하기엔 너무나 많은 개성을 가진 도시입니다.",
@@ -346,7 +346,7 @@
     "offers_subtitle": "참여하는 각 비즈니스는 패스포트 소지자들이 방문할 이유가 되는, 기억에 남을 시그니처 혜택을 하나 준비합니다.",
     "offer_examples_title": "혜택 예시",
     "what_you_get_title": "받게 되는 것",
-    "what_you_get_p1": "Beltline 경로 페이지의 추천 목록, 모든 인쇄 패스포트에 들어가는 비즈니스 스탬프, Atlanta Passport 채널의 소셜 미디어 게시물, 그리고 패스포트 소지자들의 직접적인 방문 유입.",
+    "what_you_get_p1": "Beltline 경로 페이지의 추천 목록, 모든 인쇄 패스포트에 들어가는 비즈니스 스탬프, Passport ATL 채널의 소셜 미디어 게시물, 그리고 패스포트 소지자들의 직접적인 방문 유입.",
     "cta_join": "경로에 합류하기"
   },
   "partners_page": {
@@ -355,7 +355,7 @@
     "title_line2": "",
     "title_highlight": "World Cup",
     "title_line3": "지도에 올리세요.",
-    "subtitle": "Atlanta Passport를 위해 현지 레스토랑, 바, 상점, 공연장, 체험 명소 중 소수만 엄선합니다.",
+    "subtitle": "Passport ATL를 위해 현지 레스토랑, 바, 상점, 공연장, 체험 명소 중 소수만 엄선합니다.",
     "cta_apply": "지금 신청하기",
     "limited_kicker": "★ 한정 자리",
     "limited_title": "동네와 카테고리별로 소수 자리만 열려 있습니다.",
@@ -401,7 +401,7 @@
   },
   "apply_page": {
     "kicker": "★ 신청하기",
-    "title": "Atlanta Passport에 등록하세요.",
+    "title": "Passport ATL에 등록하세요.",
     "subtitle": "비즈니스에 대해 알려주세요. 모든 신청서는 직접 검토하며 며칠 내로 답변 드립니다.",
     "progress_label": "필수 항목 {{completed}}/{{total}} 완료",
     "section_about_title": "비즈니스 소개",

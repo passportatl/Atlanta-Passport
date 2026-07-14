@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Passport ATL" />
     <meta property="og:title" content="Passport ATL" />
     <meta property="og:description" content="The unofficial guide to the real Atlanta — experience Atlanta like a local." />
     <meta property="og:image" content="/opengraph.jpg" />
@@ -20,6 +21,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (function () {
+        var ld = document.createElement("script");
+        ld.type = "application/ld+json";
+        ld.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Passport ATL",
+          "alternateName": "Passport ATL — Experience Atlanta Like a Local",
+          "url": window.location.origin + "/",
+        });
+        document.head.appendChild(ld);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

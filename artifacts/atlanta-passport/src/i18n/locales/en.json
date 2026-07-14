@@ -92,7 +92,7 @@
     "business_cta": {
       "kicker": "For Atlanta Businesses",
       "title": "Get on the map before the world arrives.",
-      "subtitle": "Atlanta Passport puts your spot or event in front of visitors looking for the real city — not the chains. Limited founding listings for Summer 2026.",
+      "subtitle": "Passport ATL puts your spot or event in front of visitors looking for the real city — not the chains. Limited founding listings for Summer 2026.",
       "cta": "Get Listed"
     },
     "decor": {
@@ -128,7 +128,7 @@
       "pickup_label": "Pick one up at",
       "loc1": "Peachtree Wellness",
       "loc2": "Atlanta Trap Museum",
-      "alt": "The physical Atlanta Passport booklet"
+      "alt": "The physical Passport ATL booklet"
     }
   },
   "lang": {
@@ -165,7 +165,7 @@
     "title_line1": "The unofficial",
     "title_line2": "guide to the",
     "title_highlight": "real Atlanta",
-    "subtitle": "Food. Drinks. Rides. Patios. Pop-ups. Neighborhood gems. Atlanta Passport helps visitors find the city locals actually love.",
+    "subtitle": "Food. Drinks. Rides. Patios. Pop-ups. Neighborhood gems. Passport ATL helps visitors find the city locals actually love.",
     "cta_explore": "Explore",
     "cta_routes": "Routes",
     "chip_food": "Food",
@@ -197,7 +197,7 @@
     "kicker": "★ Featured Experience",
     "title": "Bike the Beltline.",
     "title_highlight": "Stamp Your Passport.",
-    "subtitle": "A 22-mile loop of murals, breweries, taquerias, and skyline views — with local stops curated by the Atlanta Passport team.",
+    "subtitle": "A 22-mile loop of murals, breweries, taquerias, and skyline views — with local stops curated by the Passport ATL team.",
     "stops_label": "Numbered stops along the route",
     "cta": "Preview the Route"
   },
@@ -237,7 +237,7 @@
   "manifesto": {
     "kicker": "★ Manifesto",
     "title": "Atlanta is more than a stadium and a stopover.",
-    "body": "Most visitors only see the airport, the venue, and a chain hotel. We built Atlanta Passport to change that — to put real local businesses in front of millions of new eyes, and give visitors a reason to remember the city after the final whistle."
+    "body": "Most visitors only see the airport, the venue, and a chain hotel. We built Passport ATL to change that — to put real local businesses in front of millions of new eyes, and give visitors a reason to remember the city after the final whistle."
   },
   "business_cta": {
     "kicker": "★ For Businesses",
@@ -253,12 +253,12 @@
     "explore_heading": "Explore",
     "all_spots": "All Spots",
     "for_businesses": "★ Get on The Map",
-    "get_listed": "Get listed in Atlanta Passport →",
+    "get_listed": "Get listed in Passport ATL →",
     "sponsor_route": "Sponsor a route →",
     "partnership_info": "Request partnership info →",
     "founding_sponsor": "Founding sponsor:",
     "wheelhaus": "WHEELHAUS BIKES",
-    "disclaimer": "Atlanta Passport is an independent local guide and is not affiliated with FIFA, the official World Cup, Waffle House, Coca-Cola, or any professional sports team. All brand names are the property of their respective owners.",
+    "disclaimer": "Passport ATL is an independent local guide and is not affiliated with FIFA, the official World Cup, Waffle House, Coca-Cola, or any professional sports team. All brand names are the property of their respective owners.",
     "rights": "All rights reserved.",
     "sticker_local_picks": "★ Local Picks",
     "sticker_match_day": "Match Day Moves",
@@ -303,8 +303,8 @@
   },
   "about_page": {
     "kicker": "★ About",
-    "title": "Why we built Atlanta Passport.",
-    "intro": "Atlanta Passport is an independent guide built by Atlanta locals who love this city. Ahead of the 2026 World Cup, millions of visitors will pass through the airport, the venue, and a chain hotel — and miss the city entirely. We exist to change that.",
+    "title": "Why we built Passport ATL.",
+    "intro": "Passport ATL is an independent guide built by Atlanta locals who love this city. Ahead of the 2026 World Cup, millions of visitors will pass through the airport, the venue, and a chain hotel — and miss the city entirely. We exist to change that.",
     "story_kicker": "★ Our Story",
     "story_title": "From a napkin sketch to a printed booklet.",
     "story_p1": "It started with a frustration: every World Cup host city builds infrastructure for visitors but loses the soul. Atlanta has too much character to be a stopover.",
@@ -346,7 +346,7 @@
     "offers_subtitle": "Each participating business creates one signature offer — something memorable that gives passport holders a reason to come in.",
     "offer_examples_title": "Example offers",
     "what_you_get_title": "What you get",
-    "what_you_get_p1": "A featured listing on the Beltline route page, your business stamp in every printed passport, social posts on the Atlanta Passport channel, and direct foot traffic from passport holders.",
+    "what_you_get_p1": "A featured listing on the Beltline route page, your business stamp in every printed passport, social posts on the Passport ATL channel, and direct foot traffic from passport holders.",
     "cta_join": "Join the Route"
   },
   "partners_page": {
@@ -355,7 +355,7 @@
     "title_line2": "Atlanta's",
     "title_highlight": "World Cup",
     "title_line3": "map.",
-    "subtitle": "We're curating a limited group of local restaurants, bars, shops, venues, and experiences for Atlanta Passport.",
+    "subtitle": "We're curating a limited group of local restaurants, bars, shops, venues, and experiences for Passport ATL.",
     "cta_apply": "Apply Now",
     "limited_kicker": "★ Limited Placements",
     "limited_title": "Only a few spots open per neighborhood and category.",
@@ -405,7 +405,7 @@
   },
   "apply_page": {
     "kicker": "★ Apply",
-    "title": "Get listed in Atlanta Passport.",
+    "title": "Get listed in Passport ATL.",
     "subtitle": "Tell us about your business. We review every application by hand and respond within a few days.",
     "progress_label": "{{completed}}/{{total}} required fields",
     "section_about_title": "About your business",

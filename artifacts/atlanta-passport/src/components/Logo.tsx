@@ -36,7 +36,7 @@ export default function Logo({
   }
 
   return (
-    <Link href="/" className={cn("inline-flex", className)} aria-label="Atlanta Passport home">
+    <Link href="/" className={cn("inline-flex", className)} aria-label="Passport ATL home">
       {img}
     </Link>
   );

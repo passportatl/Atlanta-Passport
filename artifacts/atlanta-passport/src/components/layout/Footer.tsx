@@ -71,7 +71,7 @@ export default function Footer({
               Privacy Policy
             </Link>
           </p>
-          <p>&copy; {new Date().getFullYear()} Atlanta Passport. {t("footer.rights")}</p>
+          <p>&copy; {new Date().getFullYear()} Passport ATL. {t("footer.rights")}</p>
         </div>
       </div>
     </footer>

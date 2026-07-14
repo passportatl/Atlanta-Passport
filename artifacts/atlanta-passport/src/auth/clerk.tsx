@@ -120,7 +120,7 @@ const clerkLocalization = {
   signIn: {
     start: {
       title: "Welcome back",
-      subtitle: "Sign in to your Atlanta Passport",
+      subtitle: "Sign in to your Passport ATL",
     },
   },
   signUp: {

@@ -29,7 +29,7 @@ export const REWARDS: RewardDef[] = [
   {
     id: "grand-prize",
     name: "Grand Prize Entry",
-    description: "20 stamps gets you in the running for the Atlanta Passport grand prize package.",
+    description: "20 stamps gets you in the running for the Passport ATL grand prize package.",
     threshold: 20,
     type: "total",
     tone: "red",

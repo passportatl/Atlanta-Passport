@@ -216,7 +216,7 @@ export function PassportBottomNav() {
           {/* Mobile: logo centered against the whole bar (not the flex region) */}
           <Link
             href="/passport"
-            aria-label="Atlanta Passport profile"
+            aria-label="Passport ATL profile"
             className="md:hidden absolute bottom-0 left-1/2 -translate-x-1/2"
           >
             <Logo
@@ -231,7 +231,7 @@ export function PassportBottomNav() {
             {TABS.slice(0, 3).map((tab) => renderTab(tab, location))}
             <Link
               href="/passport"
-              aria-label="Atlanta Passport profile"
+              aria-label="Passport ATL profile"
               className="relative flex items-center justify-center self-stretch"
             >
               <Logo

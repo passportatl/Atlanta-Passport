@@ -50,7 +50,7 @@ export default function MapSnapshot({
     <div className="relative mb-5 overflow-hidden rounded-xl border-2 border-foreground">
       <img
         src={url}
-        alt={`Map showing ${name} on the Atlanta Passport map`}
+        alt={`Map showing ${name} on the Passport ATL map`}
         className="block w-full h-auto"
         loading="lazy"
         onError={() => setFailed(true)}

@@ -83,7 +83,7 @@
     "business_cta": {
       "kicker": "Para Negócios em Atlanta",
       "title": "Apareça no mapa antes que o mundo chegue.",
-      "subtitle": "O Atlanta Passport coloca o seu negócio ou evento na frente de visitantes que buscam a cidade de verdade — não as redes. Vagas limitadas para listagens fundadoras no Summer 2026.",
+      "subtitle": "O Passport ATL coloca o seu negócio ou evento na frente de visitantes que buscam a cidade de verdade — não as redes. Vagas limitadas para listagens fundadoras no Summer 2026.",
       "cta": "Quero ser Listado"
     },
     "decor": {
@@ -128,7 +128,7 @@
       "pickup_label": "Retire em",
       "loc1": "Peachtree Wellness",
       "loc2": "Atlanta Trap Museum",
-      "alt": "O folheto físico do Atlanta Passport"
+      "alt": "O folheto físico do Passport ATL"
     }
   },
   "lang": {
@@ -165,7 +165,7 @@
     "title_line1": "O guia não oficial",
     "title_line2": "para a",
     "title_highlight": "Atlanta de verdade",
-    "subtitle": "Comida. Bebida. Pedaladas. Varandas. Pop-ups. Joias dos bairros. O Atlanta Passport ajuda visitantes a descobrir a cidade que os moradores realmente amam.",
+    "subtitle": "Comida. Bebida. Pedaladas. Varandas. Pop-ups. Joias dos bairros. O Passport ATL ajuda visitantes a descobrir a cidade que os moradores realmente amam.",
     "cta_explore": "Explorar",
     "cta_routes": "Roteiros",
     "chip_food": "Comida",
@@ -197,7 +197,7 @@
     "kicker": "★ Experiência em Destaque",
     "title": "Pedala no Beltline.",
     "title_highlight": "Carimba o Passport.",
-    "subtitle": "Um circuito de 35 km cheio de murais, cervejarias, taquerias e vistas do skyline — com paradas locais curadas pela equipe do Atlanta Passport.",
+    "subtitle": "Um circuito de 35 km cheio de murais, cervejarias, taquerias e vistas do skyline — com paradas locais curadas pela equipe do Passport ATL.",
     "stops_label": "Paradas numeradas ao longo do roteiro",
     "cta": "Pré-visualizar o Roteiro"
   },
@@ -237,7 +237,7 @@
   "manifesto": {
     "kicker": "★ Manifesto",
     "title": "Atlanta é muito mais do que um estádio e uma escala.",
-    "body": "A maioria dos visitantes só conhece o aeroporto, o local do evento e um hotel de rede. A gente criou o Atlanta Passport para mudar isso — colocar negócios locais de verdade na frente de milhões de novos olhares e dar aos visitantes um motivo para lembrar da cidade depois do apito final."
+    "body": "A maioria dos visitantes só conhece o aeroporto, o local do evento e um hotel de rede. A gente criou o Passport ATL para mudar isso — colocar negócios locais de verdade na frente de milhões de novos olhares e dar aos visitantes um motivo para lembrar da cidade depois do apito final."
   },
   "business_cta": {
     "kicker": "★ Para Empresas",
@@ -253,12 +253,12 @@
     "explore_heading": "Explorar",
     "all_spots": "Todos os Lugares",
     "for_businesses": "★ Entre no Mapa",
-    "get_listed": "Cadastre-se no Atlanta Passport →",
+    "get_listed": "Cadastre-se no Passport ATL →",
     "sponsor_route": "Patrocine um roteiro →",
     "partnership_info": "Solicite informações de parceria →",
     "founding_sponsor": "Patrocinador fundador:",
     "wheelhaus": "WHEELHAUS BIKES",
-    "disclaimer": "O Atlanta Passport é um guia local independente e não tem afiliação com FIFA, a Copa do Mundo oficial, Waffle House, Coca-Cola ou qualquer equipe esportiva profissional. Todas as marcas mencionadas são propriedade de seus respectivos donos.",
+    "disclaimer": "O Passport ATL é um guia local independente e não tem afiliação com FIFA, a Copa do Mundo oficial, Waffle House, Coca-Cola ou qualquer equipe esportiva profissional. Todas as marcas mencionadas são propriedade de seus respectivos donos.",
     "rights": "Todos os direitos reservados.",
     "sticker_local_picks": "★ Escolhas Locais",
     "sticker_match_day": "Pedidas do Dia do Jogo",
@@ -303,8 +303,8 @@
   },
   "about_page": {
     "kicker": "★ Sobre",
-    "title": "Por que criamos o Atlanta Passport.",
-    "intro": "O Atlanta Passport é um guia independente criado por moradores de Atlanta que amam esta cidade. Com a Copa do Mundo de 2026 chegando, milhões de visitantes vão passar pelo aeroporto, pelo local dos jogos e por um hotel de rede — e perder a cidade inteiramente. A gente existe para mudar isso.",
+    "title": "Por que criamos o Passport ATL.",
+    "intro": "O Passport ATL é um guia independente criado por moradores de Atlanta que amam esta cidade. Com a Copa do Mundo de 2026 chegando, milhões de visitantes vão passar pelo aeroporto, pelo local dos jogos e por um hotel de rede — e perder a cidade inteiramente. A gente existe para mudar isso.",
     "story_kicker": "★ Nossa História",
     "story_title": "De um esboço num guardanapo a um livreto impresso.",
     "story_p1": "Tudo começou com uma frustração: toda cidade-sede da Copa do Mundo constrói infraestrutura para visitantes, mas perde a essência. Atlanta tem personalidade demais para ser só uma escala.",
@@ -346,7 +346,7 @@
     "offers_subtitle": "Cada negócio participante cria uma oferta exclusiva — algo memorável que dá aos portadores do passport um motivo para entrar.",
     "offer_examples_title": "Exemplos de ofertas",
     "what_you_get_title": "O que você ganha",
-    "what_you_get_p1": "Um perfil em destaque na página do roteiro do Beltline, o carimbo do seu negócio em todos os passports impressos, posts nas redes sociais do Atlanta Passport e tráfego direto de portadores do passport.",
+    "what_you_get_p1": "Um perfil em destaque na página do roteiro do Beltline, o carimbo do seu negócio em todos os passports impressos, posts nas redes sociais do Passport ATL e tráfego direto de portadores do passport.",
     "cta_join": "Junte-se ao Roteiro"
   },
   "partners_page": {
@@ -355,7 +355,7 @@
     "title_line2": "Copa do Mundo",
     "title_highlight": "de Atlanta.",
     "title_line3": "",
-    "subtitle": "Estamos curado um grupo limitado de restaurantes, bares, lojas, espaços e experiências locais para o Atlanta Passport.",
+    "subtitle": "Estamos curado um grupo limitado de restaurantes, bares, lojas, espaços e experiências locais para o Passport ATL.",
     "cta_apply": "Inscreva-se Agora",
     "limited_kicker": "★ Vagas Limitadas",
     "limited_title": "Apenas algumas vagas abertas por bairro e categoria.",
@@ -401,7 +401,7 @@
   },
   "apply_page": {
     "kicker": "★ Inscreva-se",
-    "title": "Cadastre-se no Atlanta Passport.",
+    "title": "Cadastre-se no Passport ATL.",
     "subtitle": "Conte-nos sobre seu negócio. A gente analisa cada inscrição pessoalmente e responde em alguns dias.",
     "progress_label": "{{completed}}/{{total}} campos obrigatórios",
     "section_about_title": "Sobre seu negócio",

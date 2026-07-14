@@ -92,7 +92,7 @@ export default function Navbar() {
               drop-shadow keep it sitting above the marquee strip below. */}
           <Link
             href="/"
-            aria-label="Atlanta Passport home"
+            aria-label="Passport ATL home"
             className="md:hidden absolute left-1/2 top-[6px] -translate-x-1/2 inline-flex items-start pointer-events-none z-50"
           >
             <Logo
@@ -106,7 +106,7 @@ export default function Navbar() {
         {/* Centered logo — desktop only, sits between "Get on the map" and "Passport" */}
         <Link
           href="/"
-          aria-label="Atlanta Passport home"
+          aria-label="Passport ATL home"
           className="hidden md:flex justify-center items-start z-50"
         >
           <Logo
