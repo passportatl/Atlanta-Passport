@@ -50,11 +50,6 @@ export default function Navbar() {
 
   const mobileTouristLinks: { name: string; path: string }[] = [];
 
-  const businessLinks = [
-    { name: t("nav.get_listed"), path: "/apply" },
-    { name: t("nav.partner_tiers"), path: "/partners" },
-  ].filter((l) => !(isStandalone && l.path === "/apply"));
-
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-[#a71930]">
       <div className="container mx-auto px-3 md:px-4 h-16 flex items-center justify-between gap-2 md:grid md:grid-cols-[1fr_auto_1fr] md:gap-4 md:items-start relative">
@@ -220,8 +215,20 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* Social links */}
-                <div className="pt-2 border-t border-foreground/15">
+              </div>
+
+              {/* Contact + social section (replaces the old business links,
+                  follow-us block, and in-menu language picker) */}
+              <div className="mt-auto bg-brand-cream border-t-[3px] border-foreground px-6 py-7 space-y-4">
+                <button
+                  type="button"
+                  onClick={openContactTab}
+                  className="block font-display text-sm tracking-[0.14em] uppercase text-foreground/85 hover:text-foreground"
+                  data-testid="link-mobile-menu-contact"
+                >
+                  Contact Us →
+                </button>
+                <div>
                   <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/50 mb-3">
                     {t("nav.follow_us")}
                   </div>
@@ -234,34 +241,13 @@ export default function Navbar() {
                         rel="noopener noreferrer"
                         aria-label={name}
                         title={name}
-                        className="inline-flex items-center justify-center h-11 w-11 border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:bg-white transition-colors"
+                        className="inline-flex items-center justify-center h-11 w-11 border-2 border-foreground bg-white text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:bg-brand-yellow transition-colors"
                       >
                         <Icon className="w-5 h-5" />
                       </a>
                     ))}
                   </div>
                 </div>
-
-                {/* Language picker inside the menu */}
-                <div className="pt-2 border-t border-foreground/15">
-                  <LanguageSwitcher variant="menu" />
-                </div>
-              </div>
-
-              {/* Separated business section */}
-              <div className="mt-auto bg-brand-cream border-t-[3px] border-foreground px-6 py-7 space-y-4">
-                <div className="font-display text-[10px] tracking-[0.22em] uppercase text-foreground/60">
-                  ★ {t("nav.for_businesses")}
-                </div>
-                {businessLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    href={link.path}
-                    className="block font-display text-sm tracking-[0.14em] uppercase text-foreground/85 hover:text-foreground"
-                  >
-                    {link.name} →
-                  </Link>
-                ))}
               </div>
             </SheetContent>
           </Sheet>
