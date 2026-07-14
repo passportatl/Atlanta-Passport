@@ -371,7 +371,10 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                     control={form.control}
                     name="neighborhood"
                     render={({ field }) => {
-                      const knownNames = neighborhoods.map((n) => n.name);
+                      const sortedNeighborhoods = [...neighborhoods].sort((a, b) =>
+                        a.name.localeCompare(b.name),
+                      );
+                      const knownNames = sortedNeighborhoods.map((n) => n.name);
                       const isOther =
                         neighborhoodOther ||
                         (field.value !== "" && !knownNames.includes(field.value));
@@ -398,8 +401,8 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
                                 <SelectValue placeholder={t("apply_page.select_placeholder")} />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
-                              {neighborhoods.map((n) => (
+                            <SelectContent className="max-h-72">
+                              {sortedNeighborhoods.map((n) => (
                                 <SelectItem key={n.id} value={n.name}>{n.name}</SelectItem>
                               ))}
                               <SelectItem value="__other__">Other (type below)</SelectItem>
