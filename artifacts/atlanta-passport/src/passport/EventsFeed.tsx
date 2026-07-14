@@ -221,7 +221,15 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     );
   }, []);
 
-  const [viewIndex, setViewIndex] = useState(0);
+  // Open the calendar on the month containing today's date (when it has
+  // events); otherwise fall back to the first month with events.
+  const [viewIndex, setViewIndex] = useState(() => {
+    const now = new Date();
+    const idx = monthsData.findIndex(
+      (m) => m.year === now.getFullYear() && m.month === now.getMonth(),
+    );
+    return idx >= 0 ? idx : 0;
+  });
   const canPrevMonth = viewIndex > 0;
   const canNextMonth = viewIndex < monthsData.length - 1;
 
@@ -246,8 +254,23 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
 
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   useEffect(() => {
+    // When viewing the current month, default to today (or the next upcoming
+    // event day). Other months default to their first event day.
+    const now = new Date();
+    const isCurrentMonth =
+      calendar.year === now.getFullYear() && calendar.month === now.getMonth();
+    if (isCurrentMonth) {
+      const today = now.getDate();
+      if (calendar.byDay.has(today)) {
+        setSelectedDay(today);
+        return;
+      }
+      const upcoming = calendar.eventDays.find((d) => d > today);
+      setSelectedDay(upcoming ?? calendar.eventDays[0] ?? null);
+      return;
+    }
     setSelectedDay(calendar.eventDays[0] ?? null);
-  }, [calendar.eventDays]);
+  }, [calendar]);
 
   const lang = i18n.language || "en";
   const monthLabel = useMemo(
