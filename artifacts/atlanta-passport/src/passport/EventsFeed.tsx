@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -340,6 +340,43 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     return true;
   });
 
+  // Swipe navigation for the featured carousel: a horizontal drag over the
+  // event squares moves to the next/previous group. Taps still work — a click
+  // right after a swipe is swallowed via the capture handler so cards don't
+  // open the map when the user was just swiping.
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const lastSwipeAtRef = useRef(0);
+  const handleCarouselPointerDown = (e: React.PointerEvent) => {
+    if (!e.isPrimary || (e.pointerType === "mouse" && e.button !== 0)) return;
+    swipeStartRef.current = { x: e.clientX, y: e.clientY };
+    // Capture the pointer so the swipe still completes when the finger/mouse
+    // leaves the carousel bounds before release.
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      // setPointerCapture can throw for already-released pointers; ignore.
+    }
+  };
+  const handleCarouselPointerUp = (e: React.PointerEvent) => {
+    const start = swipeStartRef.current;
+    swipeStartRef.current = null;
+    if (!start || count <= 1) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      lastSwipeAtRef.current = Date.now();
+      setPage((p) => (dx < 0 ? (p + 1) % count : (p - 1 + count) % count));
+    }
+  };
+  const handleCarouselClickCapture = (e: React.MouseEvent) => {
+    // Swallow only the click fired immediately after a swipe gesture, so
+    // deliberate taps on cards keep working.
+    if (Date.now() - lastSwipeAtRef.current < 300) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   const selectedLabel =
     selectedDay != null
       ? new Intl.DateTimeFormat(lang, {
@@ -377,7 +414,15 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
 
         {/* Auto-playing event card carousel — sized to the visible gap between
             the pinned map (40dvh + padding) and the fixed bottom nav (~110px). */}
-        <div className="relative h-[calc(60dvh-180px)] min-h-[220px] shrink-0">
+        <div
+          className="relative h-[calc(60dvh-180px)] min-h-[220px] shrink-0 touch-pan-y"
+          onPointerDown={handleCarouselPointerDown}
+          onPointerUp={handleCarouselPointerUp}
+          onPointerCancel={() => {
+            swipeStartRef.current = null;
+          }}
+          onClickCapture={handleCarouselClickCapture}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
