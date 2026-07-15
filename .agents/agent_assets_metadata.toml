@@ -137,3 +137,9 @@ id = "cuT0_U-5Qmi8LGZqPaIYf"
 uri = "file://.backups/atlanta-passport-db.sql.gz"
 type = "unspecified"
 title = "Atlanta Passport database backup (SQL dump, gzipped)"
+
+[[outputs]]
+id = "-9zNvynU_-pF2ZD0N2fDC"
+uri = "file://exports/oakland-cemetery-stamp-qr.png"
+type = "image"
+title = "Oakland Cemetery Bonus Stamp QR Code"
