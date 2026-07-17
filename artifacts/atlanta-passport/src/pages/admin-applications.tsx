@@ -334,7 +334,7 @@ function CsvImporter({
           <button
             type="button"
             onClick={downloadTemplate}
-            className="button-pop text-sm px-3 py-2 bg-brand-cream inline-flex items-center gap-2"
+            className="button-pop text-sm px-3 py-2 bg-brand-cream text-foreground inline-flex items-center gap-2"
           >
             <Download className="w-4 h-4" /> Download CSV Template
           </button>
@@ -434,7 +434,7 @@ function CsvImporter({
             <button
               type="button"
               onClick={() => setStage("upload")}
-              className="button-pop text-sm px-3 py-2 bg-brand-cream"
+              className="button-pop text-sm px-3 py-2 bg-brand-cream text-foreground"
             >
               ← Back
             </button>
@@ -534,7 +534,7 @@ function CsvImporter({
             <button
               type="button"
               onClick={() => setStage("map")}
-              className="button-pop text-sm px-3 py-2 bg-brand-cream"
+              className="button-pop text-sm px-3 py-2 bg-brand-cream text-foreground"
             >
               ← Back
             </button>
@@ -1341,7 +1341,7 @@ function AdminEventCard({
               type="button"
               disabled={saving || updateMutation.isPending}
               onClick={saveNotes}
-              className="button-pop text-[10px] px-3 py-1 mt-1 bg-brand-cream disabled:opacity-50"
+              className="button-pop text-[10px] px-3 py-1 mt-1 bg-brand-cream text-foreground disabled:opacity-50"
             >
               Save Notes
             </button>
@@ -1554,7 +1554,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
           {formError && <p className="text-sm text-brand-red font-bold">{formError}</p>}
 
           <div className="flex gap-2">
-            <button type="button" onClick={cancelForm} className="button-pop text-sm px-3 py-2 bg-brand-cream">Cancel</button>
+            <button type="button" onClick={cancelForm} className="button-pop text-sm px-3 py-2 bg-brand-cream text-foreground">Cancel</button>
             <button type="button" onClick={saveForm} disabled={formSaving} className="button-pop button-pop-yellow text-sm px-4 py-2 disabled:opacity-50 inline-flex items-center gap-2">
               {formSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               {editingId ? "Save Changes" : "Create Source"}
@@ -1595,10 +1595,10 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
                 {syncingId === s.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
                 Sync Now
               </button>
-              <button type="button" onClick={() => doToggle(s)} className="button-pop text-[10px] px-2 py-1 bg-brand-cream">
+              <button type="button" onClick={() => doToggle(s)} className="button-pop text-[10px] px-2 py-1 bg-brand-cream text-foreground">
                 {s.isActive ? "Disable" : "Enable"}
               </button>
-              <button type="button" onClick={() => openEdit(s)} className="button-pop text-[10px] px-2 py-1 bg-brand-cream">
+              <button type="button" onClick={() => openEdit(s)} className="button-pop text-[10px] px-2 py-1 bg-brand-cream text-foreground">
                 Edit
               </button>
               <button
@@ -2082,7 +2082,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
         <button
           type="button"
           onClick={() => setShowImporter((v) => !v)}
-          className="button-pop text-sm px-3 py-1.5 bg-brand-cream inline-flex items-center gap-1.5 ml-auto"
+          className="button-pop text-sm px-3 py-1.5 bg-brand-cream text-foreground inline-flex items-center gap-1.5 ml-auto"
         >
           <Upload className="w-3.5 h-3.5" /> Import CSV
         </button>
