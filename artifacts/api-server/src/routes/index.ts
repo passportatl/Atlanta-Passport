@@ -8,6 +8,7 @@ import applicationsRouter from "./applications";
 import eventsRouter from "./events";
 import contactRouter from "./contact";
 import adminExportRouter from "./admin-export";
+import sourcesRouter from "./sources";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(applicationsRouter);
 router.use(eventsRouter);
 router.use(contactRouter);
 router.use(adminExportRouter);
+router.use(sourcesRouter);
 
 export default router;

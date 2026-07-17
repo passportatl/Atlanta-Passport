@@ -607,6 +607,171 @@ function CsvImporter({
   );
 }
 
+// ── Ingestion system: types & fetch helpers ──────────────────────────────────
+
+type EventSourceRecord = {
+  id: string;
+  name: string;
+  type: string;
+  config: string;
+  isActive: boolean;
+  lastSyncAt: string | null;
+  lastSyncStatus: string;
+  lastSyncMessage: string | null;
+  createdAt: string;
+};
+
+type ImportRunRecord = {
+  id: string;
+  sourceId: string;
+  sourceName?: string;
+  status: string;
+  found: number;
+  inserted: number;
+  duplicates: number;
+  changed: number;
+  errors: number;
+  errorDetail: string | null;
+  startedAt: string;
+  finishedAt: string | null;
+};
+
+type ImportRunRowRecord = {
+  id: string;
+  runId: string;
+  eventId: string | null;
+  status: string;
+  externalId: string | null;
+  rawName: string | null;
+  rawDate: string | null;
+  rawVenue: string | null;
+  duplicateOfId: string | null;
+  errorMessage: string | null;
+};
+
+type DuplicatePair = {
+  flagged: AdminEventRecord;
+  original: AdminEventRecord | null;
+};
+
+async function listSources(adminKey: string): Promise<EventSourceRecord[]> {
+  const res = await fetch(`${API_BASE}/admin/sources`, { headers: { "x-admin-key": adminKey } });
+  if (!res.ok) throw new Error(`Failed to load sources: ${res.status}`);
+  return res.json() as Promise<EventSourceRecord[]>;
+}
+
+async function upsertSource(
+  method: "POST" | "PATCH",
+  idOrEmpty: string,
+  data: { name?: string; type?: string; config?: Record<string, string>; isActive?: boolean },
+  adminKey: string,
+): Promise<EventSourceRecord> {
+  const url = idOrEmpty
+    ? `${API_BASE}/admin/sources/${idOrEmpty}`
+    : `${API_BASE}/admin/sources`;
+  const res = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({ error: res.statusText }))) as { error: string };
+    throw new Error(body.error ?? `Request failed: ${res.status}`);
+  }
+  return res.json() as Promise<EventSourceRecord>;
+}
+
+async function removeSource(id: string, adminKey: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/admin/sources/${id}`, {
+    method: "DELETE",
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+}
+
+async function triggerSync(id: string, adminKey: string): Promise<ImportRunRecord> {
+  const res = await fetch(`${API_BASE}/admin/sources/${id}/sync`, {
+    method: "POST",
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({ error: res.statusText }))) as { error: string };
+    throw new Error(body.error ?? `Sync failed: ${res.status}`);
+  }
+  return res.json() as Promise<ImportRunRecord>;
+}
+
+async function listImportRuns(adminKey: string, sourceId?: string): Promise<ImportRunRecord[]> {
+  const url = sourceId
+    ? `${API_BASE}/admin/import-runs?sourceId=${sourceId}`
+    : `${API_BASE}/admin/import-runs`;
+  const res = await fetch(url, { headers: { "x-admin-key": adminKey } });
+  if (!res.ok) throw new Error(`Failed to load runs: ${res.status}`);
+  return res.json() as Promise<ImportRunRecord[]>;
+}
+
+async function getRunRows(runId: string, adminKey: string): Promise<ImportRunRowRecord[]> {
+  const res = await fetch(`${API_BASE}/admin/import-runs/${runId}/rows`, {
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) throw new Error(`Failed to load rows: ${res.status}`);
+  return res.json() as Promise<ImportRunRowRecord[]>;
+}
+
+async function listDuplicates(adminKey: string): Promise<DuplicatePair[]> {
+  const res = await fetch(`${API_BASE}/admin/events/duplicates`, {
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) throw new Error(`Failed to load duplicates: ${res.status}`);
+  return res.json() as Promise<DuplicatePair[]>;
+}
+
+// ── Source type metadata ─────────────────────────────────────────────────────
+
+const SOURCE_TYPE_LABELS: Record<string, string> = {
+  ticketmaster: "Ticketmaster",
+  google_sheets: "Google Sheets",
+  ical: "iCal Feed",
+  manual: "Manual (CSV)",
+};
+
+const SOURCE_TYPE_COLORS: Record<string, string> = {
+  ticketmaster: "bg-brand-sky text-foreground",
+  google_sheets: "bg-brand-lime text-foreground",
+  ical: "bg-brand-orange text-white",
+  manual: "bg-brand-cream text-foreground",
+};
+
+type ConfigField = { key: string; label: string; placeholder: string; required?: boolean };
+
+const SOURCE_CONFIG_FIELDS: Record<string, ConfigField[]> = {
+  ticketmaster: [
+    { key: "city", label: "City", placeholder: "Atlanta" },
+    { key: "stateCode", label: "State Code", placeholder: "GA" },
+    { key: "keyword", label: "Keyword Filter", placeholder: "music festival" },
+    { key: "radius", label: "Radius (miles)", placeholder: "25" },
+    { key: "classificationName", label: "Category Filter", placeholder: "Music" },
+  ],
+  google_sheets: [
+    { key: "sheetId", label: "Google Sheet ID", placeholder: "1BxiMVs0XRA5…", required: true },
+    { key: "tabName", label: "Tab Name", placeholder: "Event Intake" },
+  ],
+  ical: [
+    { key: "url", label: "iCal Feed URL", placeholder: "https://venue.com/events.ics", required: true },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Concert" },
+    { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
+  ],
+  manual: [],
+};
+
+const SYNC_STATUS_COLORS: Record<string, string> = {
+  idle: "bg-brand-cream text-foreground",
+  running: "bg-brand-sky text-foreground",
+  success: "bg-brand-lime text-foreground",
+  error: "bg-brand-red text-white",
+  partial: "bg-brand-yellow text-brand-yellow-foreground",
+};
+
 const ADMIN_PASSWORD =
   (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
@@ -1187,6 +1352,568 @@ function AdminEventCard({
   );
 }
 
+// ── SourcesPanel ─────────────────────────────────────────────────────────────
+
+function SourcesPanel({ adminKey }: { adminKey: string }) {
+  const [sources, setSources] = useState<EventSourceRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [syncingId, setSyncingId] = useState<string | null>(null);
+  const [syncMsg, setSyncMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Form state
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formName, setFormName] = useState("");
+  const [formType, setFormType] = useState("manual");
+  const [formConfig, setFormConfig] = useState<Record<string, string>>({});
+  const [formActive, setFormActive] = useState(true);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formSaving, setFormSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setSources(await listSources(adminKey));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load sources");
+    } finally {
+      setLoading(false);
+    }
+  }, [adminKey]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const openAdd = () => {
+    setEditingId(null);
+    setFormName("");
+    setFormType("manual");
+    setFormConfig({});
+    setFormActive(true);
+    setFormError(null);
+    setShowForm(true);
+  };
+
+  const openEdit = (s: EventSourceRecord) => {
+    setEditingId(s.id);
+    setFormName(s.name);
+    setFormType(s.type);
+    try { setFormConfig(JSON.parse(s.config) as Record<string, string>); }
+    catch { setFormConfig({}); }
+    setFormActive(s.isActive);
+    setFormError(null);
+    setShowForm(true);
+  };
+
+  const cancelForm = () => { setShowForm(false); setEditingId(null); };
+
+  const saveForm = async () => {
+    if (!formName.trim()) { setFormError("Name is required"); return; }
+    const configFields = SOURCE_CONFIG_FIELDS[formType] ?? [];
+    for (const f of configFields) {
+      if (f.required && !formConfig[f.key]?.trim()) {
+        setFormError(`${f.label} is required for ${SOURCE_TYPE_LABELS[formType] ?? formType}`);
+        return;
+      }
+    }
+    setFormSaving(true);
+    setFormError(null);
+    try {
+      if (editingId) {
+        await upsertSource("PATCH", editingId, { name: formName.trim(), type: formType, config: formConfig, isActive: formActive }, adminKey);
+      } else {
+        await upsertSource("POST", "", { name: formName.trim(), type: formType, config: formConfig, isActive: formActive }, adminKey);
+      }
+      setShowForm(false);
+      await load();
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setFormSaving(false);
+    }
+  };
+
+  const doSync = async (id: string) => {
+    setSyncingId(id);
+    setSyncMsg(null);
+    try {
+      const run = await triggerSync(id, adminKey);
+      const msg = `✅ Done — ${run.inserted} inserted, ${run.duplicates} duplicates, ${run.changed} seen, ${run.errors} errors`;
+      setSyncMsg({ id, msg, ok: true });
+      await load();
+    } catch (e) {
+      setSyncMsg({ id, msg: `❌ ${e instanceof Error ? e.message : "Sync failed"}`, ok: false });
+    } finally {
+      setSyncingId(null);
+    }
+  };
+
+  const doToggle = async (s: EventSourceRecord) => {
+    try {
+      await upsertSource("PATCH", s.id, { isActive: !s.isActive }, adminKey);
+      await load();
+    } catch { /* ignore */ }
+  };
+
+  const doDelete = async (id: string) => {
+    setDeletingId(id);
+    try {
+      await removeSource(id, adminKey);
+      await load();
+    } catch { /* ignore */ } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const configFields = SOURCE_CONFIG_FIELDS[formType] ?? [];
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>Event Sources</h3>
+          <p className="text-xs text-foreground/60 mt-0.5">
+            Configure sources for automated event ingestion. All imports enter the review queue — auto-publish is always off.
+          </p>
+        </div>
+        <button type="button" onClick={openAdd} className="button-pop button-pop-yellow text-sm px-3 py-2 shrink-0">
+          + Add Source
+        </button>
+      </div>
+
+      {/* Credential notice */}
+      <div className="bg-brand-cream border-2 border-foreground rounded-xl p-3 text-xs space-y-1">
+        <div className="font-black uppercase tracking-widest text-[10px]">API Credentials</div>
+        <div><span className="font-mono bg-white border border-foreground/20 px-1 rounded">TICKETMASTER_API_KEY</span> — set in environment secrets for Ticketmaster syncs</div>
+        <div><span className="font-mono bg-white border border-foreground/20 px-1 rounded">google-drive</span> connector — already connected (used for Google Sheets reads)</div>
+      </div>
+
+      {/* Add / Edit form */}
+      {showForm && (
+        <div className="card-pop bg-white border-2 border-foreground p-4 space-y-3">
+          <div className="font-black text-sm" style={{ fontFamily: "Bungee, sans-serif" }}>
+            {editingId ? "Edit Source" : "Add New Source"}
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest mb-1">Source Name *</label>
+              <input
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                placeholder="e.g. Ticketmaster Atlanta"
+                className="w-full border-2 border-foreground rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest mb-1">Source Type *</label>
+              <select
+                value={formType}
+                onChange={(e) => { setFormType(e.target.value); setFormConfig({}); }}
+                className="w-full border-2 border-foreground rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+              >
+                {Object.entries(SOURCE_TYPE_LABELS).map(([k, v]) => (
+                  <option key={k} value={k}>{v}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {configFields.length > 0 && (
+            <div className="grid sm:grid-cols-2 gap-3">
+              {configFields.map((f) => (
+                <div key={f.key}>
+                  <label className="block text-[10px] font-black uppercase tracking-widest mb-1">
+                    {f.label}{f.required ? " *" : ""}
+                  </label>
+                  <input
+                    value={formConfig[f.key] ?? ""}
+                    onChange={(e) => setFormConfig((p) => ({ ...p, [f.key]: e.target.value }))}
+                    placeholder={f.placeholder}
+                    className="w-full border-2 border-foreground rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {formType === "ticketmaster" && (
+            <p className="text-[10px] text-foreground/60 bg-brand-cream rounded-lg p-2">
+              Requires <span className="font-mono">TICKETMASTER_API_KEY</span> environment secret. Syncs will silently skip if key is absent.
+            </p>
+          )}
+
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="checkbox" checked={formActive} onChange={(e) => setFormActive(e.target.checked)} className="w-4 h-4 accent-brand-yellow" />
+            Active (enable auto-sync from admin panel)
+          </label>
+
+          {formError && <p className="text-sm text-brand-red font-bold">{formError}</p>}
+
+          <div className="flex gap-2">
+            <button type="button" onClick={cancelForm} className="button-pop text-sm px-3 py-2 bg-brand-cream">Cancel</button>
+            <button type="button" onClick={saveForm} disabled={formSaving} className="button-pop button-pop-yellow text-sm px-4 py-2 disabled:opacity-50 inline-flex items-center gap-2">
+              {formSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              {editingId ? "Save Changes" : "Create Source"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Source list */}
+      {loading && <div className="card-pop bg-white p-8 text-center text-sm text-foreground/60">Loading sources…</div>}
+      {error && <div className="text-sm text-brand-red font-bold">{error}</div>}
+
+      {!loading && sources.length === 0 && !showForm && (
+        <div className="card-pop bg-white p-10 text-center">
+          <FileText className="w-10 h-10 mx-auto mb-3 opacity-30" />
+          <p className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>No sources configured</p>
+          <p className="text-sm text-foreground/60 mt-1">Add a source above to start ingesting events automatically.</p>
+        </div>
+      )}
+
+      {sources.map((s) => (
+        <div key={s.id} className={`card-pop bg-white p-4 ${!s.isActive ? "opacity-60" : ""}`}>
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className={`badge-sticker text-[9px] shrink-0 ${SOURCE_TYPE_COLORS[s.type] ?? "bg-brand-cream"}`}>
+                {SOURCE_TYPE_LABELS[s.type] ?? s.type}
+              </span>
+              <span className="font-black text-sm truncate">{s.name}</span>
+              {!s.isActive && <span className="badge-sticker bg-foreground/10 text-[9px] shrink-0">Disabled</span>}
+            </div>
+            <div className="flex gap-1.5 shrink-0 flex-wrap">
+              <button
+                type="button"
+                onClick={() => doSync(s.id)}
+                disabled={syncingId === s.id || !s.isActive}
+                className="button-pop text-[10px] px-2 py-1 bg-brand-navy text-white inline-flex items-center gap-1 disabled:opacity-50"
+              >
+                {syncingId === s.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                Sync Now
+              </button>
+              <button type="button" onClick={() => doToggle(s)} className="button-pop text-[10px] px-2 py-1 bg-brand-cream">
+                {s.isActive ? "Disable" : "Enable"}
+              </button>
+              <button type="button" onClick={() => openEdit(s)} className="button-pop text-[10px] px-2 py-1 bg-brand-cream">
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => { if (window.confirm(`Delete source "${s.name}"?`)) void doDelete(s.id); }}
+                disabled={deletingId === s.id}
+                className="button-pop text-[10px] px-2 py-1 bg-brand-red text-white disabled:opacity-50"
+              >
+                {deletingId === s.id ? <Loader2 className="w-3 h-3 animate-spin" /> : "Delete"}
+              </button>
+            </div>
+          </div>
+
+          {/* Last sync info */}
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-foreground/60">
+            {s.lastSyncAt && (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="w-3 h-3" /> {new Date(s.lastSyncAt).toLocaleString()}
+              </span>
+            )}
+            <span className={`badge-sticker text-[9px] ${SYNC_STATUS_COLORS[s.lastSyncStatus] ?? "bg-brand-cream"}`}>
+              {s.lastSyncStatus}
+            </span>
+            {s.lastSyncMessage && <span className="text-[11px]">{s.lastSyncMessage}</span>}
+            {!s.lastSyncAt && <span className="text-foreground/40">Never synced</span>}
+          </div>
+
+          {syncMsg?.id === s.id && (
+            <div className={`mt-2 text-xs font-bold ${syncMsg.ok ? "text-foreground" : "text-brand-red"}`}>
+              {syncMsg.msg}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── ImportLogsPanel ───────────────────────────────────────────────────────────
+
+function ImportLogsPanel({ adminKey }: { adminKey: string }) {
+  const [runs, setRuns] = useState<ImportRunRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [rowsCache, setRowsCache] = useState<Record<string, ImportRunRowRecord[]>>({});
+  const [rowsLoading, setRowsLoading] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      setRuns(await listImportRuns(adminKey));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load logs");
+    } finally {
+      setLoading(false);
+    }
+  }, [adminKey]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const toggleExpand = async (id: string) => {
+    if (expandedId === id) { setExpandedId(null); return; }
+    setExpandedId(id);
+    if (!rowsCache[id]) {
+      setRowsLoading(true);
+      try {
+        const rows = await getRunRows(id, adminKey);
+        setRowsCache((p) => ({ ...p, [id]: rows }));
+      } catch { /* ignore */ } finally {
+        setRowsLoading(false);
+      }
+    }
+  };
+
+  const RUN_STATUS_COLORS: Record<string, string> = {
+    running: "bg-brand-sky text-foreground",
+    success: "bg-brand-lime text-foreground",
+    error: "bg-brand-red text-white",
+    partial: "bg-brand-yellow text-brand-yellow-foreground",
+  };
+
+  const ROW_STATUS_COLORS: Record<string, string> = {
+    inserted: "bg-brand-lime text-foreground",
+    duplicate: "bg-brand-yellow text-brand-yellow-foreground",
+    seen: "bg-brand-cream text-foreground",
+    changed: "bg-brand-sky text-foreground",
+    error: "bg-brand-red text-white",
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>Import Logs</h3>
+          <p className="text-xs text-foreground/60 mt-0.5">History of all source sync runs.</p>
+        </div>
+        <button type="button" onClick={load} className="button-pop text-sm px-3 py-2 bg-white inline-flex items-center gap-1.5">
+          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+        </button>
+      </div>
+
+      {loading && <div className="card-pop bg-white p-8 text-center text-sm text-foreground/60">Loading logs…</div>}
+      {error && <div className="text-sm text-brand-red font-bold">{error}</div>}
+
+      {!loading && runs.length === 0 && (
+        <div className="card-pop bg-white p-10 text-center">
+          <Inbox className="w-10 h-10 mx-auto mb-3 opacity-30" />
+          <p className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>No import runs yet</p>
+          <p className="text-sm text-foreground/60 mt-1">Trigger a sync from the Sources tab to see logs here.</p>
+        </div>
+      )}
+
+      {runs.map((run) => {
+        const isExpanded = expandedId === run.id;
+        const rows = rowsCache[run.id];
+        return (
+          <div key={run.id} className="card-pop bg-white p-4">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-black text-sm">{run.sourceName ?? run.sourceId.slice(0, 8)}</span>
+                  <span className={`badge-sticker text-[9px] ${RUN_STATUS_COLORS[run.status] ?? "bg-brand-cream"}`}>
+                    {run.status}
+                  </span>
+                </div>
+                <div className="text-xs text-foreground/60 mt-0.5">
+                  {new Date(run.startedAt).toLocaleString()}
+                  {run.finishedAt && ` · ${Math.round((new Date(run.finishedAt).getTime() - new Date(run.startedAt).getTime()) / 1000)}s`}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 text-[10px]">
+                <span className="badge-sticker bg-foreground/10">{run.found} found</span>
+                {run.inserted > 0 && <span className="badge-sticker bg-brand-lime text-foreground">{run.inserted} inserted</span>}
+                {run.duplicates > 0 && <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground">{run.duplicates} dup</span>}
+                {run.changed > 0 && <span className="badge-sticker bg-brand-sky text-foreground">{run.changed} seen</span>}
+                {run.errors > 0 && <span className="badge-sticker bg-brand-red text-white">{run.errors} error</span>}
+              </div>
+            </div>
+
+            {run.errorDetail && (
+              <div className="mt-2 text-xs text-brand-red font-mono bg-red-50 rounded p-2">{run.errorDetail}</div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => toggleExpand(run.id)}
+              className="text-[10px] font-display uppercase tracking-widest text-foreground/50 hover:text-foreground flex items-center gap-1 mt-2"
+            >
+              {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              {isExpanded ? "Hide rows" : "Show rows"}
+            </button>
+
+            {isExpanded && (
+              <div className="mt-3 border-t-2 border-dashed border-foreground/20 pt-3">
+                {rowsLoading && !rows ? (
+                  <div className="text-xs text-center py-4 text-foreground/50">Loading rows…</div>
+                ) : rows && rows.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs min-w-[480px]">
+                      <thead>
+                        <tr className="border-b border-foreground/10">
+                          <th className="text-left py-1 px-2 font-black uppercase tracking-widest text-[9px]">Status</th>
+                          <th className="text-left py-1 px-2 font-black uppercase tracking-widest text-[9px]">Name</th>
+                          <th className="text-left py-1 px-2 font-black uppercase tracking-widest text-[9px]">Date</th>
+                          <th className="text-left py-1 px-2 font-black uppercase tracking-widest text-[9px]">Venue</th>
+                          <th className="text-left py-1 px-2 font-black uppercase tracking-widest text-[9px]">Note</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.map((r) => (
+                          <tr key={r.id} className="border-b border-foreground/5 last:border-0">
+                            <td className="py-1 px-2">
+                              <span className={`badge-sticker text-[8px] ${ROW_STATUS_COLORS[r.status] ?? "bg-brand-cream"}`}>{r.status}</span>
+                            </td>
+                            <td className="py-1 px-2 max-w-[160px] truncate">{r.rawName ?? "—"}</td>
+                            <td className="py-1 px-2 whitespace-nowrap">{r.rawDate ?? "—"}</td>
+                            <td className="py-1 px-2 max-w-[120px] truncate">{r.rawVenue ?? "—"}</td>
+                            <td className="py-1 px-2 text-foreground/50 max-w-[140px] truncate">{r.errorMessage ?? "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-xs text-foreground/50 text-center py-2">No row-level data recorded.</div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── DuplicatesPanel ───────────────────────────────────────────────────────────
+
+function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged: () => void }) {
+  const [pairs, setPairs] = useState<DuplicatePair[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      setPairs(await listDuplicates(adminKey));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load duplicates");
+    } finally {
+      setLoading(false);
+    }
+  }, [adminKey]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const resolve = async (id: string, resolution: "pending" | "archived") => {
+    setProcessingId(id);
+    try {
+      await bulkUpdateStatus([id], resolution, adminKey);
+      await load();
+      onChanged();
+    } catch { /* ignore */ } finally {
+      setProcessingId(null);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>Possible Duplicates</h3>
+          <p className="text-xs text-foreground/60 mt-0.5">Events that closely match an existing record — review each pair and decide.</p>
+        </div>
+        <button type="button" onClick={load} className="button-pop text-sm px-3 py-2 bg-white inline-flex items-center gap-1.5">
+          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+        </button>
+      </div>
+
+      {loading && <div className="card-pop bg-white p-8 text-center text-sm text-foreground/60">Loading…</div>}
+      {error && <div className="text-sm text-brand-red font-bold">{error}</div>}
+
+      {!loading && pairs.length === 0 && (
+        <div className="card-pop bg-white p-10 text-center">
+          <CheckCircle className="w-10 h-10 mx-auto mb-3 opacity-30" />
+          <p className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>No duplicates to review</p>
+          <p className="text-sm text-foreground/60 mt-1">Events that match existing records will appear here for your decision.</p>
+        </div>
+      )}
+
+      {pairs.map(({ flagged, original }) => (
+        <div key={flagged.id} className="card-pop bg-white p-4">
+          <div className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">Possible Duplicate Pair</div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {/* Flagged (new incoming) */}
+            <div className="bg-brand-yellow/10 border-2 border-brand-yellow rounded-xl p-3">
+              <div className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px] mb-2 inline-block">⚠️ New / Flagged</div>
+              <div className="font-black text-sm leading-tight mb-1">{flagged.name}</div>
+              <div className="text-xs text-foreground/70 space-y-0.5">
+                {flagged.date && <div className="flex items-center gap-1"><Calendar className="w-3 h-3" />{flagged.date}</div>}
+                {flagged.venue && <div className="flex items-center gap-1"><MapPin className="w-3 h-3" />{flagged.venue}</div>}
+                {flagged.neighborhood && <div>{flagged.neighborhood}</div>}
+                <div className="text-[10px] text-foreground/40 mt-1">Source: {flagged.source}</div>
+              </div>
+            </div>
+
+            {/* Original */}
+            <div className="bg-brand-cream border-2 border-foreground/20 rounded-xl p-3">
+              <div className="badge-sticker bg-foreground/10 text-[9px] mb-2 inline-block">📌 Existing Event</div>
+              {original ? (
+                <>
+                  <div className="font-black text-sm leading-tight mb-1">{original.name}</div>
+                  <div className="text-xs text-foreground/70 space-y-0.5">
+                    {original.date && <div className="flex items-center gap-1"><Calendar className="w-3 h-3" />{original.date}</div>}
+                    {original.venue && <div className="flex items-center gap-1"><MapPin className="w-3 h-3" />{original.venue}</div>}
+                    {original.neighborhood && <div>{original.neighborhood}</div>}
+                    <div className="text-[10px] text-foreground/40 mt-1">Status: {original.workflowStatus}</div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-xs text-foreground/50 italic">Original event not found</div>
+              )}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-foreground/10">
+            <button
+              type="button"
+              disabled={processingId === flagged.id}
+              onClick={() => resolve(flagged.id, "pending")}
+              className="button-pop text-xs px-3 py-1.5 bg-brand-lime text-foreground inline-flex items-center gap-1 disabled:opacity-50"
+            >
+              {processingId === flagged.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3" />}
+              Not a Duplicate — Send to Review
+            </button>
+            <button
+              type="button"
+              disabled={processingId === flagged.id}
+              onClick={() => resolve(flagged.id, "archived")}
+              className="button-pop text-xs px-3 py-1.5 bg-foreground/10 text-foreground inline-flex items-center gap-1 disabled:opacity-50"
+            >
+              {processingId === flagged.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Archive className="w-3 h-3" />}
+              Confirm Duplicate — Archive
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Bulk actions constant ─────────────────────────────────────────────────────
+
 const BULK_ACTIONS = [
   { status: "approved",  label: "Approve",  icon: <CheckCircle className="w-3.5 h-3.5" />, cls: "bg-brand-lime text-foreground" },
   { status: "published", label: "Publish",  icon: <Eye className="w-3.5 h-3.5" />,         cls: "bg-brand-navy text-white" },
@@ -1194,8 +1921,18 @@ const BULK_ACTIONS = [
   { status: "archived",  label: "Archive",  icon: <Archive className="w-3.5 h-3.5" />,     cls: "bg-foreground/10 text-foreground" },
 ] as const;
 
+type OpsTab = "events" | "sources" | "logs" | "duplicates";
+
+const OPS_TABS: { id: OpsTab; label: string; icon: React.ReactNode }[] = [
+  { id: "events",     label: "Events",     icon: <Calendar className="w-3.5 h-3.5" /> },
+  { id: "sources",    label: "Sources",    icon: <RefreshCw className="w-3.5 h-3.5" /> },
+  { id: "logs",       label: "Import Logs",icon: <FileText className="w-3.5 h-3.5" /> },
+  { id: "duplicates", label: "Duplicates", icon: <AlertTriangle className="w-3.5 h-3.5" /> },
+];
+
 function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const qc = useQueryClient();
+  const [opsTab, setOpsTab] = useState<OpsTab>("events");
   const [statusFilter, setStatusFilter] = useState<StatusTab>("all");
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -1286,6 +2023,32 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   return (
     <div>
       {summary && <SummaryBar summary={summary} />}
+
+      {/* Inner ops tab bar */}
+      <div className="flex flex-wrap gap-1.5 mb-5 border-b-2 border-foreground/10 pb-3">
+        {OPS_TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setOpsTab(t.id)}
+            className={`button-pop text-sm px-3 py-1.5 inline-flex items-center gap-1.5 ${opsTab === t.id ? "button-pop-yellow" : "bg-white"}`}
+          >
+            {t.icon} {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Sources panel */}
+      {opsTab === "sources" && <SourcesPanel adminKey={adminKey} />}
+
+      {/* Import logs panel */}
+      {opsTab === "logs" && <ImportLogsPanel adminKey={adminKey} />}
+
+      {/* Duplicates panel */}
+      {opsTab === "duplicates" && <DuplicatesPanel adminKey={adminKey} onChanged={refresh} />}
+
+      {/* Events panel (existing content) */}
+      {opsTab === "events" && <>
 
       {/* CSV Importer */}
       {showImporter && (
@@ -1414,6 +2177,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           />
         ))}
       </div>
+      </>}
     </div>
   );
 }

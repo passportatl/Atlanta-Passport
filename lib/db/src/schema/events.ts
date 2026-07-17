@@ -29,6 +29,11 @@ export const eventsTable = pgTable("events", {
   promoContactMethod: text("promo_contact_method"),
   source: text("source").notNull().default("web_form"),
   sourceRef: text("source_ref"),
+  // Ingestion system fields
+  ingestSourceId: uuid("ingest_source_id"),          // FK to event_sources.id
+  externalId: text("external_id"),                    // ID from the originating system
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }), // updated on each sync
+  externalChangedAt: timestamp("external_changed_at", { withTimezone: true }), // set when source data changed
   intakeNotes: text("intake_notes"),
   assignedTo: text("assigned_to"),
   adminNotes: text("admin_notes"),
