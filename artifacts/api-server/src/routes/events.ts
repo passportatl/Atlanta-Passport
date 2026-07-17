@@ -94,6 +94,28 @@ router.post("/events", async (req, res) => {
   }
   const data = parsed.data;
 
+  // Derive tier from listing package
+  const listingPackage = data.listingPackage ?? "free";
+  const tier = listingPackage === "premier" ? "paid" : listingPackage === "featured" ? "paid" : "free";
+
+  // Pack extra metadata that has no dedicated column into intake notes
+  const extraNotes: string[] = [];
+  if (data.ageCategory) extraNotes.push(`Age Category: ${data.ageCategory}`);
+  if (data.tags) extraNotes.push(`Tags: ${data.tags}`);
+  if (data.imageUrl) extraNotes.push(`Image URL: ${data.imageUrl}`);
+  if (data.ticketUrl && data.url && data.ticketUrl !== data.url)
+    extraNotes.push(`Ticket URL: ${data.ticketUrl}`);
+  if (listingPackage !== "free") extraNotes.push(`Listing Package: ${listingPackage}`);
+  if (data.endDate) extraNotes.push(`End Date: ${data.endDate}`);
+
+  const intakeNotes = [
+    data.intakeNotes ?? "",
+    ...extraNotes,
+  ].filter(Boolean).join("\n") || null;
+
+  // Use ticketUrl as url when no website provided
+  const urlToStore = data.url || data.ticketUrl || null;
+
   const completenessScore = computeEventCompleteness({
     name: data.name,
     date: data.date,
@@ -104,7 +126,8 @@ router.post("/events", async (req, res) => {
     category: data.category,
     time: data.time,
     cost: data.cost,
-    url: data.url,
+    url: urlToStore,
+    highlights: data.highlights,
   });
 
   const [row] = await db
@@ -119,61 +142,78 @@ router.post("/events", async (req, res) => {
       address: data.address ?? null,
       neighborhood: data.neighborhood ?? "",
       description: data.description ?? null,
+      highlights: data.highlights ?? null,
+      instagram: data.instagram ?? null,
       cost: data.cost ?? null,
-      url: data.url ?? null,
+      url: urlToStore,
       contactName: data.contactName ?? null,
       contactEmail: data.contactEmail ?? null,
       contactPhone: data.contactPhone ?? null,
       promoContact: data.promoContact ?? null,
       promoContactMethod: data.promoContactMethod ?? null,
-      intakeNotes: data.intakeNotes ?? null,
+      intakeNotes,
       source: "web_form",
+      tier,
       workflowStatus: "pending",
       completenessScore,
     })
     .returning();
 
   // Notification email
-  const subject = `New Passport ATL event — ${data.name}`;
+  const subject = `New Passport ATL event${listingPackage !== "free" ? ` [${listingPackage.toUpperCase()}]` : ""} — ${data.name}`;
   const htmlBody = `
     <div style="font-family:sans-serif;max-width:640px;margin:0 auto;padding:20px;">
       <h2 style="font-family:Bungee,sans-serif;margin-bottom:16px;">New Event Submission</h2>
       <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        ${renderRow("Listing Package", listingPackage.toUpperCase())}
         ${renderRow("Event Name", data.name)}
         ${renderRow("Category", data.category)}
+        ${renderRow("Age Category", data.ageCategory)}
         ${renderRow("Date", data.date)}
+        ${renderRow("End Date", data.endDate)}
         ${renderRow("Time", data.time)}
         ${renderRow("Venue", data.venue)}
         ${renderRow("Address", data.address)}
         ${renderRow("Neighborhood", data.neighborhood)}
         ${renderRow("Cost", data.cost)}
-        ${renderRow("URL", data.url)}
+        ${renderRow("Website", data.url)}
+        ${renderRow("Ticket URL", data.ticketUrl)}
+        ${renderRow("Image URL", data.imageUrl)}
+        ${renderRow("Instagram", data.instagram?.join(", "))}
+        ${renderRow("Tags", data.tags)}
         ${renderRow("Description", data.description)}
+        ${renderRow("Highlights", data.highlights?.map((h, i) => `${i + 1}. ${h}`).join("<br>"))}
         ${renderRow("Contact Name", data.contactName)}
         ${renderRow("Contact Email", data.contactEmail)}
         ${renderRow("Contact Phone", data.contactPhone)}
         ${data.promoContact ? renderRow("Wants promo contact", "Yes") : ""}
         ${data.promoContact ? renderRow("Preferred contact method", data.promoContactMethod || "not specified") : ""}
-        ${renderRow("Notes", data.intakeNotes)}
+        ${renderRow("Notes", intakeNotes)}
       </table>
-      <p style="margin-top:16px;font-size:12px;color:#555;">Event id: ${row!.id} · Completeness: ${completenessScore}%</p>
+      <p style="margin-top:16px;font-size:12px;color:#555;">Event id: ${row!.id} · Completeness: ${completenessScore}% · Tier: ${tier}</p>
     </div>`;
 
   const textBody = [
-    `New event: ${data.name}`,
-    `Date: ${data.date ?? ""}`,
+    `New event [${listingPackage.toUpperCase()}]: ${data.name}`,
+    `Date: ${data.date ?? ""}${data.endDate ? " – " + data.endDate : ""}`,
     `Time: ${data.time ?? ""}`,
     `Venue: ${data.venue ?? ""}`,
     `Address: ${data.address ?? ""}`,
     `Neighborhood: ${data.neighborhood ?? ""}`,
+    `Age Category: ${data.ageCategory ?? ""}`,
     `Cost: ${data.cost ?? ""}`,
-    `URL: ${data.url ?? ""}`,
+    `Website: ${data.url ?? ""}`,
+    `Ticket URL: ${data.ticketUrl ?? ""}`,
+    `Image URL: ${data.imageUrl ?? ""}`,
+    `Instagram: ${data.instagram?.join(", ") ?? ""}`,
+    `Tags: ${data.tags ?? ""}`,
     `Description: ${data.description ?? ""}`,
+    data.highlights?.length ? `Highlights:\n${data.highlights.map((h) => `  • ${h}`).join("\n")}` : "",
     `Contact: ${data.contactName ?? ""} <${data.contactEmail ?? ""}> ${data.contactPhone ?? ""}`,
     data.promoContact ? `Wants promo contact (preferred: ${data.promoContactMethod || "unspecified"})` : "",
-    `Notes: ${data.intakeNotes ?? ""}`,
+    `Notes: ${intakeNotes ?? ""}`,
     ``,
-    `Event id: ${row!.id} · Completeness: ${completenessScore}%`,
+    `Event id: ${row!.id} · Completeness: ${completenessScore}% · Tier: ${tier}`,
   ]
     .filter(Boolean)
     .join("\n");

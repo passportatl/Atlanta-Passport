@@ -339,6 +339,8 @@ export const SubmitEventBody = zod.object({
   address: zod.string().optional(),
   neighborhood: zod.string().optional(),
   description: zod.string().optional(),
+  highlights: zod.array(zod.string()).optional(),
+  instagram: zod.array(zod.string()).optional(),
   cost: zod.string().optional(),
   url: zod.string().optional(),
   contactName: zod.string(),
@@ -347,6 +349,12 @@ export const SubmitEventBody = zod.object({
   promoContact: zod.boolean().optional(),
   promoContactMethod: zod.string().optional(),
   intakeNotes: zod.string().optional(),
+  ageCategory: zod.string().optional(),
+  tags: zod.string().optional(),
+  imageUrl: zod.string().optional(),
+  ticketUrl: zod.string().optional(),
+  listingPackage: zod.string().optional(),
+  endDate: zod.string().optional(),
 });
 
 /**

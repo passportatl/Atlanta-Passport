@@ -12,6 +12,7 @@ import PartnersComingSoon from "@/pages/partners-coming-soon";
 import EventDetail from "@/pages/event-detail";
 import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
+import ListEvent from "@/pages/list-event";
 import Listing from "@/pages/listing";
 import StampPage from "@/pages/stamp";
 import RedeemPage from "@/pages/redeem";
@@ -43,8 +44,8 @@ function MarketingRoutes() {
             (the real page is still imported above and fully intact). */}
         <Route path="/apply" component={PartnersComingSoon} />
         {/* Event submissions stay open while partner applications are paused:
-            /list-event renders the Apply form locked to event mode. */}
-        <Route path="/list-event">{() => <Apply eventOnly />}</Route>
+            /list-event renders the full event listing form. */}
+        <Route path="/list-event" component={ListEvent} />
         <Route path="/listing/:id" component={Listing} />
         <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route component={NotFound} />

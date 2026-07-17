@@ -319,6 +319,8 @@ export interface SubmitEventInput {
   address?: string;
   neighborhood?: string;
   description?: string;
+  highlights?: string[];
+  instagram?: string[];
   cost?: string;
   url?: string;
   contactName: string;
@@ -327,6 +329,12 @@ export interface SubmitEventInput {
   promoContact?: boolean;
   promoContactMethod?: string;
   intakeNotes?: string;
+  ageCategory?: string;
+  tags?: string;
+  imageUrl?: string;
+  ticketUrl?: string;
+  listingPackage?: string;
+  endDate?: string;
 }
 
 export interface AdminUpdateEventInput {
