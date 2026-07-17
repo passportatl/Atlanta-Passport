@@ -5,6 +5,8 @@ import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, Che
 import { motion, AnimatePresence } from "framer-motion";
 import { events as sampleEvents, businesses, neighborhoods } from "@/data/sample-data";
 import { useListPublicEvents, getListPublicEventsQueryKey } from "@workspace/api-client-react";
+import { EVENT_TAGS } from "@/data/event-taxonomy";
+export { EVENT_TYPES } from "@/data/event-taxonomy";
 import CategoryBadge from "@/components/CategoryBadge";
 import Footer from "@/components/layout/Footer";
 import {
@@ -104,38 +106,13 @@ type EventItem = {
   instagram?: readonly string[] | string[] | null;
   bonusStamp?: boolean;
   listingOnly?: boolean;
+  tags?: string[] | null;
 };
 
 // Fixed dropdown option lists for the selected-day filters. Price tiers map to
 // ticket cost: $ is $20 and under, $$ is $20–60, $$$ is $60+ (the tier meaning
 // is intentionally not shown in the dropdown).
 const PRICE_TIERS = ["Free", "$", "$$", "$$$"] as const;
-// Event Type options mirror the dropdown on the "CSV FOR REPLIT" sheet's
-// Events tab (Type column), in the same order. "Performing Arts" is spelled
-// "Perfprming arts" in the sheet; both spellings match when filtering.
-export const EVENT_TYPES = [
-  "Concert",
-  "Festival",
-  "Pop Up",
-  "Party",
-  "Market",
-  "Convention",
-  "Sports",
-  "Political",
-  "Parade",
-  "Comedy",
-  "Gaming",
-  "Charity",
-  "Karaoke",
-  "Trivia",
-  "Tasting",
-  "Art Exhibit",
-  "Performing Arts",
-  "Workshops",
-  "After Hours",
-  "Family Friendly",
-  "Wellness",
-] as const;
 
 // Case/typo-tolerant comparison between an event's category and a Type option.
 function matchesEventType(category: string, activeTypes: string[]): boolean {
@@ -207,6 +184,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         highlights: e.highlights,
         instagram: e.instagram,
         bonusStamp: e.isBonusStamp,
+        tags: (e as { tags?: string[] | null }).tags ?? null,
       })),
     [apiEventsRaw],
   );
@@ -368,6 +346,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const [activeAreas, setActiveAreas] = useState<string[]>([]);
   const [activePrices, setActivePrices] = useState<string[]>([]);
   const [activeTypes, setActiveTypes] = useState<string[]>([]);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
 
   const toggleIn = (
     list: string[],
@@ -380,13 +359,15 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     activeTimes.length > 0 ||
     activeAreas.length > 0 ||
     activePrices.length > 0 ||
-    activeTypes.length > 0;
+    activeTypes.length > 0 ||
+    activeTags.length > 0;
 
   const clearFilters = () => {
     setActiveTimes([]);
     setActiveAreas([]);
     setActivePrices([]);
     setActiveTypes([]);
+    setActiveTags([]);
   };
 
   // Area options are the same neighborhoods the Explore page lists.
@@ -400,6 +381,10 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     if (activeAreas.length > 0 && !activeAreas.includes(ev.neighborhood)) return false;
     if (activePrices.length > 0 && !activePrices.includes(ev.price)) return false;
     if (activeTypes.length > 0 && !matchesEventType(ev.category, activeTypes)) return false;
+    if (activeTags.length > 0) {
+      const evTags = ev.tags ?? [];
+      if (!activeTags.some((t) => evTags.includes(t))) return false;
+    }
     return true;
   });
 
@@ -777,6 +762,34 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                         onSelect={(e) => e.preventDefault()}
                       >
                         {cat}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex h-8 w-full items-center justify-between gap-1 rounded-md border-2 border-foreground bg-white px-2 font-display text-[10px] tracking-wider uppercase"
+                    >
+                      <span className="truncate">
+                        {activeTags.length > 0
+                          ? `${t("events_page.filter_tags", { defaultValue: "Tags" })} (${activeTags.length})`
+                          : t("events_page.filter_tags", { defaultValue: "Tags" })}
+                      </span>
+                      <ChevronDown className="w-3.5 h-3.5 opacity-50 shrink-0" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="max-h-72">
+                    {EVENT_TAGS.map((tag) => (
+                      <DropdownMenuCheckboxItem
+                        key={tag}
+                        checked={activeTags.includes(tag)}
+                        onCheckedChange={() => toggleIn(activeTags, setActiveTags, tag)}
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        {tag}
                       </DropdownMenuCheckboxItem>
                     ))}
                   </DropdownMenuContent>

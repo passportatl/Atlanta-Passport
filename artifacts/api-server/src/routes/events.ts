@@ -39,9 +39,10 @@ function requireAdmin(req: Request, res: Response, next: NextFunction): void {
 
 // GET /events  — published events only, optional neighborhood/category filter
 router.get("/events", async (req, res) => {
-  const { neighborhood, category } = req.query as {
+  const { neighborhood, category, tags } = req.query as {
     neighborhood?: string;
     category?: string;
+    tags?: string;
   };
 
   const rows = await db
@@ -50,9 +51,15 @@ router.get("/events", async (req, res) => {
     .where(eq(eventsTable.workflowStatus, "published"))
     .orderBy(desc(eventsTable.createdAt));
 
+  const tagFilter = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
+
   const filtered = rows.filter((e) => {
     if (neighborhood && e.neighborhood !== neighborhood) return false;
     if (category && e.category !== category) return false;
+    if (tagFilter.length > 0) {
+      const evTags = e.tags ?? [];
+      if (!tagFilter.some((t) => evTags.includes(t))) return false;
+    }
     return true;
   });
 
@@ -101,7 +108,7 @@ router.post("/events", async (req, res) => {
   // Pack extra metadata that has no dedicated column into intake notes
   const extraNotes: string[] = [];
   if (data.ageCategory) extraNotes.push(`Age Category: ${data.ageCategory}`);
-  if (data.tags) extraNotes.push(`Tags: ${data.tags}`);
+  if (data.tags && data.tags.length > 0) extraNotes.push(`Tags: ${data.tags.join(", ")}`);
   if (data.imageUrl) extraNotes.push(`Image URL: ${data.imageUrl}`);
   if (data.ticketUrl && data.url && data.ticketUrl !== data.url)
     extraNotes.push(`Ticket URL: ${data.ticketUrl}`);
@@ -151,6 +158,8 @@ router.post("/events", async (req, res) => {
       contactPhone: data.contactPhone ?? null,
       promoContact: data.promoContact ?? null,
       promoContactMethod: data.promoContactMethod ?? null,
+      ageCategory: data.ageCategory ?? null,
+      tags: data.tags && data.tags.length > 0 ? data.tags : null,
       intakeNotes,
       source: "web_form",
       tier,
@@ -352,6 +361,8 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
   if (data.description !== undefined) updates.description = data.description;
   if (data.cost !== undefined) updates.cost = data.cost;
   if (data.url !== undefined) updates.url = data.url;
+  if (data.tags !== undefined) updates.tags = data.tags;
+  if (data.ageCategory !== undefined) updates.ageCategory = data.ageCategory;
   if (data.scheduledPublishAt !== undefined) {
     updates.scheduledPublishAt = data.scheduledPublishAt
       ? new Date(data.scheduledPublishAt)

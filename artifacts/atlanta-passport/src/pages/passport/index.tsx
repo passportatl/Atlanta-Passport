@@ -56,7 +56,7 @@ export default function PassportHome() {
             DIGITAL PASSPORT
           </div>
           <h1 className="text-3xl sm:text-4xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>
-            Your Passport ATL
+            Passport Rewards
           </h1>
           <p className="text-sm text-foreground/70">
             Collect stamps at participating spots. Unlock secret routes & rewards.

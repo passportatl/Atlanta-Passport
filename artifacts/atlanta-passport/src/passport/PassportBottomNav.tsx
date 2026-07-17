@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Compass, Stamp as StampIcon, Map, Mail, User, Calendar, Menu, X, ArrowLeft } from "lucide-react";
+import { Compass, Stamp as StampIcon, Map, Mail, Trophy, Calendar, Menu, X, ArrowLeft } from "lucide-react";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SocialLinks } from "@/components/SocialLinks";
@@ -22,7 +22,7 @@ const TABS = [
   { href: "/passport/events", label: "Events", icon: Calendar },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/contact", label: "Contact", icon: Mail },
-  { href: "/passport", label: "Profile", icon: User, exact: true },
+  { href: "/passport", label: "Rewards", icon: Trophy, exact: true },
 ];
 
 type Tab = (typeof TABS)[number];

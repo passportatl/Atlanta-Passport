@@ -350,7 +350,7 @@ export const SubmitEventBody = zod.object({
   promoContactMethod: zod.string().optional(),
   intakeNotes: zod.string().optional(),
   ageCategory: zod.string().optional(),
-  tags: zod.string().optional(),
+  tags: zod.array(zod.string()).optional(),
   imageUrl: zod.string().optional(),
   ticketUrl: zod.string().optional(),
   listingPackage: zod.string().optional(),
@@ -383,6 +383,8 @@ export const GetPublicEventResponse = zod.object({
   isFeatured: zod.boolean(),
   isBonusStamp: zod.boolean(),
   tier: zod.string(),
+  tags: zod.array(zod.string()).nullish(),
+  ageCategory: zod.string().nullish(),
   publishedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
@@ -434,6 +436,8 @@ export const ListAdminEventsResponseItem = zod.object({
   paymentId: zod.string().nullish(),
   paymentStatus: zod.string().nullish(),
   emailDelivered: zod.string(),
+  tags: zod.array(zod.string()).nullish(),
+  ageCategory: zod.string().nullish(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });
@@ -484,6 +488,8 @@ export const UpdateAdminEventBody = zod.object({
   description: zod.string().optional(),
   cost: zod.string().optional(),
   url: zod.string().optional(),
+  tags: zod.array(zod.string()).optional(),
+  ageCategory: zod.string().optional(),
 });
 
 export const UpdateAdminEventResponse = zod.object({
@@ -524,6 +530,8 @@ export const UpdateAdminEventResponse = zod.object({
   paymentId: zod.string().nullish(),
   paymentStatus: zod.string().nullish(),
   emailDelivered: zod.string(),
+  tags: zod.array(zod.string()).nullish(),
+  ageCategory: zod.string().nullish(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });

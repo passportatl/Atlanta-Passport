@@ -18,6 +18,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { categories, categoryColor, isDarkColor, neighborhoods } from "@/data/sample-data";
+import { EVENT_TYPES, EVENT_TAGS } from "@/data/event-taxonomy";
 import Marquee from "@/components/Marquee";
 import { cn } from "@/lib/utils";
 
@@ -89,7 +90,7 @@ const PACKAGES: {
   },
 ];
 
-const AGE_OPTIONS = ["All Ages", "Family (kids welcome)", "18+ only", "21+ only"];
+const AGE_OPTIONS = ["All Ages", "18+ only", "21+ only"];
 
 // ── Schema ──────────────────────────────────────────────────────────────────────
 
@@ -99,7 +100,7 @@ const schema = z
     eventName: z.string().min(2, "Event name must be at least 2 characters."),
     description: z.string().optional().default(""),
     highlights: z.string().optional().default(""),
-    tags: z.string().optional().default(""),
+    tags: z.array(z.string()).default([]),
     eventDate: z.string().min(1, "Start date is required."),
     endDate: z.string().optional().default(""),
     startTime: z.string().min(1, "Start time is required."),
@@ -107,7 +108,7 @@ const schema = z
     venue: z.string().min(2, "Venue is required."),
     address: z.string().min(5, "Address is required."),
     neighborhood: z.string().min(1, "Neighborhood is required."),
-    category: z.array(z.string()).min(1, "Select at least one event type."),
+    category: z.string().min(1, "Select a primary event type."),
     ageCategory: z.string().min(1, "Age range is required."),
     cost: z.string().min(1, 'Enter a price or "Free".'),
     ticketUrl: z.string().optional().default(""),
@@ -276,13 +277,13 @@ function ReviewSummary({ values, pkg }: { values: Partial<FormValues>; pkg: Pkg 
           {row("Address", values.address)}
           {row("Neighborhood", values.neighborhood)}
           {row("Event Type", values.category)}
+          {values.tags.length > 0 && row("Tags", values.tags.join(", "))}
           {row("Age Range", values.ageCategory)}
           {row("Cost", values.cost)}
           {row("Ticket URL", values.ticketUrl)}
           {row("Website", values.website)}
           {row("Image URL", values.imageUrl)}
           {row("Instagram", values.instagramHandle)}
-          {row("Tags", values.tags)}
           {row("Description", values.description)}
           {hLines.length > 0 && row("Highlights", hLines.map((h, i) => `${i + 1}. ${h}`).join(" · "))}
           {row("Organizer", values.organizerName)}
@@ -310,7 +311,7 @@ export default function ListEvent() {
       eventName: "",
       description: "",
       highlights: "",
-      tags: "",
+      tags: [],
       eventDate: "",
       endDate: "",
       startTime: "",
@@ -318,7 +319,7 @@ export default function ListEvent() {
       venue: "",
       address: "",
       neighborhood: "",
-      category: [],
+      category: "",
       ageCategory: "",
       cost: "",
       ticketUrl: "",
@@ -376,7 +377,7 @@ export default function ListEvent() {
 
       const body = {
         name: values.eventName,
-        category: values.category.join(", "),
+        category: values.category,
         date: dateDisplay,
         dateIso: values.eventDate,
         time: timeDisplay,
@@ -394,7 +395,7 @@ export default function ListEvent() {
         promoContact: values.promoContact,
         promoContactMethod: promoContactMethod || undefined,
         ageCategory: values.ageCategory || undefined,
-        tags: values.tags || undefined,
+        tags: values.tags.length > 0 ? values.tags : undefined,
         imageUrl: values.imageUrl || undefined,
         ticketUrl: values.ticketUrl || undefined,
         listingPackage: values.listingPackage,
@@ -634,23 +635,6 @@ export default function ListEvent() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tags <span className="font-normal text-muted-foreground">(optional)</span></FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="art, free, outdoor, food, music, community"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FieldNote>Comma-separated keywords to help people find your event.</FieldNote>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
 
               {/* ── Section 02 · Dates & Times ─────────────────────────────── */}
@@ -808,23 +792,56 @@ export default function ListEvent() {
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Event type *{" "}
-                        <span className="font-normal normal-case text-muted-foreground">— check all that apply</span>
-                      </FormLabel>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
-                        {["Music", "Food & Drink", "Art & Culture", "Outdoors", "Sports & Fitness",
-                          "Film & Media", "Comedy", "Markets & Shopping", "Networking", "Education",
-                          "Family", "Nightlife", "Festival", "Community"].map((cat) => {
-                          const checked = field.value?.includes(cat) ?? false;
-                          const hex = categoryColor(cat);
+                      <FormLabel>Primary event type *</FormLabel>
+                      <RadioGroup
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1"
+                      >
+                        {EVENT_TYPES.map((type) => {
+                          const active = field.value === type;
                           return (
                             <label
-                              key={cat}
-                              style={{ backgroundColor: hex, color: isDarkColor(hex) ? "#FFFFFF" : "#15171c" }}
+                              key={type}
                               className={cn(
-                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground p-3 cursor-pointer shadow-pop-sm transition-all",
-                                checked ? "-translate-y-0.5 shadow-pop" : "opacity-80 hover:opacity-100",
+                                "flex items-center gap-2 rounded-xl border-[3px] border-foreground p-3 cursor-pointer transition-all text-sm font-medium",
+                                active
+                                  ? "bg-brand-navy text-white shadow-pop -translate-y-0.5"
+                                  : "bg-background opacity-80 hover:opacity-100",
+                              )}
+                            >
+                              <RadioGroupItem value={type} className="sr-only" />
+                              {active && <Check className="w-4 h-4 shrink-0" />}
+                              <span className="min-w-0 break-words text-xs leading-tight">{type}</span>
+                            </label>
+                          );
+                        })}
+                      </RadioGroup>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Tags{" "}
+                        <span className="font-normal normal-case text-muted-foreground">— check all that apply (optional)</span>
+                      </FormLabel>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
+                        {EVENT_TAGS.map((tag) => {
+                          const checked = (field.value ?? []).includes(tag);
+                          return (
+                            <label
+                              key={tag}
+                              className={cn(
+                                "flex min-w-0 items-center gap-2.5 rounded-xl border-[3px] border-foreground p-3 cursor-pointer transition-all text-sm font-medium",
+                                checked
+                                  ? "bg-brand-red text-white shadow-pop -translate-y-0.5"
+                                  : "bg-background opacity-80 hover:opacity-100",
                               )}
                             >
                               <Checkbox
@@ -832,12 +849,12 @@ export default function ListEvent() {
                                 checked={checked}
                                 onCheckedChange={(c) => {
                                   const next = new Set(field.value ?? []);
-                                  if (c) next.add(cat);
-                                  else next.delete(cat);
+                                  if (c) next.add(tag);
+                                  else next.delete(tag);
                                   field.onChange(Array.from(next));
                                 }}
                               />
-                              <span className="min-w-0 break-words text-xs font-medium leading-tight">{cat}</span>
+                              <span className="min-w-0 break-words text-xs leading-tight">{tag}</span>
                             </label>
                           );
                         })}

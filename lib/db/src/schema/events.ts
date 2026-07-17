@@ -25,6 +25,8 @@ export const eventsTable = pgTable("events", {
   contactName: text("contact_name"),
   contactEmail: text("contact_email"),
   contactPhone: text("contact_phone"),
+  ageCategory: text("age_category"),
+  tags: text("tags").array(),
   promoContact: boolean("promo_contact"),
   promoContactMethod: text("promo_contact_method"),
   source: text("source").notNull().default("web_form"),
