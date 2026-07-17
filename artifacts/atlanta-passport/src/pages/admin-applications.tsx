@@ -505,7 +505,7 @@ function CsvImporter({
                   return (
                     <tr
                       key={i}
-                      className={`border-b border-foreground/10 last:border-0 ${hasError ? "bg-red-50" : willSkip ? "bg-yellow-50" : "bg-white"}`}
+                      className={`border-b border-foreground/10 last:border-0 ${hasError ? "bg-red-50" : willSkip ? "bg-yellow-50" : "bg-white text-foreground"}`}
                     >
                       <td className="px-3 py-1.5 text-foreground/50">{i + 1}</td>
                       <td className="px-3 py-1.5 whitespace-nowrap">
@@ -1696,7 +1696,7 @@ function ImportLogsPanel({ adminKey }: { adminKey: string }) {
           <h3 className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>Import Logs</h3>
           <p className="text-xs text-foreground/60 mt-0.5">History of all source sync runs.</p>
         </div>
-        <button type="button" onClick={load} className="button-pop text-sm px-3 py-2 bg-white inline-flex items-center gap-1.5">
+        <button type="button" onClick={load} className="button-pop text-sm px-3 py-2 bg-white text-foreground inline-flex items-center gap-1.5">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
@@ -1834,7 +1834,7 @@ function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged:
           <h3 className="font-black text-base" style={{ fontFamily: "Bungee, sans-serif" }}>Possible Duplicates</h3>
           <p className="text-xs text-foreground/60 mt-0.5">Events that closely match an existing record — review each pair and decide.</p>
         </div>
-        <button type="button" onClick={load} className="button-pop text-sm px-3 py-2 bg-white inline-flex items-center gap-1.5">
+        <button type="button" onClick={load} className="button-pop text-sm px-3 py-2 bg-white text-foreground inline-flex items-center gap-1.5">
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
       </div>
@@ -2031,7 +2031,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
             key={t.id}
             type="button"
             onClick={() => setOpsTab(t.id)}
-            className={`button-pop text-sm px-3 py-1.5 inline-flex items-center gap-1.5 ${opsTab === t.id ? "button-pop-yellow" : "bg-white"}`}
+            className={`button-pop text-sm px-3 py-1.5 inline-flex items-center gap-1.5 ${opsTab === t.id ? "button-pop-yellow" : "bg-white text-foreground"}`}
           >
             {t.icon} {t.label}
           </button>
@@ -2067,7 +2067,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
             key={tab.id}
             type="button"
             onClick={() => { setStatusFilter(tab.id); setSelectedIds(new Set()); }}
-            className={`button-pop text-sm px-3 py-1.5 ${statusFilter === tab.id ? "button-pop-yellow" : "bg-white"}`}
+            className={`button-pop text-sm px-3 py-1.5 ${statusFilter === tab.id ? "button-pop-yellow" : "bg-white text-foreground"}`}
           >
             {tab.label}
           </button>
@@ -2075,7 +2075,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
         <button
           type="button"
           onClick={refresh}
-          className="button-pop text-sm px-3 py-1.5 bg-white inline-flex items-center gap-1.5"
+          className="button-pop text-sm px-3 py-1.5 bg-white text-foreground inline-flex items-center gap-1.5"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
@@ -2104,7 +2104,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           <button
             type="button"
             onClick={toggleSelectAll}
-            className="button-pop text-sm px-3 py-2 bg-white inline-flex items-center gap-1.5 shrink-0"
+            className="button-pop text-sm px-3 py-2 bg-white text-foreground inline-flex items-center gap-1.5 shrink-0"
           >
             {allVisibleSelected ? <CheckSquare className="w-4 h-4 text-brand-yellow" /> : <Square className="w-4 h-4" />}
             {allVisibleSelected ? "Deselect all" : "Select all"}
@@ -2259,7 +2259,7 @@ export default function AdminApplications() {
             type="button"
             onClick={() => setTab("business")}
             className={`button-pop text-sm px-4 py-2 ${
-              tab === "business" ? "button-pop-yellow" : "bg-white"
+              tab === "business" ? "button-pop-yellow" : "bg-white text-foreground"
             }`}
           >
             Partner Applications ({businessApps.length})
@@ -2268,7 +2268,7 @@ export default function AdminApplications() {
             type="button"
             onClick={() => setTab("event")}
             className={`button-pop text-sm px-4 py-2 ${
-              tab === "event" ? "button-pop-yellow" : "bg-white"
+              tab === "event" ? "button-pop-yellow" : "bg-white text-foreground"
             }`}
           >
             Event Submissions ({eventApps.length})
@@ -2277,7 +2277,7 @@ export default function AdminApplications() {
             type="button"
             onClick={() => setTab("events-ops")}
             className={`button-pop text-sm px-4 py-2 ${
-              tab === "events-ops" ? "button-pop-yellow" : "bg-white"
+              tab === "events-ops" ? "button-pop-yellow" : "bg-white text-foreground"
             }`}
           >
             Events Ops
