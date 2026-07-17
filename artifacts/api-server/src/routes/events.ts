@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { desc, eq, or, and } from "drizzle-orm";
+import { desc, eq, or, and, inArray } from "drizzle-orm";
 import { db, eventsTable, computeEventCompleteness } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
@@ -329,6 +329,142 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     .returning();
 
   res.json(updated);
+});
+
+// POST /admin/events/bulk  — CSV import: validate, dedup, insert as pending
+router.post("/admin/events/bulk", requireAdmin, async (req, res) => {
+  const body = req.body as { events?: unknown[] };
+  if (!Array.isArray(body?.events) || body.events.length === 0) {
+    res.status(400).json({ error: "events array is required" });
+    return;
+  }
+
+  // Load existing events for duplicate detection (name+date or name+venue match)
+  const existing = await db
+    .select({ id: eventsTable.id, name: eventsTable.name, date: eventsTable.date, venue: eventsTable.venue })
+    .from(eventsTable);
+
+  const norm = (s: string) => (s ?? "").toLowerCase().trim().replace(/\s+/g, " ");
+
+  const checkDuplicate = (name: string, date: string, venue: string): string | null => {
+    const found = existing.find(
+      (e) =>
+        norm(e.name) === norm(name) &&
+        (norm(e.date) === norm(date) || norm(e.venue) === norm(venue)),
+    );
+    return found ? found.id : null;
+  };
+
+  type RowResult = {
+    rowIndex: number;
+    status: "inserted" | "duplicate" | "error";
+    name: string;
+    id?: string;
+    duplicateOfId?: string;
+    error?: string;
+  };
+
+  const results: RowResult[] = [];
+
+  for (let i = 0; i < body.events.length; i++) {
+    const raw = body.events[i] as Record<string, string | undefined>;
+    const name = String(raw.name ?? "").trim();
+    const date = String(raw.date ?? "").trim();
+    const venue = String(raw.venue ?? "").trim();
+    const neighborhood = String(raw.neighborhood ?? "").trim();
+    const category = String(raw.category ?? "").trim();
+
+    // Validate required fields
+    const errs: string[] = [];
+    if (!name) errs.push("name required");
+    if (!date) errs.push("date required");
+    if (!venue) errs.push("venue required");
+    if (!neighborhood) errs.push("neighborhood required");
+    if (!category) errs.push("category required");
+
+    if (errs.length > 0) {
+      results.push({ rowIndex: i, status: "error", name: name || `Row ${i + 1}`, error: errs.join(", ") });
+      continue;
+    }
+
+    const dupId = checkDuplicate(name, date, venue);
+    if (dupId) {
+      results.push({ rowIndex: i, status: "duplicate", name, duplicateOfId: dupId });
+      continue;
+    }
+
+    try {
+      const partial = {
+        name, date, venue, neighborhood, category,
+        time: raw.time ?? null,
+        address: raw.address ?? null,
+        description: raw.description ?? null,
+        cost: raw.cost ?? null,
+        url: raw.url ?? null,
+        highlights: null as null,
+        instagram: null as null,
+        contactName: null as null,
+        contactEmail: null as null,
+        contactPhone: null as null,
+        isBonusStamp: false,
+      };
+      const completenessScore = computeEventCompleteness(partial);
+
+      const [row] = await db
+        .insert(eventsTable)
+        .values({
+          name, category, date,
+          time: raw.time || null,
+          venue, address: raw.address || null,
+          neighborhood, description: raw.description || null,
+          cost: raw.cost || null,
+          url: raw.url || null,
+          source: "csv_import",
+          workflowStatus: "pending",
+          completenessScore,
+        })
+        .returning({ id: eventsTable.id });
+
+      const inserted = { id: row!.id, name, date, venue };
+      // Add to in-memory list so later rows in the same batch can dedup against it
+      existing.push(inserted);
+      results.push({ rowIndex: i, status: "inserted", name, id: row!.id });
+    } catch {
+      results.push({ rowIndex: i, status: "error", name, error: "Database error inserting row" });
+    }
+  }
+
+  res.json({
+    inserted: results.filter((r) => r.status === "inserted").length,
+    duplicates: results.filter((r) => r.status === "duplicate").length,
+    errors: results.filter((r) => r.status === "error").length,
+    rows: results,
+  });
+});
+
+// PATCH /admin/events/bulk-status  — update workflowStatus for many events at once
+router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
+  const { ids, status } = req.body as { ids?: string[]; status?: string };
+  if (!Array.isArray(ids) || ids.length === 0) {
+    res.status(400).json({ error: "ids array required" });
+    return;
+  }
+  if (!status || typeof status !== "string") {
+    res.status(400).json({ error: "status required" });
+    return;
+  }
+
+  const updates: Record<string, unknown> = { workflowStatus: status, updatedAt: new Date() };
+  if (status === "published") updates.publishedAt = new Date();
+  if (status === "approved" || status === "published") updates.verifiedAt = new Date();
+
+  const rows = await db
+    .update(eventsTable)
+    .set(updates)
+    .where(inArray(eventsTable.id, ids))
+    .returning({ id: eventsTable.id });
+
+  res.json({ updated: rows.length });
 });
 
 export default router;
