@@ -12,7 +12,8 @@ import {
   ExternalLink,
   Navigation,
 } from "lucide-react";
-import { events, businesses, businessCategories } from "@/data/sample-data";
+import { events as sampleEvents, businesses, businessCategories } from "@/data/sample-data";
+import { useGetPublicEvent, getGetPublicEventQueryKey } from "@workspace/api-client-react";
 import CategoryBadge from "@/components/CategoryBadge";
 import MapSnapshot from "@/components/MapSnapshot";
 import NearbyRoutes from "@/components/NearbyRoutes";
@@ -37,23 +38,92 @@ export default function EventDetailBody({
   hrefBase: string;
 }) {
   const { t } = useTranslation();
-  const event = events.find((e) => e.id === id);
-  // Listing-only events (imported for the calendar) intentionally have no
-  // detail page — treat a direct visit as not found.
-  if (!event || ("listingOnly" in event && event.listingOnly)) return <NotFound />;
+
+  // Try to load the event from the API (supports both UUID and slug lookup).
+  const { data: apiEvent, isLoading } = useGetPublicEvent(id ?? "", {
+    query: { queryKey: getGetPublicEventQueryKey(id ?? ""), enabled: !!id, retry: false, staleTime: 60_000 },
+  });
+
+  // Fall back to sample-data while the API loads or for events not yet in the DB.
+  const sampleEvent = id
+    ? sampleEvents.find((e) => e.id === id)
+    : undefined;
+  const sampleIsListingOnly =
+    sampleEvent != null &&
+    "listingOnly" in sampleEvent &&
+    (sampleEvent as { listingOnly?: boolean }).listingOnly === true;
+
+  // Normalize to a unified shape so the rest of the component doesn't branch.
+  type NormalizedEvent = {
+    id: string; slug: string | null;
+    name: string; date: string; time: string; venue: string;
+    address: string; neighborhood: string; category: string;
+    price: string; description: string;
+    highlights: string[]; instagram: string[];
+    bonusStamp: boolean;
+  };
+
+  const event: NormalizedEvent | null = apiEvent
+    ? {
+        id: apiEvent.id,
+        slug: apiEvent.slug ?? null,
+        name: apiEvent.name,
+        date: apiEvent.date,
+        time: apiEvent.time ?? "",
+        venue: apiEvent.venue,
+        address: apiEvent.address ?? "",
+        neighborhood: apiEvent.neighborhood,
+        category: apiEvent.category,
+        price: apiEvent.cost ?? "",
+        description: apiEvent.description ?? "",
+        highlights: (apiEvent.highlights ?? []) as string[],
+        instagram: (apiEvent.instagram ?? []) as string[],
+        bonusStamp: apiEvent.isBonusStamp,
+      }
+    : sampleEvent && !sampleIsListingOnly
+      ? {
+          id: sampleEvent.id,
+          slug: null,
+          name: sampleEvent.name,
+          date: sampleEvent.date,
+          time: ("time" in sampleEvent ? String(sampleEvent.time ?? "") : ""),
+          venue: sampleEvent.venue,
+          address: ("address" in sampleEvent ? String(sampleEvent.address ?? "") : ""),
+          neighborhood: sampleEvent.neighborhood,
+          category: sampleEvent.category,
+          price: sampleEvent.price,
+          description: sampleEvent.description ?? "",
+          highlights: (("highlights" in sampleEvent ? sampleEvent.highlights : []) as string[]),
+          instagram: (("instagram" in sampleEvent ? sampleEvent.instagram : []) as string[]),
+          bonusStamp: "bonusStamp" in sampleEvent ? Boolean(sampleEvent.bonusStamp) : false,
+        }
+      : null;
+
+  // Show a subtle loading state only when we have no sample-data fallback.
+  if (isLoading && !sampleEvent) {
+    return (
+      <div className="flex-1 grid place-items-center py-24">
+        <div className="animate-pulse text-foreground/30 font-display tracking-widest text-sm">
+          Loading…
+        </div>
+      </div>
+    );
+  }
+
+  if (!event || sampleIsListingOnly) return <NotFound />;
 
   const tile = parseDateTile(event.date);
-  // Prev/next navigate only among events that actually have a detail page.
-  const navEvents = events.filter(
-    (e) => !("listingOnly" in e && e.listingOnly),
+  // Prev/next navigate among full-detail events in sample-data (backward compat).
+  const navEvents = sampleEvents.filter(
+    (e) => !("listingOnly" in e && (e as { listingOnly?: boolean }).listingOnly),
   );
-  const idx = navEvents.findIndex((e) => e.id === event.id);
-  const prev = idx > 0 ? navEvents[idx - 1] : null;
-  const next = idx < navEvents.length - 1 ? navEvents[idx + 1] : null;
+  const sampleIdx = navEvents.findIndex((e) => e.id === (event.slug ?? event.id));
+  const prev = sampleIdx > 0 ? navEvents[sampleIdx - 1] : null;
+  const next = sampleIdx < navEvents.length - 1 ? navEvents[sampleIdx + 1] : null;
 
   // Match the event's venue to a listed business so we can deep-link to its
   // location detail page and reuse its coordinates for the map snapshot.
-  const address: string = "address" in event ? event.address : "";
+  const address = event.address;
   const venueBusiness = businesses.find(
     (b) => b.name === event.venue || (address !== "" && b.address === address),
   );
@@ -71,7 +141,7 @@ export default function EventDetailBody({
       eventName: event.name,
       name: event.name,
       meta: "Featured Event",
-      detail: event.description,
+      detail: event.description || undefined,
     },
   ];
   if (venueBusiness && STAMP_SLUG[venueBusiness.id]) {
@@ -109,7 +179,7 @@ export default function EventDetailBody({
             </h1>
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm md:text-base font-display tracking-[0.12em] uppercase">
               <span className="inline-flex items-center gap-2"><Calendar className="w-4 h-4" /> {event.date}</span>
-              {"time" in event && event.time && (
+              {event.time && (
                 <span className="inline-flex items-center gap-2"><Clock className="w-4 h-4" /> {event.time}</span>
               )}
               <span className="inline-flex items-center gap-2"><MapPin className="w-4 h-4" /> {event.neighborhood}</span>
@@ -126,7 +196,7 @@ export default function EventDetailBody({
             {event.description}
           </p>
 
-          {"highlights" in event && event.highlights.length > 0 && (
+          {event.highlights.length > 0 && (
             <div className="mb-10">
               <div className="section-kicker mb-4">★ What to Expect</div>
               <ul className="space-y-3">
@@ -140,7 +210,7 @@ export default function EventDetailBody({
             </div>
           )}
 
-          {"instagram" in event && event.instagram.length > 0 && (
+          {event.instagram.length > 0 && (
             <div>
               <div className="section-kicker mb-4">★ Follow Along</div>
               <div className="flex flex-wrap gap-2">
@@ -179,7 +249,7 @@ export default function EventDetailBody({
             ) : (
               <h3 className="font-serif font-bold text-xl mb-2">{event.venue}</h3>
             )}
-            {"address" in event && event.address && (
+            {event.address && (
               <p className="text-sm text-foreground/70 leading-snug mb-4">{event.address}</p>
             )}
             {venueBusiness?.lat != null && venueBusiness?.lng != null && (

@@ -5,3 +5,4 @@ export * from "./redemptions";
 export * from "./applications";
 export * from "./contact-messages";
 export * from "./app-config";
+export * from "./events";

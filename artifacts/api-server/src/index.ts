@@ -1,6 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
-import { seedBusinesses } from "./lib/seed";
+import { seedBusinesses, seedCalendarEvents } from "./lib/seed";
 import { scheduleSignupSync } from "./lib/googleSheetSync";
 
 const rawPort = process.env["PORT"];
@@ -25,5 +25,6 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
   void seedBusinesses();
+  void seedCalendarEvents();
   scheduleSignupSync();
 });

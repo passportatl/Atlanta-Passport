@@ -22,6 +22,8 @@ tags:
     description: Admin operations
   - name: applications
     description: Partner applications
+  - name: events
+    description: Event calendar and intake
 paths:
   /healthz:
     get:
@@ -258,6 +260,127 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApplicationList"
+
+  /events:
+    get:
+      operationId: listPublicEvents
+      tags: [events]
+      summary: List published events (public)
+      parameters:
+        - in: query
+          name: neighborhood
+          schema: { type: string }
+        - in: query
+          name: category
+          schema: { type: string }
+      responses:
+        "200":
+          description: Published events
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/EventRecord" }
+    post:
+      operationId: submitEvent
+      tags: [events]
+      summary: Submit an event for review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SubmitEventInput" }
+      responses:
+        "201":
+          description: Submitted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EventRecord" }
+
+  /events/{id}:
+    get:
+      operationId: getPublicEvent
+      tags: [events]
+      summary: Get a single published event by id or slug
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Event
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EventRecord" }
+        "404":
+          description: Not found
+
+  /admin/events:
+    get:
+      operationId: listAdminEvents
+      tags: [admin]
+      summary: List all events (admin, requires x-admin-key header)
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: search
+          schema: { type: string }
+        - in: query
+          name: tier
+          schema: { type: string }
+      responses:
+        "200":
+          description: All events
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AdminEventRecord" }
+        "401":
+          description: Unauthorized
+
+  /admin/events/summary:
+    get:
+      operationId: getAdminEventsSummary
+      tags: [admin]
+      summary: Workflow summary counts (admin, requires x-admin-key header)
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminEventsSummary" }
+        "401":
+          description: Unauthorized
+
+  /admin/events/{id}:
+    patch:
+      operationId: updateAdminEvent
+      tags: [admin]
+      summary: Update event workflow status and metadata (admin, requires x-admin-key header)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AdminUpdateEventInput" }
+      responses:
+        "200":
+          description: Updated event
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminEventRecord" }
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not found
 
   /contact:
     post:
@@ -620,3 +743,189 @@ components:
         id: { type: string }
         emailDelivered: { type: string }
       required: [id, emailDelivered]
+
+    EventRecord:
+      type: object
+      properties:
+        id: { type: string }
+        slug: { type: string, nullable: true }
+        name: { type: string }
+        category: { type: string }
+        date: { type: string }
+        dateIso: { type: string, nullable: true }
+        time: { type: string, nullable: true }
+        venue: { type: string }
+        address: { type: string, nullable: true }
+        neighborhood: { type: string }
+        description: { type: string, nullable: true }
+        highlights:
+          type: array
+          items: { type: string }
+          nullable: true
+        instagram:
+          type: array
+          items: { type: string }
+          nullable: true
+        cost: { type: string, nullable: true }
+        url: { type: string, nullable: true }
+        isFeatured: { type: boolean }
+        isBonusStamp: { type: boolean }
+        tier: { type: string }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required:
+        - id
+        - name
+        - category
+        - date
+        - venue
+        - neighborhood
+        - isFeatured
+        - isBonusStamp
+        - tier
+        - createdAt
+
+    AdminEventRecord:
+      type: object
+      properties:
+        id: { type: string }
+        slug: { type: string, nullable: true }
+        name: { type: string }
+        category: { type: string }
+        date: { type: string }
+        dateIso: { type: string, nullable: true }
+        time: { type: string, nullable: true }
+        venue: { type: string }
+        address: { type: string, nullable: true }
+        neighborhood: { type: string }
+        description: { type: string, nullable: true }
+        highlights:
+          type: array
+          items: { type: string }
+          nullable: true
+        instagram:
+          type: array
+          items: { type: string }
+          nullable: true
+        cost: { type: string, nullable: true }
+        url: { type: string, nullable: true }
+        workflowStatus: { type: string }
+        publishedAt: { type: string, format: date-time, nullable: true }
+        scheduledPublishAt: { type: string, format: date-time, nullable: true }
+        tier: { type: string }
+        isFeatured: { type: boolean }
+        isBonusStamp: { type: boolean }
+        contactName: { type: string, nullable: true }
+        contactEmail: { type: string, nullable: true }
+        contactPhone: { type: string, nullable: true }
+        promoContact: { type: boolean, nullable: true }
+        promoContactMethod: { type: string, nullable: true }
+        source: { type: string }
+        sourceRef: { type: string, nullable: true }
+        intakeNotes: { type: string, nullable: true }
+        assignedTo: { type: string, nullable: true }
+        adminNotes: { type: string, nullable: true }
+        verifiedAt: { type: string, format: date-time, nullable: true }
+        completenessScore: { type: integer }
+        duplicateOfId: { type: string, nullable: true }
+        paymentId: { type: string, nullable: true }
+        paymentStatus: { type: string, nullable: true }
+        emailDelivered: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required:
+        - id
+        - name
+        - category
+        - date
+        - venue
+        - neighborhood
+        - workflowStatus
+        - tier
+        - isFeatured
+        - isBonusStamp
+        - source
+        - completenessScore
+        - emailDelivered
+        - createdAt
+        - updatedAt
+
+    AdminEventsSummary:
+      type: object
+      properties:
+        total: { type: integer }
+        pending: { type: integer }
+        needsVerification: { type: integer }
+        possibleDuplicate: { type: integer }
+        approved: { type: integer }
+        scheduled: { type: integer }
+        published: { type: integer }
+        rejected: { type: integer }
+        canceled: { type: integer }
+        archived: { type: integer }
+        avgCompleteness: { type: number }
+        freeCount: { type: integer }
+        featuredCount: { type: integer }
+        paidCount: { type: integer }
+      required:
+        - total
+        - pending
+        - needsVerification
+        - possibleDuplicate
+        - approved
+        - scheduled
+        - published
+        - rejected
+        - canceled
+        - archived
+        - avgCompleteness
+        - freeCount
+        - featuredCount
+        - paidCount
+
+    SubmitEventInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 2 }
+        category: { type: string }
+        date: { type: string }
+        dateIso: { type: string }
+        time: { type: string }
+        venue: { type: string }
+        address: { type: string }
+        neighborhood: { type: string }
+        description: { type: string }
+        cost: { type: string }
+        url: { type: string }
+        contactName: { type: string }
+        contactEmail: { type: string, format: email }
+        contactPhone: { type: string }
+        promoContact: { type: boolean }
+        promoContactMethod: { type: string }
+        intakeNotes: { type: string }
+      required:
+        - name
+        - contactName
+        - contactEmail
+        - contactPhone
+
+    AdminUpdateEventInput:
+      type: object
+      properties:
+        workflowStatus: { type: string }
+        adminNotes: { type: string }
+        assignedTo: { type: string }
+        tier: { type: string }
+        isFeatured: { type: boolean }
+        isBonusStamp: { type: boolean }
+        scheduledPublishAt: { type: string }
+        name: { type: string }
+        category: { type: string }
+        date: { type: string }
+        time: { type: string }
+        venue: { type: string }
+        address: { type: string }
+        neighborhood: { type: string }
+        description: { type: string }
+        cost: { type: string }
+        url: { type: string }

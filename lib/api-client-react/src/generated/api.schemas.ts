@@ -225,3 +225,137 @@ export interface ContactReceipt {
   id: string;
   emailDelivered: string;
 }
+
+export interface EventRecord {
+  id: string;
+  slug?: string | null;
+  name: string;
+  category: string;
+  date: string;
+  dateIso?: string | null;
+  time?: string | null;
+  venue: string;
+  address?: string | null;
+  neighborhood: string;
+  description?: string | null;
+  highlights?: string[] | null;
+  instagram?: string[] | null;
+  cost?: string | null;
+  url?: string | null;
+  isFeatured: boolean;
+  isBonusStamp: boolean;
+  tier: string;
+  publishedAt?: string | null;
+  createdAt: string;
+}
+
+export interface AdminEventRecord {
+  id: string;
+  slug?: string | null;
+  name: string;
+  category: string;
+  date: string;
+  dateIso?: string | null;
+  time?: string | null;
+  venue: string;
+  address?: string | null;
+  neighborhood: string;
+  description?: string | null;
+  highlights?: string[] | null;
+  instagram?: string[] | null;
+  cost?: string | null;
+  url?: string | null;
+  workflowStatus: string;
+  publishedAt?: string | null;
+  scheduledPublishAt?: string | null;
+  tier: string;
+  isFeatured: boolean;
+  isBonusStamp: boolean;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  promoContact?: boolean | null;
+  promoContactMethod?: string | null;
+  source: string;
+  sourceRef?: string | null;
+  intakeNotes?: string | null;
+  assignedTo?: string | null;
+  adminNotes?: string | null;
+  verifiedAt?: string | null;
+  completenessScore: number;
+  duplicateOfId?: string | null;
+  paymentId?: string | null;
+  paymentStatus?: string | null;
+  emailDelivered: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminEventsSummary {
+  total: number;
+  pending: number;
+  needsVerification: number;
+  possibleDuplicate: number;
+  approved: number;
+  scheduled: number;
+  published: number;
+  rejected: number;
+  canceled: number;
+  archived: number;
+  avgCompleteness: number;
+  freeCount: number;
+  featuredCount: number;
+  paidCount: number;
+}
+
+export interface SubmitEventInput {
+  /** @minLength 2 */
+  name: string;
+  category?: string;
+  date?: string;
+  dateIso?: string;
+  time?: string;
+  venue?: string;
+  address?: string;
+  neighborhood?: string;
+  description?: string;
+  cost?: string;
+  url?: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  promoContact?: boolean;
+  promoContactMethod?: string;
+  intakeNotes?: string;
+}
+
+export interface AdminUpdateEventInput {
+  workflowStatus?: string;
+  adminNotes?: string;
+  assignedTo?: string;
+  tier?: string;
+  isFeatured?: boolean;
+  isBonusStamp?: boolean;
+  scheduledPublishAt?: string;
+  name?: string;
+  category?: string;
+  date?: string;
+  time?: string;
+  venue?: string;
+  address?: string;
+  neighborhood?: string;
+  description?: string;
+  cost?: string;
+  url?: string;
+}
+
+export type ListPublicEventsParams = {
+  neighborhood?: string;
+  category?: string;
+};
+
+export type ListAdminEventsParams = {
+  status?: string;
+  search?: string;
+  tier?: string;
+};

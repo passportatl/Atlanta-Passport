@@ -3,7 +3,8 @@ import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { events, businesses, neighborhoods } from "@/data/sample-data";
+import { events as sampleEvents, businesses, neighborhoods } from "@/data/sample-data";
+import { useListPublicEvents, getListPublicEventsQueryKey } from "@workspace/api-client-react";
 import CategoryBadge from "@/components/CategoryBadge";
 import Footer from "@/components/layout/Footer";
 import {
@@ -87,7 +88,23 @@ function parseEventDays(dateStr: string): {
   return { month, year, days };
 }
 
-type EventItem = (typeof events)[number];
+type EventItem = {
+  id: string;
+  slug?: string | null;
+  name: string;
+  date: string;
+  time?: string | null;
+  venue: string;
+  address?: string | null;
+  neighborhood: string;
+  category: string;
+  price: string;
+  description?: string | null;
+  highlights?: readonly string[] | string[] | null;
+  instagram?: readonly string[] | string[] | null;
+  bonusStamp?: boolean;
+  listingOnly?: boolean;
+};
 
 // Fixed dropdown option lists for the selected-day filters. Price tiers map to
 // ticket cost: $ is $20 and under, $$ is $20–60, $$$ is $60+ (the tier meaning
@@ -166,12 +183,58 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const [page, setPage] = useState(0);
   const groupSize = useResponsiveGroupSize();
 
+  // Load published events from the API; fall back to an empty array while loading.
+  const { data: apiEventsRaw } = useListPublicEvents(
+    undefined,
+    { query: { queryKey: getListPublicEventsQueryKey(), staleTime: 60_000 } },
+  );
+
+  // Adapt API EventRecord shape to the local EventItem shape used by this component.
+  const adaptedApiEvents = useMemo<EventItem[]>(
+    () =>
+      (apiEventsRaw ?? []).map((e) => ({
+        id: e.id,
+        slug: e.slug,
+        name: e.name,
+        date: e.date,
+        time: e.time,
+        venue: e.venue,
+        address: e.address,
+        neighborhood: e.neighborhood,
+        category: e.category,
+        price: e.cost ?? "",
+        description: e.description,
+        highlights: e.highlights,
+        instagram: e.instagram,
+        bonusStamp: e.isBonusStamp,
+      })),
+    [apiEventsRaw],
+  );
+
+  // Listing-only sample events (calendar-only entries with no detail page) fill
+  // the calendar for events not yet imported into the DB.
+  const listingOnlyEvents = useMemo<EventItem[]>(
+    () =>
+      (sampleEvents as unknown as EventItem[]).filter(
+        (e) => "listingOnly" in e && (e as { listingOnly?: boolean }).listingOnly,
+      ),
+    [],
+  );
+
+  // Merge: API events take priority; listing-only sample events fill the gaps.
+  const apiIdSet = useMemo(() => new Set(adaptedApiEvents.map((e) => e.id)), [adaptedApiEvents]);
+  const allEvents = useMemo<EventItem[]>(
+    () => [
+      ...adaptedApiEvents,
+      ...listingOnlyEvents.filter((e) => !apiIdSet.has(e.id)),
+    ],
+    [adaptedApiEvents, listingOnlyEvents, apiIdSet],
+  );
+
   // The featured carousel only spotlights events explicitly marked with a
   // Passport bonus stamp (Passport Bonus Stamp = YES). Every other event is
   // still listed on the calendar below, just not featured up top.
-  const carouselEvents = events.filter(
-    (e) => "bonusStamp" in e && e.bonusStamp === true,
-  );
+  const carouselEvents = allEvents.filter((e) => e.bonusStamp === true);
   const groups: EventItem[][] = [];
   for (let i = 0; i < carouselEvents.length; i += groupSize) {
     groups.push(carouselEvents.slice(i, i + groupSize));
@@ -201,7 +264,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
       string,
       { month: number; year: number; byDay: Map<number, EventItem[]> }
     >();
-    for (const ev of events) {
+    for (const ev of allEvents) {
       const parsed = parseEventDays(ev.date);
       if (!parsed) continue;
       const key = `${parsed.year}-${parsed.month}`;
@@ -219,7 +282,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     return [...map.values()].sort(
       (a, b) => a.year - b.year || a.month - b.month,
     );
-  }, []);
+  }, [allEvents]);
 
   // Open the calendar on the month containing today's date (when it has
   // events); otherwise fall back to the first month with events.
@@ -333,7 +396,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   );
 
   const filteredSelectedEvents = selectedEvents.filter((ev) => {
-    if (activeTimes.length > 0 && !matchesTimeBucket(ev.time, activeTimes)) return false;
+    if (activeTimes.length > 0 && !matchesTimeBucket(ev.time ?? "", activeTimes)) return false;
     if (activeAreas.length > 0 && !activeAreas.includes(ev.neighborhood)) return false;
     if (activePrices.length > 0 && !activePrices.includes(ev.price)) return false;
     if (activeTypes.length > 0 && !matchesEventType(ev.category, activeTypes)) return false;
@@ -484,9 +547,9 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                           <MapPin className="w-3 h-3 text-brand-red shrink-0 mt-[1px]" />
                           <span>{event.venue}</span>
                         </div>
-                        {!("listingOnly" in event && event.listingOnly) && (
+                        {!event.listingOnly && (
                           <Link
-                            href={`/passport/events/${event.id}`}
+                            href={`/passport/events/${event.slug ?? event.id}`}
                             onClick={(e) => e.stopPropagation()}
                             aria-label={`${t("events_page.view_event")}: ${event.name}`}
                             className="mt-auto inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
@@ -741,16 +804,12 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
               )}
               {filteredSelectedEvents.map((event) => {
                 const venueBiz = businesses.find((b) => b.name === event.venue);
-                const isListingOnly =
-                  "listingOnly" in event && event.listingOnly;
+                const isListingOnly = event.listingOnly === true;
                 const areaHex = neighborhoods.find(
                   (n) => n.name === event.neighborhood,
                 )?.hex;
-                const ticketPrice =
-                  "ticketPrice" in event ? event.ticketPrice : undefined;
-                const priceText = ticketPrice
-                  ? ticketPrice
-                  : event.price === "Free"
+                const priceText =
+                  event.price === "Free"
                     ? t("events_page.price_free", { defaultValue: "Free" })
                     : event.price;
                 return (
@@ -808,7 +867,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     </div>
                     {!isListingOnly && (
                       <Link
-                        href={`/passport/events/${event.id}`}
+                        href={`/passport/events/${event.slug ?? event.id}`}
                         onClick={(e) => e.stopPropagation()}
                         aria-label={`${t("events_page.view_event")}: ${event.name}`}
                         className="mt-1 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"

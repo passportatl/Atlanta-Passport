@@ -293,6 +293,234 @@ export const ListApplicationsResponseItem = zod.object({
 export const ListApplicationsResponse = zod.array(ListApplicationsResponseItem);
 
 /**
+ * @summary List published events (public)
+ */
+export const ListPublicEventsQueryParams = zod.object({
+  neighborhood: zod.coerce.string().optional(),
+  category: zod.coerce.string().optional(),
+});
+
+export const ListPublicEventsResponseItem = zod.object({
+  id: zod.string(),
+  slug: zod.string().nullish(),
+  name: zod.string(),
+  category: zod.string(),
+  date: zod.string(),
+  dateIso: zod.string().nullish(),
+  time: zod.string().nullish(),
+  venue: zod.string(),
+  address: zod.string().nullish(),
+  neighborhood: zod.string(),
+  description: zod.string().nullish(),
+  highlights: zod.array(zod.string()).nullish(),
+  instagram: zod.array(zod.string()).nullish(),
+  cost: zod.string().nullish(),
+  url: zod.string().nullish(),
+  isFeatured: zod.boolean(),
+  isBonusStamp: zod.boolean(),
+  tier: zod.string(),
+  publishedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListPublicEventsResponse = zod.array(ListPublicEventsResponseItem);
+
+/**
+ * @summary Submit an event for review
+ */
+export const submitEventBodyNameMin = 2;
+
+export const SubmitEventBody = zod.object({
+  name: zod.string().min(submitEventBodyNameMin),
+  category: zod.string().optional(),
+  date: zod.string().optional(),
+  dateIso: zod.string().optional(),
+  time: zod.string().optional(),
+  venue: zod.string().optional(),
+  address: zod.string().optional(),
+  neighborhood: zod.string().optional(),
+  description: zod.string().optional(),
+  cost: zod.string().optional(),
+  url: zod.string().optional(),
+  contactName: zod.string(),
+  contactEmail: zod.string().email(),
+  contactPhone: zod.string(),
+  promoContact: zod.boolean().optional(),
+  promoContactMethod: zod.string().optional(),
+  intakeNotes: zod.string().optional(),
+});
+
+/**
+ * @summary Get a single published event by id or slug
+ */
+export const GetPublicEventParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const GetPublicEventResponse = zod.object({
+  id: zod.string(),
+  slug: zod.string().nullish(),
+  name: zod.string(),
+  category: zod.string(),
+  date: zod.string(),
+  dateIso: zod.string().nullish(),
+  time: zod.string().nullish(),
+  venue: zod.string(),
+  address: zod.string().nullish(),
+  neighborhood: zod.string(),
+  description: zod.string().nullish(),
+  highlights: zod.array(zod.string()).nullish(),
+  instagram: zod.array(zod.string()).nullish(),
+  cost: zod.string().nullish(),
+  url: zod.string().nullish(),
+  isFeatured: zod.boolean(),
+  isBonusStamp: zod.boolean(),
+  tier: zod.string(),
+  publishedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary List all events (admin, requires x-admin-key header)
+ */
+export const ListAdminEventsQueryParams = zod.object({
+  status: zod.coerce.string().optional(),
+  search: zod.coerce.string().optional(),
+  tier: zod.coerce.string().optional(),
+});
+
+export const ListAdminEventsResponseItem = zod.object({
+  id: zod.string(),
+  slug: zod.string().nullish(),
+  name: zod.string(),
+  category: zod.string(),
+  date: zod.string(),
+  dateIso: zod.string().nullish(),
+  time: zod.string().nullish(),
+  venue: zod.string(),
+  address: zod.string().nullish(),
+  neighborhood: zod.string(),
+  description: zod.string().nullish(),
+  highlights: zod.array(zod.string()).nullish(),
+  instagram: zod.array(zod.string()).nullish(),
+  cost: zod.string().nullish(),
+  url: zod.string().nullish(),
+  workflowStatus: zod.string(),
+  publishedAt: zod.coerce.date().nullish(),
+  scheduledPublishAt: zod.coerce.date().nullish(),
+  tier: zod.string(),
+  isFeatured: zod.boolean(),
+  isBonusStamp: zod.boolean(),
+  contactName: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  contactPhone: zod.string().nullish(),
+  promoContact: zod.boolean().nullish(),
+  promoContactMethod: zod.string().nullish(),
+  source: zod.string(),
+  sourceRef: zod.string().nullish(),
+  intakeNotes: zod.string().nullish(),
+  assignedTo: zod.string().nullish(),
+  adminNotes: zod.string().nullish(),
+  verifiedAt: zod.coerce.date().nullish(),
+  completenessScore: zod.number(),
+  duplicateOfId: zod.string().nullish(),
+  paymentId: zod.string().nullish(),
+  paymentStatus: zod.string().nullish(),
+  emailDelivered: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+export const ListAdminEventsResponse = zod.array(ListAdminEventsResponseItem);
+
+/**
+ * @summary Workflow summary counts (admin, requires x-admin-key header)
+ */
+export const GetAdminEventsSummaryResponse = zod.object({
+  total: zod.number(),
+  pending: zod.number(),
+  needsVerification: zod.number(),
+  possibleDuplicate: zod.number(),
+  approved: zod.number(),
+  scheduled: zod.number(),
+  published: zod.number(),
+  rejected: zod.number(),
+  canceled: zod.number(),
+  archived: zod.number(),
+  avgCompleteness: zod.number(),
+  freeCount: zod.number(),
+  featuredCount: zod.number(),
+  paidCount: zod.number(),
+});
+
+/**
+ * @summary Update event workflow status and metadata (admin, requires x-admin-key header)
+ */
+export const UpdateAdminEventParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateAdminEventBody = zod.object({
+  workflowStatus: zod.string().optional(),
+  adminNotes: zod.string().optional(),
+  assignedTo: zod.string().optional(),
+  tier: zod.string().optional(),
+  isFeatured: zod.boolean().optional(),
+  isBonusStamp: zod.boolean().optional(),
+  scheduledPublishAt: zod.string().optional(),
+  name: zod.string().optional(),
+  category: zod.string().optional(),
+  date: zod.string().optional(),
+  time: zod.string().optional(),
+  venue: zod.string().optional(),
+  address: zod.string().optional(),
+  neighborhood: zod.string().optional(),
+  description: zod.string().optional(),
+  cost: zod.string().optional(),
+  url: zod.string().optional(),
+});
+
+export const UpdateAdminEventResponse = zod.object({
+  id: zod.string(),
+  slug: zod.string().nullish(),
+  name: zod.string(),
+  category: zod.string(),
+  date: zod.string(),
+  dateIso: zod.string().nullish(),
+  time: zod.string().nullish(),
+  venue: zod.string(),
+  address: zod.string().nullish(),
+  neighborhood: zod.string(),
+  description: zod.string().nullish(),
+  highlights: zod.array(zod.string()).nullish(),
+  instagram: zod.array(zod.string()).nullish(),
+  cost: zod.string().nullish(),
+  url: zod.string().nullish(),
+  workflowStatus: zod.string(),
+  publishedAt: zod.coerce.date().nullish(),
+  scheduledPublishAt: zod.coerce.date().nullish(),
+  tier: zod.string(),
+  isFeatured: zod.boolean(),
+  isBonusStamp: zod.boolean(),
+  contactName: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  contactPhone: zod.string().nullish(),
+  promoContact: zod.boolean().nullish(),
+  promoContactMethod: zod.string().nullish(),
+  source: zod.string(),
+  sourceRef: zod.string().nullish(),
+  intakeNotes: zod.string().nullish(),
+  assignedTo: zod.string().nullish(),
+  adminNotes: zod.string().nullish(),
+  verifiedAt: zod.coerce.date().nullish(),
+  completenessScore: zod.number(),
+  duplicateOfId: zod.string().nullish(),
+  paymentId: zod.string().nullish(),
+  paymentStatus: zod.string().nullish(),
+  emailDelivered: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary Submit a contact / suggestion message
  */
 export const submitContactMessageBodyNameMin = 2;

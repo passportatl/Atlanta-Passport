@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./adminEventRecord";
+export * from "./adminEventsSummary";
+export * from "./adminUpdateEventInput";
 export * from "./application";
 export * from "./applicationList";
 export * from "./applicationReceipt";
@@ -14,9 +17,12 @@ export * from "./businessList";
 export * from "./collectStampInput";
 export * from "./contactReceipt";
 export * from "./createVisitorInput";
+export * from "./eventRecord";
 export * from "./exportQrInput";
 export * from "./exportQrResult";
 export * from "./healthStatus";
+export * from "./listAdminEventsParams";
+export * from "./listPublicEventsParams";
 export * from "./redeemPrizeInput";
 export * from "./redeemPrizeResult";
 export * from "./redemption";
@@ -29,4 +35,5 @@ export * from "./submitApplicationInputPackage";
 export * from "./submitApplicationInputSubmissionType";
 export * from "./submitContactMessageInput";
 export * from "./submitContactMessageInputTopic";
+export * from "./submitEventInput";
 export * from "./visitor";

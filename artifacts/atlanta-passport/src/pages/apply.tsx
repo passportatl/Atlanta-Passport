@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { CheckCircle2, Check, Loader2 } from "lucide-react";
-import { useSubmitApplication } from "@workspace/api-client-react";
+import { useSubmitApplication, useSubmitEvent } from "@workspace/api-client-react";
 import {
   Form,
   FormControl,
@@ -163,45 +163,58 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
   }, [search, form]);
 
   const submitMutation = useSubmitApplication();
+  const eventMutation = useSubmitEvent();
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { promoContact, promoByPhone, promoByEmail, ...rest } = values;
-    const promoNote =
-      values.submissionType === "event" && promoContact
-        ? "[Wants to be contacted about promotional options for this event]"
-        : "";
-    const notes = [promoNote, rest.notes?.trim() ?? ""]
-      .filter(Boolean)
-      .join("\n");
-    // Preferred contact method(s) as a readable string, e.g. "phone, email".
     const promoContactMethod =
       promoContact
         ? [promoByPhone ? "phone" : "", promoByEmail ? "email" : ""]
             .filter(Boolean)
             .join(", ")
         : "";
-    // The event form no longer shows a description box, but the API requires
-    // a non-trivial `offer` value — send a placeholder for event submissions.
-    const payload =
-      rest.submissionType === "event"
-        ? {
-            ...rest,
-            notes,
-            website: "",
-            offer:
-              rest.offer.trim().length >= 5
-                ? rest.offer
-                : "Free event listing submission — see notes.",
-            package: "event" as const,
+
+    // Event submissions → dedicated /events endpoint
+    if (rest.submissionType === "event") {
+      const promoNote = promoContact
+        ? "[Wants to be contacted about promotional options for this event]"
+        : "";
+      const intakeNotes = [promoNote, rest.notes?.trim() ?? ""]
+        .filter(Boolean)
+        .join("\n");
+      eventMutation.mutate(
+        {
+          data: {
+            name: rest.businessName ?? "",
+            category: rest.category.join(", "),
+            date: rest.eventDate ?? "",
+            time: rest.eventTime ?? "",
+            venue: rest.eventVenue ?? "",
+            address: rest.address,
+            neighborhood: rest.neighborhood,
+            cost: rest.eventCost ?? "",
+            url: rest.website ?? "",
+            contactName: rest.contactName,
+            contactEmail: rest.email,
+            contactPhone: rest.phone,
             promoContact: promoContact ?? false,
             promoContactMethod,
-          }
-        : rest;
+            intakeNotes,
+          },
+        },
+        { onSuccess: () => setSubmitted(true) },
+      );
+      return;
+    }
+
+    // Business / partner applications → existing /applications endpoint
+    const promoNote = promoContact
+      ? "[Wants to be contacted about promotional options for this event]"
+      : "";
+    const notes = [promoNote, rest.notes?.trim() ?? ""].filter(Boolean).join("\n");
     submitMutation.mutate(
-      { data: payload },
-      {
-        onSuccess: () => setSubmitted(true),
-      },
+      { data: { ...rest, notes } },
+      { onSuccess: () => setSubmitted(true) },
     );
   }
 
@@ -913,17 +926,17 @@ export default function Apply({ eventOnly = false }: { eventOnly?: boolean }) {
               </div>
               )}
 
-              {submitMutation.isError && (
+              {(submitMutation.isError || eventMutation.isError) && (
                 <div className="card-pop bg-brand-red text-white p-4 text-sm font-medium">
                   Something went wrong submitting your application. Please try again, or email us at touristpassportatl@gmail.com.
                 </div>
               )}
               <button
                 type="submit"
-                disabled={submitMutation.isPending}
+                disabled={submitMutation.isPending || eventMutation.isPending}
                 className="button-pop w-full text-lg py-5 mt-4 disabled:opacity-60 inline-flex items-center justify-center gap-2"
               >
-                {submitMutation.isPending ? (
+                {(submitMutation.isPending || eventMutation.isPending) ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
                     Sending…

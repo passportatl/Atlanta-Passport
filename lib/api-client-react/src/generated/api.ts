@@ -17,6 +17,9 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AdminEventRecord,
+  AdminEventsSummary,
+  AdminUpdateEventInput,
   ApplicationList,
   ApplicationReceipt,
   Business,
@@ -24,9 +27,12 @@ import type {
   CollectStampInput,
   ContactReceipt,
   CreateVisitorInput,
+  EventRecord,
   ExportQrInput,
   ExportQrResult,
   HealthStatus,
+  ListAdminEventsParams,
+  ListPublicEventsParams,
   RedeemPrizeInput,
   RedeemPrizeResult,
   RedemptionList,
@@ -34,6 +40,7 @@ import type {
   StampList,
   SubmitApplicationInput,
   SubmitContactMessageInput,
+  SubmitEventInput,
   Visitor,
 } from "./api.schemas";
 
@@ -1130,6 +1137,532 @@ export function useListApplications<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List published events (public)
+ */
+export const getListPublicEventsUrl = (params?: ListPublicEventsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/events?${stringifiedParams}`
+    : `/api/events`;
+};
+
+export const listPublicEvents = async (
+  params?: ListPublicEventsParams,
+  options?: RequestInit,
+): Promise<EventRecord[]> => {
+  return customFetch<EventRecord[]>(getListPublicEventsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListPublicEventsQueryKey = (
+  params?: ListPublicEventsParams,
+) => {
+  return [`/api/events`, ...(params ? [params] : [])] as const;
+};
+
+export const getListPublicEventsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPublicEvents>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPublicEventsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPublicEvents>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListPublicEventsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPublicEvents>>
+  > = ({ signal }) => listPublicEvents(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPublicEvents>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPublicEventsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPublicEvents>>
+>;
+export type ListPublicEventsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List published events (public)
+ */
+
+export function useListPublicEvents<
+  TData = Awaited<ReturnType<typeof listPublicEvents>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPublicEventsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPublicEvents>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPublicEventsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Submit an event for review
+ */
+export const getSubmitEventUrl = () => {
+  return `/api/events`;
+};
+
+export const submitEvent = async (
+  submitEventInput: SubmitEventInput,
+  options?: RequestInit,
+): Promise<EventRecord> => {
+  return customFetch<EventRecord>(getSubmitEventUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(submitEventInput),
+  });
+};
+
+export const getSubmitEventMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof submitEvent>>,
+    TError,
+    { data: BodyType<SubmitEventInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof submitEvent>>,
+  TError,
+  { data: BodyType<SubmitEventInput> },
+  TContext
+> => {
+  const mutationKey = ["submitEvent"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof submitEvent>>,
+    { data: BodyType<SubmitEventInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return submitEvent(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SubmitEventMutationResult = NonNullable<
+  Awaited<ReturnType<typeof submitEvent>>
+>;
+export type SubmitEventMutationBody = BodyType<SubmitEventInput>;
+export type SubmitEventMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Submit an event for review
+ */
+export const useSubmitEvent = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof submitEvent>>,
+    TError,
+    { data: BodyType<SubmitEventInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof submitEvent>>,
+  TError,
+  { data: BodyType<SubmitEventInput> },
+  TContext
+> => {
+  return useMutation(getSubmitEventMutationOptions(options));
+};
+
+/**
+ * @summary Get a single published event by id or slug
+ */
+export const getGetPublicEventUrl = (id: string) => {
+  return `/api/events/${id}`;
+};
+
+export const getPublicEvent = async (
+  id: string,
+  options?: RequestInit,
+): Promise<EventRecord> => {
+  return customFetch<EventRecord>(getGetPublicEventUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPublicEventQueryKey = (id: string) => {
+  return [`/api/events/${id}`] as const;
+};
+
+export const getGetPublicEventQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicEvent>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPublicEvent>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPublicEventQueryKey(id);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPublicEvent>>> = ({
+    signal,
+  }) => getPublicEvent(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicEvent>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetPublicEventQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicEvent>>
+>;
+export type GetPublicEventQueryError = ErrorType<void>;
+
+/**
+ * @summary Get a single published event by id or slug
+ */
+
+export function useGetPublicEvent<
+  TData = Awaited<ReturnType<typeof getPublicEvent>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPublicEvent>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetPublicEventQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List all events (admin, requires x-admin-key header)
+ */
+export const getListAdminEventsUrl = (params?: ListAdminEventsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/events?${stringifiedParams}`
+    : `/api/admin/events`;
+};
+
+export const listAdminEvents = async (
+  params?: ListAdminEventsParams,
+  options?: RequestInit,
+): Promise<AdminEventRecord[]> => {
+  return customFetch<AdminEventRecord[]>(getListAdminEventsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListAdminEventsQueryKey = (params?: ListAdminEventsParams) => {
+  return [`/api/admin/events`, ...(params ? [params] : [])] as const;
+};
+
+export const getListAdminEventsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAdminEvents>>,
+  TError = ErrorType<void>,
+>(
+  params?: ListAdminEventsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listAdminEvents>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListAdminEventsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminEvents>>> = ({
+    signal,
+  }) => listAdminEvents(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminEvents>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListAdminEventsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listAdminEvents>>
+>;
+export type ListAdminEventsQueryError = ErrorType<void>;
+
+/**
+ * @summary List all events (admin, requires x-admin-key header)
+ */
+
+export function useListAdminEvents<
+  TData = Awaited<ReturnType<typeof listAdminEvents>>,
+  TError = ErrorType<void>,
+>(
+  params?: ListAdminEventsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listAdminEvents>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListAdminEventsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Workflow summary counts (admin, requires x-admin-key header)
+ */
+export const getGetAdminEventsSummaryUrl = () => {
+  return `/api/admin/events/summary`;
+};
+
+export const getAdminEventsSummary = async (
+  options?: RequestInit,
+): Promise<AdminEventsSummary> => {
+  return customFetch<AdminEventsSummary>(getGetAdminEventsSummaryUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAdminEventsSummaryQueryKey = () => {
+  return [`/api/admin/events/summary`] as const;
+};
+
+export const getGetAdminEventsSummaryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminEventsSummary>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminEventsSummary>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAdminEventsSummaryQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminEventsSummary>>
+  > = ({ signal }) => getAdminEventsSummary({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminEventsSummary>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAdminEventsSummaryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminEventsSummary>>
+>;
+export type GetAdminEventsSummaryQueryError = ErrorType<void>;
+
+/**
+ * @summary Workflow summary counts (admin, requires x-admin-key header)
+ */
+
+export function useGetAdminEventsSummary<
+  TData = Awaited<ReturnType<typeof getAdminEventsSummary>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminEventsSummary>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAdminEventsSummaryQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update event workflow status and metadata (admin, requires x-admin-key header)
+ */
+export const getUpdateAdminEventUrl = (id: string) => {
+  return `/api/admin/events/${id}`;
+};
+
+export const updateAdminEvent = async (
+  id: string,
+  adminUpdateEventInput: AdminUpdateEventInput,
+  options?: RequestInit,
+): Promise<AdminEventRecord> => {
+  return customFetch<AdminEventRecord>(getUpdateAdminEventUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(adminUpdateEventInput),
+  });
+};
+
+export const getUpdateAdminEventMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminEvent>>,
+    TError,
+    { id: string; data: BodyType<AdminUpdateEventInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateAdminEvent>>,
+  TError,
+  { id: string; data: BodyType<AdminUpdateEventInput> },
+  TContext
+> => {
+  const mutationKey = ["updateAdminEvent"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateAdminEvent>>,
+    { id: string; data: BodyType<AdminUpdateEventInput> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateAdminEvent(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateAdminEventMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateAdminEvent>>
+>;
+export type UpdateAdminEventMutationBody = BodyType<AdminUpdateEventInput>;
+export type UpdateAdminEventMutationError = ErrorType<void>;
+
+/**
+ * @summary Update event workflow status and metadata (admin, requires x-admin-key header)
+ */
+export const useUpdateAdminEvent = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateAdminEvent>>,
+    TError,
+    { id: string; data: BodyType<AdminUpdateEventInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateAdminEvent>>,
+  TError,
+  { id: string; data: BodyType<AdminUpdateEventInput> },
+  TContext
+> => {
+  return useMutation(getUpdateAdminEventMutationOptions(options));
+};
 
 /**
  * @summary Submit a contact / suggestion message

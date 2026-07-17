@@ -1,5 +1,5 @@
 import { inArray, eq } from "drizzle-orm";
-import { db, businessesTable, type InsertBusiness } from "@workspace/db";
+import { db, businessesTable, eventsTable, type InsertBusiness } from "@workspace/db";
 import { logger } from "./logger";
 
 // Geofence anchors keyed by DB slug — only the 11 sponsor offers, the 6 bonus
@@ -265,5 +265,53 @@ export async function seedBusinesses(): Promise<void> {
     );
   } catch (err) {
     logger.error({ err }, "Failed to seed businesses");
+  }
+}
+
+// Calendar events — full-detail events from the sample-data, seeded as
+// published entries so the EventsFeed API can serve them. Idempotent by slug.
+const SEED_CALENDAR_EVENTS = [
+  { slug: "battle-of-the-bands", name: "Battle of the Bands", category: "Concert", date: "June 13, 2026", time: "3pm – 9pm", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313", neighborhood: "Castleberry Hill", cost: "Free", description: "Live music, ice cream, vendors, and vibes — a kickoff block party from the Atlantucky crew ahead of the matches.", highlights: ["Live local bands all afternoon", "Ice cream + food vendors on site", "Outdoor activations from Atlantucky partners", "Free to attend, family-friendly until 7pm"], instagram: ["@atlkybob", "@dp.and.co_atl", "@peachtreewellnessatl"], isBonusStamp: true },
+  { slug: "video-game-prelims", name: "Video Game Prelims + Soccer Tourney", category: "Gaming", date: "June 16, 2026", time: "12pm – 6pm", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313", neighborhood: "Castleberry Hill", cost: "Free", description: "Kickoff of the FIFA-style video game prelims and a small outdoor soccer tourney. Sign up at the door or just come hang.", highlights: ["Open video game prelims — bracket play", "5v5 mini-pitch outside", "Ice cream, food vendors, and giveaways", "Prizes for finalists in both brackets"], instagram: ["@atlantucky", "@dp.and.co_atl", "@peachtreewellnessatl"], isBonusStamp: true },
+  { slug: "hot-sauce-market", name: "Hot Sauce Market", category: "Market", date: "June 20, 2026", time: "12pm – 6pm", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313", neighborhood: "Castleberry Hill", cost: "Free", description: "Atlanta's spiciest pop-up — local hot sauce makers, vendors, tastings, and a couple of dares.", highlights: ["20+ local hot sauce makers", "Tastings + bottles for sale", "Live music + food trucks", "Heat challenge with prizes"], instagram: ["@hotsaucefest.atl", "@dp.and.co_atl", "@peachtreewellnessatl", "@atlantucky", "@passport.atl"], isBonusStamp: true },
+  { slug: "post-match-atlantucky", name: "Post-Match Vibes at Atlantucky", category: "Party", date: "June 21, 2026", time: "4pm – 9pm", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313", neighborhood: "Castleberry Hill", cost: "Free", description: "Post-match hang at Atlantucky — slow down, grab a beer, and celebrate (or commiserate) with the Atlanta soccer community.", highlights: ["Drink specials post-match", "DJ set + cool Atlanta vibes", "Stamps available for Passport holders", "Walk from SEC District MARTA (blue/green)"], instagram: ["@dp.and.co_atl", "@atlantucky", "@peachtreewellnessatl", "@passport.atl"], isBonusStamp: true },
+  { slug: "soccer-gaming-finals", name: "Soccer Video Game Tournament + Wing Eating Comp", category: "Gaming", date: "June 22–23, 2026", time: "12pm – 8pm both days", venue: "Atlantucky Brewing", address: "170 Northside Dr SW, Atlanta, GA 30313", neighborhood: "Castleberry Hill", cost: "Free", description: "Two-day finals weekend — gaming bracket finals, the wing eating comp, plus a full block of vendors and activations.", highlights: ["Video game tournament finals", "Wing eating competition (sign up at door)", "Air-brushing + custom jersey making", "Soccer net activation outside", "Vendors, ice cream, and DJs all day"], instagram: ["@dp.and.co_atl", "@atlantucky", "@peachtreewellnessatl", "@passport.atl"], isBonusStamp: true },
+  { slug: "skate-and-graffiti", name: "Skate & Graffiti", category: "Art Exhibit", date: "June 27, 2026", time: "4pm – 9pm", venue: "Peachtree Wellness", address: "585 Memorial Dr SE, Atlanta, GA 30312", neighborhood: "Grant Park", cost: "Free", description: "A skate and graffiti session at Peachtree Wellness — live spray-paint art, skating, and Atlanta's creative community coming together ahead of the matches.", highlights: ["Live graffiti and spray-paint art", "Open skate session", "Free to attend", "Stamps available for Passport holders"], instagram: ["@peachtreewellnessatl", "@passport.atl"], isBonusStamp: true },
+  { slug: "castleberry-hill-artist-market", name: "Castleberry Hill Artist Market", category: "Market", date: "June 12, 2026", time: "7pm – 10pm", venue: "172 Haynes St SW", address: "172 Haynes St SW, Atlanta, GA 30313", neighborhood: "Castleberry Hill", cost: "Free", description: "", highlights: [], instagram: [], isBonusStamp: false },
+  { slug: "slow-and-low", name: "Slow and Low", category: "Concert", date: "June 12, 2026", time: "8pm", venue: "Smith's Olde Bar", address: "1578 Piedmont Ave NE, Atlanta, GA 30309", neighborhood: "Midtown", cost: "$15", description: "", highlights: [], instagram: [], isBonusStamp: false },
+  { slug: "fizz-ed-creature-comforts", name: "Fizz Ed Ft. Creature Comforts", category: "Tasting", date: "June 18, 2026", time: "7pm – 9pm", venue: "Hop City Krog Street", address: "440 Moreland Ave NE, Atlanta, GA 30307", neighborhood: "Inman Park", cost: "$35", description: "", highlights: [], instagram: [], isBonusStamp: false },
+  { slug: "west-coast-classics-wine-tasting", name: "West Coast Classics Wine Tasting", category: "Tasting", date: "June 25, 2026", time: "6pm – 9pm", venue: "Varasano's Pizzeria", address: "2171 Peachtree Rd NE, Atlanta, GA 30309", neighborhood: "Buckhead", cost: "$50", description: "", highlights: [], instagram: [], isBonusStamp: false },
+];
+
+export async function seedCalendarEvents(): Promise<void> {
+  try {
+    for (const ev of SEED_CALENDAR_EVENTS) {
+      await db
+        .insert(eventsTable)
+        .values({
+          slug: ev.slug,
+          name: ev.name,
+          category: ev.category,
+          date: ev.date,
+          time: ev.time,
+          venue: ev.venue,
+          address: ev.address,
+          neighborhood: ev.neighborhood,
+          cost: ev.cost,
+          description: ev.description || null,
+          highlights: ev.highlights.length > 0 ? ev.highlights : null,
+          instagram: ev.instagram.length > 0 ? ev.instagram : null,
+          isBonusStamp: ev.isBonusStamp,
+          isFeatured: ev.isBonusStamp,
+          workflowStatus: "published",
+          publishedAt: new Date(),
+          source: "manual",
+          completenessScore: ev.description ? 85 : 60,
+        })
+        .onConflictDoNothing({ target: eventsTable.slug });
+    }
+    logger.info({ count: SEED_CALENDAR_EVENTS.length }, "Seeded calendar events (idempotent)");
+  } catch (err) {
+    logger.error({ err }, "Failed to seed calendar events");
   }
 }
