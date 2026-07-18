@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
   CheckCircle2, Check, Loader2, ChevronDown, ChevronUp,
-  Star, Zap, Crown,
+  Star, Zap, Flame, Crown, Gem,
 } from "lucide-react";
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
@@ -25,68 +25,122 @@ import { cn } from "@/lib/utils";
 const API_BASE = "/api";
 
 const marqueeKeys = [
-  "List your event", "FREE basic listing", "Featured + Premier options",
+  "List your event", "Free · Basic · Featured · Premier · Signature",
   "Atlanta events", "Local culture", "Get discovered", "Passport ATL",
 ];
 
 // ── Package config ─────────────────────────────────────────────────────────────
 
-type Pkg = "free" | "featured" | "premier";
+type Pkg = "free" | "basic" | "featured" | "premier" | "signature";
 
 const PACKAGES: {
   id: Pkg;
   title: string;
   price: string;
   icon: React.ReactNode;
-  cls: string;
   activeCls: string;
   badge?: string;
+  badgeCls?: string;
   perks: string[];
-  requiredExtras: string[];
+  morePerks: string[];
 }[] = [
   {
     id: "free",
-    title: "Free Listing",
+    title: "Free",
     price: "$0",
-    icon: <Star className="w-5 h-5" />,
-    cls: "bg-background",
+    icon: <Star className="w-4 h-4" />,
     activeCls: "bg-brand-cream",
-    perks: ["Name & date on the calendar", "Venue & basics", "Neighborhood tag"],
-    requiredExtras: [],
+    perks: [
+      "Basic event listing on the calendar",
+      "Event name, date & venue",
+      "Neighborhood tag & event type",
+    ],
+    morePerks: [
+      "Listed in the Passport ATL events directory",
+      "Visible to all Passport ATL users",
+    ],
+  },
+  {
+    id: "basic",
+    title: "Basic",
+    price: "$149",
+    icon: <Zap className="w-4 h-4" />,
+    activeCls: "bg-brand-yellow",
+    badge: "POPULAR",
+    badgeCls: "bg-brand-lime text-foreground",
+    perks: [
+      "Everything in Free",
+      "Full event description & photo",
+      "Website link + social share card",
+      "Contact form on your listing",
+    ],
+    morePerks: [
+      "Enhanced calendar placement",
+      "Shareable event page link",
+      "Eligible for Passport ATL promotion",
+    ],
   },
   {
     id: "featured",
-    title: "Featured Event",
-    price: "$49",
-    icon: <Zap className="w-5 h-5" />,
-    cls: "bg-background",
-    activeCls: "bg-brand-yellow text-brand-yellow-foreground",
-    badge: "POPULAR",
+    title: "Featured",
+    price: "$399",
+    icon: <Flame className="w-4 h-4" />,
+    activeCls: "bg-brand-red text-white",
+    badge: "BEST VISIBILITY",
+    badgeCls: "bg-foreground text-white",
     perks: [
-      "Everything in Free",
-      "Full description & image",
-      "Website link",
-      "Social share card",
-      "Boosted visibility",
+      "Everything in Basic",
+      "Boosted homepage placement",
+      "Event tags & audience targeting",
+      "Priority calendar listing",
     ],
-    requiredExtras: ["description", "imageUrl", "website"],
+    morePerks: [
+      "Instagram handle displayed on listing",
+      "Eligible for email newsletter mention",
+      "Highlighted in category filters",
+    ],
   },
   {
     id: "premier",
-    title: "Premier Event",
-    price: "$99",
-    icon: <Crown className="w-5 h-5" />,
-    cls: "bg-background",
+    title: "Premier",
+    price: "$649",
+    icon: <Crown className="w-4 h-4" />,
     activeCls: "bg-brand-navy text-white",
     badge: "SPOTLIGHT",
+    badgeCls: "bg-brand-yellow text-foreground",
     perks: [
       "Everything in Featured",
-      "Homepage spotlight",
-      "Highlights bullet list",
-      "Ticket link",
-      "Priority placement",
+      "Homepage spotlight feature",
+      "Highlights bullet list on listing",
+      "Ticket / RSVP link integration",
     ],
-    requiredExtras: ["description", "imageUrl", "website", "highlights", "ticketUrl"],
+    morePerks: [
+      "Featured in Passport ATL map",
+      "Social media spotlight post",
+      "Priority review & setup",
+      "Passport ATL collaboration opportunity",
+    ],
+  },
+  {
+    id: "signature",
+    title: "Signature",
+    price: "$999",
+    icon: <Gem className="w-4 h-4" />,
+    activeCls: "bg-foreground text-white",
+    badge: "FULL CAMPAIGN",
+    badgeCls: "bg-brand-red text-white",
+    perks: [
+      "Everything in Premier",
+      "Dedicated feature story & newsletter spotlight",
+      "Instagram & social media campaign",
+      "Season-long VIP placement",
+    ],
+    morePerks: [
+      "Passport ATL co-branded promotion",
+      "Personalized outreach & onboarding support",
+      "Top-of-calendar priority for the full run",
+      "End-of-season recap inclusion",
+    ],
   },
 ];
 
@@ -96,7 +150,7 @@ const AGE_OPTIONS = ["All Ages", "18+ only", "21+ only"];
 
 const schema = z
   .object({
-    listingPackage: z.enum(["free", "featured", "premier"]),
+    listingPackage: z.enum(["free", "basic", "featured", "premier", "signature"]),
     eventName: z.string().min(2, "Event name must be at least 2 characters."),
     description: z.string().optional().default(""),
     highlights: z.string().optional().default(""),
@@ -127,39 +181,42 @@ const schema = z
   })
   .superRefine((val, ctx) => {
     const pkg = val.listingPackage;
-    if (pkg === "featured" || pkg === "premier") {
+    const needsMedia = pkg === "basic" || pkg === "featured" || pkg === "premier" || pkg === "signature";
+    const needsHighlights = pkg === "premier" || pkg === "signature";
+
+    if (needsMedia) {
       if (!val.description || val.description.trim().length < 20)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["description"],
-          message: "Description is required for Featured & Premier listings (min 20 characters).",
+          message: "Description is required for paid listings (min 20 characters).",
         });
       if (!val.imageUrl?.trim())
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["imageUrl"],
-          message: "An event image URL is required for Featured & Premier listings.",
+          message: "An event image URL is required for paid listings.",
         });
       if (!val.website?.trim())
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["website"],
-          message: "A website URL is required for Featured & Premier listings.",
+          message: "A website URL is required for paid listings.",
         });
     }
-    if (pkg === "premier") {
+    if (needsHighlights) {
       const lines = (val.highlights ?? "").split("\n").map((s) => s.trim()).filter(Boolean);
       if (lines.length < 2)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["highlights"],
-          message: "At least 2 highlights are required for Premier listings.",
+          message: "At least 2 highlights are required for Premier & Signature listings.",
         });
       if (!val.ticketUrl?.trim())
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["ticketUrl"],
-          message: "A ticket URL is required for Premier listings.",
+          message: "A ticket URL is required for Premier & Signature listings.",
         });
     }
   });
@@ -198,10 +255,12 @@ function getRequiredFields(pkg: Pkg): (keyof FormValues)[] {
     "neighborhood", "category", "ageCategory", "cost",
     "organizerName", "organizerEmail", "organizerPhone", "consent",
   ];
-  if (pkg === "featured")
-    return [...base, "description", "imageUrl", "website"];
-  if (pkg === "premier")
+  const needsMedia = pkg === "basic" || pkg === "featured" || pkg === "premier" || pkg === "signature";
+  const needsHighlights = pkg === "premier" || pkg === "signature";
+  if (needsMedia && needsHighlights)
     return [...base, "description", "imageUrl", "website", "highlights", "ticketUrl"];
+  if (needsMedia)
+    return [...base, "description", "imageUrl", "website"];
   return base;
 }
 
@@ -224,15 +283,20 @@ function FieldNote({ children, className }: { children: React.ReactNode; classNa
 }
 
 function PkgBadge({ pkg, field }: { pkg: Pkg; field: string }) {
-  const featuredReq = ["description", "imageUrl", "website"];
+  const mediaReq = ["description", "imageUrl", "website"];
   const premierOnly = ["highlights", "ticketUrl"];
-  if (pkg === "free" && featuredReq.includes(field))
-    return <span className="ml-1 font-normal normal-case text-xs text-muted-foreground">(required for Featured+)</span>;
-  if (pkg === "free" && premierOnly.includes(field))
-    return <span className="ml-1 font-normal normal-case text-xs text-muted-foreground">(required for Premier)</span>;
-  if (pkg === "featured" && premierOnly.includes(field))
-    return <span className="ml-1 font-normal normal-case text-xs text-muted-foreground">(required for Premier)</span>;
-  if ((pkg === "featured" && featuredReq.includes(field)) || (pkg === "premier" && [...featuredReq, ...premierOnly].includes(field)))
+  const needsMedia = pkg === "basic" || pkg === "featured" || pkg === "premier" || pkg === "signature";
+  const needsHighlights = pkg === "premier" || pkg === "signature";
+
+  if (pkg === "free") {
+    if (mediaReq.includes(field))
+      return <span className="ml-1 font-normal normal-case text-xs text-muted-foreground">(required for Basic+)</span>;
+    if (premierOnly.includes(field))
+      return <span className="ml-1 font-normal normal-case text-xs text-muted-foreground">(required for Premier+)</span>;
+  }
+  if ((pkg === "basic" || pkg === "featured") && premierOnly.includes(field))
+    return <span className="ml-1 font-normal normal-case text-xs text-muted-foreground">(required for Premier+)</span>;
+  if ((needsMedia && mediaReq.includes(field)) || (needsHighlights && premierOnly.includes(field)))
     return <span className="ml-0.5 text-brand-red">*</span>;
   return null;
 }
@@ -303,6 +367,16 @@ export default function ListEvent() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [neighborhoodOther, setNeighborhoodOther] = useState(false);
+  const [expandedPackages, setExpandedPackages] = useState<Set<string>>(new Set());
+  const toggleExpand = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedPackages((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -441,12 +515,12 @@ export default function ListEvent() {
           </p>
           {pkg !== "free" && (
             <p className="mb-6 text-sm leading-snug opacity-80">
-              Our team will reach out about payment and next steps for your {pkgObj.title}.
+              Our team will send an invoice and next steps for your <strong>{pkgObj.title}</strong> package within 1 business day.
             </p>
           )}
           {pkg === "free" && (
             <p className="mb-6 text-sm leading-snug opacity-80">
-              Want more visibility? Reply to the confirmation email and we'll send you Featured or Premier options.
+              Want more reach? Reply to the confirmation email and we'll walk you through our Basic, Featured, Premier, and Signature options.
             </p>
           )}
           <Link href="/" className="button-pop inline-flex justify-center w-full">
@@ -469,7 +543,7 @@ export default function ListEvent() {
           <h1 className="hero-title text-primary mb-6">List your event in Passport ATL.</h1>
           <p className="text-lg text-muted-foreground mt-4">
             Get your event in front of local Atlanta explorers. Free basic listings, or upgrade for
-            maximum reach with Featured and Premier plans.
+            maximum reach with our Basic, Featured, Premier, and Signature plans.
           </p>
         </div>
 
@@ -504,7 +578,7 @@ export default function ListEvent() {
               <div className="space-y-4">
                 <SectionHeader num="00" title="Choose your listing" />
                 <p className="text-sm text-muted-foreground">
-                  Pick a plan — the form updates to show you exactly what's needed for each level.
+                  Pick a plan — the form updates to show exactly what's needed. All paid packages include invoice-based billing after submission.
                 </p>
                 <FormField
                   control={form.control}
@@ -516,44 +590,68 @@ export default function ListEvent() {
                         <RadioGroup
                           value={field.value}
                           onValueChange={field.onChange}
-                          className="grid sm:grid-cols-3 gap-4"
+                          className="grid gap-3"
                         >
                           {PACKAGES.map((opt) => {
                             const active = field.value === opt.id;
+                            const expanded = expandedPackages.has(opt.id);
                             return (
                               <label
                                 key={opt.id}
                                 className={cn(
-                                  "relative border-[3px] border-foreground rounded-2xl p-4 pt-6 cursor-pointer transition-all flex flex-col gap-2 min-w-0 focus-within:ring-4 focus-within:ring-brand-yellow",
+                                  "relative flex items-start gap-4 rounded-2xl border-[3px] border-foreground p-4 cursor-pointer transition-all focus-within:ring-4 focus-within:ring-brand-yellow",
                                   active
-                                    ? `${opt.activeCls} shadow-pop -translate-y-1 ring-2 ring-foreground`
+                                    ? `${opt.activeCls} shadow-pop -translate-y-0.5 ring-2 ring-foreground`
                                     : "bg-background hover:-translate-y-0.5 hover:shadow-pop-sm",
                                 )}
                               >
                                 <RadioGroupItem value={opt.id} className="sr-only" />
-                                {active && (
-                                  <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center border-2 border-background shadow-pop-sm">
-                                    <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                                  </span>
-                                )}
-                                {!active && opt.badge && (
-                                  <span className="absolute -top-2 right-2 badge-sticker bg-brand-lime text-foreground text-[9px] px-2 py-0.5 whitespace-nowrap">
+                                {opt.badge && (
+                                  <span className={cn(
+                                    "absolute -top-2.5 right-3 font-display text-[9px] tracking-widest px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
+                                    opt.badgeCls ?? "bg-brand-lime text-foreground",
+                                  )}>
                                     {opt.badge}
                                   </span>
                                 )}
-                                <div className="flex items-center gap-1.5 mb-1">
-                                  {opt.icon}
-                                  <span className="font-display text-[10px] tracking-[0.1em] uppercase opacity-80">{opt.title}</span>
+                                <div className="mt-0.5 shrink-0">{opt.icon}</div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-baseline gap-2 flex-wrap">
+                                    <span className="font-display text-base tracking-wide uppercase">{opt.title}</span>
+                                    <span className="font-display text-xl leading-none">{opt.price}</span>
+                                    {active && <Check className="w-4 h-4 ml-auto shrink-0" />}
+                                  </div>
+                                  <ul className="mt-2 space-y-1">
+                                    {opt.perks.map((p) => (
+                                      <li key={p} className="text-xs flex items-start gap-1.5 leading-snug opacity-90">
+                                        <span className="shrink-0 mt-0.5">✓</span>
+                                        {p}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                  {opt.morePerks.length > 0 && (
+                                    <>
+                                      {expanded && (
+                                        <ul className="mt-1 space-y-1 border-t border-foreground/15 pt-2">
+                                          {opt.morePerks.map((p) => (
+                                            <li key={p} className="text-xs flex items-start gap-1.5 leading-snug opacity-75">
+                                              <span className="shrink-0 mt-0.5">+</span>
+                                              {p}
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      )}
+                                      <button
+                                        type="button"
+                                        onClick={(e) => toggleExpand(opt.id, e)}
+                                        className="mt-2 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide opacity-60 hover:opacity-100 transition-opacity"
+                                      >
+                                        {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                                        {expanded ? "Show less" : "See all features"}
+                                      </button>
+                                    </>
+                                  )}
                                 </div>
-                                <div className="font-display text-2xl leading-none mb-2">{opt.price}</div>
-                                <ul className="space-y-1">
-                                  {opt.perks.map((p) => (
-                                    <li key={p} className="text-xs flex items-start gap-1.5 leading-snug">
-                                      <span className="shrink-0 mt-0.5">✓</span>
-                                      {p}
-                                    </li>
-                                  ))}
-                                </ul>
                               </label>
                             );
                           })}
@@ -600,10 +698,10 @@ export default function ListEvent() {
                         />
                       </FormControl>
                       {pkg === "free" && (
-                        <FieldNote>Optional for free listings. Required for Featured & Premier.</FieldNote>
+                        <FieldNote>Optional for free listings. Required for all paid packages.</FieldNote>
                       )}
                       {pkg !== "free" && (
-                        <FieldNote>Min 20 characters for your package tier.</FieldNote>
+                        <FieldNote>Min 20 characters for your selected package.</FieldNote>
                       )}
                       <FormMessage />
                     </FormItem>
@@ -628,7 +726,7 @@ export default function ListEvent() {
                       </FormControl>
                       <FieldNote>
                         Enter one highlight per line.
-                        {pkg === "premier" ? " Required for Premier (at least 2)." : " Optional — these appear as bullet points on your event listing."}
+                        {(pkg === "premier" || pkg === "signature") ? " Required for Premier & Signature (at least 2)." : " Optional — these appear as bullet points on your event listing."}
                       </FieldNote>
                       <FormMessage />
                     </FormItem>
@@ -932,8 +1030,8 @@ export default function ListEvent() {
                         <FormControl>
                           <Input placeholder="https://eventbrite.com/..." {...field} />
                         </FormControl>
-                        {pkg === "premier" && (
-                          <FieldNote>Required for Premier listings.</FieldNote>
+                        {(pkg === "premier" || pkg === "signature") && (
+                          <FieldNote>Required for Premier & Signature listings.</FieldNote>
                         )}
                         <FormMessage />
                       </FormItem>
@@ -977,7 +1075,7 @@ export default function ListEvent() {
                           <Input placeholder="https://example.com/event-flyer.jpg" {...field} />
                         </FormControl>
                         {pkg === "free" && (
-                          <FieldNote>Optional. Required for Featured & Premier.</FieldNote>
+                          <FieldNote>Optional. Required for all paid packages.</FieldNote>
                         )}
                         <FormMessage />
                       </FormItem>
@@ -1119,6 +1217,7 @@ export default function ListEvent() {
                     <p className="font-semibold">
                       {PACKAGES.find((p) => p.id === pkg)?.title} — {PACKAGES.find((p) => p.id === pkg)?.price}
                     </p>
+                    <p className="text-muted-foreground">Invoice sent after submission. No payment required now.</p>
                     <p className="text-muted-foreground">
                       Our team will reach out within 24 hours about payment and next steps after you submit.
                     </p>

@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
-  CheckCircle2, Check, Loader2, Star, Zap, Crown,
-  AlertTriangle,
+  CheckCircle2, Check, Loader2, ChevronDown, ChevronUp,
+  Star, Zap, TrendingUp, Crown, AlertTriangle,
 } from "lucide-react";
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
@@ -22,64 +22,101 @@ import { cn } from "@/lib/utils";
 const API_BASE = "/api";
 
 const marqueeKeys = [
-  "List your location", "FREE basic listing", "Featured + Premier options",
-  "Passport ATL", "Get on the map", "Atlanta's local guide",
+  "List your location", "Free · Starter · Growth · Premier",
+  "Passport ATL", "Get on the map", "Atlanta's local guide", "Stamp stop eligibility",
 ];
 
 // ── Packages ─────────────────────────────────────────────────────────────────
 
-type Pkg = "free" | "featured" | "premier";
+type Pkg = "free" | "starter" | "growth" | "premier";
 
 const PACKAGES: {
   id: Pkg;
   title: string;
   price: string;
   icon: React.ReactNode;
-  cls: string;
   activeCls: string;
   badge?: string;
+  badgeCls?: string;
   perks: string[];
+  morePerks: string[];
 }[] = [
   {
     id: "free",
-    title: "Free Listing",
+    title: "Free",
     price: "$0",
-    icon: <Star className="w-5 h-5" />,
-    cls: "bg-background",
+    icon: <Star className="w-4 h-4" />,
     activeCls: "bg-brand-cream",
-    perks: ["Name & address on the directory", "Category & neighborhood", "Basic contact info"],
+    perks: [
+      "Business name & address on the directory",
+      "Category & neighborhood tag",
+      "Basic contact info",
+    ],
+    morePerks: [
+      "Listed in search & browse",
+      "Visible to all Passport ATL users",
+    ],
   },
   {
-    id: "featured",
-    title: "Featured Location",
-    price: "$49",
-    icon: <Zap className="w-5 h-5" />,
-    cls: "bg-background",
-    activeCls: "bg-brand-yellow text-brand-yellow-foreground",
+    id: "starter",
+    title: "Starter",
+    price: "$199",
+    icon: <Zap className="w-4 h-4" />,
+    activeCls: "bg-brand-yellow",
     badge: "POPULAR",
+    badgeCls: "bg-brand-lime text-foreground",
     perks: [
       "Everything in Free",
-      "Full description & hero image",
-      "Website + reviews link",
-      "Tags & highlights",
-      "Boosted directory placement",
+      "Full business description & hero image",
+      "Website & reviews link",
+      "Enhanced directory card & placement",
+    ],
+    morePerks: [
+      "Business tags & highlights",
+      "Social share card for your listing",
+      "Eligible for Passport ATL promotion",
+    ],
+  },
+  {
+    id: "growth",
+    title: "Growth",
+    price: "$499",
+    icon: <TrendingUp className="w-4 h-4" />,
+    activeCls: "bg-brand-red text-white",
+    badge: "BEST VALUE",
+    badgeCls: "bg-foreground text-white",
+    perks: [
+      "Everything in Starter",
+      "Gallery images (up to 6 photos)",
+      "Featured category section placement",
+      "Event & programming calendar listing",
+    ],
+    morePerks: [
+      "MARTA & parking details highlighted",
+      "Hours & access prominently displayed",
+      "Priority review & onboarding",
+      "Eligible for newsletter spotlights",
     ],
   },
   {
     id: "premier",
-    title: "Premier Listing",
-    price: "$149",
-    icon: <Crown className="w-5 h-5" />,
-    cls: "bg-background",
+    title: "Premier",
+    price: "$999",
+    icon: <Crown className="w-4 h-4" />,
     activeCls: "bg-brand-navy text-white",
     badge: "STAMP STOP",
+    badgeCls: "bg-brand-yellow text-foreground",
     perks: [
-      "Everything in Featured",
+      "Everything in Growth",
       "Passport stamp stop eligibility",
-      "Insider tips & passport summary",
-      "Gallery images",
+      "Insider tips & passport summary on listing",
       "Homepage spotlight consideration",
-      "Priority review",
+    ],
+    morePerks: [
+      "Social media feature post",
+      "Newsletter inclusion",
+      "Sponsored route consideration",
+      "Personalized Passport ATL partnership",
     ],
   },
 ];
@@ -87,7 +124,7 @@ const PACKAGES: {
 // ── Schema ────────────────────────────────────────────────────────────────────
 
 const schema = z.object({
-  listingTier: z.enum(["free", "featured", "premier"]),
+  listingTier: z.enum(["free", "starter", "growth", "premier"]),
 
   // Section 01 — Business Info
   locationName: z.string().min(2, "Location name must be at least 2 characters."),
@@ -161,6 +198,16 @@ export default function ListALocation() {
   const [step, setStep] = useState<"form" | "review" | "success" | "duplicate">("form");
   const [submitting, setSubmitting] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
+  const [expandedPackages, setExpandedPackages] = useState<Set<string>>(new Set());
+  const toggleExpand = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setExpandedPackages((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -203,7 +250,8 @@ export default function ListALocation() {
 
   const requiredByPkg: Record<Pkg, string[]> = {
     free: ["locationName", "primaryCategory", "address", "neighborhood", "contactName", "contactEmail"],
-    featured: ["locationName", "primaryCategory", "address", "neighborhood", "description", "heroImage", "website", "contactName", "contactEmail"],
+    starter: ["locationName", "primaryCategory", "address", "neighborhood", "description", "heroImage", "website", "contactName", "contactEmail"],
+    growth: ["locationName", "primaryCategory", "address", "neighborhood", "description", "heroImage", "website", "contactName", "contactEmail"],
     premier: ["locationName", "primaryCategory", "address", "neighborhood", "description", "heroImage", "website", "passportSummary", "contactName", "contactEmail"],
   };
 
@@ -470,6 +518,9 @@ export default function ListALocation() {
             {/* ── Listing Tier ────────────────────────────────────────────── */}
             <div className="space-y-4">
               <SectionHeader num="✦" title="Choose Your Listing Tier" />
+              <p className="text-sm text-foreground/70">
+                Compare tiers below — the form updates to show what each tier requires. All paid tiers are invoiced after submission.
+              </p>
               <FormField
                 control={form.control}
                 name="listingTier"
@@ -482,37 +533,63 @@ export default function ListALocation() {
                     >
                       {PACKAGES.map((p) => {
                         const active = field.value === p.id;
+                        const expanded = expandedPackages.has(p.id);
                         return (
                           <label
                             key={p.id}
                             className={cn(
-                              "relative flex items-start gap-4 rounded-2xl border-[3px] border-foreground p-4 cursor-pointer transition-all",
+                              "relative flex items-start gap-4 rounded-2xl border-[3px] border-foreground p-4 cursor-pointer transition-all focus-within:ring-4 focus-within:ring-brand-yellow",
                               active
-                                ? cn(p.activeCls, "shadow-pop -translate-y-0.5")
-                                : cn(p.cls, "opacity-80 hover:opacity-100"),
+                                ? cn(p.activeCls, "shadow-pop -translate-y-0.5 ring-2 ring-foreground")
+                                : "bg-background opacity-80 hover:opacity-100 hover:-translate-y-0.5 hover:shadow-pop-sm",
                             )}
                           >
                             <RadioGroupItem value={p.id} className="sr-only" />
                             {p.badge && (
-                              <span className="absolute top-3 right-3 font-display text-[9px] tracking-widest bg-brand-red text-white px-2 py-0.5 rounded-full uppercase">
+                              <span className={cn(
+                                "absolute -top-2.5 right-3 font-display text-[9px] tracking-widest px-2 py-0.5 rounded-full uppercase whitespace-nowrap",
+                                p.badgeCls ?? "bg-brand-lime text-foreground",
+                              )}>
                                 {p.badge}
                               </span>
                             )}
-                            <div className="mt-0.5">{p.icon}</div>
+                            <div className="mt-0.5 shrink-0">{p.icon}</div>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-baseline gap-2">
-                                <span className="font-black text-base">{p.title}</span>
-                                <span className="font-bold text-sm">{p.price}</span>
+                              <div className="flex items-baseline gap-2 flex-wrap">
+                                <span className="font-display text-base tracking-wide uppercase">{p.title}</span>
+                                <span className="font-display text-xl leading-none">{p.price}</span>
                                 {active && <Check className="w-4 h-4 ml-auto shrink-0" />}
                               </div>
-                              <ul className="mt-1 space-y-0.5">
+                              <ul className="mt-2 space-y-1">
                                 {p.perks.map((perk) => (
-                                  <li key={perk} className="text-xs opacity-80 flex items-start gap-1.5">
-                                    <span className="mt-0.5 shrink-0">·</span>
+                                  <li key={perk} className="text-xs opacity-90 flex items-start gap-1.5 leading-snug">
+                                    <span className="mt-0.5 shrink-0">✓</span>
                                     {perk}
                                   </li>
                                 ))}
                               </ul>
+                              {p.morePerks.length > 0 && (
+                                <>
+                                  {expanded && (
+                                    <ul className="mt-1 space-y-1 border-t border-foreground/15 pt-2">
+                                      {p.morePerks.map((perk) => (
+                                        <li key={perk} className="text-xs opacity-75 flex items-start gap-1.5 leading-snug">
+                                          <span className="mt-0.5 shrink-0">+</span>
+                                          {perk}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => toggleExpand(p.id, e)}
+                                    className="mt-2 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide opacity-60 hover:opacity-100 transition-opacity"
+                                  >
+                                    {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                                    {expanded ? "Show less" : "See all features"}
+                                  </button>
+                                </>
+                              )}
                             </div>
                           </label>
                         );
@@ -637,7 +714,7 @@ export default function ListALocation() {
                     </FormControl>
                     <FieldNote>
                       {pkg !== "free"
-                        ? "Required for Featured and Premier listings. Shown on your directory card."
+                        ? "Required for Starter, Growth & Premier listings. Shown on your directory card."
                         : "Add a description to make your listing stand out."}
                     </FieldNote>
                     <FormMessage />
@@ -993,7 +1070,7 @@ export default function ListALocation() {
                       <Input placeholder="https://images.unsplash.com/your-photo" {...field} />
                     </FormControl>
                     <FieldNote>
-                      Link to a high-quality photo (landscape, 1200×630px ideal). Required for Featured + Premier listings.
+                      Link to a high-quality photo (landscape, 1200×630px ideal). Required for Starter, Growth & Premier listings.
                     </FieldNote>
                     <FormMessage />
                   </FormItem>
@@ -1027,7 +1104,7 @@ export default function ListALocation() {
             <div className="space-y-6">
               <SectionHeader num="05" title="Passport Details" />
               <p className="text-sm text-foreground/65">
-                Tell us about your interest in the Passport ATL program. This section is optional for Free and Featured tiers, required for Premier.
+                Tell us about your interest in the Passport ATL program. Optional for Free and Starter tiers, encouraged for Growth, and required for Premier.
               </p>
 
               <FormField
