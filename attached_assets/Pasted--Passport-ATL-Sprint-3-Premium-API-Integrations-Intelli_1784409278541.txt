@@ -1,0 +1,410 @@
+# Passport ATL – Sprint 3: Premium API Integrations & Intelligent Event Aggregation
+
+Implement Sprint 3 of Passport ATL's automatic event ingestion system.
+
+## Objective
+
+Expand Passport ATL into a comprehensive Atlanta event aggregation platform by integrating major event APIs in addition to the Ticketmaster, iCal, RSS, JSON, and XML sources completed in previous sprints.
+
+Sprint 3 should **extend the existing architecture** without replacing any working functionality.
+
+The following integrations must remain fully operational:
+
+* Manual events
+* Google Sheets imports
+* Ticketmaster
+* iCal feeds
+* RSS feeds
+* JSON feeds
+* XML feeds
+* Pending Review workflow
+* Deduplication engine
+
+No existing integrations should be removed or broken.
+
+---
+
+# Priority API Integrations
+
+Integrate as many of the following APIs as possible, beginning with those that provide public APIs or support developer accounts.
+
+## Tier 1 (Highest Priority)
+
+* Eventbrite
+* Meetup
+* Bandsintown
+* SeatGeek
+
+## Tier 2
+
+If API access is available:
+
+* PredictHQ
+* Fever
+* Eventeny
+* Humanitix
+* Universe
+* TicketLeap
+* SimpleTix
+* Eventbee
+
+If an API requires paid credentials that are unavailable, build the connector framework but leave the source disabled with a clear configuration requirement.
+
+---
+
+# Connector Architecture
+
+Each provider should be implemented as an independent connector.
+
+Every connector should support:
+
+* enable / disable
+* manual sync
+* scheduled sync
+* health status
+* sync history
+* error logging
+* API authentication
+* rate limit handling
+* retry handling
+
+The system should allow future connectors to be added with minimal code changes.
+
+---
+
+# Authentication
+
+Use environment variables for all API credentials.
+
+Do not hardcode:
+
+* API keys
+* OAuth tokens
+* secrets
+* client IDs
+
+If credentials are unavailable:
+
+* do not fail the application
+* disable only that connector
+* report the missing configuration
+
+---
+
+# Geographic Filtering
+
+Import only events relevant to Passport ATL.
+
+Prioritize:
+
+* Atlanta
+* Decatur
+* Sandy Springs
+* Alpharetta
+* Roswell
+* Marietta
+* Smyrna
+* Duluth
+* College Park
+* East Point
+* Kennesaw
+
+Also include surrounding metro counties.
+
+Reject events clearly outside the Atlanta metropolitan area unless they are explicitly marked as statewide or regional events.
+
+---
+
+# Category Filtering
+
+Prioritize:
+
+* Music
+* Arts
+* Theater
+* Comedy
+* Festivals
+* Food & Drink
+* Museums
+* Attractions
+* Community
+* Cultural
+* Family
+* Outdoor
+* Sports
+* Education
+* Nightlife
+
+Filter out obvious non-events such as:
+
+* merchandise
+* parking passes
+* VIP upgrades
+* donation products
+* resale listings
+* expired listings
+
+---
+
+# Event Normalization
+
+Normalize all providers into the Passport ATL event schema.
+
+Capture whenever available:
+
+* title
+* subtitle
+* description
+* organizer
+* organizer URL
+* venue
+* venue type
+* address
+* city
+* state
+* ZIP
+* latitude
+* longitude
+* neighborhood
+* category
+* tags
+* image
+* event URL
+* ticket URL
+* external ID
+* source provider
+* start date
+* end date
+* timezone
+* all-day status
+* recurrence
+* minimum price
+* maximum price
+* free indicator
+* age restrictions
+* accessibility information
+* ticket availability
+* sale dates
+
+---
+
+# Intelligent Deduplication
+
+Extend the current deduplication engine.
+
+Prevent duplicates across:
+
+* Ticketmaster
+* Eventbrite
+* Meetup
+* Bandsintown
+* SeatGeek
+* RSS
+* XML
+* JSON
+* iCal
+* Google Sheets
+* Manual events
+
+Use weighted matching based on:
+
+* external ID
+* normalized title
+* venue
+* address
+* coordinates
+* event URL
+* ticket URL
+* start date
+* start time
+
+When duplicate confidence is high:
+
+* merge source references
+* preserve richer metadata
+* retain editorial content
+* update only source-controlled fields
+
+Never overwrite manual edits.
+
+---
+
+# Rate Limiting
+
+Implement connector-specific rate limiting.
+
+Respect provider limits.
+
+Automatically:
+
+* queue requests
+* throttle requests
+* retry temporary failures
+* avoid unnecessary polling
+
+---
+
+# Scheduling
+
+Suggested defaults:
+
+Ticketmaster
+
+* every 6 hours
+
+Eventbrite
+
+* every 6 hours
+
+Meetup
+
+* every 6 hours
+
+Bandsintown
+
+* every 12 hours
+
+SeatGeek
+
+* every 12 hours
+
+Use configurable schedules.
+
+Prevent concurrent syncs for the same provider.
+
+---
+
+# Source Health
+
+Every connector should expose:
+
+* Healthy
+* Warning
+* Failed
+* Disabled
+* Awaiting Credentials
+
+Track:
+
+* last sync
+* last success
+* consecutive failures
+* response time
+* events fetched
+* inserted
+* updated
+* duplicates skipped
+* rejected
+* API quota usage (when available)
+
+---
+
+# Admin Dashboard
+
+Extend the source management interface.
+
+Allow administrators to:
+
+* enable or disable connectors
+* manually sync providers
+* view sync history
+* inspect failures
+* inspect API responses
+* inspect duplicate counts
+* view health status
+* view authentication status
+* view API quota information when available
+
+---
+
+# Pending Review
+
+All imported events must:
+
+* remain unpublished
+* enter Pending Review
+* preserve provider attribution
+* preserve external IDs
+* preserve source URLs
+
+No automatic publishing.
+
+---
+
+# Logging
+
+Maintain detailed logs for every provider.
+
+Include:
+
+* sync start
+* sync finish
+* duration
+* provider
+* records fetched
+* inserted
+* updated
+* duplicates
+* rejected
+* failures
+* API errors
+
+---
+
+# Testing
+
+Run live tests for every connector that has credentials.
+
+Verify:
+
+* authentication succeeds
+* requests succeed
+* events normalize correctly
+* Pending Review receives events
+* duplicates are prevented
+* existing Ticketmaster integration still works
+* existing iCal integrations still work
+* existing RSS integrations still work
+* Google Sheets still work
+* application starts successfully
+
+If credentials are unavailable:
+
+* report the connector as disabled
+* explain what configuration is required
+
+---
+
+# Completion Criteria
+
+Sprint 3 is complete only when:
+
+* every feasible connector has been implemented
+* all configured connectors pass live tests
+* unavailable connectors are safely disabled
+* imported events enter Pending Review
+* duplicates are prevented across every provider
+* existing Sprint 1 and Sprint 2 functionality remains intact
+* the application has been verified after implementation
+
+---
+
+# Final Report
+
+Provide a detailed implementation summary including:
+
+* providers implemented
+* providers enabled
+* providers awaiting credentials
+* providers skipped
+* reasons skipped
+* authentication status for each provider
+* live API test results
+* total events fetched
+* inserted
+* updated
+* duplicates skipped
+* rejected
+* remaining recommendations before Sprint 4
+
+Do not report Sprint 3 complete until all live-enabled providers have been verified inside the running application.
