@@ -17,6 +17,11 @@ description: Adapter types, verified Atlanta sources, deduplication rules, and s
 3. Ponce City Market — `https://poncecitymarket.com/events/?ical=1` (Old Fourth Ward, Community, every 24h)
 4. Georgia State University Events — `https://calendar.gsu.edu/calendar.ics` (Downtown, Education, every 24h) — 1260 events/pull
 5. Atlanta Botanical Garden — `https://atlantabg.org/events-exhibitions/?ical=1` (Midtown, Outdoor & Nature, every 24h)
+6. Callanwolde Fine Arts Center — `https://callanwolde.org/events/?ical=1` (Virginia-Highland, Arts & Culture, every 12h) — ~30 events
+7. Piedmont Park Conservancy — `https://piedmontpark.org/events/?ical=1` (valid, not yet added as a source)
+
+## Pitfall: creating a source for an already-ingested venue
+Check GET /admin/sources first. Syncing a second source pointing at the same feed hits Tier 2/3 cross-source dedup, which FLIPS existing pending events to possible_duplicate (side effect on the DB). If it happens: delete the redundant source and revert affected events to pending.
 
 ## Deduplication tiers (deduplicator.ts)
 - Tier 1: same source + same externalId → exact (update lastSeenAt)
@@ -35,6 +40,7 @@ Defaults by type: ical/rss/json_api/google_sheets = 6h, csv_url = 24h.
 ## Sources that were tested and DON'T have iCal
 - `beltline.org/events/?ical=1` → HTML (not iCal)
 - `zooatlanta.org/visit/events/?ical=1` → HTML
+- `atlantacontemporary.org`, `fernbankmuseum.org`, `chattnaturecenter.org`, `wrensnest.org` → HTML; `oakland-cemetery.com` → empty
 - `foxtheatre.org` → 405
 - `woodruffcenter.org` → HTML
 - `krogstreetmarket.com` → HTML
