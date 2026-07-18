@@ -668,6 +668,16 @@ async function listSources(adminKey: string): Promise<EventSourceRecord[]> {
   return res.json() as Promise<EventSourceRecord[]>;
 }
 
+async function fetchCredentials(adminKey: string): Promise<{ ticketmasterKeySet: boolean }> {
+  try {
+    const res = await fetch(`${API_BASE}/admin/sources/credentials`, { headers: { "x-admin-key": adminKey } });
+    if (!res.ok) return { ticketmasterKeySet: false };
+    return res.json() as Promise<{ ticketmasterKeySet: boolean }>;
+  } catch {
+    return { ticketmasterKeySet: false };
+  }
+}
+
 async function upsertSource(
   method: "POST" | "PATCH",
   idOrEmpty: string,

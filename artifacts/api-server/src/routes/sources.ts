@@ -118,6 +118,17 @@ router.delete("/admin/sources/:id", requireAdmin, async (req, res) => {
   res.json({ deleted: true });
 });
 
+// ── Credential status ─────────────────────────────────────────────────────────
+
+// GET /admin/sources/credentials
+// Returns which third-party API credentials are present in the environment.
+// Values are booleans only — secret values are never exposed.
+router.get("/admin/sources/credentials", requireAdmin, (_req, res) => {
+  res.json({
+    ticketmasterKeySet: !!process.env.TICKETMASTER_API_KEY,
+  });
+});
+
 // ── Manual sync trigger ───────────────────────────────────────────────────────
 
 // POST /admin/sources/:id/sync
