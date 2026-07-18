@@ -1,0 +1,410 @@
+Implement Sprint 1 of Passport ATL’s automatic event ingestion system, including both iCal sources and Ticketmaster.
+
+Primary objective:
+
+Build and verify a reliable automatic event ingestion pipeline that imports Atlanta-area events from:
+
+1. Ticketmaster
+2. Twenty to thirty legitimate Atlanta-area iCal or ICS feeds
+
+All newly imported events must enter the Passport ATL CMS as Pending Review and must not be automatically published.
+
+Before making changes:
+
+* Review the existing event ingestion architecture.
+* Reuse the current event schema, source manager, import logging, deduplication, and Pending Review workflow wherever possible.
+* Preserve all existing manual events and Google Sheets imports.
+* Do not remove or disable any functioning source integrations.
+
+## Ticketmaster integration
+
+Use the existing Replit secret:
+
+TICKETMASTER_API_KEY
+
+Read it directly from the application environment. Do not claim the key is missing merely because the Replit Agent cannot display or inspect secret values.
+
+Validate the Ticketmaster integration by making a real request from the running application using the environment variable.
+
+Configure Ticketmaster to import relevant events within Atlanta and the surrounding metro area.
+
+Prioritize events located in:
+
+* Atlanta
+* Decatur
+* Sandy Springs
+* Alpharetta
+* Marietta
+* Roswell
+* College Park
+* East Point
+* Smyrna
+* Duluth
+* Kennesaw
+* Cobb County
+* Fulton County
+* DeKalb County
+* Gwinnett County
+* Clayton County
+
+Use geographic radius or DMA-based filtering where appropriate, but do not import events that are clearly outside the Atlanta metro area.
+
+Import relevant categories such as:
+
+* music
+* sports
+* arts and theatre
+* comedy
+* family
+* festivals
+* cultural events
+* community events
+* attractions
+* nightlife
+* educational events
+
+Exclude or flag unsuitable records such as:
+
+* cancelled events
+* events without usable Atlanta-area location data
+* obvious duplicate listings
+* parking-only listings
+* add-on products
+* VIP upgrades without a primary event
+* merchandise listings
+* resale-only records
+* events that have already ended
+
+Ticketmaster imports must:
+
+* use the Ticketmaster event ID as the external source identifier
+* preserve the Ticketmaster event URL
+* preserve source attribution
+* import available images
+* import venue information
+* import date, time, and timezone data
+* import pricing information when available
+* import age restrictions when available
+* import classification and category information
+* import sale dates and ticket status when available
+* route all new records to Pending Review
+* never publish automatically
+
+Test the Ticketmaster integration with a live request before enabling automatic synchronization.
+
+If the live request fails, report the exact HTTP status, API response category, or application error. Do not infer that the secret is missing unless the running process confirms that the environment variable is empty or undefined.
+
+## iCal and ICS sources
+
+Add and verify twenty to thirty Atlanta-area iCal or ICS event feeds.
+
+Add only genuine, publicly accessible calendar feeds.
+
+Do not invent feed URLs or treat ordinary event webpages as iCal feeds.
+
+Prefer official organization, venue, institution, university, government, library, and community calendar feeds over third-party aggregators.
+
+Prioritize sources such as:
+
+* High Museum of Art
+* Atlanta Botanical Garden
+* Fernbank Museum
+* Atlanta History Center
+* Fox Theatre
+* Alliance Theatre
+* Atlanta Symphony Orchestra
+* Center for Puppetry Arts
+* The Breman Museum
+* Museum of Design Atlanta
+* Michael C. Carlos Museum
+* Georgia Aquarium
+* Zoo Atlanta
+* National Center for Civil and Human Rights
+* Georgia Tech
+* Georgia State University
+* Emory University
+* Kennesaw State University
+* City of Atlanta
+* City of Decatur
+* Sandy Springs
+* Alpharetta
+* Cobb County
+* Fulton County
+* DeKalb County
+* Gwinnett County
+* Gas South District
+* Cobb Energy Performing Arts Centre
+* Georgia World Congress Center
+* Atlanta-area library systems
+* Atlanta-area parks and recreation departments
+
+If an organization does not provide a valid public iCal or ICS feed, skip it and document the reason.
+
+For each candidate feed:
+
+1. Confirm the URL is reachable.
+2. Confirm the response contains valid iCal or ICS content.
+3. Confirm the calendar contains actual events.
+4. Confirm dates and timezones parse correctly.
+5. Run a test import.
+6. Enable the feed only after the test succeeds.
+7. Record failed sources as disabled with a specific explanation.
+
+## Source records and monitoring
+
+For every source, including Ticketmaster and each iCal feed, store and display:
+
+* source name
+* organization name
+* source type
+* feed URL or API identifier
+* enabled or disabled status
+* health status
+* last attempted sync
+* last successful sync
+* next scheduled sync
+* number of events fetched
+* number inserted
+* number updated
+* number skipped as duplicates
+* number rejected
+* error status
+* error message
+* consecutive failure count
+
+Use clear source health states such as:
+
+* Healthy
+* Warning
+* Failed
+* Disabled
+* Never Run
+
+## Event normalization
+
+Normalize imported records into the existing Passport ATL event schema.
+
+Where available, normalize:
+
+* title
+* summary
+* full description
+* venue name
+* venue type
+* street address
+* city
+* state
+* ZIP code
+* latitude
+* longitude
+* neighborhood
+* start date
+* start time
+* end date
+* end time
+* timezone
+* all-day status
+* event URL
+* ticket URL
+* image
+* source name
+* source event ID
+* organizer
+* category
+* subcategory
+* age restriction
+* price minimum
+* price maximum
+* free-event status
+* recurrence information
+* cancellation status
+* sale status
+
+Use America/New_York as the fallback timezone only when the source does not provide a timezone and the event is clearly in the Atlanta area.
+
+Preserve all-day events correctly.
+
+Do not convert all-day events into midnight timed events unless required by the existing schema.
+
+## Deduplication
+
+Use the existing deduplication system and strengthen it where necessary.
+
+Check the following signals:
+
+* source event ID
+* normalized title
+* start date and time
+* end date and time
+* venue name
+* address
+* latitude and longitude
+* event URL
+* ticket URL
+
+Prevent duplicate records when:
+
+* the same event appears in Ticketmaster and an iCal feed
+* the same event appears in multiple iCal feeds
+* a source republishes or modifies an existing event
+* recurring events contain repeated instances
+* an event title varies slightly between sources
+
+Use exact external IDs as the strongest match.
+
+For cross-source matching, use a weighted comparison based on normalized title, date and time, venue, address, and URL.
+
+When a probable duplicate exists:
+
+* update the existing record only when the source data is more complete or newer
+* preserve source references when possible
+* otherwise skip the duplicate and log the reason
+
+Do not silently overwrite manually edited CMS fields.
+
+## Recurring events
+
+Handle recurring iCal events safely.
+
+Support:
+
+* recurrence rules
+* recurrence exceptions
+* modified instances
+* cancelled instances
+* event series identifiers
+
+Do not generate unlimited future occurrences.
+
+Use a reasonable import horizon, such as the next twelve months, unless the existing system already defines a different horizon.
+
+Each occurrence should remain traceable to its source event and recurrence identifier.
+
+## Pending Review workflow
+
+All newly imported Ticketmaster and iCal events must:
+
+* be assigned Pending Review status
+* remain unpublished
+* retain source attribution
+* be reviewable in the CMS
+* show whether they came from Ticketmaster or a specific iCal source
+
+Do not alter the publication status of existing events.
+
+Do not overwrite editorial changes made after an event has been reviewed unless the update is limited to protected source-controlled fields, such as cancellation status or source URL.
+
+## Automatic synchronization
+
+Configure reasonable recurring sync schedules.
+
+Suggested defaults:
+
+* Ticketmaster: every six hours
+* active iCal feeds: every twelve hours
+* recently failing sources: retry with controlled backoff
+* disabled sources: do not sync automatically
+
+Prevent overlapping sync jobs for the same source.
+
+Log every sync attempt.
+
+A failed source must not stop other sources from syncing.
+
+## Admin interface
+
+Ensure the CMS includes a usable source-management view where an administrator can:
+
+* view all automatic sources
+* distinguish Ticketmaster, iCal, Google Sheets, and manual sources
+* filter by source type
+* filter by Healthy, Warning, Failed, Disabled, or Never Run
+* manually trigger a sync
+* enable or disable a source
+* inspect recent sync results
+* inspect error details
+* view fetched, inserted, updated, duplicate, and rejected counts
+* identify sources that have not synced recently
+* view the date and result of the last live Ticketmaster request
+
+Ensure the event review interface displays:
+
+* source
+* source event ID
+* import date
+* duplicate status
+* event URL
+* ticket URL
+* sync history when relevant
+
+## Testing
+
+Run live tests against:
+
+* Ticketmaster using TICKETMASTER_API_KEY
+* every iCal source proposed for activation
+
+Verify that:
+
+* requests complete successfully
+* response data parses correctly
+* events normalize into the Passport ATL schema
+* newly created records appear in Pending Review
+* duplicates are prevented
+* recurring events do not create uncontrolled records
+* cancelled events are handled correctly
+* existing Google Sheets imports still work
+* existing manual events remain unchanged
+* the application still starts and runs successfully
+
+Do not use mocked responses as the only verification.
+
+Mocks may be used for automated tests, but Sprint 1 is not complete until live requests have also succeeded.
+
+## Completion criteria
+
+Sprint 1 is complete only when:
+
+* Ticketmaster successfully completes a live API request using the Replit environment secret
+* Ticketmaster imports relevant Atlanta-area events into Pending Review
+* at least twenty valid Atlanta-area iCal feeds are configured and enabled, unless fewer than twenty legitimate public feeds can be verified
+* every enabled iCal feed has passed a live test
+* all imported events remain unpublished in Pending Review
+* duplicates are prevented across Ticketmaster, iCal, Google Sheets, and existing records
+* recurring events are handled safely
+* failed sources are clearly documented
+* existing manual events remain intact
+* existing Google Sheets imports continue working
+* the running application has been verified after implementation
+
+Do not report Sprint 1 as complete unless these conditions have been verified inside the running application.
+
+## Final implementation report
+
+At the end, provide a concise but complete report containing:
+
+* Ticketmaster live-request result
+* whether the environment variable was available to the running process
+* Ticketmaster HTTP response status
+* Ticketmaster events fetched
+* Ticketmaster events inserted
+* Ticketmaster events updated
+* Ticketmaster duplicates skipped
+* number of iCal candidate sources checked
+* number of iCal sources successfully enabled
+* number of iCal sources skipped or disabled
+* name of every enabled source
+* name of every skipped source
+* specific reason each source was skipped
+* total events fetched across all sources
+* total events inserted
+* total events updated
+* total duplicates skipped
+* total records rejected
+* confirmation that imported events are in Pending Review
+* confirmation that no imported events were automatically published
+* confirmation that Google Sheets imports still work
+* confirmation that manual events were not altered
+* remaining risks, limitations, or follow-up work
+
+Do not state that Ticketmaster is unavailable merely because secret values cannot be displayed. Determine availability by testing the environment variable from the running application.
