@@ -1330,7 +1330,7 @@ export default function AdminContent() {
         <div className="max-w-sm w-full card-pop bg-white p-8 space-y-6">
           <div className="text-center">
             <div className="text-3xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>ADMIN</div>
-            <div className="text-sm text-foreground/60">Content Hub · Location Management</div>
+            <div className="text-sm text-foreground/60">Locations Hub · Location Management</div>
           </div>
           <form onSubmit={handleUnlock} className="space-y-3">
             <input
@@ -1369,7 +1369,7 @@ export default function AdminContent() {
           <div className="p-4 border-b-2 border-foreground bg-[hsl(var(--brand-navy))] text-[hsl(var(--brand-cream))] flex items-center justify-between gap-4">
             <div>
               <h1 className="text-xl font-black tracking-tight" style={{ fontFamily: "Bungee, sans-serif" }}>
-                CONTENT HUB
+                LOCATIONS HUB
               </h1>
               <p className="text-xs opacity-70">Locations · ATL Legends · Passport Experiences</p>
             </div>

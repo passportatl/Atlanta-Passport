@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  useListApplications,
-  getListApplicationsQueryKey,
   useListAdminEvents,
   useGetAdminEventsSummary,
   useUpdateAdminEvent,
@@ -2703,7 +2701,6 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
 export default function AdminApplications() {
   const [unlocked, setUnlocked] = useState(false);
   const [adminKey, setAdminKey] = useState("");
-  const [tab, setTab] = useState<"business" | "event" | "events-ops">("business");
 
   useEffect(() => {
     if (sessionStorage.getItem(UNLOCK_KEY) === "1") {
@@ -2711,34 +2708,6 @@ export default function AdminApplications() {
       setAdminKey(sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? ADMIN_PASSWORD);
     }
   }, []);
-
-  const { data: appsRaw, isLoading } = useListApplications({
-    query: {
-      enabled: unlocked,
-      queryKey: getListApplicationsQueryKey(),
-      refetchInterval: 30000,
-    },
-  });
-  const applications = (appsRaw as Application[] | undefined) ?? [];
-
-  const businessApps = useMemo(
-    () => applications.filter((a) => a.submissionType !== "event"),
-    [applications],
-  );
-  const eventApps = useMemo(
-    () => applications.filter((a) => a.submissionType === "event"),
-    [applications],
-  );
-
-  const counts = useMemo(() => {
-    return {
-      starter: businessApps.filter((a) => a.package === "starter").length,
-      featured: businessApps.filter((a) => a.package === "featured").length,
-      premier: businessApps.filter((a) => a.package === "premier").length,
-      route: businessApps.filter((a) => a.package === "route").length,
-      custom: businessApps.filter((a) => a.package === "custom").length,
-    };
-  }, [businessApps]);
 
   if (!unlocked) {
     return (
@@ -2751,8 +2720,6 @@ export default function AdminApplications() {
     );
   }
 
-  const shown = tab === "business" ? businessApps : eventApps;
-
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -2762,89 +2729,13 @@ export default function AdminApplications() {
             className="text-3xl font-black"
             style={{ fontFamily: "Bungee, sans-serif" }}
           >
-            {tab === "events-ops" ? "Events Ops" : "Submissions"}
+            Events Hub
           </h1>
           <p className="text-xs text-foreground/60 mt-1">
             Notifications send to <strong>touristpassportatl@gmail.com</strong>.
           </p>
         </div>
-
-        {/* Tab bar */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          <button
-            type="button"
-            onClick={() => setTab("business")}
-            className={`button-pop text-sm px-4 py-2 ${
-              tab === "business" ? "button-pop-yellow" : "bg-white text-foreground"
-            }`}
-          >
-            Partner Applications ({businessApps.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("event")}
-            className={`button-pop text-sm px-4 py-2 ${
-              tab === "event" ? "button-pop-yellow" : "bg-white text-foreground"
-            }`}
-          >
-            Event Submissions ({eventApps.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("events-ops")}
-            className={`button-pop text-sm px-4 py-2 ${
-              tab === "events-ops" ? "button-pop-yellow" : "bg-white text-foreground"
-            }`}
-          >
-            Events Ops
-          </button>
-        </div>
-
-        {/* Events Ops tab */}
-        {tab === "events-ops" && <EventsOpsPanel adminKey={adminKey} />}
-
-        {/* Applications tabs */}
-        {tab !== "events-ops" && (
-          <>
-            {tab === "business" && businessApps.length > 0 && (
-              <p className="text-sm text-foreground/70 mb-4">
-                Starter {counts.starter} · Featured {counts.featured} · Premier{" "}
-                {counts.premier} · Route {counts.route} · Custom {counts.custom}
-              </p>
-            )}
-
-            {isLoading && (
-              <div className="card-pop bg-white p-8 text-center text-sm">Loading…</div>
-            )}
-
-            {!isLoading && shown.length === 0 && (
-              <div className="card-pop bg-white p-10 text-center">
-                <Inbox className="w-10 h-10 mx-auto mb-3 opacity-50" />
-                <p
-                  className="font-black text-lg"
-                  style={{ fontFamily: "Bungee, sans-serif" }}
-                >
-                  {tab === "business" ? "No applications yet" : "No event submissions yet"}
-                </p>
-                <p className="text-sm text-foreground/70 mt-1">
-                  {tab === "business"
-                    ? "They'll show up here the moment someone submits the apply form."
-                    : "They'll show up here the moment someone submits the List Your Event form."}
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {shown.map((a) =>
-                a.submissionType === "event" ? (
-                  <EventCard key={a.id} app={a} />
-                ) : (
-                  <ApplicationCard key={a.id} app={a} />
-                ),
-              )}
-            </div>
-          </>
-        )}
+        <EventsOpsPanel adminKey={adminKey} />
       </div>
     </div>
   );
