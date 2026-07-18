@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { events as sampleEvents, businesses, neighborhoods } from "@/data/sample-data";
 import { useListPublicEvents, getListPublicEventsQueryKey } from "@workspace/api-client-react";
 import { EVENT_TAGS } from "@/data/event-taxonomy";
-export { EVENT_TYPES } from "@/data/event-taxonomy";
+import { EVENT_TYPES } from "@/data/event-taxonomy";
+export { EVENT_TYPES };
 import CategoryBadge from "@/components/CategoryBadge";
 import Footer from "@/components/layout/Footer";
 import {
