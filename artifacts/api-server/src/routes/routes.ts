@@ -536,6 +536,21 @@ router.post(
 
 // ── Admin — migrate from sample data ─────────────────────────────────────────
 
+// Stamp slugs that exist in the passport stamp system, keyed by business slug.
+const STAMP_SLUG_MAP: Record<string, string> = {
+  "atlantucky-brewing": "atlantucky",
+  "peachtree-wellness": "peachtree-wellness",
+  "wheelhaus-bikes": "wheelhaus",
+  "the-westwood": "westwood",
+  "vickerys-bar-grill": "vickerys",
+  "boxcar-at-hop-city": "boxcar",
+  "hop-city-at-krog-st-market": "hop-city-krog",
+  "la-semilla": "la-semilla",
+  varasanos: "varasanos",
+  "nakato-japanese-restaurant": "nakato",
+  "trap-museum": "trap-museum",
+};
+
 const SAMPLE_ROUTES = [
   {
     id: "nakato-route",
@@ -543,6 +558,11 @@ const SAMPLE_ROUTES = [
     area: "Midtown → Cheshire Bridge",
     pace: "Bike Friendly",
     color: "red",
+    transportationVariants: ["Bike", "Car/Rideshare"],
+    durationMinutes: 300,
+    distanceMiles: "4.2 mi",
+    ageGuidance: "21+ recommended — most stops are dinner/bar venues",
+    timeOfDayGuidance: "Best starting afternoon; Nakato opens for dinner service",
     vibe: "A Midtown-to-Cheshire-Bridge ride built around a legendary teppanyaki dinner at third-generation Nakato — with a pub, bowling, and live music along the way.",
     description: "This route is recommended for biking or driving. Start from the MARTA Midtown station and loop back to it when you're done.",
     starts: {
@@ -557,6 +577,10 @@ const SAMPLE_ROUTES = [
       noon: ["liddel-house","six-feet-under","midtown-bowl","nakato-japanese-restaurant","smiths-old-bar","felixs-atlanta"],
       night: ["liddel-house","six-feet-under","midtown-bowl","nakato-japanese-restaurant","smiths-old-bar","felixs-atlanta"],
     },
+    isSponsored: false,
+    sponsorName: null as string | null,
+    sponsorTier: null as string | null,
+    adminNotes: "MIGRATED FROM SAMPLE DATA. Needs: hero image, SEO title/description. Confirm Nakato dinner hours before publishing season.",
   },
   {
     id: "varasanos-route",
@@ -564,6 +588,11 @@ const SAMPLE_ROUTES = [
     area: "Lindbergh → Buckhead",
     pace: "Bike Friendly",
     color: "lime",
+    transportationVariants: ["Bike", "Car/Rideshare"],
+    durationMinutes: 240,
+    distanceMiles: "3.1 mi",
+    ageGuidance: "21+ recommended — ASW Distillery tasting and Tongue & Groove late-night bar",
+    timeOfDayGuidance: "Best afternoon through evening; Tongue & Groove opens at 9pm",
     vibe: "An Armour/Ottley ride capped by a wood-fired pie at Varasano's: a pickleball stop, an ASW Distillery tasting, then late drinks at Tongue & Groove.",
     description: "This route is recommended for biking. Start at Lindbergh Center — grab a Zipcar there if you'd rather drive between stops.",
     starts: {
@@ -576,6 +605,10 @@ const SAMPLE_ROUTES = [
       noon: ["the-painted-pickle","asw-distillery","varasanos","tongue-and-groove"],
       night: ["the-painted-pickle","asw-distillery","varasanos","tongue-and-groove"],
     },
+    isSponsored: false,
+    sponsorName: null as string | null,
+    sponsorTier: null as string | null,
+    adminNotes: "MIGRATED FROM SAMPLE DATA. Needs: hero image, SEO title/description. Confirm ASW Distillery tasting room hours.",
   },
   {
     id: "wheelhaus-route",
@@ -583,6 +616,11 @@ const SAMPLE_ROUTES = [
     area: "Glenwood → Grant Park",
     pace: "Bike Friendly",
     color: "sky",
+    transportationVariants: ["Bike"],
+    durationMinutes: 300,
+    distanceMiles: "4.8 mi",
+    ageGuidance: "All ages welcome · 21+ for Vickery's patio stops",
+    timeOfDayGuidance: "Start by 11am — Wheelhaus closes at 7pm; plan your bike return before then",
     vibe: "Rent a set of wheels at founding sponsor Wheelhaus and ride the Southeast BeltLine through Grant Park and Zoo Atlanta — with a Waffle House detour to debate.",
     description: "This route is recommended for biking. Pick up your bike at Wheelhaus, and get it back to drop off before they close at 7pm.",
     starts: {
@@ -599,6 +637,10 @@ const SAMPLE_ROUTES = [
       noon: ["wheelhaus-bikes","vickerys-bar-grill","grant-park","zoo-atlanta","waffle-house","chick-fil-a"],
       night: ["wheelhaus-bikes","vickerys-bar-grill","grant-park","zoo-atlanta","waffle-house","chick-fil-a"],
     },
+    isSponsored: true,
+    sponsorName: "Wheelhaus Bikes",
+    sponsorTier: "Founding Sponsor",
+    adminNotes: "MIGRATED FROM SAMPLE DATA · FOUNDING SPONSOR ROUTE. Needs: hero image, SEO title/description. Confirm current Wheelhaus hours and bike pricing with sponsor before next season.",
   },
   {
     id: "trap-music-museum-route",
@@ -606,6 +648,11 @@ const SAMPLE_ROUTES = [
     area: "West End → Westside BeltLine",
     pace: "Bike Friendly",
     color: "yellow",
+    transportationVariants: ["Bike", "Walk"],
+    durationMinutes: 360,
+    distanceMiles: "5.5 mi",
+    ageGuidance: "All ages welcome at museums and murals · 21+ at Atlantucky Brewing",
+    timeOfDayGuidance: "Best late-morning start — Trap Museum and galleries have midday hours; Atlantucky opens at noon",
     vibe: "A Westside BeltLine ride through Black ATL's culture core: brunch at The Westwood, the Trap Music Museum and its Tiny Door, the MLK mural at Trap City Cafe, Nappy Roots' Atlantucky brews, the Hammond's House and Spelman art museums, and a finish at BoxCar at Hop City.",
     description: "This route is recommended for biking. Begin at the West End MARTA station, where an ATL Spoke shuttle can take you to the Lee + White BeltLine access point — then follow the Westside BeltLine trail to Lucile Ave SW and turn left.",
     starts: {
@@ -624,6 +671,10 @@ const SAMPLE_ROUTES = [
       noon: ["the-westwood","trap-museum","tiny-door-atl-26","mlk-mural-at-trap-city-cafe","atlantucky-brewing","hammonds-house-museum","spelman-college-museum-of-fine-art","boxcar-at-hop-city"],
       night: ["the-westwood","trap-museum","tiny-door-atl-26","mlk-mural-at-trap-city-cafe","atlantucky-brewing","hammonds-house-museum","spelman-college-museum-of-fine-art","boxcar-at-hop-city"],
     },
+    isSponsored: false,
+    sponsorName: null as string | null,
+    sponsorTier: null as string | null,
+    adminNotes: "MIGRATED FROM SAMPLE DATA. Needs: hero image, SEO title/description. Confirm Trap Music Museum admission hours and Spelman gallery access for general public.",
   },
   {
     id: "peachtree-wellness-route",
@@ -631,6 +682,11 @@ const SAMPLE_ROUTES = [
     area: "Oakland → Cabbagetown",
     pace: "Walkable",
     color: "orange",
+    transportationVariants: ["Walk"],
+    durationMinutes: 330,
+    distanceMiles: "3.2 mi",
+    ageGuidance: "All ages welcome",
+    timeOfDayGuidance: "Best morning through mid-afternoon — Oakland Cemetery closes at 5pm",
     vibe: "A walkable Southeast BeltLine wander from Oakland Cemetery through Cabbagetown — the Krog St Tunnel and Tiny Door #1, a skatepark, Hop City, and a patio beer at 97 Estoria.",
     description: "This route is recommended for walking. Start at King Memorial Station and follow the Southeast BeltLine trail through Cabbagetown.",
     starts: {
@@ -647,6 +703,10 @@ const SAMPLE_ROUTES = [
       noon: ["oakland-cemetery","la-semilla","krog-street-tunnel","thomas-taylor-memorial-skatepark","hop-city-at-krog-st-market","97-estoria","peachtree-wellness"],
       night: ["oakland-cemetery","la-semilla","krog-street-tunnel","thomas-taylor-memorial-skatepark","hop-city-at-krog-st-market","97-estoria","peachtree-wellness"],
     },
+    isSponsored: false,
+    sponsorName: null as string | null,
+    sponsorTier: null as string | null,
+    adminNotes: "MIGRATED FROM SAMPLE DATA. Needs: hero image, SEO title/description. Confirm Oakland Cemetery public hours and BeltLine SE Trail access near Krog Tunnel.",
   },
 ];
 
@@ -673,6 +733,14 @@ router.post("/admin/routes/migrate-sample", requireAdmin, async (req, res) => {
       }
 
       try {
+        // Derive stamp slugs from the stop list using the known stamp map
+        const allStopSlugsForRoute = Array.from(
+          new Set([...sr.byTime.morning, ...sr.byTime.noon, ...sr.byTime.night]),
+        );
+        const relatedStampSlugs = allStopSlugsForRoute
+          .map((s) => STAMP_SLUG_MAP[s])
+          .filter((s): s is string => Boolean(s));
+
         const [route] = await db
           .insert(masterRoutesTable)
           .values({
@@ -683,28 +751,32 @@ router.post("/admin/routes/migrate-sample", requireAdmin, async (req, res) => {
             description: sr.description,
             color: sr.color,
             pace: sr.pace,
+            transportationVariants: sr.transportationVariants,
+            durationMinutes: sr.durationMinutes,
+            distanceMiles: sr.distanceMiles,
+            ageGuidance: sr.ageGuidance,
+            timeOfDayGuidance: sr.timeOfDayGuidance,
             workflowStatus: "published",
             publishedAt: new Date(),
             isFeatured: true,
+            isSponsored: sr.isSponsored,
+            sponsorName: sr.sponsorName ?? undefined,
+            sponsorTier: sr.sponsorTier ?? undefined,
             startMartaName: sr.starts.marta.name,
             startMartaLat: sr.starts.marta.lat,
             startMartaLng: sr.starts.marta.lng,
             startParkingName: sr.starts.parking.name,
             startParkingLat: sr.starts.parking.lat,
             startParkingLng: sr.starts.parking.lng,
+            relatedStampSlugs: relatedStampSlugs.length ? relatedStampSlugs : undefined,
+            adminNotes: sr.adminNotes,
           })
           .returning();
 
         if (!route) throw new Error("Insert returned no row");
 
         // Build stop rows with time-of-day orders
-        const allSlugs = Array.from(
-          new Set([
-            ...sr.byTime.morning,
-            ...sr.byTime.noon,
-            ...sr.byTime.night,
-          ]),
-        );
+        const allSlugs = allStopSlugsForRoute;
 
         const stopRows = allSlugs.map((slug, idx) => ({
           routeId: route.id,
@@ -719,15 +791,17 @@ router.post("/admin/routes/migrate-sample", requireAdmin, async (req, res) => {
           nightOrder: sr.byTime.night.indexOf(slug) >= 0
             ? sr.byTime.night.indexOf(slug) + 1
             : undefined,
-          stopNote: sr.stopNotes[slug] as string | undefined,
+          stopNote: (sr.stopNotes as Record<string, string>)[slug] ?? undefined,
+          hasStamp: Boolean(STAMP_SLUG_MAP[slug]),
         }));
 
         await db.insert(routeStopsTable).values(stopRows);
 
-        // Update completeness
+        // Compute and store completeness
+        const updatedScore = computeCompleteness(route, stopRows.length);
         await db
           .update(masterRoutesTable)
-          .set({ completenessScore: computeCompleteness(route, stopRows.length) })
+          .set({ completenessScore: updatedScore })
           .where(eq(masterRoutesTable.id, route.id));
 
         report.push({
