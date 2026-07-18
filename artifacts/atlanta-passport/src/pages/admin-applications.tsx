@@ -1892,6 +1892,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [syncMsg, setSyncMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [credentials, setCredentials] = useState<{ ticketmasterKeySet: boolean } | null>(null);
 
   // Form state
   const [showForm, setShowForm] = useState(false);
@@ -1907,7 +1908,9 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
     setLoading(true);
     setError(null);
     try {
-      setSources(await listSources(adminKey));
+      const [srcs, creds] = await Promise.all([listSources(adminKey), fetchCredentials(adminKey)]);
+      setSources(srcs);
+      setCredentials(creds);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load sources");
     } finally {
@@ -2018,7 +2021,11 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
       {/* Credential notice */}
       <div className="bg-brand-cream border-2 border-foreground rounded-xl p-3 text-xs space-y-1">
         <div className="font-black uppercase tracking-widest text-[10px]">API Credentials</div>
-        <div><span className="font-mono bg-white border border-foreground/20 px-1 rounded">TICKETMASTER_API_KEY</span> — set in environment secrets for Ticketmaster syncs</div>
+        <div className="flex items-center gap-2">
+          <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${credentials === null ? "bg-foreground/20" : credentials.ticketmasterKeySet ? "bg-brand-lime" : "bg-brand-red"}`} />
+          <span className="font-mono bg-white border border-foreground/20 px-1 rounded">TICKETMASTER_API_KEY</span>
+          <span>{credentials === null ? "checking…" : credentials.ticketmasterKeySet ? "Set — Ticketmaster syncs enabled" : "Not set — add in Replit Secrets to enable Ticketmaster syncs"}</span>
+        </div>
         <div><span className="font-mono bg-white border border-foreground/20 px-1 rounded">google-drive</span> connector — already connected (used for Google Sheets reads)</div>
       </div>
 
@@ -2115,6 +2122,9 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
               </span>
               <span className="font-black text-sm truncate">{s.name}</span>
               {!s.isActive && <span className="badge-sticker bg-foreground/10 text-[9px] shrink-0">Disabled</span>}
+              {s.type === "ticketmaster" && credentials !== null && !credentials.ticketmasterKeySet && (
+                <span className="badge-sticker bg-brand-red text-white text-[9px] shrink-0">Key missing</span>
+              )}
             </div>
             <div className="flex gap-1.5 shrink-0 flex-wrap">
               <button
