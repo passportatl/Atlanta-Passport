@@ -590,7 +590,7 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
 
         {/* Interactive calendar + selected-day events. Mobile: calendar full
             width with results stacked below. md+: side by side. */}
-        <div className="shrink-0 mt-3 flex flex-col md:flex-row gap-2.5 md:h-[44dvh]">
+        <div className="shrink-0 mt-3 flex flex-col md:flex-row gap-2.5 md:min-h-[44dvh]">
           {/* Calendar — full width on mobile, half the map width on md+ */}
           <div className="w-full md:w-1/2 shrink-0 self-start card-pop bg-card flex flex-col overflow-hidden">
             <div className="shrink-0 border-b-2 border-foreground bg-brand-yellow text-brand-yellow-foreground px-2 py-1.5 flex items-center justify-between gap-1">
