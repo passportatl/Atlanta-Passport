@@ -627,8 +627,12 @@ type EventSourceRecord = {
   lastSyncAt: string | null;
   lastSyncStatus: string;
   lastSyncMessage: string | null;
+  consecutiveFailures: number;
   createdAt: string;
 };
+
+// A source is considered "failing" once it has failed this many times in a row.
+const FAILING_THRESHOLD = 2;
 
 type ImportRunRecord = {
   id: string;
@@ -2179,6 +2183,19 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
         </div>
       )}
 
+      {/* Failing sources banner */}
+      {!loading && sources.some((s) => s.consecutiveFailures >= FAILING_THRESHOLD) && (
+        <div className="card-pop bg-brand-red/10 border-2 border-brand-red p-4 text-sm">
+          <p className="font-black text-brand-red" style={{ fontFamily: "Bungee, sans-serif" }}>
+            ⚠ {sources.filter((s) => s.consecutiveFailures >= FAILING_THRESHOLD).length} source
+            {sources.filter((s) => s.consecutiveFailures >= FAILING_THRESHOLD).length !== 1 ? "s" : ""} failing repeatedly
+          </p>
+          <p className="mt-1 text-foreground/70">
+            These sources have failed {FAILING_THRESHOLD}+ syncs in a row and may have a dead or changed feed URL — events from them are no longer coming in. Check the feed URL, then use Test / Sync Now to confirm the fix.
+          </p>
+        </div>
+      )}
+
       {/* Source list */}
       {loading && <div className="card-pop bg-white p-8 text-center text-sm text-foreground/60">Loading sources…</div>}
       {error && <div className="text-sm text-brand-red font-bold">{error}</div>}
@@ -2192,7 +2209,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
       )}
 
       {sources.map((s) => (
-        <div key={s.id} className={`card-pop bg-white p-4 ${!s.isActive ? "opacity-60" : ""}`}>
+        <div key={s.id} className={`card-pop bg-white p-4 ${!s.isActive ? "opacity-60" : ""} ${s.consecutiveFailures >= FAILING_THRESHOLD ? "border-2 border-brand-red" : ""}`}>
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
               <span className={`badge-sticker text-[9px] shrink-0 ${SOURCE_TYPE_COLORS[s.type] ?? "bg-brand-cream"}`}>
@@ -2202,6 +2219,14 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
               {!s.isActive && <span className="badge-sticker bg-foreground/10 text-[9px] shrink-0">Disabled</span>}
               {s.type === "ticketmaster" && credentials !== null && !credentials.ticketmasterKeySet && (
                 <span className="badge-sticker bg-brand-red text-white text-[9px] shrink-0">Key missing</span>
+              )}
+              {s.consecutiveFailures >= FAILING_THRESHOLD && (
+                <span className="badge-sticker bg-brand-red text-white text-[9px] shrink-0">
+                  ⚠ Failing ×{s.consecutiveFailures}
+                </span>
+              )}
+              {s.consecutiveFailures === 1 && (
+                <span className="badge-sticker bg-brand-yellow text-foreground text-[9px] shrink-0">Last sync failed</span>
               )}
             </div>
             <div className="flex gap-1.5 shrink-0 flex-wrap">

@@ -5,7 +5,7 @@
 //   • Concurrent sync calls for the same source are safe — the run record
 //     is created before any inserts, acting as a lock signal in the UI.
 
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import {
   db,
   eventsTable,
@@ -99,7 +99,12 @@ export async function runSourceSync(sourceId: string): Promise<string> {
       .where(eq(importRunsTable.id, runId));
     await db
       .update(eventSourcesTable)
-      .set({ lastSyncStatus: "error", lastSyncMessage: msg, updatedAt: new Date() })
+      .set({
+        lastSyncStatus: "error",
+        lastSyncMessage: msg,
+        consecutiveFailures: sql`${eventSourcesTable.consecutiveFailures} + 1`,
+        updatedAt: new Date(),
+      })
       .where(eq(eventSourcesTable.id, sourceId));
     throw err;
   }
@@ -321,6 +326,10 @@ export async function runSourceSync(sourceId: string): Promise<string> {
       lastSyncStatus: finalStatus === "error" ? "error" : "success",
       lastSyncAt: new Date(),
       lastSyncMessage: summary,
+      consecutiveFailures:
+        finalStatus === "error"
+          ? sql`${eventSourcesTable.consecutiveFailures} + 1`
+          : 0,
       updatedAt: new Date(),
     })
     .where(eq(eventSourcesTable.id, sourceId));
