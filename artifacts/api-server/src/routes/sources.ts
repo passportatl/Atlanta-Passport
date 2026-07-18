@@ -13,6 +13,7 @@ import {
 import { runSourceSync } from "../lib/ingestion/runner";
 import { fetchTicketmasterEvents } from "../lib/ingestion/sources/ticketmaster";
 import { fetchIcalEvents } from "../lib/ingestion/sources/ical";
+import { inspectGoogleSheet } from "../lib/ingestion/sources/google-sheets-intake";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -195,6 +196,41 @@ router.post("/admin/sources/:id/test", requireAdmin, async (req, res) => {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logger.error({ sourceId: id, err }, "Source test failed");
+    res.status(422).json({ error: msg });
+  }
+});
+
+// GET /admin/sources/:id/inspect
+// Returns raw CSV headers and their field mapping for a google_sheets source,
+// plus total row count and usable (non-blank-name) row count — no DB writes.
+router.get("/admin/sources/:id/inspect", requireAdmin, async (req, res) => {
+  const { id } = req.params as { id: string };
+
+  const sources = await db
+    .select()
+    .from(eventSourcesTable)
+    .where(eq(eventSourcesTable.id, id));
+
+  const source = sources[0];
+  if (!source) { res.status(404).json({ error: "Source not found" }); return; }
+  if (source.type !== "google_sheets") {
+    res.status(400).json({ error: `Inspect is only available for google_sheets sources, not "${source.type}"` });
+    return;
+  }
+
+  let config: Record<string, unknown> = {};
+  try {
+    config = JSON.parse(source.config ?? "{}") as Record<string, unknown>;
+  } catch {
+    res.status(400).json({ error: "Source config is not valid JSON" }); return;
+  }
+
+  try {
+    const result = await inspectGoogleSheet(config as Parameters<typeof inspectGoogleSheet>[0]);
+    logger.info({ sourceId: id, ...result }, "Sheet inspect completed");
+    res.json(result);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     res.status(422).json({ error: msg });
   }
 });

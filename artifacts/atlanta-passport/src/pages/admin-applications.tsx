@@ -1992,7 +1992,10 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
     setSyncMsg(null);
     try {
       const run = await triggerSync(id, adminKey);
-      const msg = `✅ Done — ${run.inserted} inserted, ${run.duplicates} duplicates, ${run.changed} seen, ${run.errors} errors`;
+      const fetched = run.found ?? 0;
+      const status = run.errors > 0 && run.inserted === 0 ? "⚠️" : "✅";
+      const msg = `${status} Done — ${fetched} fetched, ${run.inserted} inserted, ${run.duplicates} duplicates, ${run.changed} seen, ${run.errors} errors`;
+
       setSyncMsg({ id, msg, ok: true });
       await load();
     } catch (e) {
