@@ -207,7 +207,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
             cost: normalized.cost ?? undefined,
             url: normalized.url ?? undefined,
             imageUrl: normalized.imageUrl ?? undefined,
-            contactName: normalized.contactName ?? undefined,
+            contactName: normalized.contactName ?? normalized.organizer ?? undefined,
             contactEmail: normalized.contactEmail ?? undefined,
             source: source.type,
             ingestSourceId: sourceId,

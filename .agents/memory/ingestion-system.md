@@ -9,7 +9,7 @@ description: Adapter types, verified Atlanta sources, deduplication rules, and s
 - `rss.ts` — RSS 2.0 + Atom 1.0, no external deps
 - `json-api.ts` — configurable dot-path + fieldMap for any JSON endpoint
 - `csv-url.ts` — remote CSV with same normalizeKey() header matching as Sheets
-- `ticketmaster.ts` — DO NOT TOUCH, always disabled (no API key)
+- `ticketmaster.ts` — LIVE (key set July 2026); dmaId 220 = Atlanta metro, paginated, excludes cancelled/parking/VIP add-ons, GA-only venue guard (missing state = dropped)
 
 ## Verified Atlanta iCal sources (confirmed text/calendar via curl)
 1. Atlanta History Center — `https://www.atlantahistorycenter.com/events/?ical=1` (Buckhead, Arts & Culture, every 12h)
@@ -46,3 +46,6 @@ Defaults by type: ical/rss/json_api/google_sheets = 6h, csv_url = 24h.
 
 ## RawEvent / NormalizedEvent fields
 `normalizer.ts` now includes: externalId, recurringId, name, category, date, dateIso, time, venue, address, neighborhood, description, cost, url, **imageUrl**, contactName, contactEmail, **organizer**
+
+## organizer persistence
+The events table has no organizer column — the runner maps `organizer` into `contactName` when contactName is empty. Don't add an organizer column without checking this mapping first.
