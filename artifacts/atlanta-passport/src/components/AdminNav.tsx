@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
 
 const tabs = [
-  { path: "/admin/applications", label: "Events Hub", icon: Calendar },
-  { path: "/admin/stamps", label: "Stamp QR Codes", icon: QrCode },
   { path: "/admin/content", label: "Locations Hub", icon: MapPin },
-  { path: "/admin/routes", label: "Routes Hub", icon: Route },
+  { path: "/admin/applications", label: "Event Hub", icon: Calendar },
+  { path: "/admin/routes", label: "Route Hub", icon: Route },
+  { path: "/admin/stamps", label: "QR Codes", icon: QrCode },
 ];
 
 export default function AdminNav({ onLock }: { onLock?: () => void }) {

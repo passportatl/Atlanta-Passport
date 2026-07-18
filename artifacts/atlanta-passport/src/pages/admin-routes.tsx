@@ -1234,7 +1234,7 @@ export default function AdminRoutes() {
         <div className="max-w-sm w-full card-pop bg-white p-8 space-y-6">
           <div className="text-center">
             <div className="text-3xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>ADMIN</div>
-            <div className="text-sm text-foreground/60">Routes Hub</div>
+            <div className="text-sm text-foreground/60">Route Hub</div>
           </div>
           <form onSubmit={handleUnlock} className="space-y-3">
             <input

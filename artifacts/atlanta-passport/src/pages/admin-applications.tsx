@@ -2864,7 +2864,7 @@ export default function AdminApplications() {
             className="text-3xl font-black"
             style={{ fontFamily: "Bungee, sans-serif" }}
           >
-            Events Hub
+            Event Hub
           </h1>
           <p className="text-xs text-foreground/60 mt-1">
             Notifications send to <strong>touristpassportatl@gmail.com</strong>.

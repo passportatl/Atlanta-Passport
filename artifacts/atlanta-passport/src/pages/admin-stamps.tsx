@@ -326,7 +326,7 @@ export default function AdminStamps() {
         <AdminNav onLock={() => setUnlocked(false)} />
         <div className="mb-6">
           <h1 className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-            Stamp QR Codes
+            QR Codes
           </h1>
           <p className="text-sm text-foreground/70 mt-1">
             {locationBusinesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
