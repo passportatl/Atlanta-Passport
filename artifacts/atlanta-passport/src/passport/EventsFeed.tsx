@@ -5,7 +5,7 @@ import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, Che
 import { motion, AnimatePresence } from "framer-motion";
 import { events as sampleEvents, businesses, neighborhoods } from "@/data/sample-data";
 import { useListPublicEvents, getListPublicEventsQueryKey } from "@workspace/api-client-react";
-import { EVENT_TAGS } from "@/data/event-taxonomy";
+import { EVENT_TAGS, AGE_OPTIONS, normalizeAge, normalizeCategory } from "@/data/event-taxonomy";
 import { EVENT_TYPES } from "@/data/event-taxonomy";
 export { EVENT_TYPES };
 import CategoryBadge from "@/components/CategoryBadge";
@@ -108,6 +108,8 @@ type EventItem = {
   bonusStamp?: boolean;
   listingOnly?: boolean;
   tags?: string[] | null;
+  ageCategory?: string | null;
+  tier?: string | null;
 };
 
 // Fixed dropdown option lists for the selected-day filters. Price tiers map to
@@ -116,9 +118,11 @@ type EventItem = {
 const PRICE_TIERS = ["Free", "$", "$$", "$$$"] as const;
 
 // Case/typo-tolerant comparison between an event's category and a Type option.
+// Legacy DB categories (Music, Tournament, …) are normalized to current
+// EVENT_TYPES names before comparing.
 function matchesEventType(category: string, activeTypes: string[]): boolean {
   const norm = (s: string) => s.toLowerCase().replace(/perfprming/g, "performing").trim();
-  const c = norm(category);
+  const c = norm(normalizeCategory(category));
   return activeTypes.some((tpe) => norm(tpe) === c);
 }
 const TIME_BUCKETS = [
@@ -154,9 +158,12 @@ function matchesTimeBucket(timeStr: string, bucketIds: string[]): boolean {
 
 type EventsFeedProps = {
   onSelectBusiness: (id: string) => void;
+  // Called when an event's venue has no matching static business; receives the
+  // event's address so the map shell can still focus that location.
+  onSelectAddress?: (address: string) => void;
 };
 
-export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
+export default function EventsFeed({ onSelectBusiness, onSelectAddress }: EventsFeedProps) {
   const { t, i18n } = useTranslation();
   const [page, setPage] = useState(0);
   const groupSize = useResponsiveGroupSize();
@@ -186,6 +193,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
         instagram: e.instagram,
         bonusStamp: e.isBonusStamp,
         tags: (e as { tags?: string[] | null }).tags ?? null,
+        ageCategory: e.ageCategory ?? null,
+        tier: e.tier ?? null,
       })),
     [apiEventsRaw],
   );
@@ -348,6 +357,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
   const [activePrices, setActivePrices] = useState<string[]>([]);
   const [activeTypes, setActiveTypes] = useState<string[]>([]);
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [activeAges, setActiveAges] = useState<string[]>([]);
 
   const toggleIn = (
     list: string[],
@@ -361,7 +371,8 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     activeAreas.length > 0 ||
     activePrices.length > 0 ||
     activeTypes.length > 0 ||
-    activeTags.length > 0;
+    activeTags.length > 0 ||
+    activeAges.length > 0;
 
   const clearFilters = () => {
     setActiveTimes([]);
@@ -369,6 +380,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
     setActivePrices([]);
     setActiveTypes([]);
     setActiveTags([]);
+    setActiveAges([]);
   };
 
   // Area options are the same neighborhoods the Explore page lists.
@@ -386,6 +398,7 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
       const evTags = ev.tags ?? [];
       if (!activeTags.some((t) => evTags.includes(t))) return false;
     }
+    if (activeAges.length > 0 && !activeAges.includes(normalizeAge(ev.ageCategory))) return false;
     return true;
   });
 
@@ -795,6 +808,34 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="flex h-8 w-full items-center justify-between gap-1 rounded-md border-2 border-foreground bg-white px-2 font-display text-[10px] tracking-wider uppercase"
+                    >
+                      <span className="truncate">
+                        {activeAges.length > 0
+                          ? `${t("events_page.filter_age", { defaultValue: "Age" })} (${activeAges.length})`
+                          : t("events_page.filter_age", { defaultValue: "Age" })}
+                      </span>
+                      <ChevronDown className="w-3.5 h-3.5 opacity-50 shrink-0" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="max-h-72">
+                    {AGE_OPTIONS.map((age) => (
+                      <DropdownMenuCheckboxItem
+                        key={age}
+                        checked={activeAges.includes(age)}
+                        onCheckedChange={() => toggleIn(activeAges, setActiveAges, age)}
+                        onSelect={(e) => e.preventDefault()}
+                      >
+                        {age}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <button
                 type="button"
@@ -829,16 +870,30 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                 return (
                   <div
                     key={event.id}
-                    onClick={() => venueBiz && onSelectBusiness(venueBiz.id)}
+                    onClick={() => {
+                      if (venueBiz) onSelectBusiness(venueBiz.id);
+                      else if (event.address && onSelectAddress) onSelectAddress(event.address);
+                    }}
                     onKeyDown={(e) => {
-                      if ((e.key === "Enter" || e.key === " ") && venueBiz) {
-                        e.preventDefault();
-                        onSelectBusiness(venueBiz.id);
+                      if (e.key === "Enter" || e.key === " ") {
+                        if (venueBiz) {
+                          e.preventDefault();
+                          onSelectBusiness(venueBiz.id);
+                        } else if (event.address && onSelectAddress) {
+                          e.preventDefault();
+                          onSelectAddress(event.address);
+                        }
                       }
                     }}
-                    role={venueBiz ? "button" : undefined}
-                    tabIndex={venueBiz ? 0 : undefined}
-                    aria-label={venueBiz ? `Show ${event.venue} on the map` : undefined}
+                    role={venueBiz || (event.address && onSelectAddress) ? "button" : undefined}
+                    tabIndex={venueBiz || (event.address && onSelectAddress) ? 0 : undefined}
+                    aria-label={
+                      venueBiz
+                        ? `Show ${event.venue} on the map`
+                        : event.address && onSelectAddress
+                          ? `Show ${event.venue} location on the map`
+                          : undefined
+                    }
                     className="card-pop bg-card p-2 cursor-pointer hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
                   >
                     <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight md:line-clamp-2">
@@ -878,6 +933,11 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                           {event.neighborhood}
                         </span>
                       )}
+                      {normalizeAge(event.ageCategory) !== "All Ages" && (
+                        <span className="inline-flex items-center rounded-full border border-foreground/40 bg-brand-yellow/40 px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground">
+                          {normalizeAge(event.ageCategory)}
+                        </span>
+                      )}
                     </div>
                     {!isListingOnly && (
                       <Link
@@ -886,7 +946,9 @@ export default function EventsFeed({ onSelectBusiness }: EventsFeedProps) {
                         aria-label={`${t("events_page.view_event")}: ${event.name}`}
                         className="mt-1 inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
                       >
-                        {t("events_page.view_event")}
+                        {event.tier && event.tier !== "free"
+                          ? t("events_page.event_details", { defaultValue: "Event Details" })
+                          : t("events_page.view_event")}
                         <ArrowRight className="w-3 h-3 rtl:rotate-180" />
                       </Link>
                     )}

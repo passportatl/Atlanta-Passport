@@ -13,6 +13,7 @@ import {
   Navigation,
 } from "lucide-react";
 import { events as sampleEvents, businesses, businessCategories } from "@/data/sample-data";
+import { normalizeAge } from "@/data/event-taxonomy";
 import { useGetPublicEvent, getGetPublicEventQueryKey } from "@workspace/api-client-react";
 import CategoryBadge from "@/components/CategoryBadge";
 import MapSnapshot from "@/components/MapSnapshot";
@@ -61,6 +62,11 @@ export default function EventDetailBody({
     price: string; description: string;
     highlights: string[]; instagram: string[];
     bonusStamp: boolean;
+    ageCategory: string | null;
+    ticketUrl: string | null;
+    imageUrl: string | null;
+    tier: string;
+    isFeatured: boolean;
   };
 
   const event: NormalizedEvent | null = apiEvent
@@ -79,6 +85,11 @@ export default function EventDetailBody({
         highlights: (apiEvent.highlights ?? []) as string[],
         instagram: (apiEvent.instagram ?? []) as string[],
         bonusStamp: apiEvent.isBonusStamp,
+        ageCategory: apiEvent.ageCategory ?? null,
+        ticketUrl: apiEvent.ticketUrl ?? null,
+        imageUrl: apiEvent.imageUrl ?? null,
+        tier: apiEvent.tier ?? "free",
+        isFeatured: apiEvent.isFeatured === true,
       }
     : sampleEvent && !sampleIsListingOnly
       ? {
@@ -96,6 +107,11 @@ export default function EventDetailBody({
           highlights: (("highlights" in sampleEvent ? sampleEvent.highlights : []) as string[]),
           instagram: (("instagram" in sampleEvent ? sampleEvent.instagram : []) as string[]),
           bonusStamp: "bonusStamp" in sampleEvent ? Boolean(sampleEvent.bonusStamp) : false,
+          ageCategory: null,
+          ticketUrl: null,
+          imageUrl: null,
+          tier: "free",
+          isFeatured: false,
         }
       : null;
 
@@ -170,10 +186,22 @@ export default function EventDetailBody({
             <div className="font-serif text-4xl font-bold leading-none mt-1">{tile.day}</div>
           </div>
           <div className="min-w-0 flex-1">
-            <CategoryBadge
-              category={event.category}
-              className="inline-block mb-3 -rotate-1 uppercase text-[10px]"
-            />
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <CategoryBadge
+                category={event.category}
+                className="inline-block -rotate-1 uppercase text-[10px]"
+              />
+              {normalizeAge(event.ageCategory) !== "All Ages" && (
+                <span className="inline-flex items-center rounded-full border-2 border-white/70 bg-white/15 px-2.5 py-1 font-display text-[10px] uppercase tracking-[0.14em] rotate-1">
+                  {normalizeAge(event.ageCategory)}
+                </span>
+              )}
+              {event.isFeatured && (
+                <span className="inline-flex items-center gap-1 rounded-full border-2 border-foreground bg-brand-yellow px-2.5 py-1 font-display text-[10px] uppercase tracking-[0.14em] text-foreground -rotate-1 shadow-pop-sm">
+                  <Sparkles className="w-3 h-3" /> Featured
+                </span>
+              )}
+            </div>
             <h1 className="font-serif font-bold text-3xl md:text-5xl leading-[1.05] mb-3">
               {event.name}
             </h1>
@@ -191,6 +219,20 @@ export default function EventDetailBody({
       {/* Body */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-8 md:gap-12">
         <div>
+          {event.imageUrl && (
+            <div className="card-pop overflow-hidden mb-10 bg-background">
+              <img
+                src={event.imageUrl}
+                alt={event.name}
+                className="w-full max-h-[420px] object-cover"
+                loading="lazy"
+                onError={(e) => {
+                  // Hide the frame entirely when the image URL is broken.
+                  (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                }}
+              />
+            </div>
+          )}
           <div className="section-kicker mb-4">★ About the Event</div>
           <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-10">
             {event.description}
@@ -254,6 +296,16 @@ export default function EventDetailBody({
             )}
             {venueBusiness?.lat != null && venueBusiness?.lng != null && (
               <MapSnapshot lat={venueBusiness.lat} lng={venueBusiness.lng} name={event.venue} />
+            )}
+            {event.ticketUrl && (
+              <a
+                href={event.ticketUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm mb-3"
+              >
+                <ExternalLink className="w-4 h-4" /> Buy Tickets
+              </a>
             )}
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}

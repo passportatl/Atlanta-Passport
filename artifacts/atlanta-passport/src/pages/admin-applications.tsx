@@ -1605,6 +1605,18 @@ function AdminEventCard({
                 Total: <span className="text-lg">${effectivePrice}</span>
               </div>
             </div>
+            {(event.listingPackage ?? event.tier ?? "free") === "free" &&
+              draft.listingPackage !== "free" &&
+              draft.paymentStatus === "unpaid" && (
+                <div className="mt-2 flex items-start gap-2 rounded-lg border-2 border-brand-yellow bg-brand-yellow/20 px-3 py-2 text-xs">
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-foreground mt-0.5" />
+                  <span>
+                    You're upgrading this free listing to a paid package, but payment status is
+                    still <strong>Unpaid</strong>. Remember to invoice the organizer and update the
+                    payment status.
+                  </span>
+                </div>
+              )}
           </div>
 
           {/* § Event Details */}

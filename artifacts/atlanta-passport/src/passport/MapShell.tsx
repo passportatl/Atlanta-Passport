@@ -338,7 +338,20 @@ export default function MapShell() {
           />
         </PassportPanel>
       )}
-      {view === "events" && <EventsFeed onSelectBusiness={setSelectedBizId} />}
+      {view === "events" && (
+        <EventsFeed
+          onSelectBusiness={setSelectedBizId}
+          onSelectAddress={(address) => {
+            // No matching static business on the map — open the address in
+            // Google Maps so the user can still see the event location.
+            window.open(
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, Atlanta, GA`)}`,
+              "_blank",
+              "noopener,noreferrer",
+            );
+          }}
+        />
+      )}
       {view === "routes" && (
         <RoutesFeed
           selectedRouteId={selectedRouteId}

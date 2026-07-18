@@ -18,7 +18,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { categories, categoryColor, isDarkColor, neighborhoods } from "@/data/sample-data";
-import { EVENT_TYPES, EVENT_TAGS } from "@/data/event-taxonomy";
+import { EVENT_TYPES, EVENT_TAGS, AGE_OPTIONS } from "@/data/event-taxonomy";
 import Marquee from "@/components/Marquee";
 import { cn } from "@/lib/utils";
 
@@ -144,13 +144,29 @@ const PACKAGES: {
   },
 ];
 
-const AGE_OPTIONS = ["All Ages", "18+ only", "21+ only"];
+// Numeric base price per package (mirrors the PACKAGES display prices).
+const PACKAGE_PRICES: Record<Pkg, number> = {
+  free: 0,
+  basic: 149,
+  featured: 399,
+  premier: 649,
+  signature: 999,
+};
+
+// Optional add-ons available to paid packages only.
+const ADD_ONS: { id: string; label: string; price: number; blurb: string }[] = [
+  { id: "newsletter", label: "Newsletter Feature", price: 75, blurb: "Dedicated mention in the Passport ATL email newsletter." },
+  { id: "instagram_feature", label: "Instagram Post", price: 99, blurb: "A standalone post about your event on our Instagram." },
+  { id: "sponsored_route", label: "Sponsored Route", price: 149, blurb: "Your event featured along a Passport ATL walking route." },
+  { id: "homepage_spotlight", label: "Homepage Spotlight", price: 199, blurb: "Premium placement on the Passport ATL homepage." },
+];
 
 // ── Schema ──────────────────────────────────────────────────────────────────────
 
 const schema = z
   .object({
     listingPackage: z.enum(["free", "basic", "featured", "premier", "signature"]),
+    addOns: z.array(z.string()).default([]),
     eventName: z.string().min(2, "Event name must be at least 2 characters."),
     description: z.string().optional().default(""),
     highlights: z.string().optional().default(""),
@@ -318,6 +334,11 @@ function ReviewSummary({ values, pkg }: { values: Partial<FormValues>; pkg: Pkg 
   };
 
   const hLines = (values.highlights ?? "").split("\n").map((s) => s.trim()).filter(Boolean);
+  const selectedAddOns = pkg !== "free"
+    ? ADD_ONS.filter((a) => (values.addOns ?? []).includes(a.id))
+    : [];
+  const reviewTotal =
+    PACKAGE_PRICES[pkg] + selectedAddOns.reduce((sum, a) => sum + a.price, 0);
 
   return (
     <div className="rounded-2xl border-[3px] border-foreground overflow-hidden shadow-pop-sm">
@@ -332,6 +353,9 @@ function ReviewSummary({ values, pkg }: { values: Partial<FormValues>; pkg: Pkg 
       {open && (
         <div className="p-5 space-y-1 bg-card text-sm">
           {row("Package", `${pkgObj.title} — ${pkgObj.price}`)}
+          {selectedAddOns.length > 0 &&
+            row("Add-ons", selectedAddOns.map((a) => `${a.label} (+$${a.price})`).join(", "))}
+          {pkg !== "free" && row("Estimated Total", `$${reviewTotal}`)}
           {row("Event Name", values.eventName)}
           {row("Date", values.eventDate
             ? formatDisplayDate(values.eventDate, values.endDate || undefined)
@@ -382,6 +406,7 @@ export default function ListEvent() {
     resolver: zodResolver(schema),
     defaultValues: {
       listingPackage: "free",
+      addOns: [],
       eventName: "",
       description: "",
       highlights: "",
@@ -443,11 +468,20 @@ export default function ListEvent() {
         ? `${values.startTime} – ${values.endTime}`
         : values.startTime;
 
-      const promoContactMethod = values.promoContact
+      const isPaid = values.listingPackage !== "free";
+      const wantsFollowUp = isPaid || values.promoContact;
+      const promoContactMethod = wantsFollowUp
         ? [values.promoByPhone ? "phone" : "", values.promoByEmail ? "email" : ""]
             .filter(Boolean)
             .join(", ")
         : "";
+
+      const selectedAddOns = isPaid
+        ? ADD_ONS.filter((a) => values.addOns.includes(a.id))
+        : [];
+      const priceTotal =
+        PACKAGE_PRICES[values.listingPackage] +
+        selectedAddOns.reduce((sum, a) => sum + a.price, 0);
 
       const body = {
         name: values.eventName,
@@ -466,13 +500,15 @@ export default function ListEvent() {
         contactName: values.organizerName,
         contactEmail: values.organizerEmail,
         contactPhone: values.organizerPhone,
-        promoContact: values.promoContact,
+        promoContact: wantsFollowUp,
         promoContactMethod: promoContactMethod || undefined,
         ageCategory: values.ageCategory || undefined,
         tags: values.tags.length > 0 ? values.tags : undefined,
         imageUrl: values.imageUrl || undefined,
         ticketUrl: values.ticketUrl || undefined,
         listingPackage: values.listingPackage,
+        addOns: selectedAddOns.length > 0 ? selectedAddOns.map((a) => a.id) : undefined,
+        listingPrice: isPaid ? priceTotal : undefined,
         endDate: values.endDate || undefined,
       };
 
@@ -661,6 +697,80 @@ export default function ListEvent() {
                     </FormItem>
                   )}
                 />
+
+                {pkg !== "free" && (
+                  <FormField
+                    control={form.control}
+                    name="addOns"
+                    render={({ field }) => {
+                      const selected = new Set(field.value ?? []);
+                      const addOnTotal = ADD_ONS.filter((a) => selected.has(a.id)).reduce(
+                        (sum, a) => sum + a.price,
+                        0,
+                      );
+                      const total = PACKAGE_PRICES[pkg] + addOnTotal;
+                      return (
+                        <FormItem className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-4 shadow-pop-sm">
+                          <div className="font-display text-xs tracking-[0.2em] uppercase mb-1">
+                            Boost your listing — optional add-ons
+                          </div>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            Add extra promotion to your {PACKAGES.find((p) => p.id === pkg)?.title} package. Billed on the same invoice.
+                          </p>
+                          <div className="grid sm:grid-cols-2 gap-2">
+                            {ADD_ONS.map((a) => {
+                              const checked = selected.has(a.id);
+                              return (
+                                <label
+                                  key={a.id}
+                                  className={cn(
+                                    "flex items-start gap-2.5 rounded-xl border-[3px] border-foreground p-3 cursor-pointer transition-all",
+                                    checked
+                                      ? "bg-brand-yellow shadow-pop -translate-y-0.5"
+                                      : "bg-background hover:-translate-y-0.5",
+                                  )}
+                                >
+                                  <Checkbox
+                                    className="mt-0.5 shrink-0"
+                                    checked={checked}
+                                    onCheckedChange={(c) => {
+                                      const next = new Set(field.value ?? []);
+                                      if (c) next.add(a.id);
+                                      else next.delete(a.id);
+                                      field.onChange(Array.from(next));
+                                    }}
+                                  />
+                                  <span className="min-w-0">
+                                    <span className="flex items-baseline gap-2 text-sm font-bold">
+                                      {a.label}
+                                      <span className="font-display text-xs">+${a.price}</span>
+                                    </span>
+                                    <span className="block text-xs text-muted-foreground leading-snug mt-0.5">
+                                      {a.blurb}
+                                    </span>
+                                  </span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-3 flex items-center justify-between rounded-xl border-2 border-foreground bg-background px-4 py-2.5">
+                            <span className="font-display text-[11px] tracking-[0.18em] uppercase">
+                              Estimated total
+                            </span>
+                            <span className="font-display text-xl leading-none">
+                              ${total}
+                            </span>
+                          </div>
+                          <p className="mt-1.5 text-[11px] text-muted-foreground">
+                            {PACKAGES.find((p) => p.id === pkg)?.title} ${PACKAGE_PRICES[pkg]}
+                            {addOnTotal > 0 ? ` + add-ons $${addOnTotal}` : ""} · invoiced after submission, no payment now.
+                          </p>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                )}
               </div>
 
               {/* ── Section 01 · Event Details ──────────────────────────────── */}
@@ -1149,61 +1259,103 @@ export default function ListEvent() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="promoContact"
-                  render={({ field }) => (
-                    <FormItem className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-4 shadow-pop-sm">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <Checkbox
-                          checked={field.value ?? false}
-                          onCheckedChange={(v) => field.onChange(v === true)}
-                          className="mt-0.5"
-                        />
-                        <span className="text-sm font-medium leading-snug">
-                          Contact me about promotional options for this event
-                          <span className="block font-normal text-muted-foreground mt-0.5">
-                            We'll reach out with featured and premier marketing plans and pricing.
+                {pkg === "free" ? (
+                  <FormField
+                    control={form.control}
+                    name="promoContact"
+                    render={({ field }) => (
+                      <FormItem className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-4 shadow-pop-sm">
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <Checkbox
+                            checked={field.value ?? false}
+                            onCheckedChange={(v) => field.onChange(v === true)}
+                            className="mt-0.5"
+                          />
+                          <span className="text-sm font-medium leading-snug">
+                            Contact me about promotional options for this event
+                            <span className="block font-normal text-muted-foreground mt-0.5">
+                              We'll reach out with featured and premier marketing plans and pricing.
+                            </span>
                           </span>
-                        </span>
-                      </label>
-                      {field.value && (
-                        <div className="mt-3 ml-8 space-y-2">
-                          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            Preferred contact method
+                        </label>
+                        {field.value && (
+                          <div className="mt-3 ml-8 space-y-2">
+                            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                              Preferred contact method
+                            </div>
+                            <FormField
+                              control={form.control}
+                              name="promoByPhone"
+                              render={({ field: pf }) => (
+                                <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                                  <Checkbox
+                                    checked={pf.value ?? false}
+                                    onCheckedChange={(v) => pf.onChange(v === true)}
+                                  />
+                                  Phone
+                                </label>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="promoByEmail"
+                              render={({ field: ef }) => (
+                                <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                                  <Checkbox
+                                    checked={ef.value ?? false}
+                                    onCheckedChange={(v) => ef.onChange(v === true)}
+                                  />
+                                  Email
+                                </label>
+                              )}
+                            />
                           </div>
-                          <FormField
-                            control={form.control}
-                            name="promoByPhone"
-                            render={({ field: pf }) => (
-                              <label className="flex items-center gap-2.5 cursor-pointer text-sm">
-                                <Checkbox
-                                  checked={pf.value ?? false}
-                                  onCheckedChange={(v) => pf.onChange(v === true)}
-                                />
-                                Phone
-                              </label>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="promoByEmail"
-                            render={({ field: ef }) => (
-                              <label className="flex items-center gap-2.5 cursor-pointer text-sm">
-                                <Checkbox
-                                  checked={ef.value ?? false}
-                                  onCheckedChange={(v) => ef.onChange(v === true)}
-                                />
-                                Email
-                              </label>
-                            )}
-                          />
-                        </div>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <div className="rounded-2xl border-[3px] border-foreground bg-brand-cream p-4 shadow-pop-sm">
+                    <div className="text-sm font-medium leading-snug">
+                      How should we follow up about your paid listing?
+                      <span className="block font-normal text-muted-foreground mt-0.5">
+                        Our team will reach out with your invoice and next steps.
+                      </span>
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Preferred contact method
+                      </div>
+                      <FormField
+                        control={form.control}
+                        name="promoByPhone"
+                        render={({ field: pf }) => (
+                          <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                            <Checkbox
+                              checked={pf.value ?? false}
+                              onCheckedChange={(v) => pf.onChange(v === true)}
+                            />
+                            Phone
+                          </label>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="promoByEmail"
+                        render={({ field: ef }) => (
+                          <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                            <Checkbox
+                              checked={ef.value ?? false}
+                              onCheckedChange={(v) => ef.onChange(v === true)}
+                            />
+                            Email
+                          </label>
+                        )}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* ── Section 08 · Review & Submit ────────────────────────────── */}
@@ -1215,7 +1367,17 @@ export default function ListEvent() {
                 {pkg !== "free" && (
                   <div className="rounded-2xl border-[3px] border-brand-navy bg-brand-navy/5 p-4 text-sm space-y-1">
                     <p className="font-semibold">
-                      {PACKAGES.find((p) => p.id === pkg)?.title} — {PACKAGES.find((p) => p.id === pkg)?.price}
+                      {PACKAGES.find((p) => p.id === pkg)?.title} — $
+                      {PACKAGE_PRICES[pkg] +
+                        ADD_ONS.filter((a) => (watched.addOns ?? []).includes(a.id)).reduce(
+                          (sum, a) => sum + a.price,
+                          0,
+                        )}
+                      {(watched.addOns ?? []).length > 0 && (
+                        <span className="font-normal text-muted-foreground">
+                          {" "}(incl. {ADD_ONS.filter((a) => (watched.addOns ?? []).includes(a.id)).map((a) => a.label).join(", ")})
+                        </span>
+                      )}
                     </p>
                     <p className="text-muted-foreground">Invoice sent after submission. No payment required now.</p>
                     <p className="text-muted-foreground">

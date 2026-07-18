@@ -245,6 +245,11 @@ export interface EventRecord {
   isFeatured: boolean;
   isBonusStamp: boolean;
   tier: string;
+  listingPackage?: string | null;
+  imageUrl?: string | null;
+  ticketUrl?: string | null;
+  tags?: string[] | null;
+  ageCategory?: string | null;
   publishedAt?: string | null;
   createdAt: string;
 }
@@ -341,6 +346,8 @@ export interface SubmitEventInput {
   imageUrl?: string;
   ticketUrl?: string;
   listingPackage?: string;
+  addOns?: string[];
+  listingPrice?: number;
   endDate?: string;
 }
 

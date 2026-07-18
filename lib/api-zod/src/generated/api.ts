@@ -354,6 +354,8 @@ export const SubmitEventBody = zod.object({
   imageUrl: zod.string().optional(),
   ticketUrl: zod.string().optional(),
   listingPackage: zod.string().optional(),
+  addOns: zod.array(zod.string()).optional(),
+  listingPrice: zod.number().optional(),
   endDate: zod.string().optional(),
 });
 

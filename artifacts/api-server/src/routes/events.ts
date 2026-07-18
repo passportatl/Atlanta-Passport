@@ -103,7 +103,7 @@ router.post("/events", async (req, res) => {
 
   // Derive tier from listing package
   const listingPackage = data.listingPackage ?? "free";
-  const tier = listingPackage === "premier" ? "paid" : listingPackage === "featured" ? "paid" : "free";
+  const tier = listingPackage === "free" ? "free" : "paid";
 
   // Pack extra metadata that has no dedicated column into intake notes
   const extraNotes: string[] = [];
@@ -113,6 +113,8 @@ router.post("/events", async (req, res) => {
   if (data.ticketUrl && data.url && data.ticketUrl !== data.url)
     extraNotes.push(`Ticket URL: ${data.ticketUrl}`);
   if (listingPackage !== "free") extraNotes.push(`Listing Package: ${listingPackage}`);
+  if (data.addOns && data.addOns.length > 0) extraNotes.push(`Add-ons: ${data.addOns.join(", ")}`);
+  if (data.listingPrice != null) extraNotes.push(`Quoted Total: $${data.listingPrice}`);
   if (data.endDate) extraNotes.push(`End Date: ${data.endDate}`);
 
   const intakeNotes = [
@@ -166,6 +168,8 @@ router.post("/events", async (req, res) => {
       source: "web_form",
       tier,
       listingPackage,
+      addOns: data.addOns && data.addOns.length > 0 ? data.addOns : null,
+      listingPrice: data.listingPrice ?? null,
       workflowStatus: "pending",
       completenessScore,
     })

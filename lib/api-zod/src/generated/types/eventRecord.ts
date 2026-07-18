@@ -25,6 +25,11 @@ export interface EventRecord {
   isFeatured: boolean;
   isBonusStamp: boolean;
   tier: string;
+  listingPackage?: string | null;
+  imageUrl?: string | null;
+  ticketUrl?: string | null;
+  tags?: string[] | null;
+  ageCategory?: string | null;
   publishedAt?: Date | null;
   createdAt: Date;
 }
