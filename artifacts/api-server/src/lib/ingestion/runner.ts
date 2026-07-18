@@ -22,6 +22,7 @@ import { fetchIcalEvents } from "./sources/ical";
 import { fetchRssEvents } from "./sources/rss";
 import { fetchJsonApiEvents } from "./sources/json-api";
 import { fetchCsvUrlEvents } from "./sources/csv-url";
+import { archivePastIngestedEvents } from "./past-event-cleanup";
 import { logger } from "../logger";
 
 type ImportRunRowInsert = typeof importRunRowsTable.$inferInsert;
@@ -335,5 +336,14 @@ export async function runSourceSync(sourceId: string): Promise<string> {
     .where(eq(eventSourcesTable.id, sourceId));
 
   logger.info({ runId, inserted, duplicates, changed, errors }, "Ingestion run complete");
+
+  // 10. Archive any ingested events whose date has passed (keeps the pending
+  // queue and public feed free of stale rows). Never aborts a successful run.
+  try {
+    await archivePastIngestedEvents();
+  } catch (err) {
+    logger.error({ err }, "Past-event cleanup after sync failed");
+  }
+
   return runId;
 }

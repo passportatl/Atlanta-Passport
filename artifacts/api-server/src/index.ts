@@ -2,7 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { seedBusinesses, seedCalendarEvents } from "./lib/seed";
 import { scheduleSignupSync } from "./lib/googleSheetSync";
-import { startScheduledPublish, startSourceAutoSync } from "./lib/scheduler";
+import { startScheduledPublish, startSourceAutoSync, startPastEventCleanup } from "./lib/scheduler";
 
 const rawPort = process.env["PORT"];
 
@@ -30,4 +30,5 @@ app.listen(port, (err) => {
   scheduleSignupSync();
   startScheduledPublish();
   startSourceAutoSync();
+  startPastEventCleanup();
 });

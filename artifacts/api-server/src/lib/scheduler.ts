@@ -5,12 +5,15 @@
 //     scheduledPublishAt has passed and workflowStatus is still "approved".
 //   • Source auto-sync: every 6 hours, run ingestion for all active sources
 //     that are due for a sync based on their per-source syncIntervalHours config.
+//   • Past-event cleanup: every hour, archive ingested events whose date has
+//     passed so they leave the admin pending queue and the public feed.
 //
 // All tasks are fire-and-forget; errors are logged but never crash the server.
 
 import { and, eq, isNotNull, lte } from "drizzle-orm";
 import { db, eventsTable, eventSourcesTable } from "@workspace/db";
 import { runSourceSync } from "./ingestion/runner";
+import { archivePastIngestedEvents } from "./ingestion/past-event-cleanup";
 import { logger } from "./logger";
 
 // ── Scheduled publish ─────────────────────────────────────────────────────────
@@ -142,6 +145,7 @@ async function runSourceAutoSync(): Promise<void> {
 
 let scheduledPublishTimer: ReturnType<typeof setInterval> | null = null;
 let sourceAutoSyncTimer: ReturnType<typeof setInterval> | null = null;
+let pastEventCleanupTimer: ReturnType<typeof setInterval> | null = null;
 
 export function startScheduledPublish(intervalMs = 5 * 60 * 1000): void {
   if (scheduledPublishTimer) return;
@@ -162,4 +166,17 @@ export function startSourceAutoSync(intervalMs = 6 * 60 * 60 * 1000): void {
     void runSourceAutoSync().catch((err) => logger.error({ err }, "Source auto-sync failed"));
   }, intervalMs);
   logger.info({ intervalMs }, "Source auto-sync scheduler started");
+}
+
+export function startPastEventCleanup(intervalMs = 60 * 60 * 1000): void {
+  if (pastEventCleanupTimer) return;
+  void archivePastIngestedEvents().catch((err) =>
+    logger.error({ err }, "Past-event cleanup startup run failed"),
+  );
+  pastEventCleanupTimer = setInterval(() => {
+    void archivePastIngestedEvents().catch((err) =>
+      logger.error({ err }, "Past-event cleanup failed"),
+    );
+  }, intervalMs);
+  logger.info({ intervalMs }, "Past-event cleanup scheduler started");
 }
