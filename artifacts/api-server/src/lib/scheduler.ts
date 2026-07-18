@@ -3,7 +3,8 @@
 // Tasks:
 //   • Scheduled publish: every 5 minutes, auto-publish events whose
 //     scheduledPublishAt has passed and workflowStatus is still "approved".
-//   • Source auto-sync: every 6 hours, run ingestion for all active sources.
+//   • Source auto-sync: every 6 hours, run ingestion for all active sources
+//     that are due for a sync based on their per-source syncIntervalHours config.
 //
 // All tasks are fire-and-forget; errors are logged but never crash the server.
 
@@ -47,38 +48,87 @@ async function runScheduledPublish(): Promise<void> {
 
 // ── Source auto-sync ──────────────────────────────────────────────────────────
 
+// Default sync interval per source type (hours)
+const DEFAULT_SYNC_INTERVAL_BY_TYPE: Record<string, number> = {
+  ical: 6,
+  rss: 6,
+  json_api: 6,
+  csv_url: 24,
+  google_sheets: 6,
+  ticketmaster: 6,
+};
+
+function getSourceSyncIntervalHours(type: string, config: Record<string, unknown>): number {
+  const fromConfig = config.syncIntervalHours;
+  if (typeof fromConfig === "number" && fromConfig > 0) return fromConfig;
+  if (typeof fromConfig === "string") {
+    const n = parseFloat(fromConfig);
+    if (!isNaN(n) && n > 0) return n;
+  }
+  return DEFAULT_SYNC_INTERVAL_BY_TYPE[type] ?? 6;
+}
+
 async function runSourceAutoSync(): Promise<void> {
-  const sources = await db
-    .select({ id: eventSourcesTable.id, name: eventSourcesTable.name, type: eventSourcesTable.type })
+  // Load all active sources — also get config and lastSyncAt for interval checking
+  const allActive = await db
+    .select({
+      id: eventSourcesTable.id,
+      name: eventSourcesTable.name,
+      type: eventSourcesTable.type,
+      config: eventSourcesTable.config,
+      lastSyncAt: eventSourcesTable.lastSyncAt,
+      lastSyncStatus: eventSourcesTable.lastSyncStatus,
+    })
     .from(eventSourcesTable)
-    .where(
-      and(
-        eq(eventSourcesTable.isActive, true),
-        eq(eventSourcesTable.lastSyncStatus, "success"),
-      ),
-    );
+    .where(eq(eventSourcesTable.isActive, true));
 
-  // Also include sources that have never synced
-  const neverSynced = await db
-    .select({ id: eventSourcesTable.id, name: eventSourcesTable.name, type: eventSourcesTable.type })
-    .from(eventSourcesTable)
-    .where(
-      and(
-        eq(eventSourcesTable.isActive, true),
-        eq(eventSourcesTable.lastSyncStatus, "idle"),
-      ),
-    );
+  // Filter to sources with status success, partial, or idle (never errored out permanently)
+  const candidates = allActive.filter((s) =>
+    ["success", "partial", "idle"].includes(s.lastSyncStatus ?? "idle"),
+  );
 
-  const allSources = [...sources, ...neverSynced];
-
-  if (allSources.length === 0) {
+  if (candidates.length === 0) {
     logger.info("Source auto-sync: no active sources to sync");
     return;
   }
 
-  logger.info({ count: allSources.length }, "Source auto-sync started");
+  const now = Date.now();
+  const due = candidates.filter((source) => {
+    let config: Record<string, unknown> = {};
+    try {
+      config = JSON.parse(source.config ?? "{}") as Record<string, unknown>;
+    } catch {
+      // ignore malformed config
+    }
 
-  for (const source of allSources) {
+    const intervalMs = getSourceSyncIntervalHours(source.type, config) * 3_600_000;
+
+    if (!source.lastSyncAt) return true; // never synced → always due
+
+    const msSinceSync = now - new Date(source.lastSyncAt).getTime();
+    if (msSinceSync < intervalMs) {
+      logger.debug(
+        {
+          sourceId: source.id,
+          name: source.name,
+          hoursAgo: Math.round(msSinceSync / 36_000) / 100,
+          intervalHours: intervalMs / 3_600_000,
+        },
+        "Source auto-sync skipped: synced recently",
+      );
+      return false;
+    }
+    return true;
+  });
+
+  if (due.length === 0) {
+    logger.info("Source auto-sync: all active sources synced recently");
+    return;
+  }
+
+  logger.info({ count: due.length }, "Source auto-sync started");
+
+  for (const source of due) {
     try {
       const runId = await runSourceSync(source.id);
       logger.info({ sourceId: source.id, name: source.name, runId }, "Source auto-sync complete");
@@ -95,7 +145,6 @@ let sourceAutoSyncTimer: ReturnType<typeof setInterval> | null = null;
 
 export function startScheduledPublish(intervalMs = 5 * 60 * 1000): void {
   if (scheduledPublishTimer) return;
-  // Run once immediately on startup, then on interval
   void runScheduledPublish().catch((err) => logger.error({ err }, "Scheduled publish startup run failed"));
   scheduledPublishTimer = setInterval(() => {
     void runScheduledPublish().catch((err) => logger.error({ err }, "Scheduled publish failed"));
@@ -105,10 +154,10 @@ export function startScheduledPublish(intervalMs = 5 * 60 * 1000): void {
 
 export function startSourceAutoSync(intervalMs = 6 * 60 * 60 * 1000): void {
   if (sourceAutoSyncTimer) return;
-  // Run once after a short delay on startup, then on interval
+  // Run once after a short delay to let server fully initialize
   setTimeout(() => {
     void runSourceAutoSync().catch((err) => logger.error({ err }, "Source auto-sync startup run failed"));
-  }, 30_000); // 30s delay to let server fully initialize
+  }, 30_000);
   sourceAutoSyncTimer = setInterval(() => {
     void runSourceAutoSync().catch((err) => logger.error({ err }, "Source auto-sync failed"));
   }, intervalMs);

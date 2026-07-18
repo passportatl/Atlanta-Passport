@@ -13,6 +13,9 @@ import {
 import { runSourceSync } from "../lib/ingestion/runner";
 import { fetchTicketmasterEvents } from "../lib/ingestion/sources/ticketmaster";
 import { fetchIcalEvents } from "../lib/ingestion/sources/ical";
+import { fetchRssEvents } from "../lib/ingestion/sources/rss";
+import { fetchJsonApiEvents } from "../lib/ingestion/sources/json-api";
+import { fetchCsvUrlEvents } from "../lib/ingestion/sources/csv-url";
 import { inspectGoogleSheet } from "../lib/ingestion/sources/google-sheets-intake";
 import { logger } from "../lib/logger";
 
@@ -31,7 +34,7 @@ function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   next();
 }
 
-const VALID_TYPES = ["ticketmaster", "google_sheets", "ical", "manual"] as const;
+const VALID_TYPES = ["ticketmaster", "google_sheets", "ical", "rss", "json_api", "csv_url", "manual"] as const;
 
 // ── Source CRUD ───────────────────────────────────────────────────────────────
 
@@ -154,7 +157,8 @@ router.post("/admin/sources/:id/sync", requireAdmin, async (req, res) => {
 
 // POST /admin/sources/:id/test
 // Dry-run fetch — calls the source fetcher and returns a preview without
-// writing anything to the database. Supported for: ticketmaster, ical.
+// writing anything to the database.
+// Supported for: ticketmaster, ical, rss, json_api, csv_url.
 router.post("/admin/sources/:id/test", requireAdmin, async (req, res) => {
   const { id } = req.params as { id: string };
 
@@ -173,22 +177,42 @@ router.post("/admin/sources/:id/test", requireAdmin, async (req, res) => {
     res.status(400).json({ error: "Source config is not valid JSON" }); return;
   }
 
-  try {
-    let rawEvents: Awaited<ReturnType<typeof fetchTicketmasterEvents>>;
+  const TESTABLE = ["ticketmaster", "ical", "rss", "json_api", "csv_url"] as const;
+  type TestableType = (typeof TESTABLE)[number];
 
-    if (source.type === "ticketmaster") {
-      rawEvents = await fetchTicketmasterEvents(config as Parameters<typeof fetchTicketmasterEvents>[0]);
-    } else if (source.type === "ical") {
-      rawEvents = await fetchIcalEvents(config as Parameters<typeof fetchIcalEvents>[0]);
-    } else {
-      res.status(400).json({ error: `Test not supported for source type "${source.type}"` });
-      return;
+  if (!TESTABLE.includes(source.type as TestableType)) {
+    res.status(400).json({ error: `Test not supported for source type "${source.type}"` });
+    return;
+  }
+
+  try {
+    let rawEvents: import("../lib/ingestion/normalizer").RawEvent[];
+
+    switch (source.type as TestableType) {
+      case "ticketmaster":
+        rawEvents = await fetchTicketmasterEvents(config as Parameters<typeof fetchTicketmasterEvents>[0]);
+        break;
+      case "ical":
+        rawEvents = await fetchIcalEvents(config as Parameters<typeof fetchIcalEvents>[0]);
+        break;
+      case "rss":
+        rawEvents = await fetchRssEvents(config as Parameters<typeof fetchRssEvents>[0]);
+        break;
+      case "json_api":
+        rawEvents = await fetchJsonApiEvents(config as Parameters<typeof fetchJsonApiEvents>[0]);
+        break;
+      case "csv_url":
+        rawEvents = await fetchCsvUrlEvents(config as Parameters<typeof fetchCsvUrlEvents>[0]);
+        break;
+      default:
+        rawEvents = [];
     }
 
     const sample = rawEvents.slice(0, 5).map((e) => ({
       name: e.name ?? "(no name)",
       date: e.date ?? "",
       venue: e.venue ?? "",
+      url: e.url ?? "",
     }));
 
     logger.info({ sourceId: id, type: source.type, found: rawEvents.length }, "Source test completed (dry-run)");

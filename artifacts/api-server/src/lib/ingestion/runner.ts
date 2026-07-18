@@ -19,6 +19,9 @@ import { findDuplicate, type ExistingEventStub } from "./deduplicator";
 import { fetchTicketmasterEvents } from "./sources/ticketmaster";
 import { fetchGoogleSheetsEvents } from "./sources/google-sheets-intake";
 import { fetchIcalEvents } from "./sources/ical";
+import { fetchRssEvents } from "./sources/rss";
+import { fetchJsonApiEvents } from "./sources/json-api";
+import { fetchCsvUrlEvents } from "./sources/csv-url";
 import { logger } from "../logger";
 
 type ImportRunRowInsert = typeof importRunRowsTable.$inferInsert;
@@ -33,11 +36,19 @@ async function fetchFromSource(type: string, config: Record<string, unknown>) {
       return fetchGoogleSheetsEvents(config as Parameters<typeof fetchGoogleSheetsEvents>[0]);
     case "ical":
       return fetchIcalEvents(config as Parameters<typeof fetchIcalEvents>[0]);
+    case "rss":
+      return fetchRssEvents(config as Parameters<typeof fetchRssEvents>[0]);
+    case "json_api":
+      return fetchJsonApiEvents(config as Parameters<typeof fetchJsonApiEvents>[0]);
+    case "csv_url":
+      return fetchCsvUrlEvents(config as Parameters<typeof fetchCsvUrlEvents>[0]);
     case "manual":
       // Manual sources are fed via the CSV importer UI — nothing to auto-fetch.
       return [];
     default:
-      throw new Error(`Unsupported source type: "${type}". Supported: ticketmaster, google_sheets, ical, manual`);
+      throw new Error(
+        `Unsupported source type: "${type}". Supported: ticketmaster, google_sheets, ical, rss, json_api, csv_url, manual`,
+      );
   }
 }
 
@@ -101,6 +112,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
       date: eventsTable.date,
       dateIso: eventsTable.dateIso,
       venue: eventsTable.venue,
+      url: eventsTable.url,
       externalId: eventsTable.externalId,
       ingestSourceId: eventsTable.ingestSourceId,
       workflowStatus: eventsTable.workflowStatus,
@@ -118,7 +130,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
   for (const raw of rawEvents) {
     const normalized: NormalizedEvent = normalizeEvent(raw);
 
-    // Skip events with no name (normalizer logged a warning)
+    // Skip events with no name
     if (!normalized.name.trim()) {
       errors++;
       runRows.push({
@@ -142,7 +154,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
           .update(eventsTable)
           .set({ lastSeenAt: now, updatedAt: now })
           .where(eq(eventsTable.id, dup.existingId));
-        changed++; // "seen again" counts as changed for metrics
+        changed++;
         runRows.push({
           runId,
           eventId: dup.existingId,
@@ -176,7 +188,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
         });
       }
     } else {
-      // New event — insert as pending (auto-publish always disabled)
+      // New event — insert as pending
       try {
         const completenessScore = computeEventCompleteness(normalized);
 
@@ -194,6 +206,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
             description: normalized.description ?? undefined,
             cost: normalized.cost ?? undefined,
             url: normalized.url ?? undefined,
+            imageUrl: normalized.imageUrl ?? undefined,
             contactName: normalized.contactName ?? undefined,
             contactEmail: normalized.contactEmail ?? undefined,
             source: source.type,
@@ -212,6 +225,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
           date: normalized.date,
           dateIso: normalized.dateIso,
           venue: normalized.venue,
+          url: normalized.url,
           externalId: normalized.externalId,
           ingestSourceId: sourceId,
           workflowStatus: "pending",

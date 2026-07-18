@@ -766,6 +766,9 @@ const SOURCE_TYPE_LABELS: Record<string, string> = {
   ticketmaster: "Ticketmaster",
   google_sheets: "Google Sheets",
   ical: "iCal Feed",
+  rss: "RSS Feed",
+  json_api: "JSON API",
+  csv_url: "CSV URL",
   manual: "Manual (CSV)",
 };
 
@@ -773,10 +776,20 @@ const SOURCE_TYPE_COLORS: Record<string, string> = {
   ticketmaster: "bg-brand-sky text-foreground",
   google_sheets: "bg-brand-lime text-foreground",
   ical: "bg-brand-orange text-white",
+  rss: "bg-brand-yellow text-foreground",
+  json_api: "bg-brand-sky text-foreground",
+  csv_url: "bg-brand-lime text-foreground",
   manual: "bg-brand-cream text-foreground",
 };
 
-type ConfigField = { key: string; label: string; placeholder: string; required?: boolean };
+type ConfigField = { key: string; label: string; placeholder: string; required?: boolean; hint?: string };
+
+const COMMON_SCHEDULE_FIELD: ConfigField = {
+  key: "syncIntervalHours",
+  label: "Sync Every (hours)",
+  placeholder: "6",
+  hint: "How often the scheduler re-fetches this source. Default: 6h for iCal/RSS/JSON, 24h for CSV.",
+};
 
 const SOURCE_CONFIG_FIELDS: Record<string, ConfigField[]> = {
   ticketmaster: [
@@ -789,11 +802,34 @@ const SOURCE_CONFIG_FIELDS: Record<string, ConfigField[]> = {
   google_sheets: [
     { key: "sheetId", label: "Google Sheet ID", placeholder: "1BxiMVs0XRA5…", required: true },
     { key: "tabName", label: "Tab Name", placeholder: "Event Intake" },
+    COMMON_SCHEDULE_FIELD,
   ],
   ical: [
-    { key: "url", label: "iCal Feed URL", placeholder: "https://venue.com/events.ics", required: true },
-    { key: "defaultCategory", label: "Default Category", placeholder: "Concert" },
+    { key: "url", label: "iCal Feed URL (.ics)", placeholder: "https://venue.com/events.ics", required: true },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Arts & Culture" },
     { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
+    { key: "recurringWindowDays", label: "Recurring Window (days)", placeholder: "180", hint: "How far ahead to expand repeating events." },
+    COMMON_SCHEDULE_FIELD,
+  ],
+  rss: [
+    { key: "url", label: "RSS / Atom Feed URL", placeholder: "https://venue.com/feed", required: true },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Arts & Culture" },
+    { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
+    COMMON_SCHEDULE_FIELD,
+  ],
+  json_api: [
+    { key: "url", label: "API Endpoint URL", placeholder: "https://api.venue.com/events", required: true },
+    { key: "eventsPath", label: "Events Array Path", placeholder: "data.events", hint: "Dot-path to the events array in the JSON response. Leave blank if root is the array." },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Arts & Culture" },
+    { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
+    COMMON_SCHEDULE_FIELD,
+  ],
+  csv_url: [
+    { key: "url", label: "CSV File URL", placeholder: "https://venue.com/events.csv", required: true },
+    { key: "delimiter", label: "Delimiter", placeholder: "," },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Arts & Culture" },
+    { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
+    COMMON_SCHEDULE_FIELD,
   ],
   manual: [],
 };
@@ -2102,6 +2138,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
                     placeholder={f.placeholder}
                     className="w-full border-2 border-foreground rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-yellow"
                   />
+                  {f.hint && <p className="text-[10px] text-foreground/50 mt-1">{f.hint}</p>}
                 </div>
               ))}
             </div>
@@ -2156,7 +2193,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
               )}
             </div>
             <div className="flex gap-1.5 shrink-0 flex-wrap">
-              {(s.type === "ticketmaster" || s.type === "ical") && (
+              {["ticketmaster", "ical", "rss", "json_api", "csv_url"].includes(s.type) && (
                 <button
                   type="button"
                   onClick={() => void doTest(s.id)}
@@ -2205,6 +2242,13 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
             </span>
             {s.lastSyncMessage && <span className="text-[11px]">{s.lastSyncMessage}</span>}
             {!s.lastSyncAt && <span className="text-foreground/40">Never synced</span>}
+            {s.type !== "manual" && s.type !== "ticketmaster" && (() => {
+              let interval: number | undefined;
+              try { interval = (JSON.parse(s.config ?? "{}") as Record<string, unknown>).syncIntervalHours as number | undefined; } catch { /* ignore */ }
+              const defaultsByType: Record<string, number> = { ical: 6, rss: 6, json_api: 6, csv_url: 24, google_sheets: 6 };
+              const h = interval ?? defaultsByType[s.type] ?? 6;
+              return <span className="inline-flex items-center gap-1 text-foreground/40">↻ every {h}h</span>;
+            })()}
           </div>
 
           {syncMsg?.id === s.id && (

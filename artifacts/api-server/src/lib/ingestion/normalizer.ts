@@ -3,6 +3,7 @@
 
 export type RawEvent = {
   externalId?: string;
+  recurringId?: string;  // base UID for recurring event grouping
   name?: string;
   category?: string;
   date?: string;
@@ -13,13 +14,15 @@ export type RawEvent = {
   description?: string;
   cost?: string;
   url?: string;
+  imageUrl?: string;
   contactName?: string;
   contactEmail?: string;
-  imageUrl?: string;
+  organizer?: string;
 };
 
 export type NormalizedEvent = {
   externalId: string | null;
+  recurringId: string | null;
   name: string;
   category: string;
   date: string;       // human-readable: "June 13, 2026"
@@ -31,8 +34,10 @@ export type NormalizedEvent = {
   description: string | null;
   cost: string | null;
   url: string | null;
+  imageUrl: string | null;
   contactName: string | null;
   contactEmail: string | null;
+  organizer: string | null;
 };
 
 // ── Date parsing ─────────────────────────────────────────────────────────────
@@ -103,7 +108,6 @@ function parseEventDate(raw: string): { display: string; iso: string } | null {
     }
   }
 
-  // Return raw as display if we can't parse, no ISO
   return null;
 }
 
@@ -121,6 +125,7 @@ const CATEGORY_MAP: Record<string, string> = {
   art: "Arts & Culture", arts: "Arts & Culture", gallery: "Arts & Culture",
   "arts & culture": "Arts & Culture", museum: "Arts & Culture", exhibition: "Arts & Culture",
   theater: "Arts & Culture", theatre: "Arts & Culture", comedy: "Arts & Culture",
+  performance: "Arts & Culture", exhibit: "Arts & Culture",
   // sports
   sports: "Sports & Fitness", sport: "Sports & Fitness", fitness: "Sports & Fitness",
   "sports & outdoors": "Sports & Fitness", outdoor: "Outdoor & Nature",
@@ -211,7 +216,6 @@ function normalizeCost(raw: string): string | null {
   if (!raw) return null;
   const s = raw.trim().toLowerCase();
   if (s === "free" || s === "0" || s === "$0" || s === "free admission") return "Free";
-  // Keep as-is if it has a $ or recognizable format
   return raw.trim();
 }
 
@@ -226,7 +230,6 @@ function normalizeTime(raw: string): string | null {
 
 function normalizeName(raw: string): string {
   if (!raw) return "";
-  // Trim and title-case if ALL CAPS
   const s = raw.trim();
   if (s === s.toUpperCase() && s.length > 3) {
     return s.charAt(0) + s.slice(1).toLowerCase();
@@ -240,6 +243,7 @@ export function normalizeEvent(raw: RawEvent): NormalizedEvent {
   const parsed = parseEventDate(raw.date ?? "");
   return {
     externalId: raw.externalId?.trim() || null,
+    recurringId: raw.recurringId?.trim() || null,
     name: normalizeName(raw.name ?? ""),
     category: normalizeCategory(raw.category ?? ""),
     date: parsed?.display ?? (raw.date?.trim() ?? ""),
@@ -251,7 +255,9 @@ export function normalizeEvent(raw: RawEvent): NormalizedEvent {
     description: (raw.description ?? "").trim() || null,
     cost: normalizeCost(raw.cost ?? ""),
     url: (raw.url ?? "").trim() || null,
+    imageUrl: (raw.imageUrl ?? "").trim() || null,
     contactName: (raw.contactName ?? "").trim() || null,
     contactEmail: (raw.contactEmail ?? "").trim() || null,
+    organizer: (raw.organizer ?? "").trim() || null,
   };
 }
