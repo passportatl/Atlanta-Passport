@@ -248,20 +248,26 @@ router.post("/events", async (req, res) => {
 
   // Submitter receipt — only when a contact email was provided
   if (data.contactEmail) {
+    const isPaidSubmission = (data.listingPackage ?? "free") !== "free";
+    const paidBodyHtml = `<p>Thanks for submitting <strong>${escapeHtml(data.name)}</strong> to Passport ATL with a <strong>${escapeHtml(data.listingPackage ?? "")}</strong> package.</p>
+        <p>A member of our team will reach out <strong>within 24 hours</strong> via your preferred contact method to arrange payment and discuss any additional listing needs.</p>`;
+    const freeBodyHtml = `<p>Thanks for submitting <strong>${escapeHtml(data.name)}</strong> to Passport ATL. Our team will review it and have it posted within 24 hours.</p>
+        <p>Want more visibility? Reply to this email and we'll walk you through our paid listing options.</p>`;
     const receiptHtml = `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
         <h2 style="font-family:Bungee,sans-serif;">We got your event!</h2>
         <p>Hi ${escapeHtml(data.contactName ?? "there")},</p>
-        <p>Thanks for submitting <strong>${escapeHtml(data.name)}</strong> to Atlanta Passport. Our team will review it and be in touch within a few business days.</p>
+        ${isPaidSubmission ? paidBodyHtml : freeBodyHtml}
         <p style="margin-top:24px;font-size:13px;color:#555;">Questions? Reply to this email or reach us at touristpassportatl@gmail.com.</p>
         <p style="font-size:12px;color:#999;">Reference: ${row!.id}</p>
       </div>`;
-    const receiptText = `Hi ${data.contactName ?? "there"},\n\nThanks for submitting "${data.name}" to Atlanta Passport! We'll review it and be in touch shortly.\n\nReference: ${row!.id}`;
+    const paidReceiptText = `Hi ${data.contactName ?? "there"},\n\nThanks for submitting "${data.name}" to Passport ATL with a ${data.listingPackage ?? ""} package.\n\nA member of our team will reach out within 24 hours via your preferred contact method to arrange payment and discuss any additional listing needs.\n\nQuestions? Reply to this email or reach us at touristpassportatl@gmail.com.\n\nReference: ${row!.id}`;
+    const freeReceiptText = `Hi ${data.contactName ?? "there"},\n\nThanks for submitting "${data.name}" to Passport ATL! Our team will review it and have it posted within 24 hours.\n\nWant more visibility? Reply to this email and we'll walk you through our paid listing options.\n\nReference: ${row!.id}`;
     void sendNotification({
       to: data.contactEmail,
-      subject: `We received your event — ${data.name}`,
+      subject: isPaidSubmission ? `Your ${data.listingPackage ?? "paid"} listing submission — ${data.name}` : `We received your event — ${data.name}`,
       html: receiptHtml,
-      text: receiptText,
+      text: isPaidSubmission ? paidReceiptText : freeReceiptText,
     });
   }
 

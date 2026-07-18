@@ -12,7 +12,7 @@ import {
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
-import BusinessMap from "@/components/BusinessMap";
+import BusinessMap, { type EventMarkerData } from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
 import RoutesFeed from "@/passport/RoutesFeed";
@@ -87,6 +87,7 @@ export default function MapShell() {
   const [selectedRouteId, setSelectedRouteId] = useState<string | undefined>(
     undefined,
   );
+  const [selectedEventMarker, setSelectedEventMarker] = useState<EventMarkerData | null>(null);
   const [routeOptions, setRouteOptions] = useState<
     Record<string, RouteOptions>
   >({});
@@ -277,7 +278,7 @@ export default function MapShell() {
           <div className="card-pop shadow-none overflow-hidden bg-[#0b0f1a]">
             <div className="h-[40dvh]">
               <BusinessMap
-                businesses={mapBusinesses}
+                businesses={view === "events" ? [] : mapBusinesses}
                 selectedId={selectedBizId}
                 onSelect={setSelectedBizId}
                 routePath={routePath}
@@ -292,6 +293,8 @@ export default function MapShell() {
                       ? activeNeighborhoods
                       : []
                 }
+                eventMarker={view === "events" && selectedEventMarker ? selectedEventMarker : undefined}
+                onEventMarkerClose={() => setSelectedEventMarker(null)}
               />
             </div>
           </div>
@@ -341,15 +344,7 @@ export default function MapShell() {
       {view === "events" && (
         <EventsFeed
           onSelectBusiness={setSelectedBizId}
-          onSelectAddress={(address) => {
-            // No matching static business on the map — open the address in
-            // Google Maps so the user can still see the event location.
-            window.open(
-              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, Atlanta, GA`)}`,
-              "_blank",
-              "noopener,noreferrer",
-            );
-          }}
+          onSelectEvent={(marker) => setSelectedEventMarker(marker)}
         />
       )}
       {view === "routes" && (

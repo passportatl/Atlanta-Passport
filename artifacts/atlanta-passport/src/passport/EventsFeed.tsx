@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events as sampleEvents, businesses, neighborhoods } from "@/data/sample-data";
 import { useListPublicEvents, getListPublicEventsQueryKey } from "@workspace/api-client-react";
@@ -156,14 +156,26 @@ function matchesTimeBucket(timeStr: string, bucketIds: string[]): boolean {
   );
 }
 
+type EventMarkerInfo = {
+  lat?: number;
+  lng?: number;
+  address?: string;
+  category: string;
+  name: string;
+};
+
 type EventsFeedProps = {
   onSelectBusiness: (id: string) => void;
   // Called when an event's venue has no matching static business; receives the
   // event's address so the map shell can still focus that location.
   onSelectAddress?: (address: string) => void;
+  // Called when any event card is selected; provides the resolved position (from
+  // matching business lat/lng or raw address for geocoding) so MapShell can show
+  // a single category-colored star on the map without relying on business markers.
+  onSelectEvent?: (marker: EventMarkerInfo | null) => void;
 };
 
-export default function EventsFeed({ onSelectBusiness, onSelectAddress }: EventsFeedProps) {
+export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelectEvent }: EventsFeedProps) {
   const { t, i18n } = useTranslation();
   const [page, setPage] = useState(0);
   const groupSize = useResponsiveGroupSize();
@@ -505,16 +517,26 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress }: Events
                 return (
                   <div
                     key={event.id}
-                    onClick={() => venueBiz && onSelectBusiness(venueBiz.id)}
-                    onKeyDown={(e) => {
-                      if ((e.key === "Enter" || e.key === " ") && venueBiz) {
-                        e.preventDefault();
-                        onSelectBusiness(venueBiz.id);
+                    onClick={() => {
+                      if (venueBiz) {
+                        onSelectEvent?.({ lat: venueBiz.lat, lng: venueBiz.lng, category: event.category, name: event.name });
+                      } else if (event.address) {
+                        onSelectEvent?.({ address: event.address, category: event.category, name: event.name });
                       }
                     }}
-                    role={venueBiz ? "button" : undefined}
-                    tabIndex={venueBiz ? 0 : undefined}
-                    aria-label={venueBiz ? `Show ${event.venue} on the map` : undefined}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        if (venueBiz) {
+                          onSelectEvent?.({ lat: venueBiz.lat, lng: venueBiz.lng, category: event.category, name: event.name });
+                        } else if (event.address) {
+                          onSelectEvent?.({ address: event.address, category: event.category, name: event.name });
+                        }
+                      }
+                    }}
+                    role={venueBiz || event.address ? "button" : undefined}
+                    tabIndex={venueBiz || event.address ? 0 : undefined}
+                    aria-label={`Show ${event.venue} on the map`}
                     className="flex-1 min-w-0 cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
                   >
                     <div className="card-pop bg-card h-full flex flex-col overflow-hidden hover:-translate-y-0.5 transition-transform">
@@ -871,29 +893,25 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress }: Events
                   <div
                     key={event.id}
                     onClick={() => {
-                      if (venueBiz) onSelectBusiness(venueBiz.id);
-                      else if (event.address && onSelectAddress) onSelectAddress(event.address);
+                      if (venueBiz) {
+                        onSelectEvent?.({ lat: venueBiz.lat, lng: venueBiz.lng, category: event.category, name: event.name });
+                      } else if (event.address) {
+                        onSelectEvent?.({ address: event.address, category: event.category, name: event.name });
+                      }
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
                         if (venueBiz) {
-                          e.preventDefault();
-                          onSelectBusiness(venueBiz.id);
-                        } else if (event.address && onSelectAddress) {
-                          e.preventDefault();
-                          onSelectAddress(event.address);
+                          onSelectEvent?.({ lat: venueBiz.lat, lng: venueBiz.lng, category: event.category, name: event.name });
+                        } else if (event.address) {
+                          onSelectEvent?.({ address: event.address, category: event.category, name: event.name });
                         }
                       }
                     }}
-                    role={venueBiz || (event.address && onSelectAddress) ? "button" : undefined}
-                    tabIndex={venueBiz || (event.address && onSelectAddress) ? 0 : undefined}
-                    aria-label={
-                      venueBiz
-                        ? `Show ${event.venue} on the map`
-                        : event.address && onSelectAddress
-                          ? `Show ${event.venue} location on the map`
-                          : undefined
-                    }
+                    role={venueBiz || event.address ? "button" : undefined}
+                    tabIndex={venueBiz || event.address ? 0 : undefined}
+                    aria-label={`Show ${event.venue} location on the map`}
                     className="card-pop bg-card p-2 cursor-pointer hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
                   >
                     <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight md:line-clamp-2">
@@ -913,7 +931,7 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress }: Events
                         <span className="md:truncate">{priceText}</span>
                       </div>
                     )}
-                    {/* Colored bubbles for type (category) and area (neighborhood) */}
+                    {/* Colored bubbles for type (category), area (neighborhood), age, and featured */}
                     <div className="mt-1 flex flex-wrap items-center gap-1">
                       <CategoryBadge
                         category={event.category}
@@ -936,6 +954,11 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress }: Events
                       {normalizeAge(event.ageCategory) !== "All Ages" && (
                         <span className="inline-flex items-center rounded-full border border-foreground/40 bg-brand-yellow/40 px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground">
                           {normalizeAge(event.ageCategory)}
+                        </span>
+                      )}
+                      {event.bonusStamp && (
+                        <span className="inline-flex items-center gap-0.5 rounded-full border border-foreground/40 bg-brand-yellow px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground">
+                          <Sparkles className="w-2.5 h-2.5" /> Featured
                         </span>
                       )}
                     </div>

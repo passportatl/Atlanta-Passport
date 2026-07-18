@@ -235,6 +235,14 @@ const schema = z
           message: "A ticket URL is required for Premier & Signature listings.",
         });
     }
+    // Paid listings must specify at least one preferred contact method.
+    if (val.listingPackage !== "free" && !val.promoByPhone && !val.promoByEmail) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["promoByEmail"],
+        message: "Please select at least one contact method so we can arrange payment and discuss your listing.",
+      });
+    }
   });
 
 type FormValues = z.infer<typeof schema>;
@@ -551,7 +559,7 @@ export default function ListEvent() {
           </p>
           {pkg !== "free" && (
             <p className="mb-6 text-sm leading-snug opacity-80">
-              Our team will send an invoice and next steps for your <strong>{pkgObj.title}</strong> package within 1 business day.
+              A member of our team will contact you within 24 hours via your preferred method to arrange payment and discuss your <strong>{pkgObj.title}</strong> listing needs.
             </p>
           )}
           {pkg === "free" && (
@@ -1344,13 +1352,16 @@ export default function ListEvent() {
                         control={form.control}
                         name="promoByEmail"
                         render={({ field: ef }) => (
-                          <label className="flex items-center gap-2.5 cursor-pointer text-sm">
-                            <Checkbox
-                              checked={ef.value ?? false}
-                              onCheckedChange={(v) => ef.onChange(v === true)}
-                            />
-                            Email
-                          </label>
+                          <FormItem>
+                            <label className="flex items-center gap-2.5 cursor-pointer text-sm">
+                              <Checkbox
+                                checked={ef.value ?? false}
+                                onCheckedChange={(v) => ef.onChange(v === true)}
+                              />
+                              Email
+                            </label>
+                            <FormMessage />
+                          </FormItem>
                         )}
                       />
                     </div>

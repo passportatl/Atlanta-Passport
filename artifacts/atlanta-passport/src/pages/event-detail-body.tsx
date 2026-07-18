@@ -173,6 +173,18 @@ export default function EventDetailBody({
 
   return (
     <div className="container mx-auto px-4 max-w-5xl">
+      {/* Back to Events — only on the standalone marketing route, not inside the passport shell (which adds its own back link above this component) */}
+      {!hrefBase.startsWith("/passport") && (
+        <div className="mb-6">
+          <Link
+            href="/events"
+            className="inline-flex items-center gap-1.5 font-display text-[10px] tracking-[0.16em] text-brand-red uppercase hover:underline"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to Events
+          </Link>
+        </div>
+      )}
       {/* Hero */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

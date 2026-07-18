@@ -228,6 +228,14 @@ export type MapBusiness = {
   offer?: string;
 };
 
+export type EventMarkerData = {
+  lat?: number;
+  lng?: number;
+  address?: string;
+  category: string;
+  name: string;
+};
+
 const BALL_ICON_URL = SOCCER_BALL_SRC;
 
 // Build a category-colored dot marker as an inline SVG data URL. A single
@@ -257,6 +265,92 @@ function dotIconSvg(colors: string[], size = 18): string {
   }
   const border = `<circle cx="${c}" cy="${c}" r="${rr}" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${shapes}${border}</svg>`;
+}
+
+// Build a category-colored 5-pointed star marker as an inline SVG data URL.
+function starIconSvg(color: string, size = 28): string {
+  const c = size / 2;
+  const outerR = size / 2 - 1.5;
+  const innerR = outerR * 0.42;
+  const pts = Array.from({ length: 10 }, (_, i) => {
+    const angle = (i * 36 - 90) * (Math.PI / 180);
+    const r = i % 2 === 0 ? outerR : innerR;
+    return `${(c + r * Math.cos(angle)).toFixed(2)},${(c + r * Math.sin(angle)).toFixed(2)}`;
+  }).join(" ");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><polygon points="${pts}" fill="${color}" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+}
+
+// Renders a single category-colored star marker for a selected event. If lat/lng
+// are provided they are used directly; otherwise the address string is geocoded
+// via the Maps JS API. Pans + zooms the map to the resolved position.
+function EventMarkerOverlay({
+  data,
+  onClose,
+}: {
+  data: EventMarkerData;
+  onClose?: () => void;
+}) {
+  const geocodingLib = useMapsLibrary("geocoding");
+  const coreLib = useMapsLibrary("core");
+  const map = useMap();
+  const [pos, setPos] = useState<{ lat: number; lng: number } | null>(
+    data.lat != null && data.lng != null ? { lat: data.lat, lng: data.lng } : null,
+  );
+
+  // Resolve position: use provided lat/lng if present, otherwise geocode the address.
+  useEffect(() => {
+    if (data.lat != null && data.lng != null) {
+      setPos({ lat: data.lat, lng: data.lng });
+      return;
+    }
+    if (!geocodingLib || !data.address) return;
+    const geocoder = new geocodingLib.Geocoder();
+    geocoder.geocode(
+      { address: `${data.address}, Atlanta, GA` },
+      (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
+        if (status === "OK" && results?.[0]) {
+          const loc = results[0].geometry.location;
+          setPos({ lat: loc.lat(), lng: loc.lng() });
+        }
+      },
+    );
+  }, [geocodingLib, data.lat, data.lng, data.address]);
+
+  // Pan + zoom to resolved position whenever it changes.
+  useEffect(() => {
+    if (!map || !pos) return;
+    map.panTo(pos);
+    if ((map.getZoom() ?? 0) < 14) map.setZoom(15);
+  }, [map, pos]);
+
+  const color = categoryColor(data.category);
+  const starIcon = coreLib && pos
+    ? {
+        url: "data:image/svg+xml," + encodeURIComponent(starIconSvg(color, 28)),
+        scaledSize: new coreLib.Size(28, 28),
+        anchor: new coreLib.Point(14, 14),
+      }
+    : undefined;
+
+  if (!pos) return null;
+
+  return (
+    <>
+      <Marker position={pos} icon={starIcon} zIndex={3000} title={data.name} />
+      <InfoWindow position={pos} pixelOffset={[0, -36]} onCloseClick={onClose}>
+        <div className="min-w-[160px] p-1">
+          <div className="text-sm font-bold text-[#15171c] leading-snug">{data.name}</div>
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-gray-500">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
+              style={{ backgroundColor: color }}
+            />
+            {data.category}
+          </div>
+        </div>
+      </InfoWindow>
+    </>
+  );
 }
 
 function BusinessMarkers({
@@ -997,6 +1091,8 @@ export default function BusinessMap({
   routePath,
   routeTravelMode,
   highlightNeighborhoods,
+  eventMarker,
+  onEventMarkerClose,
 }: {
   businesses: MapBusiness[];
   selectedId?: string;
@@ -1004,6 +1100,8 @@ export default function BusinessMap({
   routePath?: { lat: number; lng: number }[];
   routeTravelMode?: "WALKING" | "BICYCLING";
   highlightNeighborhoods?: string[];
+  eventMarker?: EventMarkerData;
+  onEventMarkerClose?: () => void;
 }) {
   const [showMarta, setShowMarta] = useState(true);
   const [showBeltline, setShowBeltline] = useState(true);
@@ -1054,7 +1152,7 @@ export default function BusinessMap({
             styles={MAP_STYLES}
             className="h-full w-full"
             style={{ width: "100%", height: "100%" }}
-            onClick={() => onSelect(undefined)}
+            onClick={() => { onSelect(undefined); onEventMarkerClose?.(); }}
           >
             {showAreas &&
               (highlightNeighborhoods && highlightNeighborhoods.length > 0 ? (
@@ -1110,6 +1208,10 @@ export default function BusinessMap({
 
             {routePath && routePath.length > 0 && (
               <RoutePath path={routePath} travelMode={routeTravelMode} />
+            )}
+
+            {eventMarker && (
+              <EventMarkerOverlay data={eventMarker} onClose={onEventMarkerClose} />
             )}
 
             <UserLocationMarker

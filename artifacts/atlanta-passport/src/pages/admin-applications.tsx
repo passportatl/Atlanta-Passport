@@ -49,6 +49,7 @@ import {
   User,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
+import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
 
 // ── Typed helpers for the two new bulk endpoints ────────────────────────────
 
@@ -1629,7 +1630,10 @@ function AdminEventCard({
               </div>
               <div>
                 <label className={labelCls}>Category</label>
-                <input value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className={inputCls} />
+                <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className={inputCls}>
+                  <option value="">— select —</option>
+                  {EVENT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
               </div>
               <div>
                 <label className={labelCls}>Date</label>
@@ -1657,7 +1661,10 @@ function AdminEventCard({
               </div>
               <div>
                 <label className={labelCls}>Age Category</label>
-                <input value={draft.ageCategory} onChange={(e) => setDraft((d) => ({ ...d, ageCategory: e.target.value }))} className={inputCls} placeholder="All ages" />
+                <select value={draft.ageCategory} onChange={(e) => setDraft((d) => ({ ...d, ageCategory: e.target.value }))} className={inputCls}>
+                  <option value="">— select —</option>
+                  {AGE_OPTIONS.map((a) => <option key={a} value={a}>{a}</option>)}
+                </select>
               </div>
               <div>
                 <label className={labelCls}>Tags (comma-separated)</label>
