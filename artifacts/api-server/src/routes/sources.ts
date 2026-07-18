@@ -11,6 +11,8 @@ import {
   eventsTable,
 } from "@workspace/db";
 import { runSourceSync } from "../lib/ingestion/runner";
+import { fetchTicketmasterEvents } from "../lib/ingestion/sources/ticketmaster";
+import { fetchIcalEvents } from "../lib/ingestion/sources/ical";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -145,6 +147,54 @@ router.post("/admin/sources/:id/sync", requireAdmin, async (req, res) => {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logger.error({ sourceId: id, err }, "Manual sync failed");
+    res.status(422).json({ error: msg });
+  }
+});
+
+// POST /admin/sources/:id/test
+// Dry-run fetch — calls the source fetcher and returns a preview without
+// writing anything to the database. Supported for: ticketmaster, ical.
+router.post("/admin/sources/:id/test", requireAdmin, async (req, res) => {
+  const { id } = req.params as { id: string };
+
+  const sources = await db
+    .select()
+    .from(eventSourcesTable)
+    .where(eq(eventSourcesTable.id, id));
+
+  const source = sources[0];
+  if (!source) { res.status(404).json({ error: "Source not found" }); return; }
+
+  let config: Record<string, unknown> = {};
+  try {
+    config = JSON.parse(source.config ?? "{}") as Record<string, unknown>;
+  } catch {
+    res.status(400).json({ error: "Source config is not valid JSON" }); return;
+  }
+
+  try {
+    let rawEvents: Awaited<ReturnType<typeof fetchTicketmasterEvents>>;
+
+    if (source.type === "ticketmaster") {
+      rawEvents = await fetchTicketmasterEvents(config as Parameters<typeof fetchTicketmasterEvents>[0]);
+    } else if (source.type === "ical") {
+      rawEvents = await fetchIcalEvents(config as Parameters<typeof fetchIcalEvents>[0]);
+    } else {
+      res.status(400).json({ error: `Test not supported for source type "${source.type}"` });
+      return;
+    }
+
+    const sample = rawEvents.slice(0, 5).map((e) => ({
+      name: e.name ?? "(no name)",
+      date: e.date ?? "",
+      venue: e.venue ?? "",
+    }));
+
+    logger.info({ sourceId: id, type: source.type, found: rawEvents.length }, "Source test completed (dry-run)");
+    res.json({ found: rawEvents.length, sample });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.error({ sourceId: id, err }, "Source test failed");
     res.status(422).json({ error: msg });
   }
 });

@@ -47,6 +47,7 @@ import {
   Link,
   Tag,
   User,
+  Zap,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
@@ -666,6 +667,21 @@ async function listSources(adminKey: string): Promise<EventSourceRecord[]> {
   const res = await fetch(`${API_BASE}/admin/sources`, { headers: { "x-admin-key": adminKey } });
   if (!res.ok) throw new Error(`Failed to load sources: ${res.status}`);
   return res.json() as Promise<EventSourceRecord[]>;
+}
+
+type TestResult = { ok: true; found: number; sample: Array<{ name: string; date: string; venue: string }> } | { ok: false; error: string };
+
+async function testSource(adminKey: string, id: string): Promise<TestResult> {
+  const res = await fetch(`${API_BASE}/admin/sources/${id}/test`, {
+    method: "POST",
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) {
+    const body = await res.json() as { error?: string };
+    return { ok: false, error: body.error ?? `HTTP ${res.status}` };
+  }
+  const data = await res.json() as { found: number; sample: Array<{ name: string; date: string; venue: string }> };
+  return { ok: true, ...data };
 }
 
 async function fetchCredentials(adminKey: string): Promise<{ ticketmasterKeySet: boolean }> {
@@ -1893,6 +1909,8 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
   const [syncMsg, setSyncMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [credentials, setCredentials] = useState<{ ticketmasterKeySet: boolean } | null>(null);
+  const [testingId, setTestingId] = useState<string | null>(null);
+  const [testResults, setTestResults] = useState<Record<string, TestResult>>({});
 
   // Form state
   const [showForm, setShowForm] = useState(false);
@@ -1999,6 +2017,14 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
     } catch { /* ignore */ } finally {
       setDeletingId(null);
     }
+  };
+
+  const doTest = async (id: string) => {
+    setTestingId(id);
+    setTestResults((prev) => { const next = { ...prev }; delete next[id]; return next; });
+    const result = await testSource(adminKey, id);
+    setTestResults((prev) => ({ ...prev, [id]: result }));
+    setTestingId(null);
   };
 
   const configFields = SOURCE_CONFIG_FIELDS[formType] ?? [];
@@ -2127,6 +2153,17 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
               )}
             </div>
             <div className="flex gap-1.5 shrink-0 flex-wrap">
+              {(s.type === "ticketmaster" || s.type === "ical") && (
+                <button
+                  type="button"
+                  onClick={() => void doTest(s.id)}
+                  disabled={testingId === s.id || syncingId === s.id}
+                  className="button-pop text-[10px] px-2 py-1 bg-brand-lime text-foreground inline-flex items-center gap-1 disabled:opacity-50"
+                >
+                  {testingId === s.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                  Test
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => doSync(s.id)}
@@ -2170,6 +2207,30 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
           {syncMsg?.id === s.id && (
             <div className={`mt-2 text-xs font-bold ${syncMsg.ok ? "text-foreground" : "text-brand-red"}`}>
               {syncMsg.msg}
+            </div>
+          )}
+
+          {testResults[s.id] && (
+            <div className={`mt-2 text-xs rounded-lg border px-3 py-2 ${testResults[s.id].ok ? "border-brand-lime bg-brand-lime/10" : "border-brand-red/30 bg-brand-red/5"}`}>
+              {testResults[s.id].ok ? (
+                <>
+                  <div className="font-bold">
+                    ⚡ Test OK — {(testResults[s.id] as Extract<TestResult, { ok: true }>).found} event{(testResults[s.id] as Extract<TestResult, { ok: true }>).found !== 1 ? "s" : ""} found (nothing written)
+                  </div>
+                  {(testResults[s.id] as Extract<TestResult, { ok: true }>).sample.length > 0 && (
+                    <ul className="mt-1 space-y-0.5 text-foreground/60">
+                      {(testResults[s.id] as Extract<TestResult, { ok: true }>).sample.map((e, i) => (
+                        <li key={i} className="truncate">· {e.name}{e.date ? ` — ${e.date}` : ""}{e.venue ? ` @ ${e.venue}` : ""}</li>
+                      ))}
+                      {(testResults[s.id] as Extract<TestResult, { ok: true }>).found > 5 && (
+                        <li className="text-foreground/40">…and {(testResults[s.id] as Extract<TestResult, { ok: true }>).found - 5} more</li>
+                      )}
+                    </ul>
+                  )}
+                </>
+              ) : (
+                <div className="font-bold text-brand-red">❌ {(testResults[s.id] as Extract<TestResult, { ok: false }>).error}</div>
+              )}
             </div>
           )}
         </div>
