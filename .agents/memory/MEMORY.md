@@ -9,6 +9,7 @@
 - [Account stamp linkedReady gate](account-stamp-linkedready.md) — account-scoped collect must wait for a "link confirmed" flag (not just isSignedIn+visitorId) or it writes into the stale anon visitor; effects reading the flag must list it in deps.
 - [CSV location import](csv-location-import.md) — adding "CSV FOR REPLIT" rows to businesses: omit image (BusinessImage placeholder), dedupe by name not slug, map categories, only YES stamp-spots need seed.ts.
 - [Clerk email-code verification](clerk-email-code-verification.md) — custom signUp: treat status==="complete" as success (don't also require createdSessionId) + strip whitespace from code, else valid codes get rejected → "too many attempts".
+- [RSS/structured feed integration](rss-feed-integration.md) — working Atlanta feed families (carbonhouse, tribe JSON, bibliocommons) + date-candidate parse rule; rejected patterns listed.
 - [Large PDF assets](large-pdf-assets.md) — PDFs >50MB can't load in the read tool but stay on disk in attached_assets/; render pages with pdftoppm (+ magick to optimize).
 - [Google Sheets ingestion](google-sheets-ingestion.md) — correct events sheet ID, BOM strip requirement, header alias rules, inspect endpoint, and why the old ID was wrong.
 - [Monorepo stale dist/ after schema changes](monorepo-stale-dist.md) — after editing lib/db or lib/api-zod or lib/api-client-react source, run `pnpm run typecheck:libs` (root) to rebuild all dist/.d.ts; without this, tsc reads stale compiled types even though the source is correct.

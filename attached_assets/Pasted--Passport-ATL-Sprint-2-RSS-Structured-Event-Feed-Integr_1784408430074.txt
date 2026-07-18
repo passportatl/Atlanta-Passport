@@ -1,0 +1,307 @@
+# Passport ATL – Sprint 2: RSS & Structured Event Feed Integration
+
+Implement Sprint 2 of the Passport ATL automatic event ingestion system.
+
+## Objective
+
+Expand Passport ATL's automatic event coverage beyond Ticketmaster and iCal by integrating RSS, Atom, JSON, XML, and structured event feeds from Atlanta organizations.
+
+Sprint 2 should **build on Sprint 1** without replacing or breaking any existing functionality.
+
+The following must continue working:
+
+* Manual events
+* Google Sheets imports
+* Ticketmaster integration
+* iCal integrations
+* Pending Review workflow
+* Existing deduplication
+
+---
+
+# Source Types
+
+Support the following feed formats:
+
+* RSS
+* Atom
+* JSON event feeds
+* XML event feeds
+* Schema.org Event JSON-LD (when available)
+* Public APIs that do not require complex authentication
+
+Do NOT scrape websites when a structured feed exists.
+
+Only fall back to HTML parsing when:
+
+* no API exists
+* no RSS exists
+* no iCal exists
+
+and isolate HTML parsers so they can be replaced later.
+
+---
+
+# Priority Sources
+
+Attempt to integrate structured feeds from organizations such as:
+
+## News & Community
+
+* Discover Atlanta
+* Atlanta Convention & Visitors Bureau
+* Midtown Alliance
+* Atlanta Downtown Improvement District
+* Buckhead Village
+* Atlantic Station
+* Ponce City Market
+* The Battery Atlanta
+
+## Arts & Culture
+
+* High Museum
+* Fox Theatre
+* Alliance Theatre
+* Atlanta Symphony Orchestra
+* MODA
+* Fernbank
+* Atlanta History Center
+* Center for Puppetry Arts
+* The Breman Museum
+
+## Universities
+
+* Georgia Tech
+* Georgia State
+* Emory
+* Kennesaw State
+
+## Government
+
+* City of Atlanta
+* City of Decatur
+* Sandy Springs
+* Alpharetta
+* Roswell
+* Cobb County
+* Fulton County
+* Gwinnett County
+* DeKalb County
+
+## Entertainment
+
+* Georgia Aquarium
+* Zoo Atlanta
+* Six Flags Over Georgia
+* Mercedes-Benz Stadium
+* State Farm Arena
+* Gas South District
+* Cobb Energy Centre
+
+## Libraries & Recreation
+
+* Atlanta-Fulton Public Library
+* Cobb Libraries
+* Gwinnett Libraries
+* DeKalb Libraries
+* County Parks & Recreation
+
+---
+
+# Source Validation
+
+For every source:
+
+1. Detect available structured feeds.
+2. Prefer official sources.
+3. Verify feed accessibility.
+4. Validate response format.
+5. Verify that events exist.
+6. Run a live import test.
+7. Enable only after successful testing.
+
+If a source has no usable feed:
+
+* disable it
+* record why
+* continue with the next source
+
+---
+
+# Feed Normalization
+
+Normalize all imported records into the Passport ATL event schema.
+
+Capture whenever available:
+
+* title
+* description
+* organizer
+* venue
+* address
+* city
+* state
+* ZIP
+* latitude
+* longitude
+* event URL
+* ticket URL
+* image
+* category
+* tags
+* age restriction
+* start date
+* end date
+* timezone
+* all-day flag
+* recurring information
+* source
+* source identifier
+
+Use America/New_York when no timezone is supplied.
+
+---
+
+# Deduplication
+
+Continue using the existing deduplication engine.
+
+Compare:
+
+* external ID
+* normalized title
+* venue
+* address
+* event URL
+* ticket URL
+* start time
+* end time
+
+Prevent duplicates across:
+
+* Ticketmaster
+* Google Sheets
+* iCal
+* RSS
+* JSON
+* XML
+* Manual events
+
+If duplicate confidence is high:
+
+* update the existing event when appropriate
+* otherwise skip the import
+* log the decision
+
+---
+
+# Import Workflow
+
+All imported events must:
+
+* remain unpublished
+* enter Pending Review
+* preserve source attribution
+* preserve external IDs
+* preserve event URLs
+
+Never overwrite editorial changes made after review.
+
+---
+
+# Sync Scheduling
+
+Assign default refresh intervals:
+
+* RSS: every 6 hours
+* JSON feeds: every 6 hours
+* XML feeds: every 12 hours
+* Atom feeds: every 6 hours
+
+Retry failed feeds using exponential backoff.
+
+Prevent overlapping sync jobs.
+
+---
+
+# CMS Improvements
+
+Extend the existing source management page.
+
+Add support for:
+
+* RSS
+* Atom
+* JSON
+* XML
+
+Display:
+
+* source type
+* status
+* enabled
+* last sync
+* last success
+* event counts
+* duplicate count
+* failures
+* latest error
+* next scheduled sync
+
+Allow:
+
+* manual sync
+* enable
+* disable
+
+---
+
+# Testing
+
+Run live imports for every enabled source.
+
+Verify:
+
+* feeds parse correctly
+* events normalize correctly
+* Pending Review receives new events
+* duplicates are prevented
+* existing Ticketmaster integration still works
+* existing iCal feeds still work
+* Google Sheets still works
+* application starts successfully
+
+---
+
+# Completion Criteria
+
+Sprint 2 is complete only when:
+
+* multiple RSS/JSON/XML sources have been successfully enabled
+* each enabled source has passed a live import
+* imported events appear in Pending Review
+* duplicates are prevented across all source types
+* Ticketmaster remains operational
+* iCal integrations remain operational
+* Google Sheets imports remain operational
+* no existing functionality has regressed
+
+---
+
+# Final Report
+
+Provide a completion report including:
+
+* structured sources examined
+* structured sources successfully enabled
+* structured sources skipped
+* reason skipped
+* total events fetched
+* inserted
+* updated
+* duplicates skipped
+* rejected
+* source health summary
+* remaining recommendations for Sprint 3
+
+Do not report Sprint 2 complete until live imports have been verified inside the running application.

@@ -10,9 +10,12 @@ export type RssConfig = {
   defaultCategory?: string;
   defaultNeighborhood?: string;
   syncIntervalHours?: number;
-  // Optional field overrides — map custom RSS tags to standard fields
-  // e.g. { venue: "ev:location", cost: "ev:price" }
+  // Optional field overrides — map custom RSS tags to standard fields.
+  // Supported keys: date, endDate, venue/location, address, cost, category, image
+  // e.g. { date: "bc:start_date", venue: "bc:location", cost: "ev:price" }
   fieldMap?: Record<string, string>;
+  // Safety cap on items ingested per sync (default 1000)
+  maxItems?: number;
 };
 
 // ── XML utilities ─────────────────────────────────────────────────────────────
@@ -74,6 +77,8 @@ function stripHtml(html: string): string {
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
     .replace(/&nbsp;/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -123,8 +128,11 @@ interface FeedItem {
   title?: string;
   link?: string;
   description?: string;
-  pubDate?: string;
+  eventDate?: string;
   location?: string;
+  address?: string;
+  cost?: string;
+  category?: string;
   image?: string;
   guid?: string;
   author?: string;
@@ -139,14 +147,38 @@ function parseRssItem(itemXml: string, fieldMap?: Record<string, string>): FeedI
   // Support custom field overrides
   const locationTag = fieldMap?.venue ?? fieldMap?.location ?? "location";
 
+  // Prefer a real event start date over the item's publication date.
+  // Candidates are tried in priority order; the first one that actually
+  // parses wins, so an unparsable extension tag falls through to pub dates.
+  const dateCandidates = [
+    fieldMap?.date ? get(fieldMap.date) : undefined,
+    get("ev:startdate"),
+    get("bc:start_date"),
+    get("xCal:dtstart"),
+    get("pubDate"),
+    get("published"),
+    get("updated"),
+    get("dc:date"),
+  ];
+  let eventDate: string | undefined;
+  for (const candidate of dateCandidates) {
+    if (candidate && parseFeedDate(candidate)) {
+      eventDate = candidate;
+      break;
+    }
+  }
+
   return {
     guid: get("guid") ?? get("id"),
     title: get("title"),
     link: get("link") ?? getAtomLink(itemXml),
     description: get("content:encoded") ?? get("description") ?? get("content") ?? get("summary"),
-    pubDate: get("pubDate") ?? get("published") ?? get("updated") ?? get("dc:date"),
-    location: get(locationTag) ?? get("location") ?? get("ev:location"),
-    image: getImageUrl(itemXml),
+    eventDate,
+    location: get(locationTag) ?? get("location") ?? get("ev:location") ?? get("bc:location"),
+    address: fieldMap?.address ? get(fieldMap.address) : get("bc:street"),
+    cost: fieldMap?.cost ? get(fieldMap.cost) : undefined,
+    category: fieldMap?.category ? get(fieldMap.category) : get("category"),
+    image: (fieldMap?.image ? get(fieldMap.image) : undefined) ?? getImageUrl(itemXml),
     author: get("author") ?? get("dc:creator"),
   };
 }
@@ -172,8 +204,13 @@ export async function fetchRssEvents(config: RssConfig): Promise<RawEvent[]> {
   const isAtom = feedText.includes("<feed") && feedText.includes("xmlns=\"http://www.w3.org/2005/Atom");
   const itemTag = isAtom ? "entry" : "item";
 
-  const items = extractTags(feedText, itemTag);
-  logger.info({ url: config.url, count: items.length, type: isAtom ? "atom" : "rss" }, "RSS feed parsed");
+  const allItems = extractTags(feedText, itemTag);
+  const cap = config.maxItems && config.maxItems > 0 ? config.maxItems : 1000;
+  const items = allItems.slice(0, cap);
+  logger.info(
+    { url: config.url, count: allItems.length, capped: items.length, type: isAtom ? "atom" : "rss" },
+    "RSS feed parsed",
+  );
 
   const results: RawEvent[] = [];
 
@@ -181,7 +218,7 @@ export async function fetchRssEvents(config: RssConfig): Promise<RawEvent[]> {
     const item = parseRssItem(itemXml, config.fieldMap);
     if (!item.title) continue;
 
-    const parsed = item.pubDate ? parseFeedDate(item.pubDate) : null;
+    const parsed = item.eventDate ? parseFeedDate(item.eventDate) : null;
     if (!parsed) continue; // skip items with no parseable date
 
     results.push({
@@ -189,12 +226,14 @@ export async function fetchRssEvents(config: RssConfig): Promise<RawEvent[]> {
       name: stripHtml(item.title),
       date: parsed.date,
       time: parsed.time,
-      venue: item.location?.trim(),
+      venue: item.location ? stripHtml(item.location) : undefined,
+      address: item.address ? stripHtml(item.address) : undefined,
+      cost: item.cost?.trim(),
       description: item.description ? stripHtml(item.description).slice(0, 1000) : undefined,
       url: item.link,
       imageUrl: item.image,
       organizer: item.author,
-      category: config.defaultCategory,
+      category: item.category ? stripHtml(item.category) : config.defaultCategory,
       neighborhood: config.defaultNeighborhood,
     });
   }
