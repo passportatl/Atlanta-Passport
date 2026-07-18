@@ -1552,6 +1552,21 @@ function AdminEventCard({
               )}
             </div>
           )}
+          {(event as AdminEventRecord & { imageUrl?: string | null }).imageUrl && (
+            <a
+              href={(event as AdminEventRecord & { imageUrl?: string | null }).imageUrl!}
+              target="_blank"
+              rel="noreferrer"
+              className="block w-full max-w-sm"
+            >
+              <img
+                src={(event as AdminEventRecord & { imageUrl?: string | null }).imageUrl!}
+                alt={`${event.name} event photo`}
+                loading="lazy"
+                className="w-full aspect-video object-cover border-2 border-foreground rounded-lg"
+              />
+            </a>
+          )}
           {event.description && (
             <div className="bg-brand-cream border-2 border-foreground rounded-lg p-3 text-sm">
               <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Description</div>

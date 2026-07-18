@@ -110,6 +110,7 @@ type EventItem = {
   tags?: string[] | null;
   ageCategory?: string | null;
   tier?: string | null;
+  imageUrl?: string | null;
 };
 
 // Fixed dropdown option lists for the selected-day filters. Price tiers map to
@@ -207,6 +208,7 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
         tags: (e as { tags?: string[] | null }).tags ?? null,
         ageCategory: e.ageCategory ?? null,
         tier: e.tier ?? null,
+        imageUrl: e.imageUrl ?? null,
       })),
     [apiEventsRaw],
   );
@@ -552,6 +554,14 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
                         </div>
                       </div>
 
+                      {event.imageUrl && (
+                        <img
+                          src={event.imageUrl}
+                          alt=""
+                          loading="lazy"
+                          className="shrink-0 w-full h-14 object-cover border-b-2 border-foreground"
+                        />
+                      )}
                       <div className="flex-1 min-h-0 p-2 flex flex-col gap-1 overflow-hidden">
                         <CategoryBadge
                           category={event.category}
@@ -914,23 +924,35 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
                     aria-label={`Show ${event.venue} location on the map`}
                     className="card-pop bg-card p-2 cursor-pointer hover:-translate-y-0.5 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red"
                   >
-                    <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight md:line-clamp-2">
-                      {event.name}
-                    </h4>
-                    <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0 mt-0.5">
-                      <Clock className="w-3 h-3 text-brand-red shrink-0" />
-                      <span className="md:truncate">{event.time}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
-                      <MapPin className="w-3 h-3 text-brand-red shrink-0" />
-                      <span className="md:truncate">{event.venue}</span>
-                    </div>
-                    {priceText && (
-                      <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
-                        <Tag className="w-3 h-3 text-brand-red shrink-0" />
-                        <span className="md:truncate">{priceText}</span>
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight md:line-clamp-2">
+                          {event.name}
+                        </h4>
+                        <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0 mt-0.5">
+                          <Clock className="w-3 h-3 text-brand-red shrink-0" />
+                          <span className="md:truncate">{event.time}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                          <MapPin className="w-3 h-3 text-brand-red shrink-0" />
+                          <span className="md:truncate">{event.venue}</span>
+                        </div>
+                        {priceText && (
+                          <div className="flex items-center gap-1 text-[10px] text-foreground/80 min-w-0">
+                            <Tag className="w-3 h-3 text-brand-red shrink-0" />
+                            <span className="md:truncate">{priceText}</span>
+                          </div>
+                        )}
                       </div>
-                    )}
+                      {event.imageUrl && (
+                        <img
+                          src={event.imageUrl}
+                          alt=""
+                          loading="lazy"
+                          className="shrink-0 w-16 h-16 object-cover rounded-md border-2 border-foreground"
+                        />
+                      )}
+                    </div>
                     {/* Colored bubbles for type (category), area (neighborhood), age, and featured */}
                     <div className="mt-1 flex flex-wrap items-center gap-1">
                       <CategoryBadge

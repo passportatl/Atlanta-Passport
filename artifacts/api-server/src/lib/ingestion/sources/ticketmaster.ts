@@ -54,16 +54,23 @@ type TmEvent = {
 // Listings that are add-ons rather than primary events.
 const EXCLUDE_NAME = /\b(parking|park & ride|shuttle|vip (package|upgrade|add[- ]?on)|upgrade only|merchandise|meet (and|&) greet only|camping pass|tailgate)\b/i;
 
+// Pick the best-fit event photo: prefer 16:9 images at least 640px wide
+// (crisp on cards without downloading a 2MB original), then any 16:9,
+// then simply the widest available image.
 function pickImage(images?: TmEvent["images"]): string | undefined {
   if (!images?.length) return undefined;
-  const sorted = [...images]
-    .filter((i) => i.url)
-    .sort((a, b) => {
-      const aScore = (a.ratio === "16_9" ? 10000 : 0) + (a.width ?? 0);
-      const bScore = (b.ratio === "16_9" ? 10000 : 0) + (b.width ?? 0);
-      return bScore - aScore;
-    });
-  return sorted[0]?.url;
+  const candidates = images.filter((i) => i.url);
+  if (!candidates.length) return undefined;
+  const score = (i: NonNullable<TmEvent["images"]>[number]): number => {
+    const wide = i.ratio === "16_9";
+    const bigEnough = (i.width ?? 0) >= 640;
+    // Among suitable images prefer the *smallest* width >= 640 to avoid
+    // shipping huge originals; otherwise fall back to the widest image.
+    if (wide && bigEnough) return 3_000_000 - (i.width ?? 0);
+    if (wide) return 1_000_000 + (i.width ?? 0);
+    return i.width ?? 0;
+  };
+  return [...candidates].sort((a, b) => score(b) - score(a))[0]?.url;
 }
 
 // Pull a short human-readable reason out of a Ticketmaster error body.
