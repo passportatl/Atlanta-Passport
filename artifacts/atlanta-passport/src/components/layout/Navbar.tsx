@@ -73,17 +73,24 @@ export default function Navbar() {
               Back to site
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={openContactTab}
-              className={cn(
-                navItemClass(false),
-                "hidden md:inline-flex items-center"
-              )}
-              data-testid="link-contact-us"
-            >
-              Contact us
-            </button>
+            <div className="hidden md:flex items-center gap-1">
+              <Link
+                href="/list-a-location"
+                className={cn(navItemClass(location === "/list-a-location" || location === "/partners"))}
+                data-testid="link-list-a-location"
+              >
+                List a Location
+              </Link>
+              <span className="text-brand-cream/30 text-xs">·</span>
+              <button
+                type="button"
+                onClick={openContactTab}
+                className={cn(navItemClass(false))}
+                data-testid="link-contact-us"
+              >
+                Contact us
+              </button>
+            </div>
           )}
 
           {/* Mobile logo — horizontally centered medallion that hangs below the
@@ -220,6 +227,13 @@ export default function Navbar() {
               {/* Contact + social section (replaces the old business links,
                   follow-us block, and in-menu language picker) */}
               <div className="mt-auto bg-brand-cream border-t-[3px] border-foreground px-6 py-7 space-y-4">
+                <Link
+                  href="/list-a-location"
+                  className="block font-display text-sm tracking-[0.14em] uppercase text-foreground/85 hover:text-foreground"
+                  data-testid="link-mobile-menu-list-location"
+                >
+                  List a Location →
+                </Link>
                 <button
                   type="button"
                   onClick={openContactTab}

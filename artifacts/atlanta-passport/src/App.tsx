@@ -21,6 +21,7 @@ import PrivacyPolicy from "@/pages/privacy-policy";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
+import ListALocation from "@/pages/list-a-location";
 import { VisitorProvider } from "@/passport/VisitorProvider";
 import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
 import { PassportLayout } from "@/passport/PassportLayout";
@@ -37,7 +38,8 @@ function MarketingRoutes() {
         {/* TEMPORARY: partner applications paused — /partners shows a holding page.
             To revert, change `PartnersComingSoon` back to `Partners` (the real page
             is still imported above and fully intact). */}
-        <Route path="/partners" component={PartnersComingSoon} />
+        <Route path="/partners" component={ListALocation} />
+        <Route path="/list-a-location" component={ListALocation} />
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/routes/:id" component={RouteDetail} />
         {/* TEMPORARY: applications paused — /apply shows the same holding page
@@ -64,7 +66,7 @@ const ALLOW_PUBLIC_ACCESS = false;
 // partners, and apply pages stay open to signed-out visitors. Sign-in/up,
 // the /stamp QR landing, and admin are functional routes that must also stay reachable.
 function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/partners", "/apply", "/list-event", "/passport/contact", "/privacy-policy", "/admin"];
+  const publicExact = ["/", "/partners", "/apply", "/list-event", "/list-a-location", "/passport/contact", "/privacy-policy", "/admin"];
   if (publicExact.includes(location)) return false;
   const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/redeem/", "/admin/"];
   if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
