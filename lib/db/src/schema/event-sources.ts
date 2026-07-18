@@ -11,6 +11,11 @@ export const eventSourcesTable = pgTable("event_sources", {
   lastSyncStatus: text("last_sync_status").notNull().default("idle"), // 'idle'|'running'|'success'|'error'
   lastSyncMessage: text("last_sync_message"),
   consecutiveFailures: integer("consecutive_failures").notNull().default(0),
+  // Failure-alert tracking: set once when an auto-sync run first fails (start of a
+  // failure streak), cleared on the next successful sync. Dismissal hides the banner
+  // without ending the streak, so repeated failures don't re-alert.
+  syncFailureAlertAt: timestamp("sync_failure_alert_at", { withTimezone: true }),
+  syncFailureAlertDismissedAt: timestamp("sync_failure_alert_dismissed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

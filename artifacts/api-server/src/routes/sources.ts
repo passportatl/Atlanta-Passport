@@ -150,6 +150,22 @@ router.get("/admin/sources/credentials", requireAdmin, (_req, res) => {
   });
 });
 
+// ── Sync failure alert dismissal ──────────────────────────────────────────────
+
+// POST /admin/sources/:id/dismiss-alert
+// Hides the sync-failure banner for this source until it recovers and fails again.
+router.post("/admin/sources/:id/dismiss-alert", requireAdmin, async (req, res) => {
+  const { id } = req.params as { id: string };
+  const [updated] = await db
+    .update(eventSourcesTable)
+    .set({ syncFailureAlertDismissedAt: new Date(), updatedAt: new Date() })
+    .where(eq(eventSourcesTable.id, id))
+    .returning({ id: eventSourcesTable.id });
+
+  if (!updated) { res.status(404).json({ error: "Source not found" }); return; }
+  res.json({ dismissed: true });
+});
+
 // ── Manual sync trigger ───────────────────────────────────────────────────────
 
 // POST /admin/sources/:id/sync

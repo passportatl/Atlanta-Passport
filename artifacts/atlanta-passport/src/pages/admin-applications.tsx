@@ -628,11 +628,95 @@ type EventSourceRecord = {
   lastSyncStatus: string;
   lastSyncMessage: string | null;
   consecutiveFailures: number;
+  syncFailureAlertAt: string | null;
+  syncFailureAlertDismissedAt: string | null;
   createdAt: string;
 };
 
 // A source is considered "failing" once it has failed this many times in a row.
 const FAILING_THRESHOLD = 2;
+
+async function dismissSyncAlert(id: string, adminKey: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/admin/sources/${id}/dismiss-alert`, {
+    method: "POST",
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) throw new Error(`Failed to dismiss alert: ${res.status}`);
+}
+
+function hasActiveSyncAlert(s: EventSourceRecord): boolean {
+  if (!s.syncFailureAlertAt) return false;
+  if (!s.syncFailureAlertDismissedAt) return true;
+  return new Date(s.syncFailureAlertDismissedAt) < new Date(s.syncFailureAlertAt);
+}
+
+function SyncFailureBanner({ adminKey }: { adminKey: string }) {
+  const [alerts, setAlerts] = useState<EventSourceRecord[]>([]);
+
+  const load = useCallback(async () => {
+    try {
+      const sources = await listSources(adminKey);
+      setAlerts(sources.filter(hasActiveSyncAlert));
+    } catch {
+      // banner is best-effort — never block the dashboard
+    }
+  }, [adminKey]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const dismiss = async (id: string) => {
+    setAlerts((prev) => prev.filter((a) => a.id !== id));
+    try {
+      await dismissSyncAlert(id, adminKey);
+    } catch {
+      void load();
+    }
+  };
+
+  if (alerts.length === 0) return null;
+
+  return (
+    <div className="mb-4 rounded-lg border-2 border-red-500 bg-red-50 p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-red-600 text-lg" aria-hidden>⚠️</span>
+        <h2 className="font-bold text-red-800">
+          Background sync failed for {alerts.length === 1 ? "1 source" : `${alerts.length} sources`}
+        </h2>
+      </div>
+      <ul className="space-y-2">
+        {alerts.map((s) => (
+          <li
+            key={s.id}
+            className="flex items-start justify-between gap-3 bg-white/70 rounded-md px-3 py-2"
+          >
+            <div className="min-w-0">
+              <p className="font-semibold text-sm text-red-900 truncate">{s.name}</p>
+              <p className="text-xs text-red-700 break-words">
+                {s.lastSyncMessage ?? "Sync failed"}
+              </p>
+              {s.syncFailureAlertAt && (
+                <p className="text-[11px] text-red-500 mt-0.5">
+                  Failing since {new Date(s.syncFailureAlertAt).toLocaleString()}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={() => void dismiss(s.id)}
+              className="text-xs font-semibold text-red-700 border border-red-300 rounded px-2 py-1 hover:bg-red-100 shrink-0"
+            >
+              Dismiss
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="text-xs text-red-600 mt-2">
+        Check the Sources panel below to test or re-sync. Dismissing hides this until the source recovers and fails again.
+      </p>
+    </div>
+  );
+}
 
 type ImportRunRecord = {
   id: string;
@@ -3005,6 +3089,7 @@ export default function AdminApplications() {
             Notifications send to <strong>touristpassportatl@gmail.com</strong>.
           </p>
         </div>
+        <SyncFailureBanner adminKey={adminKey} />
         <EventsOpsPanel adminKey={adminKey} />
       </div>
     </div>

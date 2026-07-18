@@ -344,6 +344,10 @@ export async function runSourceSync(sourceId: string): Promise<string> {
           ? sql`${eventSourcesTable.consecutiveFailures} + 1`
           : 0,
       updatedAt: new Date(),
+      // A successful sync ends any failure streak — clear the admin alert.
+      ...(finalStatus !== "error"
+        ? { syncFailureAlertAt: null, syncFailureAlertDismissedAt: null }
+        : {}),
     })
     .where(eq(eventSourcesTable.id, sourceId));
 

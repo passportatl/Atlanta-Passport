@@ -139,10 +139,72 @@ async function runSourceAutoSync(): Promise<void> {
     try {
       const runId = await runSourceSync(source.id);
       logger.info({ sourceId: source.id, name: source.name, runId }, "Source auto-sync complete");
+      // The runner may finish without throwing but still record an error status
+      // (e.g. every row failed). Re-check and update the failure alert either way.
+      await updateFailureAlert(source.id, source.name);
     } catch (err) {
       logger.error({ sourceId: source.id, name: source.name, err }, "Source auto-sync failed");
+      const msg = err instanceof Error ? err.message : String(err);
+      await flagSyncFailure(source.id, source.name, msg).catch((alertErr) =>
+        logger.error({ sourceId: source.id, err: alertErr }, "Failed to record sync failure alert"),
+      );
     }
   }
+}
+
+// ── Sync failure alerts ───────────────────────────────────────────────────────
+//
+// When a scheduled sync fails, set syncFailureAlertAt so the admin dashboard can
+// show a prominent banner. Set it only once per failure streak (only when it is
+// currently null); a later successful sync clears it.
+
+async function updateFailureAlert(sourceId: string, name: string): Promise<void> {
+  const [row] = await db
+    .select({
+      lastSyncStatus: eventSourcesTable.lastSyncStatus,
+      lastSyncMessage: eventSourcesTable.lastSyncMessage,
+      syncFailureAlertAt: eventSourcesTable.syncFailureAlertAt,
+    })
+    .from(eventSourcesTable)
+    .where(eq(eventSourcesTable.id, sourceId));
+  if (!row) return;
+
+  if (row.lastSyncStatus === "error") {
+    await flagSyncFailure(sourceId, name, row.lastSyncMessage ?? "Sync failed");
+  } else if (row.syncFailureAlertAt) {
+    // Sync recovered — end the failure streak so a future failure alerts again.
+    await db
+      .update(eventSourcesTable)
+      .set({ syncFailureAlertAt: null, syncFailureAlertDismissedAt: null, updatedAt: new Date() })
+      .where(eq(eventSourcesTable.id, sourceId));
+    logger.info({ sourceId, name }, "Sync failure alert cleared after successful sync");
+  }
+}
+
+async function flagSyncFailure(sourceId: string, name: string, message: string): Promise<void> {
+  const now = new Date();
+  const [row] = await db
+    .select({
+      syncFailureAlertAt: eventSourcesTable.syncFailureAlertAt,
+      lastSyncStatus: eventSourcesTable.lastSyncStatus,
+    })
+    .from(eventSourcesTable)
+    .where(eq(eventSourcesTable.id, sourceId));
+  if (!row) return;
+
+  const updates: Record<string, unknown> = { updatedAt: now };
+  // A thrown error can leave the source stuck in "running" — record the failure.
+  if (row.lastSyncStatus !== "error") {
+    updates.lastSyncStatus = "error";
+    updates.lastSyncMessage = message;
+  }
+  // Only start a new alert if there isn't already an active failure streak.
+  if (!row.syncFailureAlertAt) {
+    updates.syncFailureAlertAt = now;
+    updates.syncFailureAlertDismissedAt = null;
+    logger.warn({ sourceId, name, message }, "Sync failure alert raised for admin");
+  }
+  await db.update(eventSourcesTable).set(updates).where(eq(eventSourcesTable.id, sourceId));
 }
 
 // ── Scheduler entry points ────────────────────────────────────────────────────
