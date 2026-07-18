@@ -17,6 +17,10 @@ import { fetchRssEvents } from "../lib/ingestion/sources/rss";
 import { fetchJsonApiEvents } from "../lib/ingestion/sources/json-api";
 import { fetchCsvUrlEvents } from "../lib/ingestion/sources/csv-url";
 import { inspectGoogleSheet } from "../lib/ingestion/sources/google-sheets-intake";
+import { fetchEventbriteEvents } from "../lib/ingestion/sources/eventbrite";
+import { fetchMeetupEvents } from "../lib/ingestion/sources/meetup";
+import { fetchBandsintownEvents } from "../lib/ingestion/sources/bandsintown";
+import { fetchSeatGeekEvents } from "../lib/ingestion/sources/seatgeek";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -34,7 +38,10 @@ function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   next();
 }
 
-const VALID_TYPES = ["ticketmaster", "google_sheets", "ical", "rss", "json_api", "csv_url", "manual"] as const;
+const VALID_TYPES = [
+  "ticketmaster", "google_sheets", "ical", "rss", "json_api", "csv_url",
+  "eventbrite", "meetup", "bandsintown", "seatgeek", "manual",
+] as const;
 
 // ── Source CRUD ───────────────────────────────────────────────────────────────
 
@@ -132,6 +139,14 @@ router.delete("/admin/sources/:id", requireAdmin, async (req, res) => {
 router.get("/admin/sources/credentials", requireAdmin, (_req, res) => {
   res.json({
     ticketmasterKeySet: !!process.env.TICKETMASTER_API_KEY,
+    // Per-connector credential status: envVar name + whether it is set.
+    connectors: {
+      ticketmaster: { envVar: "TICKETMASTER_API_KEY", set: !!process.env.TICKETMASTER_API_KEY },
+      eventbrite: { envVar: "EVENTBRITE_API_TOKEN", set: !!process.env.EVENTBRITE_API_TOKEN },
+      meetup: { envVar: "MEETUP_ACCESS_TOKEN", set: !!process.env.MEETUP_ACCESS_TOKEN },
+      bandsintown: { envVar: "BANDSINTOWN_APP_ID", set: !!process.env.BANDSINTOWN_APP_ID },
+      seatgeek: { envVar: "SEATGEEK_CLIENT_ID", set: !!process.env.SEATGEEK_CLIENT_ID },
+    },
   });
 });
 
@@ -177,7 +192,10 @@ router.post("/admin/sources/:id/test", requireAdmin, async (req, res) => {
     res.status(400).json({ error: "Source config is not valid JSON" }); return;
   }
 
-  const TESTABLE = ["ticketmaster", "ical", "rss", "json_api", "csv_url"] as const;
+  const TESTABLE = [
+    "ticketmaster", "ical", "rss", "json_api", "csv_url",
+    "eventbrite", "meetup", "bandsintown", "seatgeek",
+  ] as const;
   type TestableType = (typeof TESTABLE)[number];
 
   if (!TESTABLE.includes(source.type as TestableType)) {
@@ -203,6 +221,18 @@ router.post("/admin/sources/:id/test", requireAdmin, async (req, res) => {
         break;
       case "csv_url":
         rawEvents = await fetchCsvUrlEvents(config as Parameters<typeof fetchCsvUrlEvents>[0]);
+        break;
+      case "eventbrite":
+        rawEvents = await fetchEventbriteEvents(config as Parameters<typeof fetchEventbriteEvents>[0]);
+        break;
+      case "meetup":
+        rawEvents = await fetchMeetupEvents(config as Parameters<typeof fetchMeetupEvents>[0]);
+        break;
+      case "bandsintown":
+        rawEvents = await fetchBandsintownEvents(config as Parameters<typeof fetchBandsintownEvents>[0]);
+        break;
+      case "seatgeek":
+        rawEvents = await fetchSeatGeekEvents(config as Parameters<typeof fetchSeatGeekEvents>[0]);
         break;
       default:
         rawEvents = [];

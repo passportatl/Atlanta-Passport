@@ -22,6 +22,10 @@ import { fetchIcalEvents } from "./sources/ical";
 import { fetchRssEvents } from "./sources/rss";
 import { fetchJsonApiEvents } from "./sources/json-api";
 import { fetchCsvUrlEvents } from "./sources/csv-url";
+import { fetchEventbriteEvents } from "./sources/eventbrite";
+import { fetchMeetupEvents } from "./sources/meetup";
+import { fetchBandsintownEvents } from "./sources/bandsintown";
+import { fetchSeatGeekEvents } from "./sources/seatgeek";
 import { archivePastIngestedEvents } from "./past-event-cleanup";
 import { logger } from "../logger";
 
@@ -43,12 +47,20 @@ async function fetchFromSource(type: string, config: Record<string, unknown>) {
       return fetchJsonApiEvents(config as Parameters<typeof fetchJsonApiEvents>[0]);
     case "csv_url":
       return fetchCsvUrlEvents(config as Parameters<typeof fetchCsvUrlEvents>[0]);
+    case "eventbrite":
+      return fetchEventbriteEvents(config as Parameters<typeof fetchEventbriteEvents>[0]);
+    case "meetup":
+      return fetchMeetupEvents(config as Parameters<typeof fetchMeetupEvents>[0]);
+    case "bandsintown":
+      return fetchBandsintownEvents(config as Parameters<typeof fetchBandsintownEvents>[0]);
+    case "seatgeek":
+      return fetchSeatGeekEvents(config as Parameters<typeof fetchSeatGeekEvents>[0]);
     case "manual":
       // Manual sources are fed via the CSV importer UI — nothing to auto-fetch.
       return [];
     default:
       throw new Error(
-        `Unsupported source type: "${type}". Supported: ticketmaster, google_sheets, ical, rss, json_api, csv_url, manual`,
+        `Unsupported source type: "${type}". Supported: ticketmaster, google_sheets, ical, rss, json_api, csv_url, eventbrite, meetup, bandsintown, seatgeek, manual`,
       );
   }
 }

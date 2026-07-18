@@ -59,6 +59,10 @@ const DEFAULT_SYNC_INTERVAL_BY_TYPE: Record<string, number> = {
   csv_url: 24,
   google_sheets: 6,
   ticketmaster: 6,
+  eventbrite: 6,
+  meetup: 6,
+  bandsintown: 12,
+  seatgeek: 12,
 };
 
 function getSourceSyncIntervalHours(type: string, config: Record<string, unknown>): number {

@@ -48,7 +48,11 @@ Defaults by type: ical/rss/json_api/google_sheets = 6h, csv_url = 24h.
 - `georgiaaquarium.org` → 404
 
 ## VALID_TYPES for source creation
-`["ticketmaster", "google_sheets", "ical", "rss", "json_api", "csv_url", "manual"]`
+`["ticketmaster", "google_sheets", "ical", "rss", "json_api", "csv_url", "manual", "eventbrite", "meetup", "bandsintown", "seatgeek"]`
+
+## Premium connectors (Sprint 3, July 2026)
+- Each requires an env var: EVENTBRITE_API_TOKEN, MEETUP_ACCESS_TOKEN, BANDSINTOWN_APP_ID, SEATGEEK_CLIENT_ID. Missing creds → sync fails with a clear "awaiting credentials" message; sources stay disabled until keys exist.
+- Shared plumbing in `connector-utils.ts` (fetchJsonWithRetry supports GET/POST, redacts credential query params before logging — keep it that way). Eventbrite is org-based only (public search API retired); Bandsintown needs an artists[] list; externalId prefixes eb-/mu-/bit-/sg-.
 
 ## RawEvent / NormalizedEvent fields
 `normalizer.ts` now includes: externalId, recurringId, name, category, date, dateIso, time, venue, address, neighborhood, description, cost, url, **imageUrl**, contactName, contactEmail, **organizer**

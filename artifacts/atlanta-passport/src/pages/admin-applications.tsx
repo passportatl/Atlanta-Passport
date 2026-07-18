@@ -688,11 +688,16 @@ async function testSource(adminKey: string, id: string): Promise<TestResult> {
   return { ok: true, ...data };
 }
 
-async function fetchCredentials(adminKey: string): Promise<{ ticketmasterKeySet: boolean }> {
+type CredentialsInfo = {
+  ticketmasterKeySet: boolean;
+  connectors?: Record<string, { envVar: string; set: boolean }>;
+};
+
+async function fetchCredentials(adminKey: string): Promise<CredentialsInfo> {
   try {
     const res = await fetch(`${API_BASE}/admin/sources/credentials`, { headers: { "x-admin-key": adminKey } });
     if (!res.ok) return { ticketmasterKeySet: false };
-    return res.json() as Promise<{ ticketmasterKeySet: boolean }>;
+    return res.json() as Promise<CredentialsInfo>;
   } catch {
     return { ticketmasterKeySet: false };
   }
@@ -701,7 +706,7 @@ async function fetchCredentials(adminKey: string): Promise<{ ticketmasterKeySet:
 async function upsertSource(
   method: "POST" | "PATCH",
   idOrEmpty: string,
-  data: { name?: string; type?: string; config?: Record<string, string>; isActive?: boolean },
+  data: { name?: string; type?: string; config?: Record<string, unknown>; isActive?: boolean },
   adminKey: string,
 ): Promise<EventSourceRecord> {
   const url = idOrEmpty
@@ -773,6 +778,10 @@ const SOURCE_TYPE_LABELS: Record<string, string> = {
   rss: "RSS Feed",
   json_api: "JSON API",
   csv_url: "CSV URL",
+  eventbrite: "Eventbrite",
+  meetup: "Meetup",
+  bandsintown: "Bandsintown",
+  seatgeek: "SeatGeek",
   manual: "Manual (CSV)",
 };
 
@@ -783,7 +792,21 @@ const SOURCE_TYPE_COLORS: Record<string, string> = {
   rss: "bg-brand-yellow text-foreground",
   json_api: "bg-brand-sky text-foreground",
   csv_url: "bg-brand-lime text-foreground",
+  eventbrite: "bg-brand-orange text-white",
+  meetup: "bg-brand-red text-white",
+  bandsintown: "bg-brand-navy text-white",
+  seatgeek: "bg-brand-yellow text-brand-yellow-foreground",
   manual: "bg-brand-cream text-foreground",
+};
+
+// Which env credential each premium connector needs (mirrors the API's
+// /admin/sources/credentials response).
+const CONNECTOR_ENV_VARS: Record<string, string> = {
+  ticketmaster: "TICKETMASTER_API_KEY",
+  eventbrite: "EVENTBRITE_API_TOKEN",
+  meetup: "MEETUP_ACCESS_TOKEN",
+  bandsintown: "BANDSINTOWN_APP_ID",
+  seatgeek: "SEATGEEK_CLIENT_ID",
 };
 
 type ConfigField = { key: string; label: string; placeholder: string; required?: boolean; hint?: string };
@@ -835,7 +858,35 @@ const SOURCE_CONFIG_FIELDS: Record<string, ConfigField[]> = {
     { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
     COMMON_SCHEDULE_FIELD,
   ],
+  eventbrite: [
+    { key: "organizationIds", label: "Organization IDs", placeholder: "123456789, 987654321", required: true, hint: "Comma-separated Eventbrite organization IDs (Eventbrite retired public search — events are pulled per organizer)." },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Community" },
+    { key: "defaultNeighborhood", label: "Default Neighborhood", placeholder: "Midtown" },
+    COMMON_SCHEDULE_FIELD,
+  ],
+  meetup: [
+    { key: "query", label: "Keyword Filter", placeholder: "tech, hiking… (optional)" },
+    { key: "radiusMiles", label: "Radius (miles)", placeholder: "30" },
+    { key: "defaultCategory", label: "Default Category", placeholder: "Community" },
+    COMMON_SCHEDULE_FIELD,
+  ],
+  bandsintown: [
+    { key: "artists", label: "Artists to Track", placeholder: "Killer Mike, Mastodon", required: true, hint: "Comma-separated artist names — the Bandsintown public API is artist-centric. Only Atlanta-metro dates are kept." },
+    COMMON_SCHEDULE_FIELD,
+  ],
+  seatgeek: [
+    { key: "range", label: "Radius", placeholder: "30mi" },
+    { key: "taxonomies", label: "Taxonomy Filter", placeholder: "concert, comedy (optional)" },
+    { key: "maxPages", label: "Max Pages", placeholder: "3" },
+    COMMON_SCHEDULE_FIELD,
+  ],
   manual: [],
+};
+
+// Config keys that should be parsed from a comma-separated string into an array
+const LIST_CONFIG_KEYS: Record<string, string[]> = {
+  eventbrite: ["organizationIds"],
+  bandsintown: ["artists"],
 };
 
 const SYNC_STATUS_COLORS: Record<string, string> = {
@@ -1975,7 +2026,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
   const [syncingId, setSyncingId] = useState<string | null>(null);
   const [syncMsg, setSyncMsg] = useState<{ id: string; msg: string; ok: boolean } | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [credentials, setCredentials] = useState<{ ticketmasterKeySet: boolean } | null>(null);
+  const [credentials, setCredentials] = useState<CredentialsInfo | null>(null);
   const [testingId, setTestingId] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, TestResult>>({});
 
@@ -2019,8 +2070,14 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
     setEditingId(s.id);
     setFormName(s.name);
     setFormType(s.type);
-    try { setFormConfig(JSON.parse(s.config) as Record<string, string>); }
-    catch { setFormConfig({}); }
+    try {
+      const parsed = JSON.parse(s.config) as Record<string, unknown>;
+      const flat: Record<string, string> = {};
+      for (const [k, v] of Object.entries(parsed)) {
+        flat[k] = Array.isArray(v) ? v.join(", ") : String(v ?? "");
+      }
+      setFormConfig(flat);
+    } catch { setFormConfig({}); }
     setFormActive(s.isActive);
     setFormError(null);
     setShowForm(true);
@@ -2039,11 +2096,21 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
     }
     setFormSaving(true);
     setFormError(null);
+    // Comma-separated list fields (e.g. Eventbrite org IDs, Bandsintown artists)
+    // are stored as arrays in the source config.
+    const listKeys = LIST_CONFIG_KEYS[formType] ?? [];
+    const outConfig: Record<string, unknown> = { ...formConfig };
+    for (const key of listKeys) {
+      const rawVal = formConfig[key];
+      if (typeof rawVal === "string") {
+        outConfig[key] = rawVal.split(",").map((s) => s.trim()).filter(Boolean);
+      }
+    }
     try {
       if (editingId) {
-        await upsertSource("PATCH", editingId, { name: formName.trim(), type: formType, config: formConfig, isActive: formActive }, adminKey);
+        await upsertSource("PATCH", editingId, { name: formName.trim(), type: formType, config: outConfig, isActive: formActive }, adminKey);
       } else {
-        await upsertSource("POST", "", { name: formName.trim(), type: formType, config: formConfig, isActive: formActive }, adminKey);
+        await upsertSource("POST", "", { name: formName.trim(), type: formType, config: outConfig, isActive: formActive }, adminKey);
       }
       setShowForm(false);
       await load();
@@ -2117,11 +2184,26 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
       {/* Credential notice */}
       <div className="bg-brand-cream border-2 border-foreground rounded-xl p-3 text-xs space-y-1">
         <div className="font-black uppercase tracking-widest text-[10px]">API Credentials</div>
-        <div className="flex items-center gap-2">
-          <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${credentials === null ? "bg-foreground/20" : credentials.ticketmasterKeySet ? "bg-brand-lime" : "bg-brand-red"}`} />
-          <span className="font-mono bg-white border border-foreground/20 px-1 rounded">TICKETMASTER_API_KEY</span>
-          <span>{credentials === null ? "checking…" : credentials.ticketmasterKeySet ? "Set — Ticketmaster syncs enabled" : "Not set — add in Replit Secrets to enable Ticketmaster syncs"}</span>
-        </div>
+        {Object.entries(CONNECTOR_ENV_VARS).map(([type, envVar]) => {
+          const set =
+            credentials === null
+              ? null
+              : (credentials.connectors?.[type]?.set ??
+                (type === "ticketmaster" ? credentials.ticketmasterKeySet : false));
+          return (
+            <div key={type} className="flex items-center gap-2">
+              <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${set === null ? "bg-foreground/20" : set ? "bg-brand-lime" : "bg-brand-red"}`} />
+              <span className="font-mono bg-white border border-foreground/20 px-1 rounded">{envVar}</span>
+              <span>
+                {set === null
+                  ? "checking…"
+                  : set
+                    ? `Set — ${SOURCE_TYPE_LABELS[type] ?? type} syncs enabled`
+                    : `Not set — ${SOURCE_TYPE_LABELS[type] ?? type} sources are awaiting credentials`}
+              </span>
+            </div>
+          );
+        })}
         <div><span className="font-mono bg-white border border-foreground/20 px-1 rounded">google-drive</span> connector — already connected (used for Google Sheets reads)</div>
       </div>
 
@@ -2175,9 +2257,9 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
             </div>
           )}
 
-          {formType === "ticketmaster" && (
+          {CONNECTOR_ENV_VARS[formType] && (
             <p className="text-[10px] text-foreground/60 bg-brand-cream rounded-lg p-2">
-              Requires <span className="font-mono">TICKETMASTER_API_KEY</span> environment secret. Syncs will silently skip if key is absent.
+              Requires the <span className="font-mono">{CONNECTOR_ENV_VARS[formType]}</span> environment secret. Without it the source stays configured but reports "awaiting credentials" on sync.
             </p>
           )}
 
@@ -2232,8 +2314,9 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
               </span>
               <span className="font-black text-sm truncate">{s.name}</span>
               {!s.isActive && <span className="badge-sticker bg-foreground/10 text-[9px] shrink-0">Disabled</span>}
-              {s.type === "ticketmaster" && credentials !== null && !credentials.ticketmasterKeySet && (
-                <span className="badge-sticker bg-brand-red text-white text-[9px] shrink-0">Key missing</span>
+              {CONNECTOR_ENV_VARS[s.type] && credentials !== null &&
+                !(credentials.connectors?.[s.type]?.set ?? (s.type === "ticketmaster" && credentials.ticketmasterKeySet)) && (
+                <span className="badge-sticker bg-brand-orange text-white text-[9px] shrink-0">Awaiting credentials</span>
               )}
               {s.consecutiveFailures >= FAILING_THRESHOLD && (
                 <span className="badge-sticker bg-brand-red text-white text-[9px] shrink-0">
@@ -2245,7 +2328,7 @@ function SourcesPanel({ adminKey }: { adminKey: string }) {
               )}
             </div>
             <div className="flex gap-1.5 shrink-0 flex-wrap">
-              {["ticketmaster", "ical", "rss", "json_api", "csv_url"].includes(s.type) && (
+              {["ticketmaster", "ical", "rss", "json_api", "csv_url", "eventbrite", "meetup", "bandsintown", "seatgeek"].includes(s.type) && (
                 <button
                   type="button"
                   onClick={() => void doTest(s.id)}
