@@ -179,7 +179,7 @@ export async function fetchCsvUrlEvents(config: CsvUrlConfig): Promise<RawEvent[
     if (config.fieldMap) {
       for (const [col, field] of Object.entries(config.fieldMap)) {
         const idx = parseInt(col, 10);
-        if (!isNaN(idx)) indexMap[idx] = field;
+        if (!isNaN(idx) && field !== undefined) indexMap[idx] = field;
       }
     }
     dataRows = rows;

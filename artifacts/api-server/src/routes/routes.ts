@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db, masterRoutesTable, routeStopsTable } from "@workspace/db";
 import { eq, and, ilike, or, sql } from "drizzle-orm";
+import { stringParam } from "../lib/params";
 
 const router = Router();
 
@@ -95,7 +96,7 @@ router.get("/routes/:slug", async (req, res) => {
     const rows = await db
       .select()
       .from(masterRoutesTable)
-      .where(eq(masterRoutesTable.slug, req.params.slug));
+      .where(eq(masterRoutesTable.slug, stringParam(req.params.slug)));
     if (!rows.length) {
       res.status(404).json({ error: "Not found" });
       return;
@@ -243,7 +244,7 @@ router.post("/admin/routes", requireAdmin, async (req, res) => {
 router.patch("/admin/routes/:id", requireAdmin, async (req, res) => {
   try {
     const body = req.body as Record<string, unknown>;
-    const id = req.params.id;
+    const id = stringParam(req.params.id);
 
     const updateData: Partial<typeof masterRoutesTable.$inferInsert> = {};
 
@@ -347,7 +348,7 @@ router.delete("/admin/routes/:id", requireAdmin, async (req, res) => {
     await db
       .update(masterRoutesTable)
       .set({ workflowStatus: "archived", archivedAt: new Date(), updatedAt: new Date() })
-      .where(eq(masterRoutesTable.id, req.params.id));
+      .where(eq(masterRoutesTable.id, stringParam(req.params.id)));
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: String(err) });
@@ -361,7 +362,7 @@ router.post("/admin/routes/:id/duplicate", requireAdmin, async (req, res) => {
     const rows = await db
       .select()
       .from(masterRoutesTable)
-      .where(eq(masterRoutesTable.id, req.params.id));
+      .where(eq(masterRoutesTable.id, stringParam(req.params.id)));
     if (!rows.length) {
       res.status(404).json({ error: "Not found" });
       return;
@@ -412,7 +413,7 @@ router.get("/admin/routes/:id/stops", requireAdmin, async (req, res) => {
     const stops = await db
       .select()
       .from(routeStopsTable)
-      .where(eq(routeStopsTable.routeId, req.params.id))
+      .where(eq(routeStopsTable.routeId, stringParam(req.params.id)))
       .orderBy(routeStopsTable.orderIndex);
     res.json(stops);
   } catch (err) {
@@ -426,7 +427,7 @@ router.post("/admin/routes/:id/stops", requireAdmin, async (req, res) => {
     const [stop] = await db
       .insert(routeStopsTable)
       .values({
-        routeId: req.params.id,
+        routeId: stringParam(req.params.id),
         businessSlug: body.businessSlug as string | undefined,
         orderIndex: body.orderIndex != null ? Number(body.orderIndex) : 0,
         morningOrder: body.morningOrder != null ? Number(body.morningOrder) : undefined,
@@ -476,8 +477,8 @@ router.patch(
         .set(update)
         .where(
           and(
-            eq(routeStopsTable.id, req.params.stopId),
-            eq(routeStopsTable.routeId, req.params.id),
+            eq(routeStopsTable.id, stringParam(req.params.stopId)),
+            eq(routeStopsTable.routeId, stringParam(req.params.id)),
           ),
         )
         .returning();
@@ -497,8 +498,8 @@ router.delete(
         .delete(routeStopsTable)
         .where(
           and(
-            eq(routeStopsTable.id, req.params.stopId),
-            eq(routeStopsTable.routeId, req.params.id),
+            eq(routeStopsTable.id, stringParam(req.params.stopId)),
+            eq(routeStopsTable.routeId, stringParam(req.params.id)),
           ),
         );
       res.json({ ok: true });
@@ -522,7 +523,7 @@ router.post(
             .where(
               and(
                 eq(routeStopsTable.id, id),
-                eq(routeStopsTable.routeId, req.params.id),
+                eq(routeStopsTable.routeId, stringParam(req.params.id)),
               ),
             ),
         ),

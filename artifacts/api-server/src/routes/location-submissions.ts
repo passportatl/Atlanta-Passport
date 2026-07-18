@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response, type NextFunction } 
 import { desc, eq, ilike, or, and, isNull } from "drizzle-orm";
 import { db, locationSubmissionsTable, businessesTable, computeLocationCompleteness } from "@workspace/db";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { stringParam } from "../lib/params";
 
 const router: IRouter = Router();
 
@@ -225,7 +226,7 @@ router.get("/admin/location-submissions", requireAdmin, async (req, res) => {
 
 // GET /admin/location-submissions/:id
 router.get("/admin/location-submissions/:id", requireAdmin, async (req, res) => {
-  const { id } = req.params;
+  const id = stringParam(req.params.id);
   const [row] = await db
     .select()
     .from(locationSubmissionsTable)
@@ -239,7 +240,7 @@ router.get("/admin/location-submissions/:id", requireAdmin, async (req, res) => 
 
 // PATCH /admin/location-submissions/:id
 router.patch("/admin/location-submissions/:id", requireAdmin, async (req, res) => {
-  const { id } = req.params;
+  const id = stringParam(req.params.id);
   const body = req.body as Record<string, unknown>;
 
   // Load existing record first (needed for status-change email)
@@ -281,7 +282,7 @@ router.patch("/admin/location-submissions/:id", requireAdmin, async (req, res) =
 
   const [updated] = await db
     .update(locationSubmissionsTable)
-    .set(patch as Parameters<typeof locationSubmissionsTable.$inferInsert>[0])
+    .set(patch as Partial<typeof locationSubmissionsTable.$inferInsert>)
     .where(eq(locationSubmissionsTable.id, id))
     .returning();
 
@@ -426,7 +427,7 @@ router.post("/admin/location-submissions/promote-bulk", requireAdmin, async (req
 
 // POST /admin/location-submissions/:id/promote — promote a single submission to the business directory
 router.post("/admin/location-submissions/:id/promote", requireAdmin, async (req, res) => {
-  const { id } = req.params;
+  const id = stringParam(req.params.id);
 
   const [sub] = await db
     .select()
