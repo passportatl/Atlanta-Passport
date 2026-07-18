@@ -239,6 +239,25 @@ router.post("/events", async (req, res) => {
     .set({ emailDelivered })
     .where(eq(eventsTable.id, row!.id));
 
+  // Submitter receipt — only when a contact email was provided
+  if (data.contactEmail) {
+    const receiptHtml = `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+        <h2 style="font-family:Bungee,sans-serif;">We got your event!</h2>
+        <p>Hi ${escapeHtml(data.contactName ?? "there")},</p>
+        <p>Thanks for submitting <strong>${escapeHtml(data.name)}</strong> to Atlanta Passport. Our team will review it and be in touch within a few business days.</p>
+        <p style="margin-top:24px;font-size:13px;color:#555;">Questions? Reply to this email or reach us at touristpassportatl@gmail.com.</p>
+        <p style="font-size:12px;color:#999;">Reference: ${row!.id}</p>
+      </div>`;
+    const receiptText = `Hi ${data.contactName ?? "there"},\n\nThanks for submitting "${data.name}" to Atlanta Passport! We'll review it and be in touch shortly.\n\nReference: ${row!.id}`;
+    void sendNotification({
+      to: data.contactEmail,
+      subject: `We received your event — ${data.name}`,
+      html: receiptHtml,
+      text: receiptText,
+    });
+  }
+
   res.status(201).json({ ...row!, emailDelivered });
 });
 
@@ -378,6 +397,43 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     .set(updates)
     .where(eq(eventsTable.id, id))
     .returning();
+
+  // Status-change email to submitter when contactEmail is on file
+  if (
+    data.workflowStatus &&
+    data.workflowStatus !== existing[0].workflowStatus &&
+    existing[0].contactEmail
+  ) {
+    const eventName = updated?.name ?? existing[0].name;
+    const contactGreeting = existing[0].contactName ?? "there";
+    const adminNote = updated?.adminNotes ?? existing[0].adminNotes;
+    const statusEmails: Record<string, { subject: string; html: string; text: string }> = {
+      approved: {
+        subject: `Your event is approved — ${eventName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;color:#1a6b3c;">Event Approved!</h2><p>Hi ${escapeHtml(contactGreeting)},</p><p>Great news — <strong>${escapeHtml(eventName)}</strong> has been approved and is being prepared for publication on Atlanta Passport.</p><p>We'll notify you once it goes live.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${contactGreeting},\n\n"${eventName}" has been approved! We'll notify you once it goes live on Atlanta Passport.\n\nRef: ${id}`,
+      },
+      published: {
+        subject: `Your event is now live on Atlanta Passport — ${eventName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;color:#1a6b3c;">You're Live! 🎉</h2><p>Hi ${escapeHtml(contactGreeting)},</p><p><strong>${escapeHtml(eventName)}</strong> is now published and visible to visitors on Atlanta Passport!</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${contactGreeting},\n\n"${eventName}" is now live on Atlanta Passport!\n\nRef: ${id}`,
+      },
+      rejected: {
+        subject: `Update on your Atlanta Passport event — ${eventName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;">Event Update</h2><p>Hi ${escapeHtml(contactGreeting)},</p><p>After review, we were unable to approve <strong>${escapeHtml(eventName)}</strong> at this time.${adminNote ? ` ${escapeHtml(adminNote)}` : ""}</p><p>Questions? Reply to this email or reach us at touristpassportatl@gmail.com.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${contactGreeting},\n\nWe were unable to approve "${eventName}" at this time.${adminNote ? `\n\n${adminNote}` : ""}\n\nRef: ${id}`,
+      },
+      needs_verification: {
+        subject: `Verification needed for your Atlanta Passport event — ${eventName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;">Verification Needed</h2><p>Hi ${escapeHtml(contactGreeting)},</p><p>We need to verify a few details about <strong>${escapeHtml(eventName)}</strong> before we can approve it.${adminNote ? `</p><p><strong>Notes:</strong> ${escapeHtml(adminNote)}` : ""}</p><p>Please reply to this email and we'll get it sorted quickly.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${contactGreeting},\n\nWe need to verify some details about "${eventName}".${adminNote ? `\n\n${adminNote}` : ""}\n\nPlease reply to this email.\n\nRef: ${id}`,
+      },
+    };
+    const tmpl = statusEmails[data.workflowStatus];
+    if (tmpl) {
+      void sendNotification({ to: existing[0].contactEmail, ...tmpl });
+    }
+  }
 
   res.json(updated);
 });

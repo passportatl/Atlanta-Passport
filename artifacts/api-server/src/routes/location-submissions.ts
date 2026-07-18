@@ -1,6 +1,7 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { desc, eq, ilike, or } from "drizzle-orm";
-import { db, locationSubmissionsTable, computeLocationCompleteness } from "@workspace/db";
+import { desc, eq, ilike, or, and, isNull } from "drizzle-orm";
+import { db, locationSubmissionsTable, businessesTable, computeLocationCompleteness } from "@workspace/db";
+import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 
 const router: IRouter = Router();
 
@@ -19,6 +20,14 @@ function renderRow(label: string, value: string | null | undefined | boolean): s
     <td style="padding:6px 12px;font-weight:bold;background:#fef3c7;border:1px solid #111;">${escapeHtml(label)}</td>
     <td style="padding:6px 12px;border:1px solid #111;">${escapeHtml(display)}</td>
   </tr>`;
+}
+
+function deriveSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
 }
 
 function getAdminSecret(): string {
@@ -52,15 +61,11 @@ router.post("/location-submissions", async (req, res) => {
     return;
   }
 
-  // Duplicate check: same name + address already submitted
+  // Duplicate check: same name already submitted
   const existing = await db
     .select({ id: locationSubmissionsTable.id, name: locationSubmissionsTable.name })
     .from(locationSubmissionsTable)
-    .where(
-      or(
-        ilike(locationSubmissionsTable.name, name),
-      ),
-    )
+    .where(or(ilike(locationSubmissionsTable.name, name)))
     .limit(5);
 
   const isDup = existing.some(
@@ -69,6 +74,7 @@ router.post("/location-submissions", async (req, res) => {
 
   const tags = Array.isArray(body.tags) ? (body.tags as string[]) : [];
   const galleryImages = Array.isArray(body.galleryImages) ? (body.galleryImages as string[]) : [];
+  const listingTier = ((body.listingTier as string | undefined) || "free");
 
   const [row] = await db
     .insert(locationSubmissionsTable)
@@ -98,7 +104,7 @@ router.post("/location-submissions", async (req, res) => {
       isStampStop: typeof body.isStampStop === "boolean" ? body.isStampStop : null,
       isFeaturedInterest: typeof body.isFeaturedInterest === "boolean" ? body.isFeaturedInterest : null,
       isSponsoredInterest: typeof body.isSponsoredInterest === "boolean" ? body.isSponsoredInterest : null,
-      listingTier: (body.listingTier as string | undefined) || "free",
+      listingTier,
       contactName,
       contactEmail,
       contactPhone: (body.contactPhone as string | undefined) || null,
@@ -118,6 +124,68 @@ router.post("/location-submissions", async (req, res) => {
     .update(locationSubmissionsTable)
     .set({ completenessScore: score })
     .where(eq(locationSubmissionsTable.id, row.id));
+
+  // ── Admin notification email ──────────────────────────────────────────────
+  const tierLabel = listingTier !== "free" ? ` [${listingTier.toUpperCase()}]` : "";
+  const adminSubject = `New Passport ATL location${tierLabel} — ${name}`;
+  const adminHtml = `
+    <div style="font-family:sans-serif;max-width:640px;margin:0 auto;padding:20px;">
+      <h2 style="font-family:Bungee,sans-serif;margin-bottom:16px;">New Location Submission</h2>
+      ${isDup ? `<p style="color:#b91c1c;font-weight:bold;">⚠️ Possible duplicate — a location with this name already exists.</p>` : ""}
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        ${renderRow("Listing Tier", listingTier.toUpperCase())}
+        ${renderRow("Location Name", name)}
+        ${renderRow("Primary Category", primaryCategory)}
+        ${renderRow("Address", address)}
+        ${renderRow("Neighborhood", neighborhood)}
+        ${renderRow("Tags", tags.join(", "))}
+        ${renderRow("Website", body.website as string)}
+        ${renderRow("Phone", body.phone as string)}
+        ${renderRow("Hours", body.hours as string)}
+        ${renderRow("Price Range", body.priceRange as string)}
+        ${renderRow("MARTA Access", body.martaAccess as boolean)}
+        ${renderRow("Description", body.description as string)}
+        ${renderRow("Featured Items", body.featuredItems as string)}
+        ${renderRow("Passport Summary", body.passportSummary as string)}
+        ${renderRow("Insider Tips", body.insiderTips as string)}
+        ${renderRow("Stamp Stop", body.isStampStop as boolean)}
+        ${renderRow("Contact Name", contactName)}
+        ${renderRow("Contact Email", contactEmail)}
+        ${renderRow("Contact Phone", body.contactPhone as string)}
+        ${renderRow("Notes", body.notes as string)}
+      </table>
+      <p style="margin-top:16px;font-size:12px;color:#555;">Submission id: ${row.id} · Completeness: ${score}%${isDup ? " · ⚠️ Possible duplicate" : ""}</p>
+    </div>`;
+  const adminText = [
+    `New location [${listingTier.toUpperCase()}]: ${name}`,
+    `Category: ${primaryCategory}`,
+    `Address: ${address}`,
+    `Neighborhood: ${neighborhood}`,
+    `Contact: ${contactName} <${contactEmail}>`,
+    isDup ? "⚠️ Possible duplicate" : "",
+    `Submission id: ${row.id} · Completeness: ${score}%`,
+  ].filter(Boolean).join("\n");
+
+  void sendNotification({ to: NOTIFY_EMAIL, subject: adminSubject, html: adminHtml, text: adminText });
+
+  // ── Submitter receipt email ───────────────────────────────────────────────
+  const receiptHtml = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+      <h2 style="font-family:Bungee,sans-serif;">We got your listing!</h2>
+      <p>Hi ${escapeHtml(contactName)},</p>
+      <p>Thanks for submitting <strong>${escapeHtml(name)}</strong> to Atlanta Passport. Our team will review your listing and be in touch within a few business days.</p>
+      ${isDup ? `<p style="color:#b45309;">Note: we found a possible match for this name in our system. We'll check for duplicates during review.</p>` : ""}
+      <p style="margin-top:24px;font-size:13px;color:#555;">Questions? Reply to this email or reach us at touristpassportatl@gmail.com.</p>
+      <p style="font-size:12px;color:#999;">Reference: ${row.id}</p>
+    </div>`;
+  const receiptText = `Hi ${contactName},\n\nThanks for submitting "${name}" to Atlanta Passport! We'll review it and be in touch shortly.\n\nReference: ${row.id}`;
+
+  void sendNotification({
+    to: contactEmail,
+    subject: `We received your Atlanta Passport listing — ${name}`,
+    html: receiptHtml,
+    text: receiptText,
+  });
 
   res.status(201).json({ id: row.id, isDuplicate: isDup });
 });
@@ -174,6 +242,17 @@ router.patch("/admin/location-submissions/:id", requireAdmin, async (req, res) =
   const { id } = req.params;
   const body = req.body as Record<string, unknown>;
 
+  // Load existing record first (needed for status-change email)
+  const [existing] = await db
+    .select()
+    .from(locationSubmissionsTable)
+    .where(eq(locationSubmissionsTable.id, id));
+
+  if (!existing) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+
   const allowed = [
     "name", "primaryCategory", "tags", "address", "neighborhood",
     "website", "reviewsLink", "phone", "hours", "ageRestriction", "priceRange",
@@ -189,13 +268,13 @@ router.patch("/admin/location-submissions/:id", requireAdmin, async (req, res) =
     if (key in body) patch[key] = body[key];
   }
 
-  if (patch.workflowStatus === "published") {
+  const newStatus = patch.workflowStatus as string | undefined;
+
+  if (newStatus === "published") {
     patch.publishedAt = new Date();
   }
   if (
-    ["approved", "rejected", "changes-requested", "duplicate"].includes(
-      patch.workflowStatus as string,
-    )
+    ["approved", "rejected", "changes-requested", "duplicate"].includes(newStatus as string)
   ) {
     patch.reviewedAt = new Date();
   }
@@ -217,7 +296,203 @@ router.patch("/admin/location-submissions/:id", requireAdmin, async (req, res) =
     .set({ completenessScore: score })
     .where(eq(locationSubmissionsTable.id, id));
 
+  // ── Status-change email to submitter ─────────────────────────────────────
+  if (newStatus && newStatus !== existing.workflowStatus && existing.contactEmail) {
+    const locationName = updated.name;
+    const emailTemplates: Record<string, { subject: string; html: string; text: string }> = {
+      approved: {
+        subject: `Your Passport ATL listing is approved — ${locationName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;color:#1a6b3c;">Listing Approved!</h2><p>Hi ${escapeHtml(existing.contactName)},</p><p>Great news — <strong>${escapeHtml(locationName)}</strong> has been approved and is being prepared for publication on Atlanta Passport.</p><p>We'll notify you once it goes live.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${existing.contactName},\n\n"${locationName}" has been approved! We'll notify you once it goes live on Atlanta Passport.\n\nRef: ${id}`,
+      },
+      published: {
+        subject: `Your listing is now live on Atlanta Passport — ${locationName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;color:#1a6b3c;">You're Live! 🎉</h2><p>Hi ${escapeHtml(existing.contactName)},</p><p><strong>${escapeHtml(locationName)}</strong> is now published on Atlanta Passport! Visitors can discover and collect stamps at your location.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${existing.contactName},\n\n"${locationName}" is now live on Atlanta Passport!\n\nRef: ${id}`,
+      },
+      rejected: {
+        subject: `Update on your Passport ATL listing — ${locationName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;">Listing Update</h2><p>Hi ${escapeHtml(existing.contactName)},</p><p>After review, we were unable to approve <strong>${escapeHtml(locationName)}</strong> at this time.${updated.adminNotes ? ` Notes: ${escapeHtml(updated.adminNotes)}` : ""}</p><p>Questions? Reply to this email or reach us at touristpassportatl@gmail.com.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${existing.contactName},\n\nWe were unable to approve "${locationName}" at this time.${updated.adminNotes ? `\n\nNotes: ${updated.adminNotes}` : ""}\n\nRef: ${id}`,
+      },
+      "changes-requested": {
+        subject: `Changes requested for your Passport ATL listing — ${locationName}`,
+        html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;"><h2 style="font-family:Bungee,sans-serif;">Changes Needed</h2><p>Hi ${escapeHtml(existing.contactName)},</p><p>Our team reviewed <strong>${escapeHtml(locationName)}</strong> and needs a few updates before we can publish it.${updated.adminNotes ? `</p><p><strong>Notes:</strong> ${escapeHtml(updated.adminNotes)}` : ""}</p><p>Please reply with the requested information and we'll get you sorted quickly.</p><p style="font-size:12px;color:#999;">Ref: ${id}</p></div>`,
+        text: `Hi ${existing.contactName},\n\nWe reviewed "${locationName}" and need a few updates.${updated.adminNotes ? `\n\nNotes: ${updated.adminNotes}` : ""}\n\nPlease reply with the requested information.\n\nRef: ${id}`,
+      },
+    };
+
+    const tmpl = emailTemplates[newStatus];
+    if (tmpl) {
+      void sendNotification({ to: existing.contactEmail, ...tmpl });
+    }
+  }
+
   res.json({ ...updated, completenessScore: score });
+});
+
+// POST /admin/location-submissions/promote-bulk — migrate all published, unpromoted submissions to businesses
+router.post("/admin/location-submissions/promote-bulk", requireAdmin, async (req, res) => {
+  const subs = await db
+    .select()
+    .from(locationSubmissionsTable)
+    .where(
+      and(
+        eq(locationSubmissionsTable.workflowStatus, "published"),
+        isNull(locationSubmissionsTable.promotedBusinessId),
+      ),
+    );
+
+  type PromoteResult = {
+    id: string;
+    name: string;
+    status: "promoted" | "skipped" | "review-needed";
+    businessId?: string;
+    slug?: string;
+    reason?: string;
+    warnings?: string[];
+  };
+
+  const results: PromoteResult[] = [];
+
+  for (const sub of subs) {
+    const baseSlug = deriveSlug(sub.name);
+    // Make slug unique by appending a counter if needed
+    let slug = baseSlug;
+    let attempt = 0;
+    while (true) {
+      const existing = await db
+        .select({ id: businessesTable.id })
+        .from(businessesTable)
+        .where(eq(businessesTable.slug, slug))
+        .limit(1);
+      if (!existing[0]) break;
+      attempt++;
+      slug = `${baseSlug}-${attempt}`;
+    }
+
+    const description = sub.description || sub.passportSummary || sub.featuredItems;
+    const warnings: string[] = [];
+    if (!description) warnings.push("No description — used placeholder text");
+
+    try {
+      const [business] = await db
+        .insert(businessesTable)
+        .values({
+          slug,
+          name: sub.name,
+          category: sub.primaryCategory,
+          neighborhood: sub.neighborhood,
+          description: description || "Visit this location to learn more.",
+          address: sub.address,
+          image: sub.heroImage || undefined,
+          contactName: sub.contactName,
+          stampName: sub.name,
+          stampColor: "#4A9B7F",
+          icon: "📍",
+          isActive: true,
+        })
+        .returning();
+
+      await db
+        .update(locationSubmissionsTable)
+        .set({ promotedBusinessId: business!.id, promotedAt: new Date() })
+        .where(eq(locationSubmissionsTable.id, sub.id));
+
+      results.push({
+        id: sub.id,
+        name: sub.name,
+        status: warnings.length > 0 ? "review-needed" : "promoted",
+        businessId: business!.id,
+        slug,
+        warnings: warnings.length > 0 ? warnings : undefined,
+      });
+    } catch (err) {
+      results.push({
+        id: sub.id,
+        name: sub.name,
+        status: "skipped",
+        reason: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  const promoted = results.filter((r) => r.status === "promoted").length;
+  const reviewNeeded = results.filter((r) => r.status === "review-needed").length;
+  const skipped = results.filter((r) => r.status === "skipped").length;
+
+  res.json({ total: subs.length, promoted, reviewNeeded, skipped, results });
+});
+
+// POST /admin/location-submissions/:id/promote — promote a single submission to the business directory
+router.post("/admin/location-submissions/:id/promote", requireAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  const [sub] = await db
+    .select()
+    .from(locationSubmissionsTable)
+    .where(eq(locationSubmissionsTable.id, id));
+
+  if (!sub) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+
+  if (sub.promotedBusinessId) {
+    res.status(409).json({ error: "Already promoted", businessId: sub.promotedBusinessId });
+    return;
+  }
+
+  const baseSlug = deriveSlug(sub.name);
+  let slug = baseSlug;
+  let attempt = 0;
+  while (true) {
+    const existing = await db
+      .select({ id: businessesTable.id })
+      .from(businessesTable)
+      .where(eq(businessesTable.slug, slug))
+      .limit(1);
+    if (!existing[0]) break;
+    attempt++;
+    slug = `${baseSlug}-${attempt}`;
+  }
+
+  const description = sub.description || sub.passportSummary || sub.featuredItems;
+  const warnings: string[] = [];
+  if (!description) warnings.push("No description — used placeholder text");
+  if (!sub.heroImage) warnings.push("No hero image — business will show without a photo");
+
+  const overrides = req.body as Record<string, unknown>;
+
+  const [business] = await db
+    .insert(businessesTable)
+    .values({
+      slug: (overrides.slug as string | undefined) || slug,
+      name: (overrides.name as string | undefined) || sub.name,
+      category: (overrides.category as string | undefined) || sub.primaryCategory,
+      neighborhood: (overrides.neighborhood as string | undefined) || sub.neighborhood,
+      description: (overrides.description as string | undefined) || description || "Visit this location to learn more.",
+      address: (overrides.address as string | undefined) || sub.address,
+      image: (overrides.image as string | undefined) || sub.heroImage || undefined,
+      contactName: (overrides.contactName as string | undefined) || sub.contactName,
+      stampName: (overrides.stampName as string | undefined) || sub.name,
+      stampColor: (overrides.stampColor as string | undefined) || "#4A9B7F",
+      icon: (overrides.icon as string | undefined) || "📍",
+      isActive: true,
+    })
+    .returning();
+
+  await db
+    .update(locationSubmissionsTable)
+    .set({ promotedBusinessId: business!.id, promotedAt: new Date() })
+    .where(eq(locationSubmissionsTable.id, id));
+
+  res.json({
+    businessId: business!.id,
+    slug: business!.slug,
+    status: warnings.length > 0 ? "promoted_with_warnings" : "promoted",
+    warnings,
+  });
 });
 
 // POST /admin/location-submissions/bulk-import — CSV bulk import
@@ -242,7 +517,6 @@ router.post("/admin/location-submissions/bulk-import", requireAdmin, async (req,
   let duplicates = 0;
   let errors = 0;
 
-  // Pre-fetch existing names for duplicate detection
   const existing = await db
     .select({ id: locationSubmissionsTable.id, name: locationSubmissionsTable.name })
     .from(locationSubmissionsTable);

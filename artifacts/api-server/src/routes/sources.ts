@@ -183,6 +183,56 @@ router.get("/admin/import-runs/:runId/rows", requireAdmin, async (req, res) => {
   res.json(rows);
 });
 
+// ── Google Sheets sync ────────────────────────────────────────────────────────
+
+// POST /admin/sheets/sync-events
+router.post("/admin/sheets/sync-events", requireAdmin, async (_req, res) => {
+  try {
+    const { syncEvents, getEventsSheetUrl } = await import("../lib/eventsSheetSync");
+    const { count } = await syncEvents();
+    const url = await getEventsSheetUrl();
+    res.json({ synced: count, url });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.error({ err }, "Events sheet sync failed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+// POST /admin/sheets/sync-locations
+router.post("/admin/sheets/sync-locations", requireAdmin, async (_req, res) => {
+  try {
+    const { syncLocations, getLocationsSheetUrl } = await import("../lib/locationsSheetSync");
+    const { count } = await syncLocations();
+    const url = await getLocationsSheetUrl();
+    res.json({ synced: count, url });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.error({ err }, "Locations sheet sync failed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+// GET /admin/sheets/urls — returns current sheet URLs (creates sheets if needed)
+router.get("/admin/sheets/urls", requireAdmin, async (_req, res) => {
+  try {
+    const [{ getEventsSheetUrl }, { getLocationsSheetUrl }, { getSignupSheetUrl }] = await Promise.all([
+      import("../lib/eventsSheetSync"),
+      import("../lib/locationsSheetSync"),
+      import("../lib/googleSheetSync"),
+    ]);
+    const [eventsUrl, locationsUrl, signupsUrl] = await Promise.all([
+      getEventsSheetUrl().catch(() => null),
+      getLocationsSheetUrl().catch(() => null),
+      getSignupSheetUrl().catch(() => null),
+    ]);
+    res.json({ eventsUrl, locationsUrl, signupsUrl });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ error: msg });
+  }
+});
+
 // ── Possible duplicates ───────────────────────────────────────────────────────
 
 // GET /admin/events/duplicates  — events in possible_duplicate status

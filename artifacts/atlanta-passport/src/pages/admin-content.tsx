@@ -57,6 +57,8 @@ type LocationSubmission = {
   createdAt: string;
   reviewedAt: string | null;
   publishedAt: string | null;
+  promotedBusinessId: string | null;
+  promotedAt: string | null;
 };
 
 type BulkRowResult = {
@@ -246,6 +248,54 @@ async function bulkImportLocations(locations: Record<string, string>[], adminKey
   return res.json() as Promise<BulkImportResult>;
 }
 
+type PromoteResult = {
+  total: number;
+  promoted: number;
+  reviewNeeded: number;
+  skipped: number;
+  results: Array<{
+    id: string;
+    name: string;
+    status: "promoted" | "skipped" | "review-needed";
+    businessId?: string;
+    slug?: string;
+    reason?: string;
+    warnings?: string[];
+  }>;
+};
+
+async function promoteLocation(id: string, adminKey: string): Promise<{ businessId: string; slug: string; status: string; warnings: string[] }> {
+  const res = await fetch(`${API_BASE}/admin/location-submissions/${id}/promote`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({})) as { error?: string };
+    throw new Error(body.error ?? `${res.status}`);
+  }
+  return res.json() as Promise<{ businessId: string; slug: string; status: string; warnings: string[] }>;
+}
+
+async function promoteBulk(adminKey: string): Promise<PromoteResult> {
+  const res = await fetch(`${API_BASE}/admin/location-submissions/promote-bulk`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) throw new Error(`Promote failed: ${res.status}`);
+  return res.json() as Promise<PromoteResult>;
+}
+
+async function syncSheet(type: "events" | "locations", adminKey: string): Promise<{ synced: number; url: string }> {
+  const res = await fetch(`${API_BASE}/admin/sheets/sync-${type}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+  });
+  if (!res.ok) throw new Error(`Sync failed: ${res.status}`);
+  return res.json() as Promise<{ synced: number; url: string }>;
+}
+
 // ── Location Card ─────────────────────────────────────────────────────────────
 
 function LocationCard({
@@ -263,6 +313,8 @@ function LocationCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [promoting, setPromoting] = useState(false);
+  const [promoteMsg, setPromoteMsg] = useState("");
   const [editStatus, setEditStatus] = useState(loc.workflowStatus);
   const [editNotes, setEditNotes] = useState(loc.adminNotes ?? "");
   const [editAssigned, setEditAssigned] = useState(loc.assignedTo ?? "");
@@ -274,6 +326,25 @@ function LocationCard({
       onUpdated();
     } finally {
       setSaving(false);
+    }
+  };
+
+  const doPromote = async () => {
+    if (!confirm(`Promote "${loc.name}" to the business directory? This will create a live business record.`)) return;
+    setPromoting(true);
+    setPromoteMsg("");
+    try {
+      const result = await promoteLocation(loc.id, adminKey);
+      setPromoteMsg(
+        result.warnings && result.warnings.length > 0
+          ? `✓ Added to directory (slug: ${result.slug}). Warnings: ${result.warnings.join("; ")}`
+          : `✓ Added to business directory (slug: ${result.slug})`,
+      );
+      onUpdated();
+    } catch (err) {
+      setPromoteMsg(`✗ ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setPromoting(false);
     }
   };
 
@@ -294,6 +365,11 @@ function LocationCard({
             <span className="font-black text-sm truncate">{loc.name}</span>
             <StatusBadge status={loc.workflowStatus} />
             <TierBadge tier={loc.listingTier} />
+            {loc.promotedBusinessId && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">
+                ✓ In Directory
+              </span>
+            )}
             {loc.isDuplicate && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">
                 ⚠ Possible Duplicate
@@ -456,7 +532,7 @@ function LocationCard({
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 disabled={saving}
@@ -473,7 +549,27 @@ function LocationCard({
               >
                 {loc.isDuplicate ? "Clear Duplicate Flag" : "Flag as Duplicate"}
               </button>
+              {!loc.promotedBusinessId ? (
+                <button
+                  type="button"
+                  disabled={promoting}
+                  onClick={doPromote}
+                  className="button-pop bg-brand-green text-white text-xs px-4 py-2 font-bold uppercase tracking-wide disabled:opacity-50 inline-flex items-center gap-1.5 ml-auto"
+                >
+                  {promoting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
+                  Promote to Directory
+                </button>
+              ) : (
+                <span className="ml-auto text-xs text-green-700 font-bold flex items-center gap-1 px-3 py-2">
+                  <CheckCircle className="w-3.5 h-3.5" /> In Business Directory
+                </span>
+              )}
             </div>
+            {promoteMsg && (
+              <div className={cn("text-xs font-medium px-3 py-2 rounded-lg", promoteMsg.startsWith("✓") ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800")}>
+                {promoteMsg}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1017,6 +1113,188 @@ function CsvImportTab({ adminKey }: { adminKey: string }) {
   );
 }
 
+// ── Migration Utility Tab ─────────────────────────────────────────────────────
+
+function MigrationTab({ adminKey }: { adminKey: string }) {
+  const [promoting, setPromoting] = useState(false);
+  const [promoteResult, setPromoteResult] = useState<PromoteResult | null>(null);
+  const [sheetSyncing, setSheetSyncing] = useState<"events" | "locations" | null>(null);
+  const [sheetResults, setSheetResults] = useState<Record<string, { synced: number; url: string } | string>>({});
+
+  const doBulkPromote = async () => {
+    if (!confirm("Promote all published location submissions to the business directory? Only unpromoted records will be affected.")) return;
+    setPromoting(true);
+    setPromoteResult(null);
+    try {
+      const result = await promoteBulk(adminKey);
+      setPromoteResult(result);
+    } catch (err) {
+      alert(`Error: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setPromoting(false);
+    }
+  };
+
+  const doSyncSheet = async (type: "events" | "locations") => {
+    setSheetSyncing(type);
+    try {
+      const result = await syncSheet(type, adminKey);
+      setSheetResults((prev) => ({ ...prev, [type]: result }));
+    } catch (err) {
+      setSheetResults((prev) => ({ ...prev, [type]: `Error: ${err instanceof Error ? err.message : String(err)}` }));
+    } finally {
+      setSheetSyncing(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Location → Business Promotion */}
+      <div className="card-pop bg-white p-6 space-y-4">
+        <div>
+          <h3 className="font-black text-lg" style={{ fontFamily: "Bungee, sans-serif" }}>
+            LOCATION MIGRATION UTILITY
+          </h3>
+          <p className="text-sm text-foreground/70 mt-1">
+            Promote published location submissions into the live business directory. Non-destructive — original submissions are kept intact with a reference to the created business record. Duplicate slugs are resolved automatically.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 text-sm">
+          <div className="p-4 bg-brand-cream rounded-xl border-2 border-foreground/20 space-y-1">
+            <div className="font-bold text-[10px] uppercase tracking-wide text-foreground/50">What gets promoted</div>
+            <p className="text-xs text-foreground/70">Only submissions with <strong>workflowStatus = published</strong> that have not yet been promoted.</p>
+          </div>
+          <div className="p-4 bg-brand-cream rounded-xl border-2 border-foreground/20 space-y-1">
+            <div className="font-bold text-[10px] uppercase tracking-wide text-foreground/50">What gets created</div>
+            <p className="text-xs text-foreground/70">A <strong>business record</strong> with name, category, address, description, and image mapped from the submission.</p>
+          </div>
+          <div className="p-4 bg-brand-cream rounded-xl border-2 border-foreground/20 space-y-1">
+            <div className="font-bold text-[10px] uppercase tracking-wide text-foreground/50">Review-needed cases</div>
+            <p className="text-xs text-foreground/70">Submissions missing a description get a placeholder — these are flagged as <strong>review-needed</strong> in the report.</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          disabled={promoting}
+          onClick={doBulkPromote}
+          className="button-pop bg-brand-green text-white px-6 py-3 font-display text-sm tracking-widest uppercase inline-flex items-center gap-2 disabled:opacity-50"
+        >
+          {promoting ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
+          {promoting ? "Promoting…" : "Promote All Published Locations"}
+        </button>
+
+        {promoteResult && (
+          <div className="space-y-4 border-t border-foreground/10 pt-4">
+            <div className="flex flex-wrap gap-4">
+              <div className="text-center px-6 py-4 bg-green-50 rounded-xl border-2 border-green-200">
+                <div className="text-3xl font-black text-green-700">{promoteResult.promoted}</div>
+                <div className="text-xs font-bold text-green-600 uppercase">Promoted</div>
+              </div>
+              <div className="text-center px-6 py-4 bg-brand-yellow/20 rounded-xl border-2 border-brand-yellow/40">
+                <div className="text-3xl font-black text-amber-700">{promoteResult.reviewNeeded}</div>
+                <div className="text-xs font-bold text-amber-600 uppercase">Review Needed</div>
+              </div>
+              <div className="text-center px-6 py-4 bg-red-50 rounded-xl border-2 border-red-200">
+                <div className="text-3xl font-black text-red-700">{promoteResult.skipped}</div>
+                <div className="text-xs font-bold text-red-600 uppercase">Skipped / Errors</div>
+              </div>
+              <div className="text-center px-6 py-4 bg-foreground/5 rounded-xl border-2 border-foreground/20">
+                <div className="text-3xl font-black">{promoteResult.total}</div>
+                <div className="text-xs font-bold text-foreground/50 uppercase">Total</div>
+              </div>
+            </div>
+
+            {promoteResult.results.length > 0 && (
+              <div className="max-h-72 overflow-y-auto space-y-1.5">
+                {promoteResult.results.map((r) => (
+                  <div
+                    key={r.id}
+                    className={cn(
+                      "flex items-start gap-3 px-3 py-2 rounded-lg text-xs",
+                      r.status === "promoted" ? "bg-green-50" :
+                      r.status === "review-needed" ? "bg-yellow-50" : "bg-red-50",
+                    )}
+                  >
+                    <span className={cn("font-bold shrink-0",
+                      r.status === "promoted" ? "text-green-700" :
+                      r.status === "review-needed" ? "text-amber-700" : "text-red-700"
+                    )}>
+                      {r.status === "promoted" ? "✓" : r.status === "review-needed" ? "⚠" : "✗"}
+                    </span>
+                    <span className="font-medium flex-1">{r.name}</span>
+                    <span className="text-foreground/50 text-right">
+                      {r.slug ? `/${r.slug}` : r.reason ?? ""}
+                      {r.warnings && r.warnings.length > 0 ? ` · ${r.warnings[0]}` : ""}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Google Sheets Sync */}
+      <div className="card-pop bg-white p-6 space-y-4">
+        <div>
+          <h3 className="font-black text-lg" style={{ fontFamily: "Bungee, sans-serif" }}>
+            GOOGLE SHEETS EXPORT
+          </h3>
+          <p className="text-sm text-foreground/70 mt-1">
+            Export the events table or location submissions to a Google Sheet on the connected Drive account. Each sync is a full rewrite — the sheet is the source of truth from the database, making it safe to run anytime.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {(["events", "locations"] as const).map((type) => {
+            const result = sheetResults[type];
+            const isSyncing = sheetSyncing === type;
+            return (
+              <div key={type} className="p-4 bg-brand-cream rounded-xl border-2 border-foreground/20 space-y-3">
+                <div className="font-bold text-sm uppercase tracking-wide">
+                  {type === "events" ? "Events Table" : "Location Submissions"}
+                </div>
+                <p className="text-xs text-foreground/60">
+                  {type === "events"
+                    ? "All events (all statuses) with completeness score, contact info, and workflow status."
+                    : "All location submissions with promotion tracking, completeness, and contact info."}
+                </p>
+                <button
+                  type="button"
+                  disabled={sheetSyncing !== null}
+                  onClick={() => doSyncSheet(type)}
+                  className="button-pop bg-brand-navy text-white text-xs px-4 py-2 font-bold uppercase tracking-wide inline-flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {isSyncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                  {isSyncing ? "Syncing…" : "Sync to Sheet"}
+                </button>
+                {result && typeof result === "object" && (
+                  <div className="text-xs space-y-1">
+                    <div className="text-green-700 font-bold">✓ Synced {result.synced} rows</div>
+                    <a
+                      href={result.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline break-all"
+                    >
+                      Open in Google Sheets →
+                    </a>
+                  </div>
+                )}
+                {result && typeof result === "string" && (
+                  <div className="text-xs text-red-700 font-medium">{result}</div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default function AdminContent() {
@@ -1024,7 +1302,7 @@ export default function AdminContent() {
   const [adminKey, setAdminKey] = useState("");
   const [keyInput, setKeyInput] = useState("");
   const [keyError, setKeyError] = useState("");
-  const [contentTab, setContentTab] = useState<"locations" | "csv-import" | "legends" | "experiences">("locations");
+  const [contentTab, setContentTab] = useState<"locations" | "csv-import" | "migration" | "legends" | "experiences">("locations");
 
   useEffect(() => {
     if (sessionStorage.getItem(UNLOCK_KEY) === "1") {
@@ -1076,6 +1354,7 @@ export default function AdminContent() {
   const CONTENT_TABS = [
     { key: "locations",   label: "Locations",   icon: <MapPin className="w-4 h-4" /> },
     { key: "csv-import",  label: "CSV Import",  icon: <Upload className="w-4 h-4" /> },
+    { key: "migration",   label: "Migration",   icon: <RefreshCw className="w-4 h-4" /> },
     { key: "legends",     label: "ATL Legends", icon: <BookOpen className="w-4 h-4" /> },
     { key: "experiences", label: "Experiences", icon: <Route className="w-4 h-4" /> },
   ] as const;
@@ -1117,6 +1396,7 @@ export default function AdminContent() {
           <div className="p-4 md:p-6">
             {contentTab === "locations" && <LocationsTab adminKey={adminKey} />}
             {contentTab === "csv-import" && <CsvImportTab adminKey={adminKey} />}
+            {contentTab === "migration" && <MigrationTab adminKey={adminKey} />}
             {contentTab === "legends" && (
               <div className="text-center py-16 space-y-3">
                 <Newspaper className="w-12 h-12 mx-auto opacity-30" />

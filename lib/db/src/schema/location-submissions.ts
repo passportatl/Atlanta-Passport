@@ -61,6 +61,10 @@ export const locationSubmissionsTable = pgTable("location_submissions", {
   duplicateOfId: uuid("duplicate_of_id"),
   importSource: text("import_source"),
 
+  // ── Promotion tracking ────────────────────────────────────────────────────
+  promotedBusinessId: uuid("promoted_business_id"),
+  promotedAt: timestamp("promoted_at", { withTimezone: true }),
+
   // ── Timestamps ────────────────────────────────────────────────────────────
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
