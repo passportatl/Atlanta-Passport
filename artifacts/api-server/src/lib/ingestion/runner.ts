@@ -165,27 +165,62 @@ export async function runSourceSync(sourceId: string): Promise<string> {
           rawVenue: normalized.venue,
         });
       } else {
-        // Cross-source possible duplicate — flag it for review
-        await db
-          .update(eventsTable)
-          .set({ workflowStatus: "possible_duplicate", duplicateOfId: dup.existingId, updatedAt: now })
-          .where(
-            and(
-              eq(eventsTable.id, dup.existingId),
-              eq(eventsTable.workflowStatus, "pending"),
-            ),
-          );
-        duplicates++;
-        runRows.push({
-          runId,
-          eventId: dup.existingId,
-          status: "duplicate",
-          externalId: normalized.externalId,
-          rawName: normalized.name,
-          rawDate: normalized.date,
-          rawVenue: normalized.venue,
-          duplicateOfId: dup.existingId,
-        });
+        // Cross-source possible duplicate — insert the INCOMING event flagged
+        // for review, pointing at the existing event it may duplicate.
+        // (Never mutate the existing event: it may be published/approved.)
+        try {
+          const completenessScore = computeEventCompleteness(normalized);
+          const [flaggedEvent] = await db
+            .insert(eventsTable)
+            .values({
+              name: normalized.name,
+              category: normalized.category,
+              date: normalized.date,
+              dateIso: normalized.dateIso ?? undefined,
+              time: normalized.time ?? undefined,
+              venue: normalized.venue,
+              address: normalized.address ?? undefined,
+              neighborhood: normalized.neighborhood,
+              description: normalized.description ?? undefined,
+              cost: normalized.cost ?? undefined,
+              url: normalized.url ?? undefined,
+              imageUrl: normalized.imageUrl ?? undefined,
+              contactName: normalized.contactName ?? normalized.organizer ?? undefined,
+              contactEmail: normalized.contactEmail ?? undefined,
+              source: source.type,
+              ingestSourceId: sourceId,
+              externalId: normalized.externalId ?? undefined,
+              lastSeenAt: now,
+              workflowStatus: "possible_duplicate",
+              duplicateOfId: dup.existingId,
+              completenessScore,
+            })
+            .returning({ id: eventsTable.id });
+
+          duplicates++;
+          runRows.push({
+            runId,
+            eventId: flaggedEvent!.id,
+            status: "duplicate",
+            externalId: normalized.externalId,
+            rawName: normalized.name,
+            rawDate: normalized.date,
+            rawVenue: normalized.venue,
+            duplicateOfId: dup.existingId,
+          });
+        } catch (err) {
+          errors++;
+          const msg = err instanceof Error ? err.message : String(err);
+          runRows.push({
+            runId,
+            status: "error",
+            externalId: normalized.externalId,
+            rawName: normalized.name,
+            rawDate: normalized.date,
+            rawVenue: normalized.venue,
+            errorMessage: msg,
+          });
+        }
       }
     } else {
       // New event — insert as pending

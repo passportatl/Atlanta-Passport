@@ -14,4 +14,5 @@
 - [Google Sheets ingestion](google-sheets-ingestion.md) — correct events sheet ID, BOM strip requirement, header alias rules, inspect endpoint, and why the old ID was wrong.
 - [Monorepo stale dist/ after schema changes](monorepo-stale-dist.md) — after editing lib/db or lib/api-zod or lib/api-client-react source, run `pnpm run typecheck:libs` (root) to rebuild all dist/.d.ts; without this, tsc reads stale compiled types even though the source is correct.
 - [Listing-only events](listing-only-events.md) — calendar event with NO detail page needs listingOnly flag + detail-body NotFound guard + link gating in feed & carousel; keep price a tier, use ticketPrice for literal display.
+- [Dedup flag direction](dedup-flag-direction.md) — flag the INCOMING event as possible_duplicate (never mutate existing); literal /admin/events routes must register before /:id.
 - [Ingestion system](ingestion-system.md) — adapter types, verified Atlanta iCal sources, dedup tier rules (Tier 3 cross-source only!), and syncIntervalHours in config JSON.

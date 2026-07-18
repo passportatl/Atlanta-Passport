@@ -391,6 +391,37 @@ router.get("/admin/events/summary", requireAdmin, async (req, res) => {
   });
 });
 
+// PATCH /admin/events/bulk-status  — update workflowStatus for many events at once
+// NOTE: must be registered BEFORE /admin/events/:id or ":id" swallows "bulk-status"
+router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
+  const { ids, status } = req.body as { ids?: string[]; status?: string };
+  if (!Array.isArray(ids) || ids.length === 0) {
+    res.status(400).json({ error: "ids array required" });
+    return;
+  }
+  if (!status || typeof status !== "string") {
+    res.status(400).json({ error: "status required" });
+    return;
+  }
+
+  const updates: Record<string, unknown> = { workflowStatus: status, updatedAt: new Date() };
+  if (status === "published") updates.publishedAt = new Date();
+  if (status === "approved" || status === "published") updates.verifiedAt = new Date();
+  // Restoring to an active status clears any stale duplicate link
+  // (kept on rejected/archived as an audit trail).
+  if (status !== "possible_duplicate" && status !== "rejected" && status !== "archived") {
+    updates.duplicateOfId = null;
+  }
+
+  const rows = await db
+    .update(eventsTable)
+    .set(updates)
+    .where(inArray(eventsTable.id, ids))
+    .returning({ id: eventsTable.id });
+
+  res.json({ updated: rows.length });
+});
+
 // PATCH /admin/events/:id  — workflow + metadata + content + pricing updates
 router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
   const id = req.params["id"] as string | undefined;
@@ -429,6 +460,16 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     }
     if ((data.workflowStatus === "approved" || data.workflowStatus === "published") && !ev.verifiedAt) {
       updates.verifiedAt = new Date();
+    }
+    // Leaving possible_duplicate for an active status → clear the duplicate link.
+    // (Keep it on rejected/archived as an audit trail of why it was removed.)
+    if (
+      ev.workflowStatus === "possible_duplicate" &&
+      data.workflowStatus !== "possible_duplicate" &&
+      data.workflowStatus !== "rejected" &&
+      data.workflowStatus !== "archived"
+    ) {
+      updates.duplicateOfId = null;
     }
   }
 
@@ -709,31 +750,6 @@ router.post("/admin/events/bulk", requireAdmin, async (req, res) => {
     errors: results.filter((r) => r.status === "error").length,
     rows: results,
   });
-});
-
-// PATCH /admin/events/bulk-status  — update workflowStatus for many events at once
-router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
-  const { ids, status } = req.body as { ids?: string[]; status?: string };
-  if (!Array.isArray(ids) || ids.length === 0) {
-    res.status(400).json({ error: "ids array required" });
-    return;
-  }
-  if (!status || typeof status !== "string") {
-    res.status(400).json({ error: "status required" });
-    return;
-  }
-
-  const updates: Record<string, unknown> = { workflowStatus: status, updatedAt: new Date() };
-  if (status === "published") updates.publishedAt = new Date();
-  if (status === "approved" || status === "published") updates.verifiedAt = new Date();
-
-  const rows = await db
-    .update(eventsTable)
-    .set(updates)
-    .where(inArray(eventsTable.id, ids))
-    .returning({ id: eventsTable.id });
-
-  res.json({ updated: rows.length });
 });
 
 export default router;
