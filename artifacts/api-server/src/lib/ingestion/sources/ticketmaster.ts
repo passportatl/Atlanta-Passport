@@ -1,5 +1,6 @@
 // Ticketmaster Discovery API adapter.
-// Safe no-op when TICKETMASTER_API_KEY is not set.
+// Throws when TICKETMASTER_API_KEY is missing or the API rejects the request,
+// so sync runs surface an error instead of silently reporting "0 found".
 
 import type { RawEvent } from "../normalizer";
 import { logger } from "../../logger";
@@ -65,10 +66,41 @@ function pickImage(images?: TmEvent["images"]): string | undefined {
   return sorted[0]?.url;
 }
 
+// Pull a short human-readable reason out of a Ticketmaster error body.
+// Ticketmaster returns either { fault: { faultstring } } (apigee auth errors)
+// or { errors: [{ detail }] } (Discovery API errors). Falls back to a trimmed
+// snippet of the raw body so the admin still sees *something* useful.
+function describeTmError(status: number, body: string): string {
+  let reason: string | undefined;
+  try {
+    const parsed = JSON.parse(body) as {
+      fault?: { faultstring?: string };
+      errors?: Array<{ detail?: string; code?: string }>;
+    };
+    reason = parsed.fault?.faultstring ?? parsed.errors?.[0]?.detail ?? parsed.errors?.[0]?.code;
+  } catch {
+    // Not JSON — use a snippet of the raw body below.
+  }
+  if (!reason) {
+    const snippet = body.replace(/\s+/g, " ").trim().slice(0, 200);
+    reason = snippet || undefined;
+  }
+  if (status === 401 || status === 403) {
+    reason = reason
+      ? `${reason} — check that TICKETMASTER_API_KEY is valid`
+      : "check that TICKETMASTER_API_KEY is valid";
+  } else if (status === 429) {
+    reason = reason ? `${reason} — rate limited, try again later` : "rate limited, try again later";
+  }
+  return reason ? `: ${reason}` : "";
+}
+
 export async function fetchTicketmasterEvents(config: TicketmasterConfig): Promise<RawEvent[]> {
   const apiKey = process.env.TICKETMASTER_API_KEY;
   if (!apiKey) {
-    throw new Error("TICKETMASTER_API_KEY is not set in the running environment");
+    throw new Error(
+      "TICKETMASTER_API_KEY is not set — add the API key before syncing this source",
+    );
   }
 
   const sizeNum = Math.min(Math.max(Number(config.size) || 100, 1), 200);
@@ -104,7 +136,11 @@ export async function fetchTicketmasterEvents(config: TicketmasterConfig): Promi
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(20_000) });
       if (!res.ok) {
-        throw new Error(`Ticketmaster API HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+        const body = await res.text().catch(() => "");
+        throw new Error(
+          `Ticketmaster API rejected the request (HTTP ${res.status} ${res.statusText})` +
+            `${describeTmError(res.status, body)}`,
+        );
       }
       data = (await res.json()) as typeof data;
     } catch (err) {
