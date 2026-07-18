@@ -265,10 +265,15 @@ export interface AdminEventRecord {
   instagram?: string[] | null;
   cost?: string | null;
   url?: string | null;
+  imageUrl?: string | null;
+  ticketUrl?: string | null;
   workflowStatus: string;
   publishedAt?: string | null;
   scheduledPublishAt?: string | null;
   tier: string;
+  listingPackage?: string | null;
+  addOns?: string[] | null;
+  listingPrice?: number | null;
   isFeatured: boolean;
   isBonusStamp: boolean;
   contactName?: string | null;
@@ -287,6 +292,8 @@ export interface AdminEventRecord {
   paymentId?: string | null;
   paymentStatus?: string | null;
   emailDelivered: string;
+  tags?: string[] | null;
+  ageCategory?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -342,6 +349,10 @@ export interface AdminUpdateEventInput {
   adminNotes?: string;
   assignedTo?: string;
   tier?: string;
+  listingPackage?: string;
+  addOns?: string[];
+  listingPrice?: number;
+  paymentStatus?: string;
   isFeatured?: boolean;
   isBonusStamp?: boolean;
   scheduledPublishAt?: string;
@@ -353,8 +364,18 @@ export interface AdminUpdateEventInput {
   address?: string;
   neighborhood?: string;
   description?: string;
+  highlights?: string[];
+  imageUrl?: string;
+  ticketUrl?: string;
+  instagram?: string[];
   cost?: string;
   url?: string;
+  tags?: string[];
+  ageCategory?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  promoContactMethod?: string;
 }
 
 export type ListPublicEventsParams = {

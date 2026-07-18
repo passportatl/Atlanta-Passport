@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import { desc, eq, or, and, inArray } from "drizzle-orm";
-import { db, eventsTable, computeEventCompleteness } from "@workspace/db";
+import { db, eventsTable, eventAuditLog, computeEventCompleteness } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 
@@ -153,6 +153,8 @@ router.post("/events", async (req, res) => {
       instagram: data.instagram ?? null,
       cost: data.cost ?? null,
       url: urlToStore,
+      imageUrl: data.imageUrl ?? null,
+      ticketUrl: data.ticketUrl ?? null,
       contactName: data.contactName ?? null,
       contactEmail: data.contactEmail ?? null,
       contactPhone: data.contactPhone ?? null,
@@ -163,6 +165,7 @@ router.post("/events", async (req, res) => {
       intakeNotes,
       source: "web_form",
       tier,
+      listingPackage,
       workflowStatus: "pending",
       completenessScore,
     })
@@ -189,7 +192,7 @@ router.post("/events", async (req, res) => {
         ${renderRow("Ticket URL", data.ticketUrl)}
         ${renderRow("Image URL", data.imageUrl)}
         ${renderRow("Instagram", data.instagram?.join(", "))}
-        ${renderRow("Tags", data.tags)}
+        ${renderRow("Tags", data.tags?.join(", "))}
         ${renderRow("Description", data.description)}
         ${renderRow("Highlights", data.highlights?.map((h, i) => `${i + 1}. ${h}`).join("<br>"))}
         ${renderRow("Contact Name", data.contactName)}
@@ -318,7 +321,7 @@ router.get("/admin/events/summary", requireAdmin, async (req, res) => {
   });
 });
 
-// PATCH /admin/events/:id  — workflow + metadata updates
+// PATCH /admin/events/:id  — workflow + metadata + content + pricing updates
 router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
   const id = req.params["id"] as string | undefined;
   if (!id) {
@@ -344,32 +347,41 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     return;
   }
 
-  type UpdateSet = Parameters<typeof db.update>[0] extends infer T
-    ? Record<string, unknown>
-    : never;
+  const ev = existing[0];
   const updates: Record<string, unknown> = { updatedAt: new Date() };
 
+  // ── Workflow status ──
   if (data.workflowStatus !== undefined) {
     updates.workflowStatus = data.workflowStatus;
-    if (
-      data.workflowStatus === "published" &&
-      !existing[0].publishedAt
-    ) {
+    // Set publishedAt only on first publish
+    if (data.workflowStatus === "published" && !ev.publishedAt) {
       updates.publishedAt = new Date();
     }
-    if (
-      (data.workflowStatus === "approved" ||
-        data.workflowStatus === "published") &&
-      !existing[0].verifiedAt
-    ) {
+    if ((data.workflowStatus === "approved" || data.workflowStatus === "published") && !ev.verifiedAt) {
       updates.verifiedAt = new Date();
     }
   }
+
+  // ── Admin / assignment ──
   if (data.adminNotes !== undefined) updates.adminNotes = data.adminNotes;
   if (data.assignedTo !== undefined) updates.assignedTo = data.assignedTo;
+
+  // ── Tier / package / pricing ──
+  if (data.listingPackage !== undefined) {
+    updates.listingPackage = data.listingPackage;
+    // Recompute tier from package (free package → free tier; others → paid)
+    updates.tier = data.listingPackage === "free" ? "free" : "paid";
+  }
   if (data.tier !== undefined) updates.tier = data.tier;
+  if (data.addOns !== undefined) updates.addOns = data.addOns;
+  if (data.listingPrice !== undefined) updates.listingPrice = data.listingPrice;
+  if (data.paymentStatus !== undefined) updates.paymentStatus = data.paymentStatus;
+
+  // ── Feature flags ──
   if (data.isFeatured !== undefined) updates.isFeatured = data.isFeatured;
   if (data.isBonusStamp !== undefined) updates.isBonusStamp = data.isBonusStamp;
+
+  // ── Core event fields ──
   if (data.name !== undefined) updates.name = data.name;
   if (data.category !== undefined) updates.category = data.category;
   if (data.date !== undefined) updates.date = data.date;
@@ -378,18 +390,26 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
   if (data.address !== undefined) updates.address = data.address;
   if (data.neighborhood !== undefined) updates.neighborhood = data.neighborhood;
   if (data.description !== undefined) updates.description = data.description;
+  if (data.highlights !== undefined) updates.highlights = data.highlights;
+  if (data.imageUrl !== undefined) updates.imageUrl = data.imageUrl;
+  if (data.ticketUrl !== undefined) updates.ticketUrl = data.ticketUrl;
+  if (data.instagram !== undefined) updates.instagram = data.instagram;
   if (data.cost !== undefined) updates.cost = data.cost;
   if (data.url !== undefined) updates.url = data.url;
   if (data.tags !== undefined) updates.tags = data.tags;
   if (data.ageCategory !== undefined) updates.ageCategory = data.ageCategory;
   if (data.scheduledPublishAt !== undefined) {
-    updates.scheduledPublishAt = data.scheduledPublishAt
-      ? new Date(data.scheduledPublishAt)
-      : null;
+    updates.scheduledPublishAt = data.scheduledPublishAt ? new Date(data.scheduledPublishAt) : null;
   }
 
+  // ── Contact fields ──
+  if (data.contactName !== undefined) updates.contactName = data.contactName;
+  if (data.contactEmail !== undefined) updates.contactEmail = data.contactEmail;
+  if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
+  if (data.promoContactMethod !== undefined) updates.promoContactMethod = data.promoContactMethod;
+
   // Recompute completeness with merged values
-  const merged = { ...existing[0], ...updates };
+  const merged = { ...ev, ...updates };
   updates.completenessScore = computeEventCompleteness(merged);
 
   const [updated] = await db
@@ -398,15 +418,50 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     .where(eq(eventsTable.id, id))
     .returning();
 
-  // Status-change email to submitter when contactEmail is on file
+  // ── Audit log: record meaningful changes ──
+  const AUDITED_FIELDS: Array<{ key: keyof typeof data; label: string }> = [
+    { key: "workflowStatus", label: "Status" },
+    { key: "listingPackage", label: "Package" },
+    { key: "paymentStatus", label: "Payment Status" },
+    { key: "listingPrice", label: "Listing Price" },
+    { key: "description", label: "Description" },
+    { key: "highlights", label: "Highlights" },
+    { key: "imageUrl", label: "Image URL" },
+    { key: "ticketUrl", label: "Ticket URL" },
+    { key: "addOns", label: "Add-ons" },
+    { key: "contactName", label: "Contact Name" },
+    { key: "contactEmail", label: "Contact Email" },
+    { key: "isFeatured", label: "Featured" },
+    { key: "isBonusStamp", label: "Bonus Stamp" },
+    { key: "name", label: "Event Name" },
+    { key: "tier", label: "Tier" },
+  ];
+  const auditEntries: Array<{ eventId: string; changedBy: string; field: string; oldValue: string | null; newValue: string | null }> = [];
+  for (const { key, label } of AUDITED_FIELDS) {
+    if (data[key] !== undefined) {
+      const oldRaw = ev[key as keyof typeof ev];
+      const newRaw = updates[key as string];
+      const oldStr = oldRaw === null || oldRaw === undefined ? null : (typeof oldRaw === "object" ? JSON.stringify(oldRaw) : String(oldRaw));
+      const newStr = newRaw === null || newRaw === undefined ? null : (typeof newRaw === "object" ? JSON.stringify(newRaw) : String(newRaw));
+      if (oldStr !== newStr) {
+        auditEntries.push({ eventId: id, changedBy: "admin", field: label, oldValue: oldStr, newValue: newStr });
+      }
+    }
+  }
+  if (auditEntries.length > 0) {
+    void db.insert(eventAuditLog).values(auditEntries);
+  }
+
+  // ── Status-change email to submitter when contactEmail is on file ──
   if (
     data.workflowStatus &&
-    data.workflowStatus !== existing[0].workflowStatus &&
-    existing[0].contactEmail
+    data.workflowStatus !== ev.workflowStatus &&
+    (ev.contactEmail || data.contactEmail)
   ) {
-    const eventName = updated?.name ?? existing[0].name;
-    const contactGreeting = existing[0].contactName ?? "there";
-    const adminNote = updated?.adminNotes ?? existing[0].adminNotes;
+    const notifyEmail = (ev.contactEmail ?? data.contactEmail) as string;
+    const eventName = updated?.name ?? ev.name;
+    const contactGreeting = ev.contactName ?? data.contactName ?? "there";
+    const adminNote = updated?.adminNotes ?? ev.adminNotes;
     const statusEmails: Record<string, { subject: string; html: string; text: string }> = {
       approved: {
         subject: `Your event is approved — ${eventName}`,
@@ -431,11 +486,26 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     };
     const tmpl = statusEmails[data.workflowStatus];
     if (tmpl) {
-      void sendNotification({ to: existing[0].contactEmail, ...tmpl });
+      void sendNotification({ to: notifyEmail, ...tmpl });
     }
   }
 
   res.json(updated);
+});
+
+// GET /admin/events/:id/audit  — change history for a single event
+router.get("/admin/events/:id/audit", requireAdmin, async (req, res) => {
+  const id = req.params["id"] as string | undefined;
+  if (!id) {
+    res.status(400).json({ error: "Missing id" });
+    return;
+  }
+  const rows = await db
+    .select()
+    .from(eventAuditLog)
+    .where(eq(eventAuditLog.eventId, id))
+    .orderBy(desc(eventAuditLog.changedAt));
+  res.json(rows);
 });
 
 // POST /admin/events/bulk  — CSV import: validate, dedup, insert as pending

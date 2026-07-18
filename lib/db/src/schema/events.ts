@@ -16,10 +16,15 @@ export const eventsTable = pgTable("events", {
   instagram: text("instagram").array(),
   cost: text("cost"),
   url: text("url"),
+  imageUrl: text("image_url"),
+  ticketUrl: text("ticket_url"),
   workflowStatus: text("workflow_status").notNull().default("pending"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   scheduledPublishAt: timestamp("scheduled_publish_at", { withTimezone: true }),
   tier: text("tier").notNull().default("free"),
+  listingPackage: text("listing_package").notNull().default("free"),
+  addOns: text("add_ons").array(),
+  listingPrice: integer("listing_price"),
   isFeatured: boolean("is_featured").notNull().default(false),
   isBonusStamp: boolean("is_bonus_stamp").notNull().default(false),
   contactName: text("contact_name"),
@@ -31,11 +36,10 @@ export const eventsTable = pgTable("events", {
   promoContactMethod: text("promo_contact_method"),
   source: text("source").notNull().default("web_form"),
   sourceRef: text("source_ref"),
-  // Ingestion system fields
-  ingestSourceId: uuid("ingest_source_id"),          // FK to event_sources.id
-  externalId: text("external_id"),                    // ID from the originating system
-  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }), // updated on each sync
-  externalChangedAt: timestamp("external_changed_at", { withTimezone: true }), // set when source data changed
+  ingestSourceId: uuid("ingest_source_id"),
+  externalId: text("external_id"),
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
+  externalChangedAt: timestamp("external_changed_at", { withTimezone: true }),
   intakeNotes: text("intake_notes"),
   assignedTo: text("assigned_to"),
   adminNotes: text("admin_notes"),
@@ -50,6 +54,19 @@ export const eventsTable = pgTable("events", {
 });
 
 export type Event = typeof eventsTable.$inferSelect;
+
+export const eventAuditLog = pgTable("event_audit_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull(),
+  changedBy: text("changed_by").notNull().default("admin"),
+  field: text("field").notNull(),
+  oldValue: text("old_value"),
+  newValue: text("new_value"),
+  note: text("note"),
+  changedAt: timestamp("changed_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type EventAuditEntry = typeof eventAuditLog.$inferSelect;
 
 export function computeEventCompleteness(e: {
   name?: string | null;

@@ -10,4 +10,5 @@
 - [CSV location import](csv-location-import.md) — adding "CSV FOR REPLIT" rows to businesses: omit image (BusinessImage placeholder), dedupe by name not slug, map categories, only YES stamp-spots need seed.ts.
 - [Clerk email-code verification](clerk-email-code-verification.md) — custom signUp: treat status==="complete" as success (don't also require createdSessionId) + strip whitespace from code, else valid codes get rejected → "too many attempts".
 - [Large PDF assets](large-pdf-assets.md) — PDFs >50MB can't load in the read tool but stay on disk in attached_assets/; render pages with pdftoppm (+ magick to optimize).
+- [Monorepo stale dist/ after schema changes](monorepo-stale-dist.md) — after editing lib/db or lib/api-zod or lib/api-client-react source, run `pnpm run typecheck:libs` (root) to rebuild all dist/.d.ts; without this, tsc reads stale compiled types even though the source is correct.
 - [Listing-only events](listing-only-events.md) — calendar event with NO detail page needs listingOnly flag + detail-body NotFound guard + link gating in feed & carousel; keep price a tier, use ticketPrice for literal display.

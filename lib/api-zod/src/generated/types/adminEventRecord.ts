@@ -22,10 +22,15 @@ export interface AdminEventRecord {
   instagram?: string[] | null;
   cost?: string | null;
   url?: string | null;
+  imageUrl?: string | null;
+  ticketUrl?: string | null;
   workflowStatus: string;
   publishedAt?: Date | null;
   scheduledPublishAt?: Date | null;
   tier: string;
+  listingPackage?: string | null;
+  addOns?: string[] | null;
+  listingPrice?: number | null;
   isFeatured: boolean;
   isBonusStamp: boolean;
   contactName?: string | null;
@@ -44,6 +49,8 @@ export interface AdminEventRecord {
   paymentId?: string | null;
   paymentStatus?: string | null;
   emailDelivered: string;
+  tags?: string[] | null;
+  ageCategory?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

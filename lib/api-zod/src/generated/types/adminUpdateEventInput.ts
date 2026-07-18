@@ -11,6 +11,10 @@ export interface AdminUpdateEventInput {
   adminNotes?: string;
   assignedTo?: string;
   tier?: string;
+  listingPackage?: string;
+  addOns?: string[];
+  listingPrice?: number;
+  paymentStatus?: string;
   isFeatured?: boolean;
   isBonusStamp?: boolean;
   scheduledPublishAt?: string;
@@ -22,6 +26,16 @@ export interface AdminUpdateEventInput {
   address?: string;
   neighborhood?: string;
   description?: string;
+  highlights?: string[];
+  imageUrl?: string;
+  ticketUrl?: string;
+  instagram?: string[];
   cost?: string;
   url?: string;
+  tags?: string[];
+  ageCategory?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  promoContactMethod?: string;
 }

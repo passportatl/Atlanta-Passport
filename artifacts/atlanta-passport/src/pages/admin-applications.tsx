@@ -40,6 +40,15 @@ import {
   X,
   Loader2,
   ArrowRight,
+  Pencil,
+  History,
+  DollarSign,
+  Save,
+  RotateCcw,
+  Image,
+  Link,
+  Tag,
+  User,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 
@@ -1095,6 +1104,53 @@ function ApplicationCard({ app }: { app: Application }) {
 
 // ── Events Ops ──────────────────────────────────────────────────────────────
 
+// ── Package + add-on pricing metadata ────────────────────────────────────────
+const EVENT_PACKAGES = [
+  { id: "free",      label: "Free",      price: 0,   desc: "Basic listing" },
+  { id: "basic",     label: "Basic",     price: 149, desc: "Standard listing" },
+  { id: "featured",  label: "Featured",  price: 399, desc: "Featured placement + highlights" },
+  { id: "premier",   label: "Premier",   price: 649, desc: "Premier badge + image + ticket link" },
+  { id: "signature", label: "Signature", price: 999, desc: "Full-service concierge listing" },
+] as const;
+
+const PACKAGE_PRICES: Record<string, number> = Object.fromEntries(
+  EVENT_PACKAGES.map((p) => [p.id, p.price]),
+);
+
+const ADD_ON_OPTIONS = [
+  { id: "newsletter",         label: "Newsletter Feature",       price: 75  },
+  { id: "instagram_feature",  label: "Instagram Feature Post",   price: 99  },
+  { id: "sponsored_route",    label: "Sponsored Route Inclusion", price: 149 },
+  { id: "homepage_spotlight", label: "Homepage Spotlight",        price: 199 },
+];
+
+const PAYMENT_STATUSES = ["unpaid", "invoiced", "paid", "waived", "refunded"];
+
+function computeListingPrice(pkg: string, addOns: string[]): number {
+  const base = PACKAGE_PRICES[pkg] ?? 0;
+  const extra = addOns.reduce((sum, ao) => sum + (ADD_ON_OPTIONS.find((o) => o.id === ao)?.price ?? 0), 0);
+  return base + extra;
+}
+
+type AuditEntry = {
+  id: string;
+  eventId: string;
+  changedBy: string;
+  field: string;
+  oldValue: string | null;
+  newValue: string | null;
+  note: string | null;
+  changedAt: string;
+};
+
+async function fetchAuditLog(eventId: string, adminKey: string): Promise<AuditEntry[]> {
+  const res = await fetch(`${API_BASE}/admin/events/${eventId}/audit`, {
+    headers: { "x-admin-key": adminKey },
+  });
+  if (!res.ok) throw new Error("Failed to load audit log");
+  return res.json() as Promise<AuditEntry[]>;
+}
+
 const STATUS_TABS = [
   { id: "all", label: "All" },
   { id: "pending", label: "Pending" },
@@ -1166,32 +1222,132 @@ function AdminEventCard({
   onSelect?: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [notesValue, setNotesValue] = useState(event.adminNotes ?? "");
-  const [saving, setSaving] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [auditLoading, setAuditLoading] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+
+  // Draft state for edit mode — initialised from the current event record
+  const [draft, setDraft] = useState({
+    listingPackage: (event.listingPackage ?? event.tier ?? "free") as string,
+    addOns: (event.addOns ?? []) as string[],
+    listingPrice: event.listingPrice ?? null as number | null,
+    paymentStatus: event.paymentStatus ?? "unpaid",
+    name: event.name,
+    category: event.category,
+    date: event.date,
+    time: event.time ?? "",
+    venue: event.venue,
+    address: event.address ?? "",
+    neighborhood: event.neighborhood,
+    description: event.description ?? "",
+    highlights: (event.highlights ?? []).join("\n"),
+    imageUrl: (event as AdminEventRecord & { imageUrl?: string | null }).imageUrl ?? "",
+    ticketUrl: (event as AdminEventRecord & { ticketUrl?: string | null }).ticketUrl ?? "",
+    url: event.url ?? "",
+    cost: event.cost ?? "",
+    instagram: (event.instagram ?? []).join(", "),
+    tags: (event as AdminEventRecord & { tags?: string[] | null }).tags?.join(", ") ?? "",
+    ageCategory: (event as AdminEventRecord & { ageCategory?: string | null }).ageCategory ?? "",
+    contactName: event.contactName ?? "",
+    contactEmail: event.contactEmail ?? "",
+    contactPhone: event.contactPhone ?? "",
+    promoContactMethod: event.promoContactMethod ?? "",
+    isFeatured: event.isFeatured,
+    isBonusStamp: event.isBonusStamp,
+    adminNotes: event.adminNotes ?? "",
+    assignedTo: event.assignedTo ?? "",
+  });
+
+  const computedPrice = computeListingPrice(draft.listingPackage, draft.addOns);
+  const effectivePrice = draft.listingPrice !== null ? draft.listingPrice : computedPrice;
 
   const updateMutation = useUpdateAdminEvent({
     request: { headers: { "x-admin-key": adminKey } },
-    mutation: { onSuccess: onUpdated },
+    mutation: {
+      onSuccess: () => {
+        onUpdated();
+        setEditMode(false);
+      },
+    },
   });
 
   const dispatch = (status: string) => {
     updateMutation.mutate({ id: event.id, data: { workflowStatus: status } });
   };
 
-  const saveNotes = async () => {
-    setSaving(true);
+  const saveEdits = (republish = false) => {
+    setSaveMsg(null);
+    const body = {
+      listingPackage: draft.listingPackage,
+      addOns: draft.addOns,
+      listingPrice: draft.listingPrice !== null ? draft.listingPrice : computedPrice,
+      paymentStatus: draft.paymentStatus,
+      name: draft.name,
+      category: draft.category,
+      date: draft.date,
+      time: draft.time || undefined,
+      venue: draft.venue,
+      address: draft.address || undefined,
+      neighborhood: draft.neighborhood,
+      description: draft.description || undefined,
+      highlights: draft.highlights.split("\n").map((s) => s.trim()).filter(Boolean),
+      imageUrl: draft.imageUrl || undefined,
+      ticketUrl: draft.ticketUrl || undefined,
+      instagram: draft.instagram.split(",").map((s) => s.trim()).filter(Boolean),
+      cost: draft.cost || undefined,
+      url: draft.url || undefined,
+      tags: draft.tags.split(",").map((s) => s.trim()).filter(Boolean),
+      ageCategory: draft.ageCategory || undefined,
+      contactName: draft.contactName || undefined,
+      contactEmail: draft.contactEmail || undefined,
+      contactPhone: draft.contactPhone || undefined,
+      promoContactMethod: draft.promoContactMethod || undefined,
+      isFeatured: draft.isFeatured,
+      isBonusStamp: draft.isBonusStamp,
+      adminNotes: draft.adminNotes || undefined,
+      assignedTo: draft.assignedTo || undefined,
+      ...(republish ? { workflowStatus: "published" } : {}),
+    };
+    updateMutation.mutate({ id: event.id, data: body });
+  };
+
+  const loadAudit = async () => {
+    setAuditLoading(true);
     try {
-      updateMutation.mutate({
-        id: event.id,
-        data: { adminNotes: notesValue },
-      });
+      const entries = await fetchAuditLog(event.id, adminKey);
+      setAuditLog(entries);
+    } catch {
+      setAuditLog([]);
     } finally {
-      setSaving(false);
+      setAuditLoading(false);
     }
+  };
+
+  const toggleHistory = () => {
+    const next = !showHistory;
+    setShowHistory(next);
+    if (next && auditLog.length === 0) void loadAudit();
   };
 
   const wfCls = WORKFLOW_COLORS[event.workflowStatus] ?? "bg-brand-cream text-foreground";
   const actions = getActions(event.workflowStatus);
+
+  const pkg = event.listingPackage ?? event.tier ?? "free";
+  const pkgLabel = EVENT_PACKAGES.find((p) => p.id === pkg)?.label ?? pkg.toUpperCase();
+  const pkgCls = pkg === "signature"
+    ? "bg-brand-navy text-white"
+    : pkg === "premier"
+    ? "bg-foreground text-[hsl(var(--brand-cream))]"
+    : pkg === "featured"
+    ? "bg-brand-red text-white"
+    : pkg === "basic"
+    ? "bg-brand-sky text-foreground"
+    : "bg-foreground/10 text-foreground";
+
+  const inputCls = "w-full border-2 border-foreground rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow";
+  const labelCls = "block text-[10px] font-black uppercase tracking-widest opacity-70 mb-0.5";
 
   return (
     <div className={`card-pop bg-white p-4 transition-shadow ${selected ? "ring-2 ring-brand-yellow" : ""}`}>
@@ -1205,11 +1361,7 @@ function AdminEventCard({
               className="mt-0.5 shrink-0 text-foreground/40 hover:text-foreground transition-colors"
               aria-label={selected ? "Deselect" : "Select"}
             >
-              {selected ? (
-                <CheckSquare className="w-4 h-4 text-brand-yellow" />
-              ) : (
-                <Square className="w-4 h-4" />
-              )}
+              {selected ? <CheckSquare className="w-4 h-4 text-brand-yellow" /> : <Square className="w-4 h-4" />}
             </button>
           )}
           <div className="min-w-0">
@@ -1228,28 +1380,32 @@ function AdminEventCard({
           <span className={`badge-sticker ${wfCls} text-[9px]`}>
             {event.workflowStatus.replace(/_/g, " ").toUpperCase()}
           </span>
-          <span className="badge-sticker bg-foreground/10 text-[9px]">
-            {event.completenessScore}%
-          </span>
+          <span className={`badge-sticker ${pkgCls} text-[9px]`}>{pkgLabel}</span>
+          <span className="badge-sticker bg-foreground/10 text-[9px]">{event.completenessScore}%</span>
+          {event.isFeatured && (
+            <span className="badge-sticker bg-brand-yellow text-brand-yellow-foreground text-[9px]">FEATURED</span>
+          )}
           {event.isBonusStamp && (
             <span className="badge-sticker bg-brand-orange text-white text-[9px]">BONUS STAMP</span>
+          )}
+          {event.paymentStatus && event.paymentStatus !== "unpaid" && (
+            <span className={`badge-sticker text-[9px] ${event.paymentStatus === "paid" ? "bg-brand-lime text-foreground" : event.paymentStatus === "invoiced" ? "bg-brand-sky text-foreground" : "bg-foreground/10 text-foreground"}`}>
+              {event.paymentStatus.toUpperCase()}
+            </span>
           )}
         </div>
       </div>
 
       {/* Quick info */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-foreground/70 mb-2">
-        {event.date && (
-          <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{event.date}</span>
-        )}
-        {event.time && (
-          <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />{event.time}</span>
-        )}
-        {event.venue && (
-          <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{event.venue}</span>
-        )}
-        {event.cost && (
-          <span className="inline-flex items-center gap-1"><Ticket className="w-3 h-3" />{event.cost}</span>
+        {event.date && <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{event.date}</span>}
+        {event.time && <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />{event.time}</span>}
+        {event.venue && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{event.venue}</span>}
+        {event.cost && <span className="inline-flex items-center gap-1"><Ticket className="w-3 h-3" />{event.cost}</span>}
+        {event.listingPrice != null && (
+          <span className="inline-flex items-center gap-1 text-brand-lime-foreground font-bold">
+            <DollarSign className="w-3 h-3" />${event.listingPrice} listing fee
+          </span>
         )}
       </div>
 
@@ -1268,19 +1424,37 @@ function AdminEventCard({
         ))}
       </div>
 
-      {/* Expand toggle */}
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        className="text-[10px] font-display uppercase tracking-widest text-foreground/50 hover:text-foreground flex items-center gap-1 mt-1"
-      >
-        {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-        {expanded ? "Hide details" : "Show details"}
-      </button>
+      {/* Toolbar */}
+      <div className="flex flex-wrap gap-2 mt-1">
+        <button
+          type="button"
+          onClick={() => { setExpanded((v) => !v); setEditMode(false); }}
+          className="text-[10px] font-display uppercase tracking-widest text-foreground/50 hover:text-foreground flex items-center gap-1"
+        >
+          {expanded && !editMode ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          {expanded && !editMode ? "Hide" : "Details"}
+        </button>
+        <button
+          type="button"
+          onClick={() => { setEditMode((v) => !v); setExpanded(true); }}
+          className={`text-[10px] font-display uppercase tracking-widest flex items-center gap-1 ${editMode ? "text-brand-yellow font-bold" : "text-foreground/50 hover:text-foreground"}`}
+        >
+          <Pencil className="w-3 h-3" />
+          {editMode ? "Editing…" : "Edit"}
+        </button>
+        <button
+          type="button"
+          onClick={toggleHistory}
+          className="text-[10px] font-display uppercase tracking-widest text-foreground/50 hover:text-foreground flex items-center gap-1"
+        >
+          <History className="w-3 h-3" />
+          History
+        </button>
+      </div>
 
-      {expanded && (
+      {/* ── Expanded read-only view ── */}
+      {expanded && !editMode && (
         <div className="mt-3 space-y-3 border-t-2 border-dashed border-foreground/20 pt-3">
-          {/* Contact */}
           {event.contactName && (
             <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">
               <div className="font-bold">{event.contactName}</div>
@@ -1301,51 +1475,381 @@ function AdminEventCard({
               )}
             </div>
           )}
-
-          {/* Description */}
           {event.description && (
             <div className="bg-brand-cream border-2 border-foreground rounded-lg p-3 text-sm">
               <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Description</div>
               <p className="whitespace-pre-wrap leading-snug">{event.description}</p>
             </div>
           )}
-
-          {/* Intake notes from submitter */}
+          {event.highlights && event.highlights.length > 0 && (
+            <div className="bg-brand-cream border-2 border-foreground rounded-lg p-3 text-sm">
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Highlights</div>
+              <ul className="space-y-0.5">
+                {event.highlights.map((h, i) => <li key={i} className="flex gap-1.5"><span className="opacity-40">·</span>{h}</li>)}
+              </ul>
+            </div>
+          )}
           {event.intakeNotes && (
             <div className="bg-white border-2 border-foreground rounded-lg p-3 text-sm">
               <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Submitter Notes</div>
               <p className="whitespace-pre-wrap leading-snug">{event.intakeNotes}</p>
             </div>
           )}
-
-          {/* URL */}
-          {event.url && (
-            <a href={event.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-sm hover:underline md:truncate">
-              <Globe className="w-3.5 h-3.5 shrink-0" /> {event.url}
-            </a>
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
+            {event.url && (
+              <a href={event.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:underline md:truncate">
+                <Globe className="w-3.5 h-3.5 shrink-0" /> Website
+              </a>
+            )}
+            {(event as AdminEventRecord & { ticketUrl?: string | null }).ticketUrl && (
+              <a href={(event as AdminEventRecord & { ticketUrl?: string | null }).ticketUrl!} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:underline">
+                <Ticket className="w-3.5 h-3.5 shrink-0" /> Tickets
+              </a>
+            )}
+            {(event as AdminEventRecord & { imageUrl?: string | null }).imageUrl && (
+              <a href={(event as AdminEventRecord & { imageUrl?: string | null }).imageUrl!} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 hover:underline">
+                <Image className="w-3.5 h-3.5 shrink-0" /> Image
+              </a>
+            )}
+          </div>
+          {event.adminNotes && (
+            <div className="bg-brand-yellow/20 border-2 border-foreground rounded-lg p-3 text-sm">
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Admin Notes</div>
+              <p className="whitespace-pre-wrap leading-snug">{event.adminNotes}</p>
+            </div>
           )}
+        </div>
+      )}
 
-          {/* Admin notes */}
+      {/* ── Edit mode panel ── */}
+      {editMode && (
+        <div className="mt-3 border-t-2 border-brand-yellow border-dashed pt-3 space-y-5">
+
+          {/* § Package & Pricing */}
           <div>
-            <label className="block text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">
-              Admin Notes
-            </label>
-            <textarea
-              value={notesValue}
-              onChange={(e) => setNotesValue(e.target.value)}
-              rows={3}
-              className="w-full border-2 border-foreground rounded-lg px-3 py-2 text-sm resize-none bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
-              placeholder="Internal notes visible only to admins…"
-            />
+            <div className="text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <DollarSign className="w-3 h-3" /> Package & Pricing
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 mb-3">
+              {EVENT_PACKAGES.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setDraft((d) => ({ ...d, listingPackage: p.id, listingPrice: null }))}
+                  className={`border-2 border-foreground rounded-lg px-2 py-2 text-center text-xs transition-colors ${draft.listingPackage === p.id ? "bg-brand-yellow text-foreground font-black" : "bg-white hover:bg-brand-cream"}`}
+                >
+                  <div className="font-black">{p.label}</div>
+                  <div className="opacity-60">${p.price}</div>
+                </button>
+              ))}
+            </div>
+            <div className="mb-2">
+              <div className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1.5">Add-ons</div>
+              <div className="flex flex-wrap gap-2">
+                {ADD_ON_OPTIONS.map((ao) => (
+                  <label key={ao.id} className={`inline-flex items-center gap-1.5 border-2 border-foreground rounded-lg px-2.5 py-1.5 text-xs cursor-pointer select-none ${draft.addOns.includes(ao.id) ? "bg-brand-sky text-foreground font-bold" : "bg-white hover:bg-brand-cream"}`}>
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={draft.addOns.includes(ao.id)}
+                      onChange={(e) => setDraft((d) => ({
+                        ...d,
+                        addOns: e.target.checked
+                          ? [...d.addOns, ao.id]
+                          : d.addOns.filter((x) => x !== ao.id),
+                        listingPrice: null,
+                      }))}
+                    />
+                    {ao.label} <span className="opacity-60">+${ao.price}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3 items-end">
+              <div className="flex-1 min-w-[140px]">
+                <label className={labelCls}>Listing Fee (computed: ${computedPrice})</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-foreground/60">$</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={draft.listingPrice !== null ? draft.listingPrice : ""}
+                    onChange={(e) => setDraft((d) => ({ ...d, listingPrice: e.target.value === "" ? null : Number(e.target.value) }))}
+                    placeholder={String(computedPrice)}
+                    className={`${inputCls} pl-6`}
+                  />
+                </div>
+                {draft.listingPrice !== null && draft.listingPrice !== computedPrice && (
+                  <button
+                    type="button"
+                    onClick={() => setDraft((d) => ({ ...d, listingPrice: null }))}
+                    className="text-[10px] text-foreground/50 hover:text-foreground mt-0.5"
+                  >
+                    Reset to computed (${computedPrice})
+                  </button>
+                )}
+              </div>
+              <div className="flex-1 min-w-[140px]">
+                <label className={labelCls}>Payment Status</label>
+                <select
+                  value={draft.paymentStatus}
+                  onChange={(e) => setDraft((d) => ({ ...d, paymentStatus: e.target.value }))}
+                  className={inputCls}
+                >
+                  {PAYMENT_STATUSES.map((s) => (
+                    <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="text-right text-sm font-black whitespace-nowrap">
+                Total: <span className="text-lg">${effectivePrice}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* § Event Details */}
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <Calendar className="w-3 h-3" /> Event Details
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <div>
+                <label className={labelCls}>Name</label>
+                <input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Category</label>
+                <input value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Date</label>
+                <input value={draft.date} onChange={(e) => setDraft((d) => ({ ...d, date: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Time</label>
+                <input value={draft.time} onChange={(e) => setDraft((d) => ({ ...d, time: e.target.value }))} className={inputCls} placeholder="7:00 PM" />
+              </div>
+              <div>
+                <label className={labelCls}>Venue</label>
+                <input value={draft.venue} onChange={(e) => setDraft((d) => ({ ...d, venue: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Neighborhood</label>
+                <input value={draft.neighborhood} onChange={(e) => setDraft((d) => ({ ...d, neighborhood: e.target.value }))} className={inputCls} />
+              </div>
+              <div className="sm:col-span-2">
+                <label className={labelCls}>Address</label>
+                <input value={draft.address} onChange={(e) => setDraft((d) => ({ ...d, address: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Ticket Price (display)</label>
+                <input value={draft.cost} onChange={(e) => setDraft((d) => ({ ...d, cost: e.target.value }))} className={inputCls} placeholder="$25 / Free" />
+              </div>
+              <div>
+                <label className={labelCls}>Age Category</label>
+                <input value={draft.ageCategory} onChange={(e) => setDraft((d) => ({ ...d, ageCategory: e.target.value }))} className={inputCls} placeholder="All ages" />
+              </div>
+              <div>
+                <label className={labelCls}>Tags (comma-separated)</label>
+                <input value={draft.tags} onChange={(e) => setDraft((d) => ({ ...d, tags: e.target.value }))} className={inputCls} placeholder="music, family, outdoor" />
+              </div>
+            </div>
+          </div>
+
+          {/* § Content */}
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <FileText className="w-3 h-3" /> Content
+            </div>
+            <div className="space-y-2">
+              <div>
+                <label className={labelCls}>Description</label>
+                <textarea
+                  value={draft.description}
+                  onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                  rows={4}
+                  className={`${inputCls} resize-none`}
+                  placeholder="Event description…"
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Highlights (one per line)</label>
+                <textarea
+                  value={draft.highlights}
+                  onChange={(e) => setDraft((d) => ({ ...d, highlights: e.target.value }))}
+                  rows={3}
+                  className={`${inputCls} resize-none`}
+                  placeholder={"Live music\nFood trucks\nFree parking"}
+                />
+              </div>
+              <div>
+                <label className={labelCls}><Image className="inline w-3 h-3 mr-1" />Image URL</label>
+                <input value={draft.imageUrl} onChange={(e) => setDraft((d) => ({ ...d, imageUrl: e.target.value }))} className={inputCls} placeholder="https://…" />
+              </div>
+              <div className="grid sm:grid-cols-2 gap-2">
+                <div>
+                  <label className={labelCls}><Globe className="inline w-3 h-3 mr-1" />Website URL</label>
+                  <input value={draft.url} onChange={(e) => setDraft((d) => ({ ...d, url: e.target.value }))} className={inputCls} placeholder="https://…" />
+                </div>
+                <div>
+                  <label className={labelCls}><Ticket className="inline w-3 h-3 mr-1" />Ticket URL</label>
+                  <input value={draft.ticketUrl} onChange={(e) => setDraft((d) => ({ ...d, ticketUrl: e.target.value }))} className={inputCls} placeholder="https://eventbrite.com/…" />
+                </div>
+                <div>
+                  <label className={labelCls}><Instagram className="inline w-3 h-3 mr-1" />Instagram (comma-separated)</label>
+                  <input value={draft.instagram} onChange={(e) => setDraft((d) => ({ ...d, instagram: e.target.value }))} className={inputCls} placeholder="@handle1, @handle2" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* § Contact */}
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <User className="w-3 h-3" /> Contact
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <div>
+                <label className={labelCls}>Name</label>
+                <input value={draft.contactName} onChange={(e) => setDraft((d) => ({ ...d, contactName: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Email</label>
+                <input type="email" value={draft.contactEmail} onChange={(e) => setDraft((d) => ({ ...d, contactEmail: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Phone</label>
+                <input value={draft.contactPhone} onChange={(e) => setDraft((d) => ({ ...d, contactPhone: e.target.value }))} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Promo Contact Method</label>
+                <select value={draft.promoContactMethod} onChange={(e) => setDraft((d) => ({ ...d, promoContactMethod: e.target.value }))} className={inputCls}>
+                  <option value="">Not requested</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone</option>
+                  <option value="both">Both</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* § Feature Flags + Admin */}
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <Tag className="w-3 h-3" /> Admin
+            </div>
+            <div className="flex flex-wrap gap-3 mb-3">
+              <label className="inline-flex items-center gap-2 cursor-pointer select-none text-sm">
+                <input
+                  type="checkbox"
+                  checked={draft.isFeatured}
+                  onChange={(e) => setDraft((d) => ({ ...d, isFeatured: e.target.checked }))}
+                  className="w-4 h-4 border-2 border-foreground rounded"
+                />
+                <span className="font-bold">Featured</span>
+              </label>
+              <label className="inline-flex items-center gap-2 cursor-pointer select-none text-sm">
+                <input
+                  type="checkbox"
+                  checked={draft.isBonusStamp}
+                  onChange={(e) => setDraft((d) => ({ ...d, isBonusStamp: e.target.checked }))}
+                  className="w-4 h-4 border-2 border-foreground rounded"
+                />
+                <span className="font-bold">Bonus Stamp</span>
+              </label>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              <div>
+                <label className={labelCls}>Assigned To</label>
+                <input value={draft.assignedTo} onChange={(e) => setDraft((d) => ({ ...d, assignedTo: e.target.value }))} className={inputCls} placeholder="Team member…" />
+              </div>
+            </div>
+            <div className="mt-2">
+              <label className={labelCls}>Admin Notes</label>
+              <textarea
+                value={draft.adminNotes}
+                onChange={(e) => setDraft((d) => ({ ...d, adminNotes: e.target.value }))}
+                rows={2}
+                className={`${inputCls} resize-none`}
+                placeholder="Internal notes…"
+              />
+            </div>
+          </div>
+
+          {/* Save buttons */}
+          {saveMsg && (
+            <div className="text-xs text-brand-red font-bold">{saveMsg}</div>
+          )}
+          <div className="flex flex-wrap gap-2 pt-1 border-t-2 border-dashed border-foreground/20">
             <button
               type="button"
-              disabled={saving || updateMutation.isPending}
-              onClick={saveNotes}
-              className="button-pop text-[10px] px-3 py-1 mt-1 bg-brand-cream text-foreground disabled:opacity-50"
+              disabled={updateMutation.isPending}
+              onClick={() => saveEdits(false)}
+              className="button-pop button-pop-yellow text-sm px-4 py-2 inline-flex items-center gap-1.5 disabled:opacity-50"
             >
-              Save Notes
+              <Save className="w-3.5 h-3.5" />
+              {updateMutation.isPending ? "Saving…" : "Save Changes"}
+            </button>
+            {event.workflowStatus !== "pending" && (
+              <button
+                type="button"
+                disabled={updateMutation.isPending}
+                onClick={() => saveEdits(true)}
+                className="button-pop bg-brand-navy text-white text-sm px-4 py-2 inline-flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                Save & Republish
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setEditMode(false)}
+              className="button-pop bg-white text-sm px-4 py-2 text-foreground/60 hover:text-foreground"
+            >
+              Cancel
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ── Audit / History panel ── */}
+      {showHistory && (
+        <div className="mt-3 border-t-2 border-dashed border-foreground/20 pt-3">
+          <div className="text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1.5">
+            <History className="w-3 h-3" /> Change History
+            <button type="button" onClick={loadAudit} className="ml-auto text-foreground/40 hover:text-foreground">
+              <RefreshCw className="w-3 h-3" />
+            </button>
+          </div>
+          {auditLoading ? (
+            <div className="text-xs text-foreground/50 flex items-center gap-1.5">
+              <Loader2 className="w-3 h-3 animate-spin" /> Loading…
+            </div>
+          ) : auditLog.length === 0 ? (
+            <p className="text-xs text-foreground/40">No changes recorded yet.</p>
+          ) : (
+            <div className="space-y-1.5">
+              {auditLog.map((entry) => (
+                <div key={entry.id} className="text-xs rounded-lg border-2 border-foreground/10 bg-foreground/5 px-3 py-2">
+                  <div className="flex justify-between items-center gap-2 mb-0.5">
+                    <span className="font-bold">{entry.field}</span>
+                    <span className="text-foreground/40 shrink-0">
+                      {new Date(entry.changedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 items-center text-foreground/70">
+                    {entry.oldValue !== null && (
+                      <span className="bg-brand-red/10 text-foreground px-1.5 py-0.5 rounded line-through opacity-60 max-w-[180px] truncate">{entry.oldValue}</span>
+                    )}
+                    {entry.oldValue !== null && <ArrowRight className="w-3 h-3 shrink-0" />}
+                    {entry.newValue !== null && (
+                      <span className="bg-brand-lime/30 text-foreground px-1.5 py-0.5 rounded max-w-[200px] truncate">{entry.newValue}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
