@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import { desc, eq, or, and, inArray } from "drizzle-orm";
-import { db, eventsTable, eventAuditLog, computeEventCompleteness } from "@workspace/db";
+import { db, eventsTable, eventAuditLog, computeEventCompleteness, businessesTable } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 
@@ -20,6 +20,66 @@ function renderRow(label: string, value: string | null | undefined): string {
     <td style="padding:6px 12px;font-weight:bold;background:#fef3c7;border:1px solid #111;">${escapeHtml(label)}</td>
     <td style="padding:6px 12px;border:1px solid #111;">${escapeHtml(value)}</td>
   </tr>`;
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
+// A bonus-stamp event gets a companion businesses row (category "events") so
+// it reuses the /stamp/:slug collection flow and shows up on the admin QR
+// codes page. Toggling the flag off deactivates the row (never deletes it, so
+// already-collected stamps survive).
+function bonusStampSlug(ev: { slug: string | null; name: string }): string {
+  const base = ev.slug ?? slugify(ev.name);
+  return base.startsWith("event-") ? base : `event-${base}`;
+}
+
+async function syncBonusStampBusiness(
+  ev: { slug: string | null; name: string; venue: string; date: string; address: string | null },
+  enabled: boolean,
+): Promise<void> {
+  const slug = bonusStampSlug(ev);
+  if (enabled) {
+    await db
+      .insert(businessesTable)
+      .values({
+        slug,
+        name: ev.name,
+        category: "events",
+        neighborhood: "Featured Events",
+        description: `Bonus stamp — scan at ${ev.venue || "the event"} during ${ev.name}${ev.date ? ` (${ev.date})` : ""}.`,
+        address: ev.address ?? "",
+        stampName: ev.name,
+        stampColor: "orange",
+        icon: "star",
+        isActive: true,
+      })
+      .onConflictDoUpdate({
+        target: businessesTable.slug,
+        set: {
+          name: ev.name,
+          category: "events",
+          neighborhood: "Featured Events",
+          description: `Bonus stamp — scan at ${ev.venue || "the event"} during ${ev.name}${ev.date ? ` (${ev.date})` : ""}.`,
+          address: ev.address ?? "",
+          stampName: ev.name,
+          stampColor: "orange",
+          icon: "star",
+          isActive: true,
+        },
+      });
+  } else {
+    await db
+      .update(businessesTable)
+      .set({ isActive: false })
+      .where(eq(businessesTable.slug, slug));
+  }
 }
 
 function getAdminSecret(): string {
@@ -418,6 +478,13 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
   if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
   if (data.promoContactMethod !== undefined) updates.promoContactMethod = data.promoContactMethod;
 
+  // Enabling a bonus stamp on an event that has no slug: persist a stable,
+  // unique slug now (name + id fragment) so later renames/toggles always
+  // address the same companion business row.
+  if (data.isBonusStamp === true && !ev.slug) {
+    updates.slug = `${slugify(data.name ?? ev.name)}-${id.slice(0, 8)}`;
+  }
+
   // Recompute completeness with merged values
   const merged = { ...ev, ...updates };
   updates.completenessScore = computeEventCompleteness(merged);
@@ -427,6 +494,21 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     .set(updates)
     .where(eq(eventsTable.id, id))
     .returning();
+
+  // ── Bonus stamp: keep the companion QR business row in sync ──
+  const evForStamp = updated ?? { ...ev, ...updates };
+  const flagToggled = data.isBonusStamp !== undefined && data.isBonusStamp !== ev.isBonusStamp;
+  const stampFieldsChanged =
+    evForStamp.isBonusStamp &&
+    (["name", "venue", "date", "address"] as const).some(
+      (k) => data[k] !== undefined && data[k] !== ev[k],
+    );
+  if (flagToggled || stampFieldsChanged) {
+    await syncBonusStampBusiness(
+      { slug: evForStamp.slug, name: evForStamp.name, venue: evForStamp.venue, date: evForStamp.date, address: evForStamp.address },
+      flagToggled ? (data.isBonusStamp as boolean) : true,
+    );
+  }
 
   // ── Audit log: record meaningful changes ──
   const AUDITED_FIELDS: Array<{ key: keyof typeof data; label: string }> = [

@@ -16,8 +16,15 @@ import {
   QrCode,
   Star,
 } from "lucide-react";
-import { NEIGHBORHOODS } from "@/passport/data";
+import { NEIGHBORHOODS, STAMP_SLUG } from "@/passport/data";
 import AdminNav from "@/components/AdminNav";
+
+// Slugs of the current passport stops — the only sponsor-location QRs shown.
+const PASSPORT_STOP_SLUGS = new Set(Object.values(STAMP_SLUG));
+
+// Prize-tier stamp costs — mirror of PRIZE_TIERS on the client and
+// PRIZE_TIER_STAMPS in the API's redemptions route.
+const PRIZE_TIER_STAMPS = [3, 7, 10, 13, 15];
 
 const ADMIN_PASSWORD = (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
@@ -43,6 +50,13 @@ function buildStampUrl(slug: string, publishedOrigin?: string | null): string {
   if (publishedOrigin) return `${publishedOrigin}${base}/stamp/${slug}`;
   if (typeof window === "undefined") return `${base}/stamp/${slug}`;
   return `${window.location.origin}${base}/stamp/${slug}`;
+}
+
+function buildRedeemUrl(tier: number, publishedOrigin?: string | null): string {
+  const base = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
+  if (publishedOrigin) return `${publishedOrigin}${base}/redeem/${tier}`;
+  if (typeof window === "undefined") return `${base}/redeem/${tier}`;
+  return `${window.location.origin}${base}/redeem/${tier}`;
 }
 
 // The QR codes encode the domain you're currently viewing this page on. Replit
@@ -280,13 +294,16 @@ export default function AdminStamps() {
   };
 
   const locationBusinesses = useMemo(
-    () => businesses.filter((b) => b.category !== "events"),
+    () =>
+      businesses.filter(
+        (b) => b.category !== "events" && PASSPORT_STOP_SLUGS.has(b.slug),
+      ),
     [businesses],
   );
   const eventBusinesses = useMemo(
     () =>
       businesses
-        .filter((b) => b.category === "events")
+        .filter((b) => b.category === "events" && b.isActive !== false)
         .sort((a, b) => a.name.localeCompare(b.name)),
     [businesses],
   );
@@ -329,7 +346,7 @@ export default function AdminStamps() {
             QR Codes
           </h1>
           <p className="text-sm text-foreground/70 mt-1">
-            {locationBusinesses.length} businesses across {grouped.length} neighborhoods. Print or share these links so visitors can collect stamps.
+            {locationBusinesses.length} passport stops, {eventBusinesses.length} bonus stamps, and {PRIZE_TIER_STAMPS.length} prize redemption codes. Print or share these links so visitors can collect stamps and redeem prizes.
           </p>
         </div>
 
@@ -425,6 +442,74 @@ export default function AdminStamps() {
             </div>
           </section>
         )}
+
+        <section className="mb-8">
+          <div className="border-t-2 border-foreground/15 pt-6">
+            <div className="flex items-baseline justify-between mb-1">
+              <h2
+                className="text-xl font-black"
+                style={{ fontFamily: "Bungee, sans-serif" }}
+              >
+                Prize Redemption
+              </h2>
+              <div className="text-[11px] font-black uppercase tracking-wider opacity-60">
+                {PRIZE_TIER_STAMPS.length} tiers
+              </div>
+            </div>
+            <p className="text-sm text-foreground/70 mb-3">
+              Scanned at the prize desk — each code redeems the reward for that stamp tier.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {PRIZE_TIER_STAMPS.map((tier) => {
+                const url = buildRedeemUrl(tier, publishedOrigin);
+                const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=240x240&margin=10`;
+                const key = `redeem-${tier}`;
+                return (
+                  <div key={key} className="card-pop bg-white p-4">
+                    <div className="flex gap-3">
+                      <img
+                        src={qrSrc}
+                        alt={`QR for prize tier ${tier} stamps`}
+                        width={96}
+                        height={96}
+                        className="border-2 border-foreground rounded-lg bg-white shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="font-black text-sm leading-tight" style={{ fontFamily: "Bungee, sans-serif" }}>
+                          Prize Tier — {tier} stamps
+                        </div>
+                        <div className="text-[10px] uppercase tracking-wider font-bold opacity-70 mt-0.5">
+                          Redemption
+                        </div>
+                        <div className="mt-1.5 text-[10px] break-all bg-[hsl(var(--brand-cream))] border-2 border-foreground rounded p-1.5 font-mono">
+                          {url}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mt-3">
+                      <button
+                        onClick={() => copy(key, url)}
+                        className="button-pop button-pop-cream text-xs flex items-center justify-center gap-1"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        {copied === key ? "Copied!" : "Copy link"}
+                      </button>
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="button-pop button-pop-yellow text-xs flex items-center justify-center gap-1"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Open page
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         {businesses.length === 0 && (
           <div className="card-pop bg-white p-8 text-center">

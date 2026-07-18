@@ -1483,6 +1483,18 @@ function AdminEventCard({
             {a.icon} {a.label}
           </button>
         ))}
+        <label className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest cursor-pointer border-2 border-foreground rounded-lg px-2 py-1 bg-white hover:bg-[hsl(var(--brand-cream))]">
+          <input
+            type="checkbox"
+            checked={event.isBonusStamp}
+            disabled={updateMutation.isPending}
+            onChange={(e) =>
+              updateMutation.mutate({ id: event.id, data: { isBonusStamp: e.target.checked } })
+            }
+            className="w-3.5 h-3.5 accent-[hsl(var(--brand-orange))]"
+          />
+          Create Bonus Stamp
+        </label>
       </div>
 
       {/* Toolbar */}
