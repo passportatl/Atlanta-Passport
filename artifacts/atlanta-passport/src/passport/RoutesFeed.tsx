@@ -3,13 +3,13 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { MapPin, Bike, Footprints, Check, Clock, Navigation, ArrowRight } from "lucide-react";
 import {
-  mapRoutes,
   resolveRoute,
   ROUTE_STARTS,
   ROUTE_TIMES,
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
+import { usePublicRoutes } from "@/hooks/usePublicRoutes";
 import Footer from "@/components/layout/Footer";
 
 const fadeInUp = {
@@ -82,6 +82,7 @@ export default function RoutesFeed({
   getRouteOptions,
   onChangeRouteOption,
 }: RoutesFeedProps) {
+  const { routes } = usePublicRoutes();
   return (
     <div className="flex-1 min-h-0 overflow-y-auto">
       <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">
@@ -103,7 +104,7 @@ export default function RoutesFeed({
           transition={{ staggerChildren: 0.06 }}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
-          {mapRoutes.map((route) => {
+          {routes.map((route) => {
             const isSelected = route.id === selectedRouteId;
             const headerTint = headerTints[route.color] ?? headerTints.yellow;
             const options = getRouteOptions(route.id);

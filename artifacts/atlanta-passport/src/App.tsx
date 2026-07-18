@@ -21,6 +21,7 @@ import PrivacyPolicy from "@/pages/privacy-policy";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
+import AdminRoutes from "@/pages/admin-routes";
 import ListALocation from "@/pages/list-a-location";
 import { VisitorProvider } from "@/passport/VisitorProvider";
 import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
@@ -239,6 +240,9 @@ function Router() {
   }
   if (location === "/admin/content") {
     return <AdminContent />;
+  }
+  if (location === "/admin/routes") {
+    return <AdminRoutes />;
   }
   // Contact is reachable to everyone (opened in its own tab from the marketing
   // nav), so render it before the protected-route gate.

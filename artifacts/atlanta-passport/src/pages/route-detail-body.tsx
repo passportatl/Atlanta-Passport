@@ -11,7 +11,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import {
-  mapRoutes,
   resolveRoute,
   businessCategories,
   ROUTE_STARTS,
@@ -19,6 +18,7 @@ import {
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
+import { usePublicRoutes } from "@/hooks/usePublicRoutes";
 import CategoryBadge from "@/components/CategoryBadge";
 import NotFound from "@/pages/not-found";
 
@@ -95,7 +95,8 @@ export default function RouteDetailBody({
   onChangeStart: (value: RouteStart) => void;
   onChangeTime: (value: RouteTime) => void;
 }) {
-  const route = mapRoutes.find((r) => r.id === id);
+  const { routes } = usePublicRoutes();
+  const route = routes.find((r) => r.id === id);
   if (!route) return <NotFound />;
 
   const resolved = resolveRoute(route, start, time);
@@ -110,9 +111,9 @@ export default function RouteDetailBody({
   const routeDescription =
     "description" in route ? (route.description as string) : "";
 
-  const idx = mapRoutes.findIndex((r) => r.id === route.id);
-  const prev = idx > 0 ? mapRoutes[idx - 1] : null;
-  const next = idx < mapRoutes.length - 1 ? mapRoutes[idx + 1] : null;
+  const idx = routes.findIndex((r) => r.id === route.id);
+  const prev = idx > 0 ? routes[idx - 1] : null;
+  const next = idx < routes.length - 1 ? routes[idx + 1] : null;
 
   return (
     <div className="container mx-auto px-4 max-w-5xl">

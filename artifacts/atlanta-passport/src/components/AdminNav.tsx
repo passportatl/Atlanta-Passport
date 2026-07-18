@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { QrCode, Inbox, Lock, Newspaper } from "lucide-react";
+import { QrCode, Inbox, Lock, Newspaper, Route } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
@@ -8,6 +8,7 @@ const tabs = [
   { path: "/admin/applications", label: "Applications", icon: Inbox },
   { path: "/admin/stamps", label: "Stamp QR Codes", icon: QrCode },
   { path: "/admin/content", label: "Content Hub", icon: Newspaper },
+  { path: "/admin/routes", label: "Routes Hub", icon: Route },
 ];
 
 export default function AdminNav({ onLock }: { onLock?: () => void }) {

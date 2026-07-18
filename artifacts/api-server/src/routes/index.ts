@@ -10,6 +10,7 @@ import contactRouter from "./contact";
 import adminExportRouter from "./admin-export";
 import sourcesRouter from "./sources";
 import locationSubmissionsRouter from "./location-submissions";
+import routesRouter from "./routes";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(contactRouter);
 router.use(adminExportRouter);
 router.use(sourcesRouter);
 router.use(locationSubmissionsRouter);
+router.use(routesRouter);
 
 export default router;
