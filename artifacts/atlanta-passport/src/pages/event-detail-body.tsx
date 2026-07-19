@@ -21,6 +21,7 @@ import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
 import NotFound from "@/pages/not-found";
+import { toDirectImageUrl } from "@/lib/utils";
 
 function parseDateTile(dateStr: string): { month: string; day: string } {
   const cleaned = dateStr
@@ -90,7 +91,7 @@ export default function EventDetailBody({
         bonusStamp: apiEvent.isBonusStamp,
         ageCategory: apiEvent.ageCategory ?? null,
         ticketUrl: apiEvent.ticketUrl ?? null,
-        imageUrl: apiEvent.imageUrl ?? null,
+        imageUrl: apiEvent.imageUrl ? toDirectImageUrl(apiEvent.imageUrl) : null,
         tier: apiEvent.tier ?? "free",
         isFeatured: apiEvent.isFeatured === true,
       }

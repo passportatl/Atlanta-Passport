@@ -15,6 +15,7 @@ import { EVENT_TYPES } from "@/data/event-taxonomy";
 export { EVENT_TYPES };
 import CategoryBadge from "@/components/CategoryBadge";
 import Footer from "@/components/layout/Footer";
+import { toDirectImageUrl } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -221,7 +222,7 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
         tags: (e as { tags?: string[] | null }).tags ?? null,
         ageCategory: e.ageCategory ?? null,
         tier: e.tier ?? null,
-        imageUrl: e.imageUrl ?? null,
+        imageUrl: e.imageUrl ? toDirectImageUrl(e.imageUrl) : null,
       })),
     [apiEventsRaw],
   );

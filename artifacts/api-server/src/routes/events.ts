@@ -169,6 +169,40 @@ router.get("/events/past", async (_req, res) => {
   res.json(rows);
 });
 
+// GET /drive-image/:fileId — streams a Google Drive file through the
+// Drive connector so private flyer uploads render as <img> without the
+// file being publicly shared.
+router.get("/drive-image/:fileId", async (req, res) => {
+  const { fileId } = req.params;
+  if (!fileId || !/^[\w-]{10,}$/.test(fileId)) {
+    res.status(400).json({ error: "Invalid file id" });
+    return;
+  }
+  try {
+    const { ReplitConnectors } = await import("@replit/connectors-sdk");
+    const connectors = new ReplitConnectors();
+    const driveRes = await connectors.proxy(
+      "google-drive",
+      `/drive/v3/files/${fileId}?alt=media`,
+    );
+    if (!driveRes.ok) {
+      res.status(driveRes.status === 404 ? 404 : 502).json({ error: "Image not available" });
+      return;
+    }
+    const contentType = driveRes.headers.get("content-type") ?? "application/octet-stream";
+    if (!contentType.startsWith("image/")) {
+      res.status(415).json({ error: "Not an image" });
+      return;
+    }
+    const buf = Buffer.from(await driveRes.arrayBuffer());
+    res.setHeader("Content-Type", contentType);
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(buf);
+  } catch {
+    res.status(502).json({ error: "Image fetch failed" });
+  }
+});
+
 // GET /events/:id  — accepts uuid or slug; published only
 router.get("/events/:id", async (req, res) => {
   const { id } = req.params;
