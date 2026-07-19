@@ -1,0 +1,532 @@
+# Passport ATL – Sprint 4: Production Readiness, Reliability & Operations
+
+Implement Sprint 4 of Passport ATL's event aggregation platform.
+
+This sprint is focused on making the system production-ready. Do not add major new event providers unless required to support reliability.
+
+Existing integrations must continue working without regression:
+
+* Manual Events
+* Google Sheets
+* Ticketmaster
+* iCal
+* RSS
+* JSON
+* XML
+* Eventbrite
+* Meetup
+* Bandsintown
+* SeatGeek
+* Any additional connectors completed during Sprint 3
+
+---
+
+# Objective
+
+Transform the event ingestion platform into a reliable, observable, fault-tolerant production system.
+
+Focus on:
+
+* reliability
+* monitoring
+* health management
+* error recovery
+* scheduling
+* deduplication improvements
+* administrative tools
+* operational visibility
+* performance
+* scalability
+
+---
+
+# Source Health Monitoring
+
+Every source should continuously maintain health information.
+
+Track:
+
+* Healthy
+* Warning
+* Failed
+* Disabled
+* Awaiting Credentials
+* Never Synced
+
+Record:
+
+* Last sync
+* Last successful sync
+* Last failure
+* Consecutive failures
+* Average response time
+* Events fetched
+* Events inserted
+* Events updated
+* Duplicates skipped
+* Events rejected
+* Parse failures
+* Authentication failures
+* Timeout failures
+
+Automatically update health status.
+
+---
+
+# Intelligent Retry System
+
+Implement automatic retry handling.
+
+Suggested behavior:
+
+Authentication failure
+
+* stop retries
+* mark Awaiting Credentials
+
+HTTP 429
+
+* exponential backoff
+
+Temporary network failures
+
+* retry automatically
+
+5xx server errors
+
+* exponential retry
+
+Malformed feeds
+
+* disable source after repeated failures
+
+Each connector should maintain independent retry state.
+
+One failing source must never stop another source from syncing.
+
+---
+
+# Scheduler Improvements
+
+Upgrade scheduling into a production scheduler.
+
+Support:
+
+* configurable sync intervals
+* manual sync
+* automatic sync
+* queued jobs
+* job locking
+* timeout protection
+* cancellation
+* staggered execution
+
+Prevent overlapping syncs.
+
+Never allow duplicate jobs for the same source.
+
+---
+
+# Sync Queue
+
+Implement a centralized synchronization queue.
+
+Each job should track:
+
+* source
+* priority
+* status
+* queued time
+* started time
+* completed time
+* duration
+* retry count
+* result
+* error message
+
+Statuses:
+
+* Queued
+* Running
+* Success
+* Warning
+* Failed
+* Cancelled
+
+---
+
+# Advanced Deduplication
+
+Strengthen duplicate detection.
+
+Current duplicate matching should expand to include weighted confidence scoring.
+
+Signals include:
+
+* External ID
+* Title similarity
+* Start date
+* Start time
+* Venue
+* Address
+* Coordinates
+* Event URL
+* Ticket URL
+* Organizer
+* Category
+
+Support fuzzy matching.
+
+Generate a duplicate confidence score.
+
+Examples:
+
+100%
+
+* same external ID
+
+95%
+
+* same title
+* same venue
+* same time
+
+80%
+
+* similar title
+* nearby venue
+* same day
+
+Automatically:
+
+* merge safe duplicates
+* flag uncertain duplicates for review
+
+Never overwrite editorial content.
+
+---
+
+# Event Versioning
+
+Track event history.
+
+Record:
+
+* original import
+* source updates
+* editorial changes
+* cancellations
+* date changes
+* venue changes
+
+Display change history inside the CMS.
+
+---
+
+# Source Analytics
+
+Build operational analytics.
+
+Per source display:
+
+* total events
+* imported today
+* imported this week
+* imported this month
+* duplicate rate
+* rejection rate
+* average response time
+* uptime percentage
+* last successful sync
+* next scheduled sync
+
+---
+
+# Dashboard
+
+Create an operations dashboard.
+
+Display:
+
+System Status
+
+* Overall Health
+
+Source Summary
+
+* Healthy
+* Warning
+* Failed
+* Disabled
+
+Recent Imports
+
+Recent Failures
+
+Recent Duplicate Activity
+
+Pending Review totals
+
+Today's imports
+
+This week's imports
+
+Top performing sources
+
+Slowest sources
+
+Most duplicate-prone sources
+
+---
+
+# Logging
+
+Improve logging.
+
+Every synchronization should generate:
+
+* job ID
+* connector
+* timestamps
+* duration
+* API response
+* events processed
+* duplicates
+* failures
+* retry attempts
+
+Support searching logs by:
+
+* connector
+* event
+* external ID
+* date
+* error type
+
+---
+
+# Notifications
+
+Implement administrative notifications.
+
+Generate alerts for:
+
+* repeated failures
+* authentication expiration
+* feeds unavailable
+* API quota exhaustion
+* abnormal duplicate spikes
+* zero events imported from an active source
+* scheduler failures
+
+Notifications should appear inside the admin interface.
+
+Email notifications may be optional if email infrastructure already exists.
+
+---
+
+# Performance
+
+Improve ingestion performance.
+
+Goals:
+
+* minimize API calls
+* incremental synchronization
+* pagination support
+* caching when appropriate
+* parallelize independent source imports safely
+* optimize database queries
+* reduce duplicate comparisons where possible
+
+---
+
+# Data Integrity
+
+Implement integrity checks.
+
+Detect:
+
+* missing venues
+* missing dates
+* invalid coordinates
+* malformed URLs
+* invalid images
+* duplicate external IDs
+
+Reject invalid records gracefully.
+
+Log every rejection.
+
+---
+
+# CMS Improvements
+
+Extend the Pending Review interface.
+
+Display:
+
+* Source
+* Import date
+* Last source update
+* Duplicate confidence
+* Event history
+* Original source URL
+* Ticket URL
+* Sync history
+
+Allow administrators to:
+
+* approve
+* reject
+* merge duplicates
+* view source history
+* inspect raw source metadata
+
+---
+
+# Backup & Recovery
+
+Implement safeguards.
+
+Support:
+
+* import rollback
+* failed batch recovery
+* partial sync recovery
+* checkpointing for large imports
+
+Prevent corrupt imports from affecting existing events.
+
+---
+
+# Configuration
+
+Centralize connector configuration.
+
+Each connector should expose:
+
+* enabled
+* sync interval
+* retry policy
+* timeout
+* health thresholds
+* priority
+* authentication status
+
+Administrators should not need code changes to modify operational settings.
+
+---
+
+# Testing
+
+Run production validation.
+
+Verify:
+
+* every connector syncs correctly
+* retries work
+* scheduler works
+* queue works
+* health monitoring works
+* duplicate detection works
+* Pending Review works
+* Google Sheets still work
+* Ticketmaster still works
+* iCal still works
+* RSS still works
+* API connectors still work
+
+Run tests simulating:
+
+* authentication failure
+* network timeout
+* malformed feed
+* duplicate event
+* cancelled event
+* source outage
+
+Verify graceful recovery.
+
+---
+
+# Production Readiness Checklist
+
+Sprint 4 is complete only when:
+
+✅ All event connectors remain operational
+
+✅ Scheduler is stable
+
+✅ Queue prevents overlapping jobs
+
+✅ Retry logic works
+
+✅ Health monitoring works
+
+✅ Duplicate confidence scoring works
+
+✅ Operations dashboard works
+
+✅ Pending Review workflow remains intact
+
+✅ Existing editorial content is preserved
+
+✅ Logs are searchable
+
+✅ Alerts are generated correctly
+
+✅ Data integrity checks pass
+
+✅ Application starts successfully
+
+✅ Existing Passport ATL functionality has no regressions
+
+---
+
+# Final Production Report
+
+Provide a detailed report including:
+
+## System Overview
+
+* Total connectors
+* Active connectors
+* Disabled connectors
+* Healthy connectors
+* Failed connectors
+
+## Scheduler
+
+* Queue status
+* Average sync duration
+* Longest sync
+* Retry statistics
+
+## Event Statistics
+
+* Total events imported
+* Total updates
+* Total duplicates prevented
+* Total rejected
+* Total Pending Review
+
+## Source Statistics
+
+For each connector:
+
+* Health
+* Last sync
+* Events imported
+* Duplicate rate
+* Failure rate
+* Average response time
+
+## Reliability Summary
+
+* Outstanding issues
+* Performance bottlenecks
+* Security recommendations
+* Future scalability recommendations
+
+Do not mark Sprint 4 complete until the production environment has been verified to be stable, all completed integrations remain functional, and the system has successfully completed live synchronization cycles without regressions.
