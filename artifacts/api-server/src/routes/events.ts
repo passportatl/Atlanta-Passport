@@ -545,8 +545,12 @@ router.post("/admin/events/backfill-date-iso", requireAdmin, async (req, res) =>
 // NOTE: must be registered BEFORE /admin/events/:id or ":id" swallows "bulk-status"
 // Body forms:
 //   { ids: string[], status: string }            — set one status on many events
-//   { restore: { id: string, status: string }[] } — per-id restore (undo of a bulk action)
+//   { restore: { id: string, status: string, expected?: string }[] } — per-id restore (undo of a bulk action)
 // Both forms return { updated, prior: { id, status }[] } so the caller can undo.
+// The restore form also returns { skipped }: when an entry carries `expected`
+// (the status the bulk action set), events whose current status no longer
+// matches it were changed by someone else since the bulk action, so the undo
+// skips them instead of silently overwriting the newer change.
 
 function bulkStatusUpdates(status: string): Record<string, unknown> {
   const updates: Record<string, unknown> = { workflowStatus: status, updatedAt: new Date() };
@@ -564,13 +568,13 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
   const { ids, status, restore } = req.body as {
     ids?: string[];
     status?: string;
-    restore?: { id?: string; status?: string }[];
+    restore?: { id?: string; status?: string; expected?: string }[];
   };
 
   // ── Per-id restore form (undo) ──
   if (Array.isArray(restore)) {
     const entries = restore.filter(
-      (e): e is { id: string; status: string } =>
+      (e): e is { id: string; status: string; expected?: string } =>
         !!e && typeof e.id === "string" && typeof e.status === "string" && e.status.length > 0,
     );
     if (entries.length === 0) {
@@ -583,10 +587,27 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
       .select({ id: eventsTable.id, status: eventsTable.workflowStatus })
       .from(eventsTable)
       .where(inArray(eventsTable.id, allIds));
+    const currentById = new Map(priorRows.map((r) => [r.id, r.status]));
+
+    // Skip entries whose current status no longer matches what the bulk action
+    // set (`expected`): another admin or the scheduler changed them since, and
+    // undo must not overwrite that newer change. Entries without `expected`
+    // (older clients) restore unconditionally, as before.
+    let skipped = 0;
+    const applicable = entries.filter((e) => {
+      if (typeof e.expected !== "string" || e.expected.length === 0) return true;
+      const current = currentById.get(e.id);
+      if (current === undefined) return true; // let the UPDATE no-op on missing rows
+      if (current !== e.expected) {
+        skipped += 1;
+        return false;
+      }
+      return true;
+    });
 
     // Group by target status so each group shares one UPDATE with its side effects
     const byStatus = new Map<string, string[]>();
-    for (const e of entries) {
+    for (const e of applicable) {
       const list = byStatus.get(e.status) ?? [];
       list.push(e.id);
       byStatus.set(e.status, list);
@@ -628,7 +649,7 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
       }
     }
 
-    res.json({ updated, prior: priorRows });
+    res.json({ updated, skipped, prior: priorRows });
     return;
   }
 

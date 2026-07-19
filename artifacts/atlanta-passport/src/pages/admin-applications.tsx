@@ -132,17 +132,21 @@ async function bulkUpdateStatus(
   return res.json() as Promise<{ updated: number; prior?: PriorStatusEntry[] }>;
 }
 
+/** Undo a bulk action. Each entry carries `expected` — the status the bulk
+ *  action set — so the server can skip events whose status changed since
+ *  (another admin or the scheduler) instead of overwriting the newer change. */
 async function bulkRestoreStatus(
-  restore: PriorStatusEntry[],
+  restore: { id: string; status: string; expected: string }[],
   adminKey: string,
-): Promise<{ updated: number }> {
+): Promise<{ updated: number; skipped: number }> {
   const res = await fetch(`${API_BASE}/admin/events/bulk-status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
     body: JSON.stringify({ restore }),
   });
   if (!res.ok) throw new Error(`Undo failed: ${res.status}`);
-  return res.json() as Promise<{ updated: number }>;
+  const data = (await res.json()) as { updated: number; skipped?: number };
+  return { updated: data.updated, skipped: data.skipped ?? 0 };
 }
 
 /** Bulk update in chunks so very large selections (1,500+) don't hit body-size
@@ -168,18 +172,20 @@ async function bulkUpdateStatusChunked(
 }
 
 async function bulkRestoreStatusChunked(
-  entries: PriorStatusEntry[],
+  entries: { id: string; status: string; expected: string }[],
   adminKey: string,
   onProgress?: (done: number, total: number) => void,
-): Promise<{ updated: number }> {
+): Promise<{ updated: number; skipped: number }> {
   let updated = 0;
+  let skipped = 0;
   for (let i = 0; i < entries.length; i += BULK_CHUNK_SIZE) {
     const chunk = entries.slice(i, i + BULK_CHUNK_SIZE);
     const result = await bulkRestoreStatus(chunk, adminKey);
     updated += result.updated;
+    skipped += result.skipped;
     onProgress?.(Math.min(i + BULK_CHUNK_SIZE, entries.length), entries.length);
   }
-  return { updated };
+  return { updated, skipped };
 }
 
 // ── CSV utilities ────────────────────────────────────────────────────────────
@@ -2953,7 +2959,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const [bulkPending, setBulkPending] = useState(false);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
-  const [undoState, setUndoState] = useState<PriorStatusEntry[] | null>(null);
+  const [undoState, setUndoState] = useState<{ entries: PriorStatusEntry[]; appliedStatus: string } | null>(null);
   const [undoPending, setUndoPending] = useState(false);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showImporter, setShowImporter] = useState(false);
@@ -3096,7 +3102,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       );
       setBulkMsg(`✅ ${result.updated} event${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
       if (result.prior.length > 0) {
-        setUndoState(result.prior);
+        setUndoState({ entries: result.prior, appliedStatus: status });
         if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
         undoTimerRef.current = setTimeout(() => {
           setUndoState(null);
@@ -3114,15 +3120,20 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   };
 
   const doUndoBulkAction = async () => {
-    if (!undoState || undoState.length === 0 || undoPending) return;
-    const entries = undoState;
+    if (!undoState || undoState.entries.length === 0 || undoPending) return;
+    const entries = undoState.entries.map((e) => ({ ...e, expected: undoState.appliedStatus }));
     setUndoPending(true);
     setBulkProgress(null);
     try {
       const result = await bulkRestoreStatusChunked(entries, adminKey, (done, total) =>
         setBulkProgress({ done: Math.min(done, total), total }),
       );
-      setBulkMsg(`↩️ Undone — ${result.updated} event${result.updated !== 1 ? "s" : ""} restored to their previous status.`);
+      const restoredMsg = `${result.updated} event${result.updated !== 1 ? "s" : ""} restored to their previous status`;
+      setBulkMsg(
+        result.skipped > 0
+          ? `↩️ Undone — ${restoredMsg}; ${result.skipped} skipped because ${result.skipped !== 1 ? "their statuses were" : "its status was"} changed by someone else after the bulk action.`
+          : `↩️ Undone — ${restoredMsg}.`,
+      );
       clearUndo();
       refresh();
     } catch (err) {
@@ -3262,7 +3273,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       {bulkMsg && selectedIds.size === 0 && (
         <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
           <span className="text-sm font-bold">{bulkMsg}</span>
-          {undoState && undoState.length > 0 && (
+          {undoState && undoState.entries.length > 0 && (
             <button
               type="button"
               disabled={undoPending}
