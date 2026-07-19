@@ -299,7 +299,11 @@
     "time_morning": "Morgens",
     "time_afternoon": "Nachmittags",
     "time_evening": "Abends",
-    "no_filter_match": "Keine Events entsprechen diesen Filtern."
+    "no_filter_match": "Keine Events entsprechen diesen Filtern.",
+    "past_events": "Archiv vergangener Events",
+    "past_loading": "Vergangene Events werden geladen…",
+    "past_empty": "Noch keine vergangenen Events im Archiv.",
+    "past_ended": "Beendet"
   },
   "about_page": {
     "kicker": "★ Über uns",

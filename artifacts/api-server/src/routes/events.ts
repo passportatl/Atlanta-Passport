@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { desc, eq, or, and, inArray } from "drizzle-orm";
+import { desc, eq, or, and, inArray, isNotNull, lt } from "drizzle-orm";
 import { db, eventsTable, eventAuditLog, computeEventCompleteness, businessesTable } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
@@ -124,6 +124,37 @@ router.get("/events", async (req, res) => {
   });
 
   res.json(filtered);
+});
+
+// GET /events/past — public archive of past events. Surfaces events whose
+// date has passed and that were publicly visible at the time: still-published
+// rows with a past dateIso, plus rows the cleanup job archived from
+// "published". Never leaks events that were pending/rejected/etc.
+// NOTE: must be registered before /events/:id so "past" isn't treated as a slug.
+router.get("/events/past", async (_req, res) => {
+  const { todayIsoAtlanta } = await import("../lib/ingestion/past-event-cleanup");
+  const todayIso = todayIsoAtlanta();
+
+  const rows = await db
+    .select()
+    .from(eventsTable)
+    .where(
+      or(
+        and(
+          eq(eventsTable.workflowStatus, "archived"),
+          eq(eventsTable.archivedFromStatus, "published"),
+        ),
+        and(
+          eq(eventsTable.workflowStatus, "published"),
+          isNotNull(eventsTable.dateIso),
+          lt(eventsTable.dateIso, todayIso),
+        ),
+      ),
+    )
+    .orderBy(desc(eventsTable.dateIso))
+    .limit(500);
+
+  res.json(rows);
 });
 
 // GET /events/:id  — accepts uuid or slug; published only

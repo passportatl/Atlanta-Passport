@@ -26,6 +26,7 @@ export interface EventRecord {
   isBonusStamp: boolean;
   tier: string;
   listingPackage?: string | null;
+  workflowStatus?: string;
   imageUrl?: string | null;
   ticketUrl?: string | null;
   tags?: string[] | null;

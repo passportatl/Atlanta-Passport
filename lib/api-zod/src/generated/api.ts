@@ -319,6 +319,12 @@ export const ListPublicEventsResponseItem = zod.object({
   isFeatured: zod.boolean(),
   isBonusStamp: zod.boolean(),
   tier: zod.string(),
+  listingPackage: zod.string().nullish(),
+  workflowStatus: zod.string().optional(),
+  imageUrl: zod.string().nullish(),
+  ticketUrl: zod.string().nullish(),
+  tags: zod.array(zod.string()).nullish(),
+  ageCategory: zod.string().nullish(),
   publishedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
@@ -360,6 +366,41 @@ export const SubmitEventBody = zod.object({
 });
 
 /**
+ * @summary List past events archive (public, formerly-published only)
+ */
+export const ListPastPublicEventsResponseItem = zod.object({
+  id: zod.string(),
+  slug: zod.string().nullish(),
+  name: zod.string(),
+  category: zod.string(),
+  date: zod.string(),
+  dateIso: zod.string().nullish(),
+  time: zod.string().nullish(),
+  venue: zod.string(),
+  address: zod.string().nullish(),
+  neighborhood: zod.string(),
+  description: zod.string().nullish(),
+  highlights: zod.array(zod.string()).nullish(),
+  instagram: zod.array(zod.string()).nullish(),
+  cost: zod.string().nullish(),
+  url: zod.string().nullish(),
+  isFeatured: zod.boolean(),
+  isBonusStamp: zod.boolean(),
+  tier: zod.string(),
+  listingPackage: zod.string().nullish(),
+  workflowStatus: zod.string().optional(),
+  imageUrl: zod.string().nullish(),
+  ticketUrl: zod.string().nullish(),
+  tags: zod.array(zod.string()).nullish(),
+  ageCategory: zod.string().nullish(),
+  publishedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListPastPublicEventsResponse = zod.array(
+  ListPastPublicEventsResponseItem,
+);
+
+/**
  * @summary Get a single published event by id or slug
  */
 export const GetPublicEventParams = zod.object({
@@ -385,6 +426,10 @@ export const GetPublicEventResponse = zod.object({
   isFeatured: zod.boolean(),
   isBonusStamp: zod.boolean(),
   tier: zod.string(),
+  listingPackage: zod.string().nullish(),
+  workflowStatus: zod.string().optional(),
+  imageUrl: zod.string().nullish(),
+  ticketUrl: zod.string().nullish(),
   tags: zod.array(zod.string()).nullish(),
   ageCategory: zod.string().nullish(),
   publishedAt: zod.coerce.date().nullish(),
@@ -416,10 +461,15 @@ export const ListAdminEventsResponseItem = zod.object({
   instagram: zod.array(zod.string()).nullish(),
   cost: zod.string().nullish(),
   url: zod.string().nullish(),
+  imageUrl: zod.string().nullish(),
+  ticketUrl: zod.string().nullish(),
   workflowStatus: zod.string(),
   publishedAt: zod.coerce.date().nullish(),
   scheduledPublishAt: zod.coerce.date().nullish(),
   tier: zod.string(),
+  listingPackage: zod.string().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  listingPrice: zod.number().nullish(),
   isFeatured: zod.boolean(),
   isBonusStamp: zod.boolean(),
   contactName: zod.string().nullish(),
@@ -522,10 +572,15 @@ export const UpdateAdminEventResponse = zod.object({
   instagram: zod.array(zod.string()).nullish(),
   cost: zod.string().nullish(),
   url: zod.string().nullish(),
+  imageUrl: zod.string().nullish(),
+  ticketUrl: zod.string().nullish(),
   workflowStatus: zod.string(),
   publishedAt: zod.coerce.date().nullish(),
   scheduledPublishAt: zod.coerce.date().nullish(),
   tier: zod.string(),
+  listingPackage: zod.string().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  listingPrice: zod.number().nullish(),
   isFeatured: zod.boolean(),
   isBonusStamp: zod.boolean(),
   contactName: zod.string().nullish(),

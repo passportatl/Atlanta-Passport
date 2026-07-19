@@ -299,7 +299,11 @@
     "time_morning": "오전",
     "time_afternoon": "오후",
     "time_evening": "저녁",
-    "no_filter_match": "필터에 맞는 이벤트가 없습니다."
+    "no_filter_match": "필터에 맞는 이벤트가 없습니다.",
+    "past_events": "지난 이벤트 아카이브",
+    "past_loading": "지난 이벤트 불러오는 중…",
+    "past_empty": "아카이브에 지난 이벤트가 아직 없습니다.",
+    "past_ended": "종료됨"
   },
   "about_page": {
     "kicker": "★ 소개",

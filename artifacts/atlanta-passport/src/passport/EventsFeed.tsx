@@ -4,7 +4,12 @@ import { useTranslation } from "react-i18next";
 import { MapPin, Calendar, Clock, Tag, ArrowRight, ChevronDown, ChevronLeft, ChevronRight, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { events as sampleEvents, businesses, neighborhoods } from "@/data/sample-data";
-import { useListPublicEvents, getListPublicEventsQueryKey } from "@workspace/api-client-react";
+import {
+  useListPublicEvents,
+  getListPublicEventsQueryKey,
+  useListPastPublicEvents,
+  getListPastPublicEventsQueryKey,
+} from "@workspace/api-client-react";
 import { EVENT_TAGS, AGE_OPTIONS, normalizeAge, normalizeCategory } from "@/data/event-taxonomy";
 import { EVENT_TYPES } from "@/data/event-taxonomy";
 export { EVENT_TYPES };
@@ -220,6 +225,40 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
       })),
     [apiEventsRaw],
   );
+
+  // Past-events archive — collapsed by default; fetched only when opened.
+  const [showPast, setShowPast] = useState(false);
+  const { data: pastEventsRaw, isLoading: pastLoading } = useListPastPublicEvents({
+    query: {
+      queryKey: getListPastPublicEventsQueryKey(),
+      staleTime: 300_000,
+      enabled: showPast,
+    },
+  });
+
+  // Group past events by month (newest first) using dateIso ("YYYY-MM-DD").
+  const pastByMonth = useMemo(() => {
+    const map = new Map<string, { label: string; events: typeof pastEventsRaw }>();
+    for (const ev of pastEventsRaw ?? []) {
+      const iso = (ev as { dateIso?: string | null }).dateIso;
+      const key = iso ? iso.slice(0, 7) : "unknown";
+      const label = iso
+        ? new Intl.DateTimeFormat(i18n.language || "en", {
+            month: "long",
+            year: "numeric",
+          }).format(new Date(`${iso.slice(0, 7)}-15T12:00:00`))
+        : "";
+      let entry = map.get(key);
+      if (!entry) {
+        entry = { label, events: [] };
+        map.set(key, entry);
+      }
+      entry.events!.push(ev);
+    }
+    return [...map.entries()]
+      .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+      .map(([key, v]) => ({ key, ...v }));
+  }, [pastEventsRaw, i18n.language]);
 
   // Listing-only sample events (calendar-only entries with no detail page) fill
   // the calendar for events not yet imported into the DB.
@@ -1010,6 +1049,95 @@ export default function EventsFeed({ onSelectBusiness, onSelectAddress, onSelect
               })}
             </div>
           </div>
+        </div>
+
+        {/* Past events archive — collapsed by default. Shows formerly-published
+            events whose date has passed, grouped by month, newest first. */}
+        <div className="shrink-0 mt-4">
+          <button
+            type="button"
+            onClick={() => setShowPast((v) => !v)}
+            aria-expanded={showPast}
+            className="w-full card-pop bg-card px-3 py-2 flex items-center justify-between gap-2"
+          >
+            <span className="inline-flex items-center gap-1.5 font-display text-[11px] tracking-[0.14em] uppercase text-foreground">
+              <Calendar className="w-3.5 h-3.5 text-brand-red" />
+              {t("events_page.past_events", { defaultValue: "Past Events Archive" })}
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 transition-transform ${showPast ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {showPast && (
+            <div className="mt-2 space-y-3">
+              {pastLoading && (
+                <p className="text-[11px] text-foreground/60 py-1">
+                  {t("events_page.past_loading", { defaultValue: "Loading past events…" })}
+                </p>
+              )}
+              {!pastLoading && pastByMonth.length === 0 && (
+                <p className="text-[11px] text-foreground/60 py-1">
+                  {t("events_page.past_empty", {
+                    defaultValue: "No past events in the archive yet.",
+                  })}
+                </p>
+              )}
+              {pastByMonth.map((group) => (
+                <div key={group.key}>
+                  {group.label && (
+                    <div className="mb-1.5 font-display text-[10px] tracking-[0.14em] uppercase text-foreground/60">
+                      {group.label}
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5">
+                    {(group.events ?? []).map((ev) => {
+                      const stillPublished =
+                        (ev as { workflowStatus?: string }).workflowStatus === "published";
+                      return (
+                        <div key={ev.id} className="card-pop bg-card p-2 opacity-80">
+                          <h4 className="text-[12px] font-serif font-bold text-foreground leading-tight">
+                            {ev.name}
+                          </h4>
+                          <div className="flex items-center gap-1 text-[10px] text-foreground/70 mt-0.5">
+                            <Calendar className="w-3 h-3 text-brand-red shrink-0" />
+                            <span className="truncate">{ev.date}</span>
+                          </div>
+                          {ev.venue && (
+                            <div className="flex items-center gap-1 text-[10px] text-foreground/70">
+                              <MapPin className="w-3 h-3 text-brand-red shrink-0" />
+                              <span className="truncate">{ev.venue}</span>
+                            </div>
+                          )}
+                          <div className="mt-1 flex flex-wrap items-center gap-1">
+                            {ev.category && (
+                              <CategoryBadge
+                                category={ev.category}
+                                className="text-[8px] px-1.5 py-0.5"
+                              />
+                            )}
+                            {stillPublished ? (
+                              <Link
+                                href={`/passport/events/${ev.slug ?? ev.id}`}
+                                className="inline-flex items-center gap-1 font-display text-[9px] tracking-[0.14em] text-brand-red uppercase hover:underline"
+                              >
+                                {t("events_page.view_event")}
+                                <ArrowRight className="w-3 h-3 rtl:rotate-180" />
+                              </Link>
+                            ) : (
+                              <span className="inline-flex items-center rounded-full border border-foreground/30 bg-foreground/5 px-1.5 py-0.5 text-[8px] font-display uppercase tracking-wider text-foreground/60">
+                                {t("events_page.past_ended", { defaultValue: "Ended" })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       </div>

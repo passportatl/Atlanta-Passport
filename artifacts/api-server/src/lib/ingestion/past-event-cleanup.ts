@@ -5,7 +5,7 @@
 // auto-archived. Archiving removes them from the admin pending queue and,
 // for published rows, from the public feed.
 
-import { and, inArray, isNotNull, lt } from "drizzle-orm";
+import { and, inArray, isNotNull, lt, sql } from "drizzle-orm";
 import { db, eventsTable } from "@workspace/db";
 import { logger } from "../logger";
 
@@ -40,7 +40,13 @@ export async function archivePastIngestedEvents(): Promise<number> {
 
   const archived = await db
     .update(eventsTable)
-    .set({ workflowStatus: "archived", updatedAt: now })
+    .set({
+      workflowStatus: "archived",
+      // Remember what the event was before archiving so the public "past
+      // events" archive can show only formerly-published events.
+      archivedFromStatus: sql`${eventsTable.workflowStatus}`,
+      updatedAt: now,
+    })
     .where(
       and(
         isNotNull(eventsTable.ingestSourceId),

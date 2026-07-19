@@ -299,7 +299,11 @@
     "time_morning": "午前",
     "time_afternoon": "午後",
     "time_evening": "夜",
-    "no_filter_match": "条件に合うイベントはありません。"
+    "no_filter_match": "条件に合うイベントはありません。",
+    "past_events": "過去のイベントアーカイブ",
+    "past_loading": "過去のイベントを読み込み中…",
+    "past_empty": "アーカイブにはまだ過去のイベントがありません。",
+    "past_ended": "終了"
   },
   "about_page": {
     "kicker": "★ について",

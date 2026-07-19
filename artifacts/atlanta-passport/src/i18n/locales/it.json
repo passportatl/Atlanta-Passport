@@ -299,7 +299,11 @@
     "time_morning": "Mattina",
     "time_afternoon": "Pomeriggio",
     "time_evening": "Sera",
-    "no_filter_match": "Nessun evento corrisponde a questi filtri."
+    "no_filter_match": "Nessun evento corrisponde a questi filtri.",
+    "past_events": "Archivio eventi passati",
+    "past_loading": "Caricamento eventi passati…",
+    "past_empty": "Nessun evento passato in archivio.",
+    "past_ended": "Concluso"
   },
   "about_page": {
     "kicker": "★ Chi Siamo",

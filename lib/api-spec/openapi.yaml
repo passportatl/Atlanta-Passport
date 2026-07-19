@@ -297,6 +297,20 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/EventRecord" }
 
+  /events/past:
+    get:
+      operationId: listPastPublicEvents
+      tags: [events]
+      summary: List past events archive (public, formerly-published only)
+      responses:
+        "200":
+          description: Past events, newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/EventRecord" }
+
   /events/{id}:
     get:
       operationId: getPublicEvent
@@ -771,6 +785,15 @@ components:
         isFeatured: { type: boolean }
         isBonusStamp: { type: boolean }
         tier: { type: string }
+        listingPackage: { type: string, nullable: true }
+        workflowStatus: { type: string }
+        imageUrl: { type: string, nullable: true }
+        ticketUrl: { type: string, nullable: true }
+        tags:
+          type: array
+          items: { type: string }
+          nullable: true
+        ageCategory: { type: string, nullable: true }
         publishedAt: { type: string, format: date-time, nullable: true }
         createdAt: { type: string, format: date-time }
       required:
@@ -809,10 +832,18 @@ components:
           nullable: true
         cost: { type: string, nullable: true }
         url: { type: string, nullable: true }
+        imageUrl: { type: string, nullable: true }
+        ticketUrl: { type: string, nullable: true }
         workflowStatus: { type: string }
         publishedAt: { type: string, format: date-time, nullable: true }
         scheduledPublishAt: { type: string, format: date-time, nullable: true }
         tier: { type: string }
+        listingPackage: { type: string, nullable: true }
+        addOns:
+          type: array
+          items: { type: string }
+          nullable: true
+        listingPrice: { type: integer, nullable: true }
         isFeatured: { type: boolean }
         isBonusStamp: { type: boolean }
         contactName: { type: string, nullable: true }
@@ -831,6 +862,11 @@ components:
         paymentId: { type: string, nullable: true }
         paymentStatus: { type: string, nullable: true }
         emailDelivered: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+          nullable: true
+        ageCategory: { type: string, nullable: true }
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
       required:
@@ -895,6 +931,12 @@ components:
         address: { type: string }
         neighborhood: { type: string }
         description: { type: string }
+        highlights:
+          type: array
+          items: { type: string }
+        instagram:
+          type: array
+          items: { type: string }
         cost: { type: string }
         url: { type: string }
         contactName: { type: string }
@@ -903,6 +945,18 @@ components:
         promoContact: { type: boolean }
         promoContactMethod: { type: string }
         intakeNotes: { type: string }
+        ageCategory: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        imageUrl: { type: string }
+        ticketUrl: { type: string }
+        listingPackage: { type: string }
+        addOns:
+          type: array
+          items: { type: string }
+        listingPrice: { type: number }
+        endDate: { type: string }
       required:
         - name
         - contactName
@@ -916,6 +970,12 @@ components:
         adminNotes: { type: string }
         assignedTo: { type: string }
         tier: { type: string }
+        listingPackage: { type: string }
+        addOns:
+          type: array
+          items: { type: string }
+        listingPrice: { type: number }
+        paymentStatus: { type: string }
         isFeatured: { type: boolean }
         isBonusStamp: { type: boolean }
         scheduledPublishAt: { type: string }
@@ -927,5 +987,21 @@ components:
         address: { type: string }
         neighborhood: { type: string }
         description: { type: string }
+        highlights:
+          type: array
+          items: { type: string }
+        imageUrl: { type: string }
+        ticketUrl: { type: string }
+        instagram:
+          type: array
+          items: { type: string }
         cost: { type: string }
         url: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        ageCategory: { type: string }
+        contactName: { type: string }
+        contactEmail: { type: string }
+        contactPhone: { type: string }
+        promoContactMethod: { type: string }

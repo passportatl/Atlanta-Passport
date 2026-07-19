@@ -38,7 +38,7 @@ type ApiRoute = {
 export type SampleRoute = (typeof mapRoutes)[number];
 
 function mergeRoutes(apiRoutes: ApiRoute[]): SampleRoute[] {
-  if (apiRoutes.length === 0) return mapRoutes;
+  if (apiRoutes.length === 0) return [...mapRoutes];
 
   const result: SampleRoute[] = [];
   for (const ar of apiRoutes) {
@@ -55,14 +55,14 @@ function mergeRoutes(apiRoutes: ApiRoute[]): SampleRoute[] {
     } as SampleRoute);
   }
 
-  if (result.length === 0) return mapRoutes;
+  if (result.length === 0) return [...mapRoutes];
   return result;
 }
 
 type Status = "loading" | "ready" | "error";
 
 export function usePublicRoutes() {
-  const [routes, setRoutes] = useState<SampleRoute[]>(mapRoutes);
+  const [routes, setRoutes] = useState<SampleRoute[]>([...mapRoutes]);
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export function usePublicRoutes() {
       })
       .catch(() => {
         if (cancelled) return;
-        setRoutes(mapRoutes);
+        setRoutes([...mapRoutes]);
         setStatus("error");
       });
     return () => { cancelled = true; };

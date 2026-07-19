@@ -246,6 +246,7 @@ export interface EventRecord {
   isBonusStamp: boolean;
   tier: string;
   listingPackage?: string | null;
+  workflowStatus?: string;
   imageUrl?: string | null;
   ticketUrl?: string | null;
   tags?: string[] | null;
@@ -342,7 +343,7 @@ export interface SubmitEventInput {
   promoContactMethod?: string;
   intakeNotes?: string;
   ageCategory?: string;
-  tags?: string;
+  tags?: string[];
   imageUrl?: string;
   ticketUrl?: string;
   listingPackage?: string;

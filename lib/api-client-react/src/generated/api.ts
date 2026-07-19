@@ -1322,6 +1322,81 @@ export const useSubmitEvent = <
 };
 
 /**
+ * @summary List past events archive (public, formerly-published only)
+ */
+export const getListPastPublicEventsUrl = () => {
+  return `/api/events/past`;
+};
+
+export const listPastPublicEvents = async (
+  options?: RequestInit,
+): Promise<EventRecord[]> => {
+  return customFetch<EventRecord[]>(getListPastPublicEventsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListPastPublicEventsQueryKey = () => {
+  return [`/api/events/past`] as const;
+};
+
+export const getListPastPublicEventsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPastPublicEvents>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listPastPublicEvents>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListPastPublicEventsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPastPublicEvents>>
+  > = ({ signal }) => listPastPublicEvents({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPastPublicEvents>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPastPublicEventsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPastPublicEvents>>
+>;
+export type ListPastPublicEventsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List past events archive (public, formerly-published only)
+ */
+
+export function useListPastPublicEvents<
+  TData = Awaited<ReturnType<typeof listPastPublicEvents>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listPastPublicEvents>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPastPublicEventsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
  * @summary Get a single published event by id or slug
  */
 export const getGetPublicEventUrl = (id: string) => {

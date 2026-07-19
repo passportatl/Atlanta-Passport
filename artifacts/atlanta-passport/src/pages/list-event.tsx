@@ -373,7 +373,7 @@ function ReviewSummary({ values, pkg }: { values: Partial<FormValues>; pkg: Pkg 
           {row("Address", values.address)}
           {row("Neighborhood", values.neighborhood)}
           {row("Event Type", values.category)}
-          {values.tags.length > 0 && row("Tags", values.tags.join(", "))}
+          {(values.tags ?? []).length > 0 && row("Tags", (values.tags ?? []).join(", "))}
           {row("Age Range", values.ageCategory)}
           {row("Cost", values.cost)}
           {row("Ticket URL", values.ticketUrl)}

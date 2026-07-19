@@ -299,7 +299,11 @@
     "time_morning": "Mañana",
     "time_afternoon": "Tarde",
     "time_evening": "Noche",
-    "no_filter_match": "Ningún evento coincide con esos filtros."
+    "no_filter_match": "Ningún evento coincide con esos filtros.",
+    "past_events": "Archivo de eventos pasados",
+    "past_loading": "Cargando eventos pasados…",
+    "past_empty": "Aún no hay eventos pasados en el archivo.",
+    "past_ended": "Finalizado"
   },
   "about_page": {
     "kicker": "★ Acerca de",

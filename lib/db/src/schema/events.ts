@@ -19,6 +19,9 @@ export const eventsTable = pgTable("events", {
   imageUrl: text("image_url"),
   ticketUrl: text("ticket_url"),
   workflowStatus: text("workflow_status").notNull().default("pending"),
+  // Status the event held right before being auto-archived (e.g. "published").
+  // Lets the public archive surface only events that were actually published.
+  archivedFromStatus: text("archived_from_status"),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   scheduledPublishAt: timestamp("scheduled_publish_at", { withTimezone: true }),
   tier: text("tier").notNull().default("free"),
