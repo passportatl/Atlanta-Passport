@@ -62,7 +62,7 @@ const MONTH_DISPLAY = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-function parseEventDate(raw: string): { display: string; iso: string } | null {
+export function parseEventDate(raw: string): { display: string; iso: string } | null {
   if (!raw) return null;
   const s = raw.trim();
 

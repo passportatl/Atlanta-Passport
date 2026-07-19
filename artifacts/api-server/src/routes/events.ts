@@ -1,9 +1,10 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { desc, eq, or, and, inArray, isNotNull, lt } from "drizzle-orm";
+import { desc, eq, or, and, inArray, isNotNull, isNull, lt } from "drizzle-orm";
 import { db, eventsTable, eventAuditLog, computeEventCompleteness, businessesTable } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 import { todayIsoAtlanta } from "../lib/ingestion/past-event-cleanup";
+import { parseEventDate } from "../lib/ingestion/normalizer";
 
 const router: IRouter = Router();
 
@@ -471,6 +472,45 @@ router.get("/admin/events/summary", requireAdmin, async (req, res) => {
     freeCount: rows.filter((e) => e.tier === "free").length,
     featuredCount: rows.filter((e) => e.tier === "featured").length,
     paidCount: rows.filter((e) => e.tier === "paid").length,
+  });
+});
+
+// POST /admin/events/backfill-date-iso  — one-time backfill: parse display `date`
+// into `dateIso` for rows where dateIso is NULL. Unparseable dates are left
+// NULL and reported, never guessed.
+// NOTE: must be registered BEFORE /admin/events/:id or ":id" swallows it
+router.post("/admin/events/backfill-date-iso", requireAdmin, async (req, res) => {
+  const dryRun = req.query.dryRun === "true" || req.query.dryRun === "1";
+
+  const rows = await db
+    .select({ id: eventsTable.id, name: eventsTable.name, date: eventsTable.date })
+    .from(eventsTable)
+    .where(isNull(eventsTable.dateIso));
+
+  let updated = 0;
+  const unparseable: { id: string; name: string; date: string }[] = [];
+
+  for (const row of rows) {
+    const parsed = parseEventDate(row.date ?? "");
+    if (parsed) {
+      if (!dryRun) {
+        await db
+          .update(eventsTable)
+          .set({ dateIso: parsed.iso, updatedAt: new Date() })
+          .where(eq(eventsTable.id, row.id));
+      }
+      updated++;
+    } else {
+      unparseable.push({ id: row.id, name: row.name, date: row.date ?? "" });
+    }
+  }
+
+  res.json({
+    dryRun,
+    scanned: rows.length,
+    updated,
+    unparseableCount: unparseable.length,
+    unparseable,
   });
 });
 
