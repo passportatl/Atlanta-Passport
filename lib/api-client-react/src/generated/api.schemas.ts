@@ -289,6 +289,7 @@ export interface AdminEventRecord {
   promoContactMethod?: string | null;
   source: string;
   sourceRef?: string | null;
+  ingestSourceId?: string | null;
   intakeNotes?: string | null;
   assignedTo?: string | null;
   adminNotes?: string | null;
@@ -395,4 +396,5 @@ export type ListAdminEventsParams = {
   status?: string;
   search?: string;
   tier?: string;
+  source?: string;
 };

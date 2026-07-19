@@ -443,6 +443,7 @@ export const ListAdminEventsQueryParams = zod.object({
   status: zod.coerce.string().optional(),
   search: zod.coerce.string().optional(),
   tier: zod.coerce.string().optional(),
+  source: zod.coerce.string().optional(),
 });
 
 export const ListAdminEventsResponseItem = zod.object({
@@ -479,6 +480,7 @@ export const ListAdminEventsResponseItem = zod.object({
   promoContactMethod: zod.string().nullish(),
   source: zod.string(),
   sourceRef: zod.string().nullish(),
+  ingestSourceId: zod.string().nullish(),
   intakeNotes: zod.string().nullish(),
   assignedTo: zod.string().nullish(),
   adminNotes: zod.string().nullish(),
@@ -590,6 +592,7 @@ export const UpdateAdminEventResponse = zod.object({
   promoContactMethod: zod.string().nullish(),
   source: zod.string(),
   sourceRef: zod.string().nullish(),
+  ingestSourceId: zod.string().nullish(),
   intakeNotes: zod.string().nullish(),
   assignedTo: zod.string().nullish(),
   adminNotes: zod.string().nullish(),

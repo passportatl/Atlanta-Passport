@@ -99,6 +99,26 @@ async function bulkUpdateStatus(
   return res.json() as Promise<{ updated: number }>;
 }
 
+/** Bulk update in chunks so very large selections (1,500+) don't hit body-size
+ *  or timeout limits. Reports progress after each chunk. */
+const BULK_CHUNK_SIZE = 250;
+
+async function bulkUpdateStatusChunked(
+  ids: string[],
+  status: string,
+  adminKey: string,
+  onProgress?: (done: number, total: number) => void,
+): Promise<{ updated: number }> {
+  let updated = 0;
+  for (let i = 0; i < ids.length; i += BULK_CHUNK_SIZE) {
+    const chunk = ids.slice(i, i + BULK_CHUNK_SIZE);
+    const result = await bulkUpdateStatus(chunk, status, adminKey);
+    updated += result.updated;
+    onProgress?.(Math.min(i + BULK_CHUNK_SIZE, ids.length), ids.length);
+  }
+  return { updated };
+}
+
 // ── CSV utilities ────────────────────────────────────────────────────────────
 
 /** RFC-4180-ish CSV parser — handles quoted fields and embedded commas. */
@@ -2802,11 +2822,19 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const qc = useQueryClient();
   const [opsTab, setOpsTab] = useState<OpsTab>("events");
   const [statusFilter, setStatusFilter] = useState<StatusTab>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkPending, setBulkPending] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
   const [showImporter, setShowImporter] = useState(false);
+  const [ingestSources, setIngestSources] = useState<EventSourceRecord[]>([]);
+
+  useEffect(() => {
+    listSources(adminKey).then(setIngestSources).catch(() => setIngestSources([]));
+  }, [adminKey]);
 
   const reqOpts = { headers: { "x-admin-key": adminKey } };
 
@@ -2824,8 +2852,14 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     },
   );
 
+  // Full filtered set (status filter applied server-side; source + search here)
   const events = useMemo(() => {
-    const all = (eventsRaw as AdminEventRecord[] | undefined) ?? [];
+    let all = (eventsRaw as AdminEventRecord[] | undefined) ?? [];
+    if (sourceFilter !== "all") {
+      all = all.filter((e) =>
+        e.ingestSourceId ? e.ingestSourceId === sourceFilter : e.source === sourceFilter,
+      );
+    }
     if (!search) return all;
     const q = search.toLowerCase();
     return all.filter(
@@ -2835,9 +2869,40 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
         (e.contactName ?? "").toLowerCase().includes(q) ||
         (e.contactEmail ?? "").toLowerCase().includes(q),
     );
-  }, [eventsRaw, search]);
+  }, [eventsRaw, search, sourceFilter]);
 
   const allEvents = (eventsRaw as AdminEventRecord[] | undefined) ?? [];
+
+  // Source filter options: ingest sources by name + manual source strings, with counts
+  const sourceOptions = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const e of allEvents) {
+      const key = e.ingestSourceId ?? e.source;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    const nameById = new Map(ingestSources.map((s) => [s.id, s.name]));
+    const manualLabels: Record<string, string> = {
+      web_form: "Web Form",
+      csv_import: "CSV Import",
+      manual: "Manual",
+    };
+    return [...counts.entries()]
+      .map(([key, count]) => ({
+        value: key,
+        label: nameById.get(key) ?? manualLabels[key] ?? key,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count);
+  }, [allEvents, ingestSources]);
+
+  // Client-side pagination — keeps the DOM light with 1,500+ pending events
+  const PAGE_SIZE = 50;
+  const pageCount = Math.max(1, Math.ceil(events.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pagedEvents = useMemo(
+    () => events.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE),
+    [events, safePage],
+  );
 
   const refresh = useCallback(() => {
     void qc.invalidateQueries({ queryKey: getListAdminEventsQueryKey() });
@@ -2852,8 +2917,9 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     });
   }, []);
 
-  const visibleIds = events.map((e) => e.id);
+  const visibleIds = pagedEvents.map((e) => e.id);
   const allVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+  const allMatchingSelected = events.length > 0 && events.every((e) => selectedIds.has(e.id));
 
   const toggleSelectAll = () => {
     if (allVisibleSelected) {
@@ -2871,13 +2937,20 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     }
   };
 
+  const selectAllMatching = () => {
+    setSelectedIds(new Set(events.map((e) => e.id)));
+  };
+
   const doBulkAction = async (status: string) => {
     const ids = [...selectedIds];
     if (ids.length === 0) return;
     setBulkPending(true);
     setBulkMsg(null);
+    setBulkProgress(null);
     try {
-      const result = await bulkUpdateStatus(ids, status, adminKey);
+      const result = await bulkUpdateStatusChunked(ids, status, adminKey, (done, total) =>
+        setBulkProgress({ done: Math.min(done, total), total }),
+      );
       setBulkMsg(`✅ ${result.updated} event${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
       setSelectedIds(new Set());
       refresh();
@@ -2885,6 +2958,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       setBulkMsg(`❌ ${err instanceof Error ? err.message : "Bulk update failed"}`);
     } finally {
       setBulkPending(false);
+      setBulkProgress(null);
     }
   };
 
@@ -2934,7 +3008,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           <button
             key={tab.id}
             type="button"
-            onClick={() => { setStatusFilter(tab.id); setSelectedIds(new Set()); }}
+            onClick={() => { setStatusFilter(tab.id); setSelectedIds(new Set()); setPage(0); }}
             className={`button-pop text-sm px-3 py-1.5 ${statusFilter === tab.id ? "button-pop-yellow" : "bg-white text-foreground"}`}
           >
             {tab.label}
@@ -2956,35 +3030,63 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
         </button>
       </div>
 
-      {/* Search + select-all row */}
-      <div className="flex gap-2 mb-4">
-        <div className="relative flex-1">
+      {/* Search + source filter + select-all row */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
           <input
             type="text"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setSelectedIds(new Set()); }}
+            onChange={(e) => { setSearch(e.target.value); setSelectedIds(new Set()); setPage(0); }}
             placeholder="Search by event name, venue, or contact…"
             className="w-full border-2 border-foreground rounded-lg pl-9 pr-4 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow"
           />
         </div>
-        {events.length > 0 && (
+        <select
+          value={sourceFilter}
+          onChange={(e) => { setSourceFilter(e.target.value); setSelectedIds(new Set()); setPage(0); }}
+          className="border-2 border-foreground rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-yellow shrink-0 max-w-[240px]"
+          aria-label="Filter by source"
+        >
+          <option value="all">All sources</option>
+          {sourceOptions.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label} ({o.count})
+            </option>
+          ))}
+        </select>
+        {pagedEvents.length > 0 && (
           <button
             type="button"
             onClick={toggleSelectAll}
             className="button-pop text-sm px-3 py-2 bg-white text-foreground inline-flex items-center gap-1.5 shrink-0"
           >
             {allVisibleSelected ? <CheckSquare className="w-4 h-4 text-brand-yellow" /> : <Square className="w-4 h-4" />}
-            {allVisibleSelected ? "Deselect all" : "Select all"}
+            {allVisibleSelected ? "Deselect page" : "Select page"}
           </button>
         )}
       </div>
+
+      {/* Select-all-matching banner: page selected but more matches exist */}
+      {events.length > pagedEvents.length && allVisibleSelected && !allMatchingSelected && (
+        <div className="card-pop bg-brand-yellow/20 border-2 border-brand-yellow p-3 mb-4 text-sm flex flex-wrap items-center gap-2">
+          <span>All <strong>{visibleIds.filter((id) => selectedIds.has(id)).length}</strong> events on this page are selected.</span>
+          <button
+            type="button"
+            onClick={selectAllMatching}
+            className="font-black underline underline-offset-2 hover:no-underline"
+          >
+            Select all {events.length} matching events
+          </button>
+        </div>
+      )}
 
       {/* Bulk actions bar */}
       {selectedIds.size > 0 && (
         <div className="card-pop bg-brand-cream border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
           <span className="text-sm font-black">
             {selectedIds.size} selected
+            {allMatchingSelected && events.length > pagedEvents.length ? " (all matching)" : ""}
           </span>
           <div className="flex flex-wrap gap-1.5">
             {BULK_ACTIONS.map((a) => (
@@ -3007,6 +3109,11 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           >
             <X className="w-4 h-4" />
           </button>
+          {bulkPending && bulkProgress && (
+            <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
+              Processing… {bulkProgress.done} of {bulkProgress.total}
+            </div>
+          )}
           {bulkMsg && (
             <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
               {bulkMsg}
@@ -3034,7 +3141,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       )}
 
       <div className="space-y-3">
-        {events.map((ev) => (
+        {pagedEvents.map((ev) => (
           <AdminEventCard
             key={ev.id}
             event={ev}
@@ -3045,6 +3152,32 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           />
         ))}
       </div>
+
+      {/* Pagination */}
+      {pageCount > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-5">
+          <button
+            type="button"
+            disabled={safePage === 0}
+            onClick={() => setPage(safePage - 1)}
+            className="button-pop text-sm px-3 py-1.5 bg-white text-foreground disabled:opacity-40"
+          >
+            ← Prev
+          </button>
+          <span className="text-sm font-bold">
+            Page {safePage + 1} of {pageCount}
+            <span className="text-foreground/50 font-normal"> · {events.length} events</span>
+          </span>
+          <button
+            type="button"
+            disabled={safePage >= pageCount - 1}
+            onClick={() => setPage(safePage + 1)}
+            className="button-pop text-sm px-3 py-1.5 bg-white text-foreground disabled:opacity-40"
+          >
+            Next →
+          </button>
+        </div>
+      )}
       </>}
     </div>
   );

@@ -345,6 +345,9 @@ paths:
         - in: query
           name: tier
           schema: { type: string }
+        - in: query
+          name: source
+          schema: { type: string }
       responses:
         "200":
           description: All events
@@ -843,7 +846,7 @@ components:
           type: array
           items: { type: string }
           nullable: true
-        listingPrice: { type: integer, nullable: true }
+        listingPrice: { type: number, nullable: true }
         isFeatured: { type: boolean }
         isBonusStamp: { type: boolean }
         contactName: { type: string, nullable: true }
@@ -853,6 +856,7 @@ components:
         promoContactMethod: { type: string, nullable: true }
         source: { type: string }
         sourceRef: { type: string, nullable: true }
+        ingestSourceId: { type: string, nullable: true }
         intakeNotes: { type: string, nullable: true }
         assignedTo: { type: string, nullable: true }
         adminNotes: { type: string, nullable: true }

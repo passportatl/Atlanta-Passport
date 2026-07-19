@@ -422,10 +422,11 @@ router.post("/events", async (req, res) => {
 
 // GET /admin/events  — all events, with optional status/search/tier filters
 router.get("/admin/events", requireAdmin, async (req, res) => {
-  const { status, search, tier } = req.query as {
+  const { status, search, tier, source } = req.query as {
     status?: string;
     search?: string;
     tier?: string;
+    source?: string;
   };
 
   const rows = await db
@@ -436,6 +437,13 @@ router.get("/admin/events", requireAdmin, async (req, res) => {
   let out = rows;
   if (status && status !== "all") out = out.filter((e) => e.workflowStatus === status);
   if (tier) out = out.filter((e) => e.tier === tier);
+  if (source && source !== "all") {
+    // UUID → filter by ingest source id; otherwise by the source string (web_form, csv_import, …)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(source);
+    out = isUuid
+      ? out.filter((e) => e.ingestSourceId === source)
+      : out.filter((e) => e.source === source && !e.ingestSourceId);
+  }
   if (search) {
     const q = search.toLowerCase();
     out = out.filter(
