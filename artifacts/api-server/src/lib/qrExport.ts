@@ -1,14 +1,14 @@
 // QR-code Excel export to Google Drive.
 //
-// Builds an .xlsx workbook with one row per scannable QR: the 11 sponsor offers
-// + 6 bonus events (stamp-collection QRs, scoped to in-scope businesses that
-// carry geofence coords) plus the 5 prize-tier redemption QRs. Uploads the file
+// Builds an .xlsx workbook with one row per scannable QR: the sponsor offers
+// (businesses with geofence coords) + all active bonus events (category
+// "events") plus the 5 prize-tier redemption QRs. Uploads the file
 // to the connected Google Drive account, overwriting the same file on each run
 // (id tracked in app_config) so re-exports never pile up duplicates.
 import ExcelJS from "exceljs";
 import QRCode from "qrcode";
 import { ReplitConnectors } from "@replit/connectors-sdk";
-import { isNotNull, eq } from "drizzle-orm";
+import { isNotNull, eq, or } from "drizzle-orm";
 import { db, businessesTable, appConfigTable } from "@workspace/db";
 import { logger } from "./logger";
 
@@ -98,12 +98,13 @@ function redeemUrl(origin: string, tier: number): string {
 }
 
 async function buildRows(origin: string): Promise<ExportRow[]> {
-  // In-scope businesses are exactly those with geofence coords: the 11 sponsor
-  // offers + 6 bonus events. Everything else is excluded by design.
+  // In scope: sponsor offers (geofence coords) plus ALL bonus events
+  // (category "events") — CMS-created bonus stamps have no coords, so they
+  // must be included by category, not by coordinates.
   const inScope = await db
     .select()
     .from(businessesTable)
-    .where(isNotNull(businessesTable.latitude));
+    .where(or(isNotNull(businessesTable.latitude), eq(businessesTable.category, "events")));
 
   const businessRows: ExportRow[] = inScope
     .filter((b) => b.isActive)
