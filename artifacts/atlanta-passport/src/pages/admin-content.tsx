@@ -238,6 +238,35 @@ async function patchLocation(id: string, patch: Record<string, unknown>, adminKe
   return res.json() as Promise<LocationSubmission>;
 }
 
+type PriorStatusEntry = { id: string; status: string };
+
+async function bulkUpdateLocationStatus(
+  ids: string[],
+  status: string,
+  adminKey: string,
+): Promise<{ updated: number; prior?: PriorStatusEntry[] }> {
+  const res = await fetch(`${API_BASE}/admin/location-submissions/bulk-status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    body: JSON.stringify({ ids, status }),
+  });
+  if (!res.ok) throw new Error(`Bulk update failed: ${res.status}`);
+  return res.json() as Promise<{ updated: number; prior?: PriorStatusEntry[] }>;
+}
+
+async function bulkRestoreLocationStatus(
+  restore: PriorStatusEntry[],
+  adminKey: string,
+): Promise<{ updated: number }> {
+  const res = await fetch(`${API_BASE}/admin/location-submissions/bulk-status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    body: JSON.stringify({ restore }),
+  });
+  if (!res.ok) throw new Error(`Undo failed: ${res.status}`);
+  return res.json() as Promise<{ updated: number }>;
+}
+
 async function bulkImportLocations(locations: Record<string, string>[], adminKey: string): Promise<BulkImportResult> {
   const res = await fetch(`${API_BASE}/admin/location-submissions/bulk-import`, {
     method: "POST",
@@ -607,6 +636,9 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkPending, setBulkPending] = useState(false);
   const [bulkMsg, setBulkMsg] = useState("");
+  const [undoState, setUndoState] = useState<PriorStatusEntry[] | null>(null);
+  const [undoPending, setUndoPending] = useState(false);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -637,21 +669,60 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
     else setSelectedIds(new Set(locations.map((l) => l.id)));
   };
 
+  // How long the Undo option stays available after a bulk action (ms)
+  const UNDO_WINDOW_MS = 20000;
+
+  const clearUndo = useCallback(() => {
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = null;
+    }
+    setUndoState(null);
+  }, []);
+
+  useEffect(() => () => {
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+  }, []);
+
   const doBulkAction = async (status: string) => {
-    if (selectedIds.size === 0) return;
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
     setBulkPending(true);
     setBulkMsg("");
-    let count = 0;
-    for (const id of selectedIds) {
-      try {
-        await patchLocation(id, { workflowStatus: status }, adminKey);
-        count++;
-      } catch { /* skip */ }
+    clearUndo();
+    try {
+      const result = await bulkUpdateLocationStatus(ids, status, adminKey);
+      setBulkMsg(`✅ ${result.updated} location${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
+      if (result.prior && result.prior.length > 0) {
+        setUndoState(result.prior);
+        undoTimerRef.current = setTimeout(() => {
+          setUndoState(null);
+          undoTimerRef.current = null;
+        }, UNDO_WINDOW_MS);
+      }
+      setSelectedIds(new Set());
+      void load();
+    } catch (err) {
+      setBulkMsg(`❌ ${err instanceof Error ? err.message : "Bulk update failed"}`);
+    } finally {
+      setBulkPending(false);
     }
-    setBulkMsg(`Updated ${count} of ${selectedIds.size} locations.`);
-    setSelectedIds(new Set());
-    setBulkPending(false);
-    void load();
+  };
+
+  const doUndoBulkAction = async () => {
+    if (!undoState || undoState.length === 0 || undoPending) return;
+    const entries = undoState;
+    setUndoPending(true);
+    try {
+      const result = await bulkRestoreLocationStatus(entries, adminKey);
+      setBulkMsg(`↩️ Undone — ${result.updated} location${result.updated !== 1 ? "s" : ""} restored to their previous status.`);
+      clearUndo();
+      void load();
+    } catch (err) {
+      setBulkMsg(`❌ ${err instanceof Error ? err.message : "Undo failed"}`);
+    } finally {
+      setUndoPending(false);
+    }
   };
 
   // Counts for status tabs
@@ -742,6 +813,32 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
           {bulkMsg && (
             <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">{bulkMsg}</div>
           )}
+        </div>
+      )}
+
+      {/* Bulk result banner (shown after a bulk action, with a short undo window) */}
+      {bulkMsg && selectedIds.size === 0 && (
+        <div className="card-pop bg-white border-2 border-foreground p-3 flex flex-wrap items-center gap-3">
+          <span className="text-sm font-bold">{bulkMsg}</span>
+          {undoState && undoState.length > 0 && (
+            <button
+              type="button"
+              disabled={undoPending}
+              onClick={() => void doUndoBulkAction()}
+              className="button-pop text-xs px-2.5 py-1.5 inline-flex items-center gap-1 bg-brand-yellow text-foreground disabled:opacity-50"
+            >
+              {undoPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              Undo
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => { setBulkMsg(""); clearUndo(); }}
+            className="text-foreground/40 hover:text-foreground ml-auto"
+            aria-label="Dismiss"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 

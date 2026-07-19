@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { desc, eq, ilike, or, and, isNull } from "drizzle-orm";
+import { desc, eq, ilike, or, and, isNull, inArray } from "drizzle-orm";
 import { db, locationSubmissionsTable, businessesTable, computeLocationCompleteness } from "@workspace/db";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 import { stringParam } from "../lib/params";
@@ -236,6 +236,93 @@ router.get("/admin/location-submissions/:id", requireAdmin, async (req, res) => 
     return;
   }
   res.json({ ...row, completenessScore: row.completenessScore ?? computeLocationCompleteness(row) });
+});
+
+// PATCH /admin/location-submissions/bulk-status — update workflowStatus for many locations at once
+// NOTE: must be registered BEFORE /admin/location-submissions/:id or ":id" swallows "bulk-status"
+// Body forms:
+//   { ids: string[], status: string }             — set one status on many locations
+//   { restore: { id: string, status: string }[] } — per-id restore (undo of a bulk action)
+// Both forms return { updated, prior: { id, status }[] } so the caller can undo.
+
+function locationBulkStatusUpdates(status: string): Partial<typeof locationSubmissionsTable.$inferInsert> {
+  const updates: Partial<typeof locationSubmissionsTable.$inferInsert> = { workflowStatus: status };
+  if (status === "published") updates.publishedAt = new Date();
+  if (["approved", "rejected", "changes-requested", "duplicate"].includes(status)) {
+    updates.reviewedAt = new Date();
+  }
+  return updates;
+}
+
+router.patch("/admin/location-submissions/bulk-status", requireAdmin, async (req, res) => {
+  const { ids, status, restore } = req.body as {
+    ids?: string[];
+    status?: string;
+    restore?: { id?: string; status?: string }[];
+  };
+
+  // ── Per-id restore form (undo) ──
+  if (Array.isArray(restore)) {
+    const entries = restore.filter(
+      (e): e is { id: string; status: string } =>
+        !!e && typeof e.id === "string" && typeof e.status === "string" && e.status.length > 0,
+    );
+    if (entries.length === 0) {
+      res.status(400).json({ error: "restore array must contain { id, status } entries" });
+      return;
+    }
+
+    const allIds = entries.map((e) => e.id);
+    const priorRows = await db
+      .select({ id: locationSubmissionsTable.id, status: locationSubmissionsTable.workflowStatus })
+      .from(locationSubmissionsTable)
+      .where(inArray(locationSubmissionsTable.id, allIds));
+
+    // Group by target status so each group shares one UPDATE with its side effects
+    const byStatus = new Map<string, string[]>();
+    for (const e of entries) {
+      const list = byStatus.get(e.status) ?? [];
+      list.push(e.id);
+      byStatus.set(e.status, list);
+    }
+
+    let updated = 0;
+    for (const [targetStatus, groupIds] of byStatus) {
+      const rows = await db
+        .update(locationSubmissionsTable)
+        .set(locationBulkStatusUpdates(targetStatus))
+        .where(inArray(locationSubmissionsTable.id, groupIds))
+        .returning({ id: locationSubmissionsTable.id });
+      updated += rows.length;
+    }
+
+    res.json({ updated, prior: priorRows });
+    return;
+  }
+
+  // ── Single-status form ──
+  if (!Array.isArray(ids) || ids.length === 0) {
+    res.status(400).json({ error: "ids array required" });
+    return;
+  }
+  if (!status || typeof status !== "string") {
+    res.status(400).json({ error: "status required" });
+    return;
+  }
+
+  // Capture old statuses first — the "prior" response payload powers the frontend Undo feature.
+  const priorRows = await db
+    .select({ id: locationSubmissionsTable.id, status: locationSubmissionsTable.workflowStatus })
+    .from(locationSubmissionsTable)
+    .where(inArray(locationSubmissionsTable.id, ids));
+
+  const rows = await db
+    .update(locationSubmissionsTable)
+    .set(locationBulkStatusUpdates(status))
+    .where(inArray(locationSubmissionsTable.id, ids))
+    .returning({ id: locationSubmissionsTable.id });
+
+  res.json({ updated: rows.length, prior: priorRows });
 });
 
 // PATCH /admin/location-submissions/:id
