@@ -544,11 +544,36 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
     updates.duplicateOfId = null;
   }
 
+  // Capture old statuses so the audit trail records the actual transition
+  const before = await db
+    .select({ id: eventsTable.id, workflowStatus: eventsTable.workflowStatus })
+    .from(eventsTable)
+    .where(inArray(eventsTable.id, ids));
+  const oldStatusById = new Map(before.map((r) => [r.id, r.workflowStatus]));
+
   const rows = await db
     .update(eventsTable)
     .set(updates)
     .where(inArray(eventsTable.id, ids))
     .returning({ id: eventsTable.id });
+
+  // ── Audit log: one entry per event whose status actually changed ──
+  const auditEntries = rows
+    .filter((r) => oldStatusById.get(r.id) !== status)
+    .map((r) => ({
+      eventId: r.id,
+      changedBy: "admin (bulk)",
+      field: "Status",
+      oldValue: oldStatusById.get(r.id) ?? null,
+      newValue: status,
+    }));
+  if (auditEntries.length > 0) {
+    try {
+      await db.insert(eventAuditLog).values(auditEntries);
+    } catch (err) {
+      req.log.error({ err }, "Failed to write bulk-status audit entries");
+    }
+  }
 
   res.json({ updated: rows.length });
 });
