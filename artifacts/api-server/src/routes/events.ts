@@ -524,8 +524,96 @@ router.post("/admin/events/backfill-date-iso", requireAdmin, async (req, res) =>
 
 // PATCH /admin/events/bulk-status  — update workflowStatus for many events at once
 // NOTE: must be registered BEFORE /admin/events/:id or ":id" swallows "bulk-status"
+// Body forms:
+//   { ids: string[], status: string }            — set one status on many events
+//   { restore: { id: string, status: string }[] } — per-id restore (undo of a bulk action)
+// Both forms return { updated, prior: { id, status }[] } so the caller can undo.
+
+function bulkStatusUpdates(status: string): Record<string, unknown> {
+  const updates: Record<string, unknown> = { workflowStatus: status, updatedAt: new Date() };
+  if (status === "published") updates.publishedAt = new Date();
+  if (status === "approved" || status === "published") updates.verifiedAt = new Date();
+  // Restoring to an active status clears any stale duplicate link
+  // (kept on rejected/archived as an audit trail).
+  if (status !== "possible_duplicate" && status !== "rejected" && status !== "archived") {
+    updates.duplicateOfId = null;
+  }
+  return updates;
+}
+
 router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
-  const { ids, status } = req.body as { ids?: string[]; status?: string };
+  const { ids, status, restore } = req.body as {
+    ids?: string[];
+    status?: string;
+    restore?: { id?: string; status?: string }[];
+  };
+
+  // ── Per-id restore form (undo) ──
+  if (Array.isArray(restore)) {
+    const entries = restore.filter(
+      (e): e is { id: string; status: string } =>
+        !!e && typeof e.id === "string" && typeof e.status === "string" && e.status.length > 0,
+    );
+    if (entries.length === 0) {
+      res.status(400).json({ error: "restore array must contain { id, status } entries" });
+      return;
+    }
+
+    const allIds = entries.map((e) => e.id);
+    const priorRows = await db
+      .select({ id: eventsTable.id, status: eventsTable.workflowStatus })
+      .from(eventsTable)
+      .where(inArray(eventsTable.id, allIds));
+
+    // Group by target status so each group shares one UPDATE with its side effects
+    const byStatus = new Map<string, string[]>();
+    for (const e of entries) {
+      const list = byStatus.get(e.status) ?? [];
+      list.push(e.id);
+      byStatus.set(e.status, list);
+    }
+
+    const restorePriorById = new Map(priorRows.map((r) => [r.id, r.status]));
+    let updated = 0;
+    const restoreAuditEntries: {
+      eventId: string;
+      changedBy: string;
+      field: string;
+      oldValue: string | null;
+      newValue: string;
+    }[] = [];
+    for (const [targetStatus, groupIds] of byStatus) {
+      const rows = await db
+        .update(eventsTable)
+        .set(bulkStatusUpdates(targetStatus))
+        .where(inArray(eventsTable.id, groupIds))
+        .returning({ id: eventsTable.id });
+      updated += rows.length;
+      for (const r of rows) {
+        if (restorePriorById.get(r.id) !== targetStatus) {
+          restoreAuditEntries.push({
+            eventId: r.id,
+            changedBy: "admin (bulk undo)",
+            field: "Status",
+            oldValue: restorePriorById.get(r.id) ?? null,
+            newValue: targetStatus,
+          });
+        }
+      }
+    }
+    if (restoreAuditEntries.length > 0) {
+      try {
+        await db.insert(eventAuditLog).values(restoreAuditEntries);
+      } catch (err) {
+        req.log.error({ err }, "Failed to write bulk-status undo audit entries");
+      }
+    }
+
+    res.json({ updated, prior: priorRows });
+    return;
+  }
+
+  // ── Single-status form ──
   if (!Array.isArray(ids) || ids.length === 0) {
     res.status(400).json({ error: "ids array required" });
     return;
@@ -535,25 +623,17 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
     return;
   }
 
-  const updates: Record<string, unknown> = { workflowStatus: status, updatedAt: new Date() };
-  if (status === "published") updates.publishedAt = new Date();
-  if (status === "approved" || status === "published") updates.verifiedAt = new Date();
-  // Restoring to an active status clears any stale duplicate link
-  // (kept on rejected/archived as an audit trail).
-  if (status !== "possible_duplicate" && status !== "rejected" && status !== "archived") {
-    updates.duplicateOfId = null;
-  }
-
-  // Capture old statuses so the audit trail records the actual transition
-  const before = await db
-    .select({ id: eventsTable.id, workflowStatus: eventsTable.workflowStatus })
+  // Capture old statuses once: serves both the audit trail (actual transition)
+  // and the "prior" response payload the frontend Undo feature relies on.
+  const priorRows = await db
+    .select({ id: eventsTable.id, status: eventsTable.workflowStatus })
     .from(eventsTable)
     .where(inArray(eventsTable.id, ids));
-  const oldStatusById = new Map(before.map((r) => [r.id, r.workflowStatus]));
+  const oldStatusById = new Map(priorRows.map((r) => [r.id, r.status]));
 
   const rows = await db
     .update(eventsTable)
-    .set(updates)
+    .set(bulkStatusUpdates(status))
     .where(inArray(eventsTable.id, ids))
     .returning({ id: eventsTable.id });
 
@@ -575,7 +655,7 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
     }
   }
 
-  res.json({ updated: rows.length });
+  res.json({ updated: rows.length, prior: priorRows });
 });
 
 // PATCH /admin/events/:id  — workflow + metadata + content + pricing updates

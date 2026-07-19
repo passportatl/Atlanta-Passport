@@ -87,17 +87,32 @@ async function bulkImportEvents(
   return res.json() as Promise<BulkImportResult>;
 }
 
+type PriorStatusEntry = { id: string; status: string };
+
 async function bulkUpdateStatus(
   ids: string[],
   status: string,
   adminKey: string,
-): Promise<{ updated: number }> {
+): Promise<{ updated: number; prior?: PriorStatusEntry[] }> {
   const res = await fetch(`${API_BASE}/admin/events/bulk-status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
     body: JSON.stringify({ ids, status }),
   });
   if (!res.ok) throw new Error(`Bulk update failed: ${res.status}`);
+  return res.json() as Promise<{ updated: number; prior?: PriorStatusEntry[] }>;
+}
+
+async function bulkRestoreStatus(
+  restore: PriorStatusEntry[],
+  adminKey: string,
+): Promise<{ updated: number }> {
+  const res = await fetch(`${API_BASE}/admin/events/bulk-status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    body: JSON.stringify({ restore }),
+  });
+  if (!res.ok) throw new Error(`Undo failed: ${res.status}`);
   return res.json() as Promise<{ updated: number }>;
 }
 
@@ -110,13 +125,30 @@ async function bulkUpdateStatusChunked(
   status: string,
   adminKey: string,
   onProgress?: (done: number, total: number) => void,
-): Promise<{ updated: number }> {
+): Promise<{ updated: number; prior: PriorStatusEntry[] }> {
   let updated = 0;
+  const prior: PriorStatusEntry[] = [];
   for (let i = 0; i < ids.length; i += BULK_CHUNK_SIZE) {
     const chunk = ids.slice(i, i + BULK_CHUNK_SIZE);
     const result = await bulkUpdateStatus(chunk, status, adminKey);
     updated += result.updated;
+    if (result.prior) prior.push(...result.prior);
     onProgress?.(Math.min(i + BULK_CHUNK_SIZE, ids.length), ids.length);
+  }
+  return { updated, prior };
+}
+
+async function bulkRestoreStatusChunked(
+  entries: PriorStatusEntry[],
+  adminKey: string,
+  onProgress?: (done: number, total: number) => void,
+): Promise<{ updated: number }> {
+  let updated = 0;
+  for (let i = 0; i < entries.length; i += BULK_CHUNK_SIZE) {
+    const chunk = entries.slice(i, i + BULK_CHUNK_SIZE);
+    const result = await bulkRestoreStatus(chunk, adminKey);
+    updated += result.updated;
+    onProgress?.(Math.min(i + BULK_CHUNK_SIZE, entries.length), entries.length);
   }
   return { updated };
 }
@@ -2883,6 +2915,9 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const [bulkPending, setBulkPending] = useState(false);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
+  const [undoState, setUndoState] = useState<PriorStatusEntry[] | null>(null);
+  const [undoPending, setUndoPending] = useState(false);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showImporter, setShowImporter] = useState(false);
   const [ingestSources, setIngestSources] = useState<EventSourceRecord[]>([]);
 
@@ -2995,23 +3030,67 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     setSelectedIds(new Set(events.map((e) => e.id)));
   };
 
+  // How long the Undo option stays available after a bulk action (ms)
+  const UNDO_WINDOW_MS = 20000;
+
+  const clearUndo = useCallback(() => {
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = null;
+    }
+    setUndoState(null);
+  }, []);
+
+  useEffect(() => () => {
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+  }, []);
+
   const doBulkAction = async (status: string) => {
     const ids = [...selectedIds];
     if (ids.length === 0) return;
     setBulkPending(true);
     setBulkMsg(null);
     setBulkProgress(null);
+    clearUndo();
     try {
       const result = await bulkUpdateStatusChunked(ids, status, adminKey, (done, total) =>
         setBulkProgress({ done: Math.min(done, total), total }),
       );
       setBulkMsg(`✅ ${result.updated} event${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
+      if (result.prior.length > 0) {
+        setUndoState(result.prior);
+        if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+        undoTimerRef.current = setTimeout(() => {
+          setUndoState(null);
+          undoTimerRef.current = null;
+        }, UNDO_WINDOW_MS);
+      }
       setSelectedIds(new Set());
       refresh();
     } catch (err) {
       setBulkMsg(`❌ ${err instanceof Error ? err.message : "Bulk update failed"}`);
     } finally {
       setBulkPending(false);
+      setBulkProgress(null);
+    }
+  };
+
+  const doUndoBulkAction = async () => {
+    if (!undoState || undoState.length === 0 || undoPending) return;
+    const entries = undoState;
+    setUndoPending(true);
+    setBulkProgress(null);
+    try {
+      const result = await bulkRestoreStatusChunked(entries, adminKey, (done, total) =>
+        setBulkProgress({ done: Math.min(done, total), total }),
+      );
+      setBulkMsg(`↩️ Undone — ${result.updated} event${result.updated !== 1 ? "s" : ""} restored to their previous status.`);
+      clearUndo();
+      refresh();
+    } catch (err) {
+      setBulkMsg(`❌ ${err instanceof Error ? err.message : "Undo failed"}`);
+    } finally {
+      setUndoPending(false);
       setBulkProgress(null);
     }
   };
@@ -3138,6 +3217,37 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           >
             Select all {events.length} matching events
           </button>
+        </div>
+      )}
+
+      {/* Bulk result banner (shown after a bulk action, with a short undo window) */}
+      {bulkMsg && selectedIds.size === 0 && (
+        <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
+          <span className="text-sm font-bold">{bulkMsg}</span>
+          {undoState && undoState.length > 0 && (
+            <button
+              type="button"
+              disabled={undoPending}
+              onClick={() => void doUndoBulkAction()}
+              className="button-pop text-xs px-2.5 py-1.5 inline-flex items-center gap-1 bg-brand-yellow text-foreground disabled:opacity-50"
+            >
+              {undoPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              Undo
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => { setBulkMsg(null); clearUndo(); }}
+            className="text-foreground/40 hover:text-foreground ml-auto"
+            aria-label="Dismiss"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          {undoPending && bulkProgress && (
+            <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
+              Undoing… {bulkProgress.done} of {bulkProgress.total}
+            </div>
+          )}
         </div>
       )}
 
