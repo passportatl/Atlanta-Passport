@@ -1,0 +1,731 @@
+# Passport ATL – Sprint 5: AI Discovery, Personalization & Smart Route Generation
+
+Implement Sprint 5 of Passport ATL.
+
+This sprint introduces intelligent features that make Passport ATL more than an event calendar—it becomes a personalized city exploration platform.
+
+Do not replace or regress any functionality completed in Sprints 1–4.
+
+The following systems must continue functioning:
+
+* Manual Events
+* Google Sheets imports
+* Ticketmaster
+* iCal feeds
+* RSS/JSON/XML feeds
+* API integrations
+* Pending Review workflow
+* Source monitoring
+* Health dashboard
+* Operations dashboard
+* Passport Routes
+* Passport Rewards
+* Passport Experiences
+
+---
+
+# Primary Objective
+
+Use AI and intelligent recommendation systems to:
+
+* classify events automatically
+* enrich event information
+* recommend events
+* build intelligent routes
+* personalize the Passport experience
+* reduce manual CMS work
+
+Human editors should always retain final approval.
+
+---
+
+# AI Event Classification
+
+Every imported event should automatically receive AI-generated metadata.
+
+Generate:
+
+Primary Category
+
+Examples:
+
+* Music
+* Festival
+* Museum
+* Art
+* Food
+* Drinks
+* Family
+* Comedy
+* Sports
+* Outdoors
+* Shopping
+* Community
+* Education
+* Holiday
+* Nightlife
+
+Secondary Categories
+
+Tags
+
+Mood
+
+Examples:
+
+* Romantic
+* Family Friendly
+* Date Night
+* Adventure
+* Hidden Gem
+* Rainy Day
+* Outdoor
+* Luxury
+* Budget Friendly
+* Local Favorite
+
+Estimated Visit Duration
+
+Suggested Time of Day
+
+Examples:
+
+* Morning
+* Afternoon
+* Evening
+* Late Night
+
+Suggested Age Group
+
+Examples:
+
+* All Ages
+* Teen
+* Adult
+* 21+
+
+Confidence score
+
+Editors can accept or override AI suggestions.
+
+---
+
+# AI Content Enrichment
+
+Automatically improve imported events.
+
+Generate:
+
+* concise summary
+* marketing description
+* SEO meta description
+* keywords
+* suggested hashtags
+* Passport ATL editorial notes
+
+Never overwrite manually written content.
+
+Store AI-generated content separately from editorial content.
+
+---
+
+# AI Image Selection
+
+When multiple images exist:
+
+Automatically select the best image based on:
+
+* resolution
+* aspect ratio
+* quality
+* relevance
+* branding
+
+If no image exists:
+
+Flag for editorial review.
+
+Do not generate copyrighted promotional artwork automatically.
+
+---
+
+# Smart Neighborhood Detection
+
+Automatically determine:
+
+Neighborhood
+
+Examples:
+
+* Midtown
+* Old Fourth Ward
+* Buckhead
+* Virginia Highlands
+* Grant Park
+* West Midtown
+* Downtown
+* East Atlanta
+* Little Five Points
+
+District
+
+Walking area
+
+Nearby MARTA station
+
+Nearby parking
+
+Nearby Passport businesses
+
+Nearby attractions
+
+Nearby Passport stamps
+
+---
+
+# Intelligent Route Generation
+
+Automatically recommend routes using:
+
+Event locations
+
+Business partners
+
+Transit
+
+Walking distance
+
+Opening hours
+
+Estimated visit duration
+
+Crowd timing
+
+Neighborhood clustering
+
+Generate route options such as:
+
+Morning Route
+
+Afternoon Route
+
+Evening Route
+
+Weekend Route
+
+Date Night
+
+Family Day
+
+Food Crawl
+
+Cocktail Crawl
+
+Coffee Crawl
+
+Museum Day
+
+BeltLine Adventure
+
+Hidden Gems
+
+Holiday Route
+
+Festival Route
+
+Rainy Day Route
+
+Luxury Route
+
+Budget Route
+
+Each suggested route should include:
+
+Estimated duration
+
+Walking distance
+
+Driving distance
+
+Transit option
+
+Recommended order
+
+Suggested meal stops
+
+Suggested Passport stamp locations
+
+Reward opportunities
+
+---
+
+# Personalized Recommendations
+
+For every Passport Rewards user, build a recommendation engine.
+
+Learn from:
+
+Completed routes
+
+Collected stamps
+
+Saved events
+
+Saved locations
+
+Favorite neighborhoods
+
+Favorite categories
+
+Visited businesses
+
+Time of day preferences
+
+Day of week preferences
+
+Age restrictions
+
+Transportation preferences
+
+Recommend:
+
+Events
+
+Businesses
+
+Routes
+
+Passport Experiences
+
+Rewards
+
+Nearby attractions
+
+Upcoming events
+
+---
+
+# AI Editorial Assistant
+
+Create an assistant for Passport administrators.
+
+For every imported event:
+
+Suggest:
+
+Publish
+
+Reject
+
+Needs Review
+
+Duplicate
+
+Missing Information
+
+Low Quality
+
+Flag reasons such as:
+
+Missing image
+
+Missing venue
+
+Missing description
+
+Possible duplicate
+
+Cancelled
+
+Outside service area
+
+Spam
+
+Incomplete data
+
+Editors always make the final decision.
+
+---
+
+# Smart Duplicate Resolution
+
+Expand duplicate detection.
+
+Use AI to compare:
+
+Titles
+
+Descriptions
+
+Venues
+
+Dates
+
+Organizers
+
+Images
+
+URLs
+
+Coordinates
+
+Generate:
+
+Duplicate confidence
+
+Suggested merge
+
+Suggested source priority
+
+Human review recommendation
+
+Never merge automatically unless confidence is extremely high.
+
+---
+
+# Event Quality Score
+
+Generate an Event Quality Score.
+
+Example inputs:
+
+Complete description
+
+High quality image
+
+Valid location
+
+Official source
+
+Organizer reputation
+
+Future date
+
+Accurate coordinates
+
+Working ticket link
+
+Good categorization
+
+Scoring:
+
+Excellent
+
+Good
+
+Fair
+
+Poor
+
+Flag Poor events for editorial review.
+
+---
+
+# Passport Route Intelligence
+
+Automatically identify opportunities to improve existing routes.
+
+Recommend:
+
+Additional businesses
+
+Nearby events
+
+New stamp opportunities
+
+Shorter walking paths
+
+Transit improvements
+
+Better start locations
+
+Better ending locations
+
+Alternative weekend versions
+
+Alternative family versions
+
+Alternative nightlife versions
+
+---
+
+# Passport Experience Suggestions
+
+AI should identify events that naturally fit existing Passport Experiences.
+
+Example:
+
+A food festival should suggest:
+
+Foodie Passport
+
+BeltLine Eats
+
+Date Night
+
+Coffee Passport
+
+Etc.
+
+Suggest—but do not automatically publish.
+
+---
+
+# Recommendation Engine
+
+Support recommendations based on:
+
+Current location
+
+Upcoming weekend
+
+Weather (when available)
+
+Recently viewed items
+
+Saved favorites
+
+Passport history
+
+Neighborhood popularity
+
+Seasonality
+
+Holiday events
+
+Trending events
+
+---
+
+# Search Improvements
+
+Upgrade search.
+
+Support:
+
+Natural language search.
+
+Examples:
+
+"Things to do tonight"
+
+"Kid friendly events"
+
+"Free events this weekend"
+
+"Best brunch in Midtown"
+
+"Date ideas"
+
+"Outdoor festivals"
+
+"Live music near me"
+
+"BeltLine activities"
+
+Return ranked results using:
+
+Distance
+
+Popularity
+
+Personalization
+
+Quality Score
+
+Editorial priority
+
+Sponsored priority (clearly labeled)
+
+---
+
+# AI CMS Dashboard
+
+Provide editors with:
+
+Suggested publishes
+
+Suggested rejections
+
+Suggested duplicates
+
+Events needing images
+
+Events needing descriptions
+
+Events outside Atlanta
+
+Low quality events
+
+Trending neighborhoods
+
+Trending categories
+
+Suggested new routes
+
+Suggested blog topics
+
+---
+
+# Analytics
+
+Generate insights such as:
+
+Most popular neighborhoods
+
+Most popular event categories
+
+Best performing partners
+
+Fastest growing event types
+
+Most saved events
+
+Most completed routes
+
+Most visited Passport businesses
+
+Stamp completion rates
+
+Conversion from event to business visit
+
+Reward redemption trends
+
+---
+
+# Performance
+
+AI processing should run asynchronously.
+
+Importing events must never wait for AI generation.
+
+AI failures must never stop event ingestion.
+
+Queue enrichment separately.
+
+Retry failed AI jobs automatically.
+
+---
+
+# Safety
+
+Do not fabricate factual event information.
+
+Never invent:
+
+dates
+
+venues
+
+ticket prices
+
+organizers
+
+artists
+
+times
+
+Use AI only for:
+
+classification
+
+summarization
+
+recommendations
+
+editorial suggestions
+
+---
+
+# Testing
+
+Verify:
+
+AI enrichment runs successfully
+
+Recommendation engine functions
+
+Route suggestions generate correctly
+
+Neighborhood detection is accurate
+
+Duplicate suggestions work
+
+Editorial suggestions appear
+
+CMS remains responsive
+
+Import pipeline is unaffected
+
+Existing Sprints 1–4 continue working
+
+---
+
+# Completion Criteria
+
+Sprint 5 is complete only when:
+
+✅ AI classifies imported events
+
+✅ AI enriches event content
+
+✅ Personalized recommendations work
+
+✅ Smart route generation works
+
+✅ Neighborhood detection works
+
+✅ Editorial suggestions work
+
+✅ AI processing is asynchronous
+
+✅ Import performance remains stable
+
+✅ Existing Passport ATL functionality has no regressions
+
+---
+
+# Final Report
+
+Provide a report including:
+
+## AI
+
+* Events classified
+* Events enriched
+* Average confidence
+* Processing time
+
+## Recommendations
+
+* Routes generated
+* Experiences suggested
+* Personalized recommendations created
+
+## Editorial
+
+* Publish suggestions
+* Duplicate suggestions
+* Low quality flags
+* Missing information flags
+
+## Analytics
+
+* Top neighborhoods
+* Top categories
+* Trending events
+* Suggested new Passport routes
+
+## Remaining Future Opportunities
+
+Recommend ideas for Sprint 6 focused on:
+
+* mobile app features
+* gamification
+* AI concierge
+* conversational trip planning
+* predictive demand
+* partner business intelligence
+* dynamic pricing opportunities
+
+Do not mark Sprint 5 complete until AI features have been tested using live imported events and verified within the running Passport ATL application.
