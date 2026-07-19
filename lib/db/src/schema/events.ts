@@ -7,6 +7,7 @@ export const eventsTable = pgTable("events", {
   category: text("category").notNull().default(""),
   date: text("date").notNull().default(""),
   dateIso: text("date_iso"),
+  endDateIso: text("end_date_iso"),
   time: text("time"),
   venue: text("venue").notNull().default(""),
   address: text("address"),

@@ -3,6 +3,7 @@ import { desc, eq, or, and, inArray, isNotNull, lt } from "drizzle-orm";
 import { db, eventsTable, eventAuditLog, computeEventCompleteness, businessesTable } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { todayIsoAtlanta } from "../lib/ingestion/past-event-cleanup";
 
 const router: IRouter = Router();
 
@@ -99,10 +100,11 @@ function requireAdmin(req: Request, res: Response, next: NextFunction): void {
 
 // GET /events  — published events only, optional neighborhood/category filter
 router.get("/events", async (req, res) => {
-  const { neighborhood, category, tags } = req.query as {
+  const { neighborhood, category, tags, includePast } = req.query as {
     neighborhood?: string;
     category?: string;
     tags?: string;
+    includePast?: string;
   };
 
   const rows = await db
@@ -113,7 +115,17 @@ router.get("/events", async (req, res) => {
 
   const tagFilter = tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [];
 
+  // Hide events whose date has clearly passed (Atlanta time). Uses the end
+  // date for multi-day events; events with no machine-readable date are kept
+  // (never hide on ambiguous data). Admin tooling can pass includePast=1.
+  const showPast = includePast === "1" || includePast === "true";
+  const todayIso = todayIsoAtlanta();
+
   const filtered = rows.filter((e) => {
+    if (!showPast) {
+      const effectiveEnd = e.endDateIso ?? e.dateIso;
+      if (effectiveEnd && effectiveEnd < todayIso) return false;
+    }
     if (neighborhood && e.neighborhood !== neighborhood) return false;
     if (category && e.category !== category) return false;
     if (tagFilter.length > 0) {
@@ -242,6 +254,7 @@ router.post("/events", async (req, res) => {
       category: data.category ?? "",
       date: data.date ?? "",
       dateIso: data.dateIso ?? null,
+      endDateIso: data.endDate || null,
       time: data.time ?? null,
       venue: data.venue ?? "",
       address: data.address ?? null,

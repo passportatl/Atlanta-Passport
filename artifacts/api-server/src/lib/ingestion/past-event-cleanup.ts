@@ -51,7 +51,8 @@ export async function archivePastIngestedEvents(): Promise<number> {
       and(
         isNotNull(eventsTable.ingestSourceId),
         isNotNull(eventsTable.dateIso),
-        lt(eventsTable.dateIso, todayIso),
+        // Multi-day events: don't archive until the END date has passed.
+        lt(sql`coalesce(${eventsTable.endDateIso}, ${eventsTable.dateIso})`, todayIso),
         inArray(eventsTable.workflowStatus, ARCHIVABLE_STATUSES),
       ),
     )
