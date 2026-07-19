@@ -10,6 +10,7 @@ import {
   type AdminEventsSummary,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUser } from "@clerk/react";
 import {
   Lock,
   Mail,
@@ -58,6 +59,34 @@ import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
 
 const API_BASE = "/api";
 
+// ── Admin actor identity (for audit attribution) ────────────────────────────
+// The signed-in Clerk user's name/email, kept in a module-level variable so
+// plain fetch helpers can attach it without prop-drilling. URI-encoded because
+// HTTP headers only allow Latin-1.
+let currentAdminActor = "";
+
+function adminActorHeader(): Record<string, string> {
+  return currentAdminActor
+    ? { "x-admin-actor": encodeURIComponent(currentAdminActor) }
+    : {};
+}
+
+/** Tracks the signed-in Clerk user and returns "Name (email)" (or fallback). */
+function useAdminActor(): string {
+  const { user } = useUser();
+  const actor = useMemo(() => {
+    if (!user) return "";
+    const name = user.fullName ?? user.username ?? "";
+    const email = user.primaryEmailAddress?.emailAddress ?? "";
+    if (name && email) return `${name} (${email})`;
+    return name || email;
+  }, [user]);
+  useEffect(() => {
+    currentAdminActor = actor;
+  }, [actor]);
+  return actor;
+}
+
 type BulkRowResult = {
   rowIndex: number;
   status: "inserted" | "duplicate" | "error";
@@ -96,7 +125,7 @@ async function bulkUpdateStatus(
 ): Promise<{ updated: number; prior?: PriorStatusEntry[] }> {
   const res = await fetch(`${API_BASE}/admin/events/bulk-status`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+    headers: { "Content-Type": "application/json", "x-admin-key": adminKey, ...adminActorHeader() },
     body: JSON.stringify({ ids, status }),
   });
   if (!res.ok) throw new Error(`Bulk update failed: ${res.status}`);
@@ -1517,8 +1546,14 @@ function AdminEventCard({
   const computedPrice = computeListingPrice(draft.listingPackage, draft.addOns);
   const effectivePrice = draft.listingPrice !== null ? draft.listingPrice : computedPrice;
 
+  const adminActor = useAdminActor();
   const updateMutation = useUpdateAdminEvent({
-    request: { headers: { "x-admin-key": adminKey } },
+    request: {
+      headers: {
+        "x-admin-key": adminKey,
+        ...(adminActor ? { "x-admin-actor": encodeURIComponent(adminActor) } : {}),
+      },
+    },
     mutation: {
       onSuccess: () => {
         onUpdated();
@@ -2132,7 +2167,10 @@ function AdminEventCard({
                 <div key={entry.id} className="text-xs rounded-lg border-2 border-foreground/10 bg-foreground/5 px-3 py-2">
                   <div className="flex justify-between items-center gap-2 mb-0.5">
                     <span className="font-bold">{entry.field}</span>
-                    <span className="text-foreground/40 shrink-0">
+                    <span className="text-foreground/50 truncate" title={entry.changedBy}>
+                      by {entry.changedBy}
+                    </span>
+                    <span className="text-foreground/40 shrink-0 ml-auto">
                       {new Date(entry.changedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                     </span>
                   </div>
@@ -3358,6 +3396,9 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
 export default function AdminApplications() {
   const [unlocked, setUnlocked] = useState(false);
   const [adminKey, setAdminKey] = useState("");
+  // Keep the module-level actor identity fresh for all fetch helpers on this
+  // page (bulk status updates, duplicate resolution, etc.).
+  useAdminActor();
 
   useEffect(() => {
     if (sessionStorage.getItem(UNLOCK_KEY) === "1") {

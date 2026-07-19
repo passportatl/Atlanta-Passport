@@ -97,6 +97,25 @@ function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   next();
 }
 
+/**
+ * Identity of the acting admin for audit attribution.
+ * The admin UI sends the signed-in Clerk user's name/email in the
+ * x-admin-actor header (URI-encoded, since headers are Latin-1 only).
+ * Falls back to "admin" when absent so the audit trail never breaks.
+ */
+function getAdminActor(req: Request): string {
+  const raw = req.headers["x-admin-actor"];
+  if (typeof raw !== "string" || raw.trim().length === 0) return "admin";
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    // keep raw value if it isn't valid URI encoding
+  }
+  const cleaned = decoded.replace(/[\r\n]/g, " ").trim().slice(0, 120);
+  return cleaned.length > 0 ? cleaned : "admin";
+}
+
 // ── Public ──────────────────────────────────────────────────────────────────
 
 // GET /events  — published events only, optional neighborhood/category filter
@@ -638,11 +657,12 @@ router.patch("/admin/events/bulk-status", requireAdmin, async (req, res) => {
     .returning({ id: eventsTable.id });
 
   // ── Audit log: one entry per event whose status actually changed ──
+  const bulkActor = getAdminActor(req);
   const auditEntries = rows
     .filter((r) => oldStatusById.get(r.id) !== status)
     .map((r) => ({
       eventId: r.id,
-      changedBy: "admin (bulk)",
+      changedBy: `${bulkActor} (bulk)`,
       field: "Status",
       oldValue: oldStatusById.get(r.id) ?? null,
       newValue: status,
@@ -806,6 +826,7 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
     { key: "tier", label: "Tier" },
   ];
   const auditEntries: Array<{ eventId: string; changedBy: string; field: string; oldValue: string | null; newValue: string | null }> = [];
+  const actor = getAdminActor(req);
   for (const { key, label } of AUDITED_FIELDS) {
     if (data[key] !== undefined) {
       const oldRaw = ev[key as keyof typeof ev];
@@ -813,12 +834,17 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
       const oldStr = oldRaw === null || oldRaw === undefined ? null : (typeof oldRaw === "object" ? JSON.stringify(oldRaw) : String(oldRaw));
       const newStr = newRaw === null || newRaw === undefined ? null : (typeof newRaw === "object" ? JSON.stringify(newRaw) : String(newRaw));
       if (oldStr !== newStr) {
-        auditEntries.push({ eventId: id, changedBy: "admin", field: label, oldValue: oldStr, newValue: newStr });
+        auditEntries.push({ eventId: id, changedBy: actor, field: label, oldValue: oldStr, newValue: newStr });
       }
     }
   }
   if (auditEntries.length > 0) {
-    void db.insert(eventAuditLog).values(auditEntries);
+    // Drizzle queries are lazy thenables — they only run when awaited.
+    try {
+      await db.insert(eventAuditLog).values(auditEntries);
+    } catch (err) {
+      req.log.error({ err }, "Failed to write event audit entries");
+    }
   }
 
   // ── Status-change email to submitter when contactEmail is on file ──
