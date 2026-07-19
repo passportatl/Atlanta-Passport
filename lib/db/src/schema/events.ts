@@ -50,6 +50,9 @@ export const eventsTable = pgTable("events", {
   verifiedAt: timestamp("verified_at", { withTimezone: true }),
   completenessScore: integer("completeness_score").notNull().default(0),
   duplicateOfId: uuid("duplicate_of_id"),
+  // Weighted duplicate-confidence score (0–100) recorded when ingestion flags
+  // this row as a possible duplicate of duplicateOfId.
+  duplicateConfidence: integer("duplicate_confidence"),
   paymentId: text("payment_id"),
   paymentStatus: text("payment_status"),
   emailDelivered: text("email_delivered").notNull().default("pending"),

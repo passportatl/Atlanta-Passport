@@ -2,15 +2,17 @@
 // All routes require x-admin-key header.
 
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
-import { eq, desc, and, inArray } from "drizzle-orm";
+import { eq, desc, and, or, ilike, gte, inArray, isNull, sql } from "drizzle-orm";
 import {
   db,
   eventSourcesTable,
   importRunsTable,
   importRunRowsTable,
   eventsTable,
+  syncJobsTable,
+  adminNotificationsTable,
 } from "@workspace/db";
-import { runSourceSync } from "../lib/ingestion/runner";
+import { enqueueSync, cancelJob, getQueueSnapshot } from "../lib/ingestion/sync-queue";
 import { fetchTicketmasterEvents } from "../lib/ingestion/sources/ticketmaster";
 import { fetchIcalEvents } from "../lib/ingestion/sources/ical";
 import { fetchRssEvents } from "../lib/ingestion/sources/rss";
@@ -168,22 +170,101 @@ router.post("/admin/sources/:id/dismiss-alert", requireAdmin, async (req, res) =
 
 // ── Manual sync trigger ───────────────────────────────────────────────────────
 
-// POST /admin/sources/:id/sync
+// POST /admin/sources/:id/sync — enqueues a high-priority job on the central
+// sync queue (no duplicate jobs per source) and waits for it to finish so the
+// admin UI still gets the run summary back.
 router.post("/admin/sources/:id/sync", requireAdmin, async (req, res) => {
   const { id } = req.params as { id: string };
+  const [source] = await db
+    .select({ id: eventSourcesTable.id, name: eventSourcesTable.name })
+    .from(eventSourcesTable)
+    .where(eq(eventSourcesTable.id, id));
+  if (!source) { res.status(404).json({ error: "Source not found" }); return; }
+
   try {
-    const runId = await runSourceSync(id);
-    // Return run summary
-    const [run] = await db
-      .select()
-      .from(importRunsTable)
-      .where(eq(importRunsTable.id, runId));
-    res.json(run ?? { id: runId, status: "success" });
+    const enq = await enqueueSync({ sourceId: id, sourceName: source.name, trigger: "manual", priority: 1 });
+    if ("alreadyQueued" in enq) {
+      res.status(409).json({ error: "A sync for this source is already queued or running" });
+      return;
+    }
+    const jobResult = await enq.promise;
+    if (jobResult.status === "failed") {
+      res.status(422).json({ error: jobResult.errorMessage ?? "Sync failed", jobId: jobResult.jobId });
+      return;
+    }
+    const [run] = jobResult.runId
+      ? await db.select().from(importRunsTable).where(eq(importRunsTable.id, jobResult.runId))
+      : [];
+    res.json(run ?? { id: jobResult.runId, status: jobResult.status, jobId: jobResult.jobId });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logger.error({ sourceId: id, err }, "Manual sync failed");
     res.status(422).json({ error: msg });
   }
+});
+
+// ── Sync queue endpoints ──────────────────────────────────────────────────────
+
+// GET /admin/sync-jobs?limit=50 — recent jobs, newest first, plus live queue stats
+router.get("/admin/sync-jobs", requireAdmin, async (req, res) => {
+  const limit = Math.min(parseInt(String(req.query.limit ?? "50"), 10) || 50, 200);
+  const jobs = await db
+    .select()
+    .from(syncJobsTable)
+    .orderBy(desc(syncJobsTable.queuedAt))
+    .limit(limit);
+  const sources = await db
+    .select({ id: eventSourcesTable.id, name: eventSourcesTable.name })
+    .from(eventSourcesTable);
+  const nameById = new Map(sources.map((s) => [s.id, s.name]));
+  res.json({
+    queue: getQueueSnapshot(),
+    jobs: jobs.map((j) => ({ ...j, sourceName: nameById.get(j.sourceId) ?? "(deleted source)" })),
+  });
+});
+
+// POST /admin/sync-jobs/:id/cancel — cancels a queued job
+router.post("/admin/sync-jobs/:id/cancel", requireAdmin, async (req, res) => {
+  const { id } = req.params as { id: string };
+  const outcome = await cancelJob(id);
+  if (outcome === "cancelled") { res.json({ cancelled: true }); return; }
+  if (outcome === "running") { res.status(409).json({ error: "Job is already running and cannot be cancelled" }); return; }
+  res.status(404).json({ error: "Job not found or already finished" });
+});
+
+// ── Admin notifications ───────────────────────────────────────────────────────
+
+// GET /admin/notifications?unread=1
+router.get("/admin/notifications", requireAdmin, async (req, res) => {
+  const unreadOnly = req.query.unread === "1";
+  const rows = await db
+    .select()
+    .from(adminNotificationsTable)
+    .where(unreadOnly ? isNull(adminNotificationsTable.readAt) : undefined)
+    .orderBy(desc(adminNotificationsTable.createdAt))
+    .limit(100);
+  res.json(rows);
+});
+
+// POST /admin/notifications/:id/read  (id = "all" marks everything read)
+router.post("/admin/notifications/:id/read", requireAdmin, async (req, res) => {
+  const { id } = req.params as { id: string };
+  const now = new Date();
+  if (id === "all") {
+    await db
+      .update(adminNotificationsTable)
+      .set({ readAt: now })
+      .where(isNull(adminNotificationsTable.readAt));
+    res.json({ read: true });
+    return;
+  }
+  const [row] = await db
+    .update(adminNotificationsTable)
+    .set({ readAt: now })
+    .where(eq(adminNotificationsTable.id, id))
+    .returning({ id: adminNotificationsTable.id });
+  if (!row) { res.status(404).json({ error: "Notification not found" }); return; }
+  res.json({ read: true });
 });
 
 // POST /admin/sources/:id/test
@@ -335,19 +416,112 @@ router.get("/admin/import-runs", requireAdmin, async (req, res) => {
   res.json(runs.map((r) => ({ ...r, sourceName: sourceMap[r.sourceId] ?? r.sourceId })));
 });
 
-// GET /admin/import-runs/:runId/rows?limit=200
+// GET /admin/import-runs/:runId/rows?limit=200&status=error&q=jazz
 router.get("/admin/import-runs/:runId/rows", requireAdmin, async (req, res) => {
   const { runId } = req.params as { runId: string };
-  const { limit: limitStr } = req.query as { limit?: string };
+  const { limit: limitStr, status, q } = req.query as {
+    limit?: string;
+    status?: string;
+    q?: string;
+  };
   const limit = Math.min(parseInt(limitStr ?? "200", 10) || 200, 500);
+
+  const conditions = [eq(importRunRowsTable.runId, runId)];
+  if (status) conditions.push(eq(importRunRowsTable.status, status));
+  if (q && q.trim()) {
+    const like = `%${q.trim()}%`;
+    conditions.push(
+      or(
+        ilike(importRunRowsTable.rawName, like),
+        ilike(importRunRowsTable.rawVenue, like),
+        ilike(importRunRowsTable.errorMessage, like),
+      )!,
+    );
+  }
 
   const rows = await db
     .select()
     .from(importRunRowsTable)
-    .where(eq(importRunRowsTable.runId, runId))
+    .where(and(...conditions))
     .limit(limit);
 
   res.json(rows);
+});
+
+// ── Analytics / ops dashboard ─────────────────────────────────────────────────
+
+// GET /admin/analytics/overview — one-shot payload for the ops dashboard
+router.get("/admin/analytics/overview", requireAdmin, async (_req, res) => {
+  const sources = await db.select().from(eventSourcesTable);
+
+  // Events grouped by workflow status + ingest source
+  const eventCounts = await db
+    .select({
+      workflowStatus: eventsTable.workflowStatus,
+      ingestSourceId: eventsTable.ingestSourceId,
+      count: sql<number>`count(*)::int`,
+    })
+    .from(eventsTable)
+    .groupBy(eventsTable.workflowStatus, eventsTable.ingestSourceId);
+
+  // Run outcomes over the last 7 days
+  const weekAgo = new Date(Date.now() - 7 * 24 * 3600_000);
+  const recentRuns = await db
+    .select({
+      sourceId: importRunsTable.sourceId,
+      status: importRunsTable.status,
+      count: sql<number>`count(*)::int`,
+      found: sql<number>`coalesce(sum(${importRunsTable.found}), 0)::int`,
+      inserted: sql<number>`coalesce(sum(${importRunsTable.inserted}), 0)::int`,
+      changed: sql<number>`coalesce(sum(${importRunsTable.changed}), 0)::int`,
+      duplicates: sql<number>`coalesce(sum(${importRunsTable.duplicates}), 0)::int`,
+      errors: sql<number>`coalesce(sum(${importRunsTable.errors}), 0)::int`,
+    })
+    .from(importRunsTable)
+    .where(gte(importRunsTable.startedAt, weekAgo))
+    .groupBy(importRunsTable.sourceId, importRunsTable.status);
+
+  const [unread] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(adminNotificationsTable)
+    .where(isNull(adminNotificationsTable.readAt));
+
+  res.json({
+    generatedAt: new Date().toISOString(),
+    queue: getQueueSnapshot(),
+    unreadNotifications: unread?.count ?? 0,
+    sources: sources.map((s) => ({
+      id: s.id,
+      name: s.name,
+      type: s.type,
+      isActive: s.isActive,
+      healthStatus: s.healthStatus,
+      disabledReason: s.disabledReason,
+      lastSyncAt: s.lastSyncAt,
+      lastSyncStatus: s.lastSyncStatus,
+      lastSuccessAt: s.lastSuccessAt,
+      lastFailureAt: s.lastFailureAt,
+      backoffUntil: s.backoffUntil,
+      consecutiveFailures: s.consecutiveFailures,
+      avgResponseMs: s.avgResponseMs,
+      priority: s.priority,
+      syncIntervalHours: s.syncIntervalHours,
+      totals: {
+        runs: s.totalRuns,
+        successfulRuns: s.totalSuccessfulRuns,
+        fetched: s.totalFetched,
+        inserted: s.totalInserted,
+        updated: s.totalUpdated,
+        duplicates: s.totalDuplicates,
+        rejected: s.totalRejected,
+        parseFailures: s.parseFailures,
+        authFailures: s.authFailures,
+        timeouts: s.timeoutFailures,
+      },
+    })),
+    eventCounts,
+    recentRuns,
+  });
 });
 
 // ── Google Sheets sync ────────────────────────────────────────────────────────

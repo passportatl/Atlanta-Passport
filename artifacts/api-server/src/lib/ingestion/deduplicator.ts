@@ -1,8 +1,12 @@
-// Duplicate detection for ingested events.
-// Three-tier check (in priority order):
-//   1. Same source + same externalId → exact match (update lastSeenAt)
-//   2. Exact URL match (non-empty) → strong cross-source signal
-//   3. Normalized name + same date (≥0.85 Levenshtein) → fuzzy cross-source
+// Duplicate detection for ingested events — Sprint 4 weighted scoring.
+//
+// Every candidate pair gets a confidence score 0–100 built from weighted
+// signals (external ID, title similarity, date, time, venue, URL, organizer).
+// Outcomes:
+//   • same source + same externalId          → 100 (exact; refresh lastSeenAt)
+//   • score ≥ AUTO_DUPLICATE_THRESHOLD (95)  → safe duplicate (skip insert)
+//   • score ≥ REVIEW_THRESHOLD (70)          → flag for admin review
+//   • below                                   → not a duplicate
 
 import type { NormalizedEvent } from "./normalizer";
 
@@ -11,20 +15,26 @@ export type ExistingEventStub = {
   name: string;
   date: string;
   dateIso: string | null;
+  time?: string | null;
   venue: string;
+  address?: string | null;
   url: string | null;
   externalId: string | null;
   ingestSourceId: string | null;
   workflowStatus: string;
+  contactName?: string | null;
 };
+
+export const AUTO_DUPLICATE_THRESHOLD = 95;
+export const REVIEW_THRESHOLD = 70;
 
 export type DuplicateMatch = {
-  type: "same_source_exact" | "url_match" | "cross_source_possible";
+  type: "same_source_exact" | "auto_duplicate" | "cross_source_possible";
   existingId: string;
-  confidence: number; // 0–1
+  confidence: number; // 0–100
 };
 
-function normStr(s: string): string {
+function normStr(s: string | null | undefined): string {
   return (s ?? "")
     .toLowerCase()
     .trim()
@@ -33,17 +43,13 @@ function normStr(s: string): string {
     .trim();
 }
 
-function datesOverlap(
+function datesMatch(
   a: string,
   b: string,
   aIso: string | null,
   bIso: string | null,
 ): boolean {
-  // Prefer the ISO date when both events have one — it's format-independent
-  // ("July 20, 2026" vs "7/20/2026" both normalize to "2026-07-20").
-  if (aIso && bIso) {
-    return aIso === bIso;
-  }
+  if (aIso && bIso) return aIso === bIso;
   const na = normStr(a);
   const nb = normStr(b);
   if (!na || !nb) return false;
@@ -51,7 +57,7 @@ function datesOverlap(
 }
 
 // Levenshtein similarity — returns ratio 0–1
-function similarity(a: string, b: string): number {
+export function similarity(a: string, b: string): number {
   if (a === b) return 1;
   if (!a || !b) return 0;
   const m = a.length;
@@ -81,47 +87,90 @@ function normalizeUrl(url: string): string {
   }
 }
 
+function normalizeTime(t: string | null | undefined): string {
+  if (!t) return "";
+  return t.toLowerCase().replace(/\s+/g, "").replace(/^0/, "");
+}
+
+// Weighted confidence score for one candidate pair (0–100).
+// Titles must be reasonably similar AND dates must match before the other
+// signals are even considered — this keeps unrelated same-venue events apart.
+export function scoreDuplicate(event: NormalizedEvent, e: ExistingEventStub): number {
+  const nameSim = similarity(normStr(event.name), normStr(e.name));
+  const sameDate = datesMatch(event.date, e.date, event.dateIso, e.dateIso);
+
+  // URL exact match is a strong cross-source signal — but never an auto-merge
+  // on its own: recurring/series events often share one canonical page URL.
+  const urlMatch =
+    !!event.url && !!e.url &&
+    normalizeUrl(event.url) === normalizeUrl(e.url) &&
+    normalizeUrl(event.url).length > 10;
+
+  if (urlMatch) {
+    // Same page + same day + similar title → near-certain duplicate.
+    if (sameDate && nameSim >= 0.6) return 95;
+    // Same page but different day (or dissimilar title) → flag for review only.
+    if (sameDate || nameSim >= 0.6) return REVIEW_THRESHOLD + 5;
+    return 0;
+  }
+
+  if (nameSim < 0.75 || !sameDate) return 0;
+
+  // Base: title similarity (up to 55 points) + same day (20 points)
+  let score = Math.round(nameSim * 55) + 20;
+
+  // Venue (up to 12)
+  const venueSim = similarity(normStr(event.venue), normStr(e.venue));
+  if (venueSim >= 0.85) score += 12;
+  else if (venueSim >= 0.6) score += 6;
+
+  // Start time (up to 8)
+  const tA = normalizeTime(event.time);
+  const tB = normalizeTime(e.time);
+  if (tA && tB) score += tA === tB ? 8 : -5; // conflicting explicit times reduce confidence
+
+  // Address (up to 5)
+  const addrSim = similarity(normStr(event.address), normStr(e.address));
+  if (event.address && e.address && addrSim >= 0.8) score += 5;
+
+  // Organizer/contact (up to 5)
+  const orgA = normStr(event.organizer ?? event.contactName);
+  const orgB = normStr(e.contactName);
+  if (orgA && orgB && similarity(orgA, orgB) >= 0.85) score += 5;
+
+  return Math.max(0, Math.min(score, 99)); // only externalId matches reach 100
+}
+
 export function findDuplicate(
   event: NormalizedEvent,
   sourceId: string,
   existing: ExistingEventStub[],
 ): DuplicateMatch | null {
-  const normName = normStr(event.name);
-  const normEventUrl = event.url ? normalizeUrl(event.url) : null;
+  let best: DuplicateMatch | null = null;
 
   for (const e of existing) {
-    // Tier 1: exact same source + externalId
+    // Exact: same source + externalId → definitive (score 100)
     if (
       event.externalId &&
       e.externalId === event.externalId &&
       e.ingestSourceId === sourceId
     ) {
-      return { type: "same_source_exact", existingId: e.id, confidence: 1.0 };
+      return { type: "same_source_exact", existingId: e.id, confidence: 100 };
     }
 
-    // Tier 2: URL-based exact match (strong cross-source signal)
-    if (normEventUrl && e.url) {
-      const normExistingUrl = normalizeUrl(e.url);
-      if (normEventUrl === normExistingUrl && normEventUrl.length > 10) {
-        return { type: "url_match", existingId: e.id, confidence: 0.95 };
-      }
-    }
+    // Same-source events with similar names (e.g. course sections) are NOT
+    // duplicates unless the externalId matched above.
+    if (e.ingestSourceId === sourceId) continue;
 
-    // Tier 3: fuzzy name + overlapping date — cross-source ONLY.
-    // Same-source events with similar names (e.g. course sections) are NOT duplicates.
-    if (e.ingestSourceId !== sourceId) {
-      const nameSim = similarity(normName, normStr(e.name));
-      if (nameSim >= 0.85 && datesOverlap(event.date, e.date, event.dateIso, e.dateIso)) {
-        const venueSim = similarity(normStr(event.venue), normStr(e.venue));
-        const confidence = nameSim * 0.7 + (venueSim >= 0.7 ? 0.2 : 0) + 0.1;
-        return {
-          type: "cross_source_possible",
-          existingId: e.id,
-          confidence: Math.min(confidence, 0.9),
-        };
-      }
+    const score = scoreDuplicate(event, e);
+    if (score >= REVIEW_THRESHOLD && (!best || score > best.confidence)) {
+      best = {
+        type: score >= AUTO_DUPLICATE_THRESHOLD ? "auto_duplicate" : "cross_source_possible",
+        existingId: e.id,
+        confidence: score,
+      };
     }
   }
 
-  return null;
+  return best;
 }

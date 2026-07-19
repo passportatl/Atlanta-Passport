@@ -48,8 +48,10 @@ import {
   Tag,
   User,
   Zap,
+  BarChart3,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
+import { NotificationsBell, OpsDashboardPanel } from "@/components/admin/ops-dashboard";
 import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
 
 // ── Typed helpers for the two new bulk endpoints ────────────────────────────
@@ -767,7 +769,7 @@ type ImportRunRowRecord = {
 };
 
 type DuplicatePair = {
-  flagged: AdminEventRecord;
+  flagged: AdminEventRecord & { duplicateConfidence?: number | null };
   original: AdminEventRecord | null;
 };
 
@@ -2534,6 +2536,8 @@ function ImportLogsPanel({ adminKey }: { adminKey: string }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [rowsCache, setRowsCache] = useState<Record<string, ImportRunRowRecord[]>>({});
   const [rowsLoading, setRowsLoading] = useState(false);
+  const [rowSearch, setRowSearch] = useState("");
+  const [rowStatus, setRowStatus] = useState<string>("all");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -2551,6 +2555,8 @@ function ImportLogsPanel({ adminKey }: { adminKey: string }) {
   const toggleExpand = async (id: string) => {
     if (expandedId === id) { setExpandedId(null); return; }
     setExpandedId(id);
+    setRowSearch("");
+    setRowStatus("all");
     if (!rowsCache[id]) {
       setRowsLoading(true);
       try {
@@ -2642,6 +2648,29 @@ function ImportLogsPanel({ adminKey }: { adminKey: string }) {
 
             {isExpanded && (
               <div className="mt-3 border-t-2 border-dashed border-foreground/20 pt-3">
+                {rows && rows.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={rowSearch}
+                      onChange={(e) => setRowSearch(e.target.value)}
+                      placeholder="Search rows (name, venue, error)…"
+                      className="text-xs border-2 border-foreground/20 rounded-lg px-2.5 py-1.5 w-56 focus:outline-none focus:border-foreground"
+                    />
+                    <select
+                      value={rowStatus}
+                      onChange={(e) => setRowStatus(e.target.value)}
+                      className="text-xs border-2 border-foreground/20 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-foreground"
+                    >
+                      <option value="all">All statuses</option>
+                      <option value="inserted">Inserted</option>
+                      <option value="duplicate">Duplicate</option>
+                      <option value="changed">Changed</option>
+                      <option value="seen">Seen</option>
+                      <option value="error">Error</option>
+                    </select>
+                  </div>
+                )}
                 {rowsLoading && !rows ? (
                   <div className="text-xs text-center py-4 text-foreground/50">Loading rows…</div>
                 ) : rows && rows.length > 0 ? (
@@ -2657,7 +2686,16 @@ function ImportLogsPanel({ adminKey }: { adminKey: string }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {rows.map((r) => (
+                        {rows.filter((r) => {
+                          if (rowStatus !== "all" && r.status !== rowStatus) return false;
+                          if (!rowSearch.trim()) return true;
+                          const q = rowSearch.trim().toLowerCase();
+                          return (
+                            (r.rawName ?? "").toLowerCase().includes(q) ||
+                            (r.rawVenue ?? "").toLowerCase().includes(q) ||
+                            (r.errorMessage ?? "").toLowerCase().includes(q)
+                          );
+                        }).map((r) => (
                           <tr key={r.id} className="border-b border-foreground/5 last:border-0">
                             <td className="py-1 px-2">
                               <span className={`badge-sticker text-[8px] ${ROW_STATUS_COLORS[r.status] ?? "bg-brand-cream"}`}>{r.status}</span>
@@ -2740,7 +2778,22 @@ function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged:
 
       {pairs.map(({ flagged, original }) => (
         <div key={flagged.id} className="card-pop bg-white p-4">
-          <div className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-2">Possible Duplicate Pair</div>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Possible Duplicate Pair</div>
+            {typeof flagged.duplicateConfidence === "number" && (
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  flagged.duplicateConfidence >= 85
+                    ? "bg-brand-red/20 text-brand-red"
+                    : flagged.duplicateConfidence >= 75
+                      ? "bg-brand-yellow/40 text-yellow-900"
+                      : "bg-foreground/10 text-foreground/60"
+                }`}
+              >
+                {flagged.duplicateConfidence}% match confidence
+              </span>
+            )}
+          </div>
           <div className="grid sm:grid-cols-2 gap-4">
             {/* Flagged (new incoming) */}
             <div className="bg-brand-yellow/10 border-2 border-brand-yellow rounded-xl p-3">
@@ -2809,13 +2862,14 @@ const BULK_ACTIONS = [
   { status: "archived",  label: "Archive",  icon: <Archive className="w-3.5 h-3.5" />,     cls: "bg-foreground/10 text-foreground" },
 ] as const;
 
-type OpsTab = "events" | "sources" | "logs" | "duplicates";
+type OpsTab = "events" | "sources" | "logs" | "duplicates" | "dashboard";
 
 const OPS_TABS: { id: OpsTab; label: string; icon: React.ReactNode }[] = [
   { id: "events",     label: "Events",     icon: <Calendar className="w-3.5 h-3.5" /> },
   { id: "sources",    label: "Sources",    icon: <RefreshCw className="w-3.5 h-3.5" /> },
   { id: "logs",       label: "Import Logs",icon: <FileText className="w-3.5 h-3.5" /> },
   { id: "duplicates", label: "Duplicates", icon: <AlertTriangle className="w-3.5 h-3.5" /> },
+  { id: "dashboard",  label: "Dashboard",  icon: <BarChart3 className="w-3.5 h-3.5" /> },
 ];
 
 function EventsOpsPanel({ adminKey }: { adminKey: string }) {
@@ -2967,7 +3021,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       {summary && <SummaryBar summary={summary} />}
 
       {/* Inner ops tab bar */}
-      <div className="flex flex-wrap gap-1.5 mb-5 border-b-2 border-foreground/10 pb-3">
+      <div className="flex flex-wrap items-center gap-1.5 mb-5 border-b-2 border-foreground/10 pb-3">
         {OPS_TABS.map((t) => (
           <button
             key={t.id}
@@ -2978,7 +3032,13 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
             {t.icon} {t.label}
           </button>
         ))}
+        <div className="ml-auto">
+          <NotificationsBell adminKey={adminKey} />
+        </div>
       </div>
+
+      {/* Ops dashboard panel */}
+      {opsTab === "dashboard" && <OpsDashboardPanel adminKey={adminKey} />}
 
       {/* Sources panel */}
       {opsTab === "sources" && <SourcesPanel adminKey={adminKey} />}

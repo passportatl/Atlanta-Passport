@@ -16,6 +16,8 @@ import {
 } from "@workspace/db";
 import { normalizeEvent, type NormalizedEvent } from "./normalizer";
 import { findDuplicate, type ExistingEventStub } from "./deduplicator";
+import { recordRunSuccess, recordRunFailure } from "./health";
+import { checkEventIntegrity } from "./integrity";
 import { fetchTicketmasterEvents } from "./sources/ticketmaster";
 import { fetchGoogleSheetsEvents } from "./sources/google-sheets-intake";
 import { fetchIcalEvents } from "./sources/ical";
@@ -100,27 +102,41 @@ export async function runSourceSync(sourceId: string): Promise<string> {
 
   logger.info({ sourceId, runId, type: source.type }, "Ingestion run started");
 
-  // 4. Fetch from source
+  // 4. Fetch from source (timed — feeds the source's rolling avg response time)
   let rawEvents: Awaited<ReturnType<typeof fetchFromSource>>;
+  const fetchStart = Date.now();
   try {
-    rawEvents = await fetchFromSource(source.type, config);
+    // Per-source timeout override (admin-configurable) — applies on top of the
+    // connector's own per-request timeout as a hard cap for the whole fetch.
+    const fetchPromise = fetchFromSource(source.type, {
+      ...config,
+      ...(source.timeoutMs ? { timeoutMs: source.timeoutMs } : {}),
+    });
+    rawEvents = source.timeoutMs
+      ? await Promise.race([
+          fetchPromise,
+          new Promise<never>((_, reject) =>
+            setTimeout(
+              () => reject(new Error(`Source fetch timed out after ${source.timeoutMs}ms`)),
+              source.timeoutMs!,
+            ),
+          ),
+        ])
+      : await fetchPromise;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     await db
       .update(importRunsTable)
       .set({ status: "error", finishedAt: new Date(), errorDetail: msg })
       .where(eq(importRunsTable.id, runId));
-    await db
-      .update(eventSourcesTable)
-      .set({
-        lastSyncStatus: "error",
-        lastSyncMessage: msg,
-        consecutiveFailures: sql`${eventSourcesTable.consecutiveFailures} + 1`,
-        updatedAt: new Date(),
-      })
-      .where(eq(eventSourcesTable.id, sourceId));
+    // Classify the failure, update health status/counters, apply backoff, and
+    // raise admin notifications as needed.
+    await recordRunFailure(sourceId, source.name, err, Date.now() - fetchStart).catch((healthErr) =>
+      logger.error({ sourceId, err: healthErr }, "Failed to record run failure health"),
+    );
     throw err;
   }
+  const responseMs = Date.now() - fetchStart;
 
   // 5. Load existing events for dedup (only what we need)
   const existing: ExistingEventStub[] = await db
@@ -129,11 +145,14 @@ export async function runSourceSync(sourceId: string): Promise<string> {
       name: eventsTable.name,
       date: eventsTable.date,
       dateIso: eventsTable.dateIso,
+      time: eventsTable.time,
       venue: eventsTable.venue,
+      address: eventsTable.address,
       url: eventsTable.url,
       externalId: eventsTable.externalId,
       ingestSourceId: eventsTable.ingestSourceId,
       workflowStatus: eventsTable.workflowStatus,
+      contactName: eventsTable.contactName,
     })
     .from(eventsTable);
 
@@ -142,15 +161,19 @@ export async function runSourceSync(sourceId: string): Promise<string> {
   let duplicates = 0;
   let changed = 0;
   let errors = 0;
+  let rejected = 0;
   const runRows: ImportRunRowInsert[] = [];
   const now = new Date();
+  const seenExternalIds = new Set<string>();
 
   for (const raw of rawEvents) {
     const normalized: NormalizedEvent = normalizeEvent(raw);
 
-    // Skip events with no name
-    if (!normalized.name.trim()) {
+    // Integrity checks — reject invalid records gracefully, log every rejection
+    const integrity = checkEventIntegrity(normalized, seenExternalIds);
+    if (!integrity.ok) {
       errors++;
+      rejected++;
       runRows.push({
         runId,
         status: "error",
@@ -158,7 +181,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
         rawName: raw.name ?? null,
         rawDate: raw.date ?? null,
         rawVenue: raw.venue ?? null,
-        errorMessage: "Event name is blank after normalization",
+        errorMessage: integrity.reason,
       });
       continue;
     }
@@ -181,6 +204,20 @@ export async function runSourceSync(sourceId: string): Promise<string> {
           rawName: normalized.name,
           rawDate: normalized.date,
           rawVenue: normalized.venue,
+        });
+      } else if (dup.type === "auto_duplicate") {
+        // High-confidence duplicate (≥95) — safe to skip the insert entirely.
+        // The existing event (possibly editorial) is never touched.
+        duplicates++;
+        runRows.push({
+          runId,
+          status: "duplicate",
+          externalId: normalized.externalId,
+          rawName: normalized.name,
+          rawDate: normalized.date,
+          rawVenue: normalized.venue,
+          duplicateOfId: dup.existingId,
+          errorMessage: `Auto-merged: ${dup.confidence}% duplicate confidence`,
         });
       } else {
         // Cross-source possible duplicate — insert the INCOMING event flagged
@@ -211,6 +248,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
               lastSeenAt: now,
               workflowStatus: "possible_duplicate",
               duplicateOfId: dup.existingId,
+              duplicateConfidence: dup.confidence,
               completenessScore,
             })
             .returning({ id: eventsTable.id });
@@ -339,10 +377,8 @@ export async function runSourceSync(sourceId: string): Promise<string> {
       lastSyncStatus: finalStatus === "error" ? "error" : "success",
       lastSyncAt: new Date(),
       lastSyncMessage: summary,
-      consecutiveFailures:
-        finalStatus === "error"
-          ? sql`${eventSourcesTable.consecutiveFailures} + 1`
-          : 0,
+      // On error, recordRunFailure (9b) owns the consecutiveFailures increment.
+      ...(finalStatus !== "error" ? { consecutiveFailures: 0 } : {}),
       updatedAt: new Date(),
       // A successful sync ends any failure streak — clear the admin alert.
       ...(finalStatus !== "error"
@@ -350,6 +386,34 @@ export async function runSourceSync(sourceId: string): Promise<string> {
         : {}),
     })
     .where(eq(eventSourcesTable.id, sourceId));
+
+  // 9b. Health monitoring — record stats, health status, and anomaly alerts.
+  try {
+    if (finalStatus === "error") {
+      await recordRunFailure(
+        sourceId,
+        source.name,
+        new Error(`All ${rawEvents.length} fetched rows failed: ${summary}`),
+        responseMs,
+      );
+    } else {
+      await recordRunSuccess(
+        sourceId,
+        source.name,
+        {
+          fetched: rawEvents.length,
+          inserted,
+          updated: changed,
+          duplicates,
+          rejected,
+          responseMs,
+        },
+        errors > 0,
+      );
+    }
+  } catch (err) {
+    logger.error({ sourceId, err }, "Failed to record run health stats");
+  }
 
   logger.info({ runId, inserted, duplicates, changed, errors }, "Ingestion run complete");
 

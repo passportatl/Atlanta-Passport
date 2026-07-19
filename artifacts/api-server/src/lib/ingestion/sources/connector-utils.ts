@@ -11,6 +11,17 @@
 
 import { logger } from "../../logger";
 
+// HTTP error carrying the status code so the runner can classify failures
+// (auth vs rate-limit vs server error) without parsing message strings.
+export class ConnectorHttpError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ConnectorHttpError";
+    this.status = status;
+  }
+}
+
 export class MissingCredentialError extends Error {
   readonly envVar: string;
   constructor(envVar: string, provider: string) {
@@ -71,8 +82,9 @@ export async function fetchJsonWithRetry<T>(url: string, opts: RetryOptions): Pr
         const wait = Number.isFinite(retryAfter) && retryAfter > 0
           ? Math.min(retryAfter * 1000, 30_000)
           : baseDelay * Math.pow(2, attempt);
-        lastError = new Error(
+        lastError = new ConnectorHttpError(
           `${opts.provider} API ${res.status === 429 ? "rate limited" : "server error"} (HTTP ${res.status})`,
+          res.status,
         );
         if (attempt < retries) {
           logger.warn({ url: redactUrl(url), status: res.status, attempt, wait }, `${opts.provider} retrying after backoff`);
@@ -89,8 +101,9 @@ export async function fetchJsonWithRetry<T>(url: string, opts: RetryOptions): Pr
           res.status === 401 || res.status === 403
             ? " — check that the API credential is valid"
             : "";
-        throw new Error(
+        throw new ConnectorHttpError(
           `${opts.provider} API rejected the request (HTTP ${res.status} ${res.statusText})${authHint}${snippet ? `: ${snippet}` : ""}`,
+          res.status,
         );
       }
 

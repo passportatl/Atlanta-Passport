@@ -12,7 +12,8 @@
 
 import { and, eq, isNotNull, lte } from "drizzle-orm";
 import { db, eventsTable, eventSourcesTable } from "@workspace/db";
-import { runSourceSync } from "./ingestion/runner";
+import { enqueueSync, recoverStaleJobs } from "./ingestion/sync-queue";
+import { notifyAdmin } from "./ingestion/health";
 import { archivePastIngestedEvents } from "./ingestion/past-event-cleanup";
 import { logger } from "./logger";
 
@@ -65,7 +66,13 @@ const DEFAULT_SYNC_INTERVAL_BY_TYPE: Record<string, number> = {
   seatgeek: 12,
 };
 
-function getSourceSyncIntervalHours(type: string, config: Record<string, unknown>): number {
+function getSourceSyncIntervalHours(
+  type: string,
+  config: Record<string, unknown>,
+  columnValue: number | null,
+): number {
+  // Admin-set column takes precedence, then legacy config value, then type default.
+  if (typeof columnValue === "number" && columnValue > 0) return columnValue;
   const fromConfig = config.syncIntervalHours;
   if (typeof fromConfig === "number" && fromConfig > 0) return fromConfig;
   if (typeof fromConfig === "string") {
@@ -76,7 +83,6 @@ function getSourceSyncIntervalHours(type: string, config: Record<string, unknown
 }
 
 async function runSourceAutoSync(): Promise<void> {
-  // Load all active sources — also get config and lastSyncAt for interval checking
   const allActive = await db
     .select({
       id: eventSourcesTable.id,
@@ -85,69 +91,74 @@ async function runSourceAutoSync(): Promise<void> {
       config: eventSourcesTable.config,
       lastSyncAt: eventSourcesTable.lastSyncAt,
       lastSyncStatus: eventSourcesTable.lastSyncStatus,
+      healthStatus: eventSourcesTable.healthStatus,
+      backoffUntil: eventSourcesTable.backoffUntil,
+      priority: eventSourcesTable.priority,
+      syncIntervalHours: eventSourcesTable.syncIntervalHours,
     })
     .from(eventSourcesTable)
     .where(eq(eventSourcesTable.isActive, true));
 
-  // Filter to sources with status success, partial, or idle (never errored out permanently)
-  const candidates = allActive.filter((s) =>
-    ["success", "partial", "idle"].includes(s.lastSyncStatus ?? "idle"),
-  );
-
-  if (candidates.length === 0) {
-    logger.info("Source auto-sync: no active sources to sync");
-    return;
-  }
-
   const now = Date.now();
-  const due = candidates.filter((source) => {
+  const due = allActive.filter((source) => {
+    // A source stuck in "running" is handled by the queue's dedup — skip.
+    if (source.lastSyncStatus === "running") return false;
+    // Auth failures never auto-retry: a human must fix credentials first.
+    if (source.healthStatus === "awaiting_credentials") return false;
+    // Respect retry backoff windows.
+    if (source.backoffUntil && new Date(source.backoffUntil).getTime() > now) return false;
+
     let config: Record<string, unknown> = {};
     try {
       config = JSON.parse(source.config ?? "{}") as Record<string, unknown>;
     } catch {
       // ignore malformed config
     }
-
-    const intervalMs = getSourceSyncIntervalHours(source.type, config) * 3_600_000;
+    const intervalMs =
+      getSourceSyncIntervalHours(source.type, config, source.syncIntervalHours) * 3_600_000;
 
     if (!source.lastSyncAt) return true; // never synced → always due
-
-    const msSinceSync = now - new Date(source.lastSyncAt).getTime();
-    if (msSinceSync < intervalMs) {
-      logger.debug(
-        {
-          sourceId: source.id,
-          name: source.name,
-          hoursAgo: Math.round(msSinceSync / 36_000) / 100,
-          intervalHours: intervalMs / 3_600_000,
-        },
-        "Source auto-sync skipped: synced recently",
-      );
-      return false;
-    }
-    return true;
+    return now - new Date(source.lastSyncAt).getTime() >= intervalMs;
   });
 
   if (due.length === 0) {
-    logger.info("Source auto-sync: all active sources synced recently");
+    logger.info("Source auto-sync: no sources due");
     return;
   }
 
-  logger.info({ count: due.length }, "Source auto-sync started");
+  logger.info({ count: due.length }, "Source auto-sync: enqueueing due sources");
 
   for (const source of due) {
     try {
-      const runId = await runSourceSync(source.id);
-      logger.info({ sourceId: source.id, name: source.name, runId }, "Source auto-sync complete");
-      // The runner may finish without throwing but still record an error status
-      // (e.g. every row failed). Re-check and update the failure alert either way.
-      await updateFailureAlert(source.id, source.name);
+      const enq = await enqueueSync({
+        sourceId: source.id,
+        sourceName: source.name,
+        trigger: "scheduled",
+        priority: source.priority ?? 5,
+      });
+      if ("alreadyQueued" in enq) continue;
+      // Track completion in the background — update the failure-alert banner
+      // once the job finishes (the queue owns retries/backoff).
+      void enq.promise.then((result) => {
+        if (result.status === "failed") {
+          void flagSyncFailure(source.id, source.name, result.errorMessage ?? "Sync failed").catch(
+            (err) => logger.error({ sourceId: source.id, err }, "Failed to record sync failure alert"),
+          );
+        } else if (result.status !== "cancelled") {
+          void updateFailureAlert(source.id, source.name).catch((err) =>
+            logger.error({ sourceId: source.id, err }, "Failed to update failure alert"),
+          );
+        }
+      });
     } catch (err) {
-      logger.error({ sourceId: source.id, name: source.name, err }, "Source auto-sync failed");
-      const msg = err instanceof Error ? err.message : String(err);
-      await flagSyncFailure(source.id, source.name, msg).catch((alertErr) =>
-        logger.error({ sourceId: source.id, err: alertErr }, "Failed to record sync failure alert"),
-      );
+      logger.error({ sourceId: source.id, name: source.name, err }, "Failed to enqueue auto-sync");
+      await notifyAdmin({
+        type: "scheduler_failure",
+        severity: "critical",
+        title: `Scheduler failed to enqueue sync for ${source.name}`,
+        body: err instanceof Error ? err.message : String(err),
+        sourceId: source.id,
+      });
     }
   }
 }
@@ -222,8 +233,10 @@ export function startScheduledPublish(intervalMs = 5 * 60 * 1000): void {
   logger.info({ intervalMs }, "Scheduled publish checker started");
 }
 
-export function startSourceAutoSync(intervalMs = 6 * 60 * 60 * 1000): void {
+export function startSourceAutoSync(intervalMs = 60 * 60 * 1000): void {
   if (sourceAutoSyncTimer) return;
+  // Clean up jobs orphaned by a previous process before scheduling new work.
+  void recoverStaleJobs();
   // Run once after a short delay to let server fully initialize
   setTimeout(() => {
     void runSourceAutoSync().catch((err) => logger.error({ err }, "Source auto-sync startup run failed"));
