@@ -23,7 +23,10 @@ import { STAMP_SLUG } from "@/passport/data";
 import NotFound from "@/pages/not-found";
 
 function parseDateTile(dateStr: string): { month: string; day: string } {
-  const cleaned = dateStr.replace(/[–—]/g, "-").trim();
+  const cleaned = dateStr
+    .replace(/[–—]/g, "-")
+    .trim()
+    .replace(/^(?:sun|mon|tues?|wednes|thurs?|fri|satur)day,?\s+/i, "");
   const m = cleaned.match(/^([A-Za-z]+)\s+(\d+)/);
   return m ? { month: m[1].slice(0, 3).toUpperCase(), day: m[2] } : { month: "ATL", day: "★" };
 }

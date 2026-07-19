@@ -63,7 +63,10 @@ const headerTints = [
 
 // Parse a "Month Day" or "Month Day-Day" style date into a big-display tile.
 function parseDateTile(dateStr: string): { month: string; day: string } {
-  const cleaned = dateStr.replace(/[–—]/g, "-").trim();
+  const cleaned = dateStr
+    .replace(/[–—]/g, "-")
+    .trim()
+    .replace(/^(?:sun|mon|tues?|wednes|thurs?|fri|satur)day,?\s+/i, "");
   const match = cleaned.match(/^([A-Za-z]+)\s+(\d+)/);
   if (match) {
     return { month: match[1].slice(0, 3).toUpperCase(), day: match[2] };
@@ -78,7 +81,12 @@ function parseEventDays(dateStr: string): {
   year: number;
   days: number[];
 } | null {
-  const cleaned = dateStr.replace(/[–—]/g, "-").trim();
+  // Strip an optional leading weekday ("Saturday, July 18, 2026") so
+  // user-submitted dates parse the same as "July 18, 2026".
+  const cleaned = dateStr
+    .replace(/[–—]/g, "-")
+    .trim()
+    .replace(/^(?:sun|mon|tues?|wednes|thurs?|fri|satur)day,?\s+/i, "");
   const match = cleaned.match(/^([A-Za-z]+)\s+(\d+)(?:\s*-\s*(\d+))?,\s*(\d+)/);
   if (!match) return null;
   const month = MONTHS.indexOf(match[1].toLowerCase());

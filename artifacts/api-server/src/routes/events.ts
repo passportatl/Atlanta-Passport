@@ -134,12 +134,17 @@ router.get("/events/:id", async (req, res) => {
     return;
   }
 
+  // Comparing a non-UUID string against the uuid `id` column makes Postgres
+  // throw (22P02), so only include the id match when the param is a UUID.
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
   const rows = await db
     .select()
     .from(eventsTable)
     .where(
       and(
-        or(eq(eventsTable.id, id), eq(eventsTable.slug, id)),
+        isUuid
+          ? or(eq(eventsTable.id, id), eq(eventsTable.slug, id))
+          : eq(eventsTable.slug, id),
         eq(eventsTable.workflowStatus, "published"),
       ),
     )
