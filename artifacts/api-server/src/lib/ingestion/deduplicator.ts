@@ -33,7 +33,17 @@ function normStr(s: string): string {
     .trim();
 }
 
-function datesOverlap(a: string, b: string): boolean {
+function datesOverlap(
+  a: string,
+  b: string,
+  aIso: string | null,
+  bIso: string | null,
+): boolean {
+  // Prefer the ISO date when both events have one — it's format-independent
+  // ("July 20, 2026" vs "7/20/2026" both normalize to "2026-07-20").
+  if (aIso && bIso) {
+    return aIso === bIso;
+  }
   const na = normStr(a);
   const nb = normStr(b);
   if (!na || !nb) return false;
@@ -101,7 +111,7 @@ export function findDuplicate(
     // Same-source events with similar names (e.g. course sections) are NOT duplicates.
     if (e.ingestSourceId !== sourceId) {
       const nameSim = similarity(normName, normStr(e.name));
-      if (nameSim >= 0.85 && datesOverlap(event.date, e.date)) {
+      if (nameSim >= 0.85 && datesOverlap(event.date, e.date, event.dateIso, e.dateIso)) {
         const venueSim = similarity(normStr(event.venue), normStr(e.venue));
         const confidence = nameSim * 0.7 + (venueSim >= 0.7 ? 0.2 : 0) + 0.1;
         return {
