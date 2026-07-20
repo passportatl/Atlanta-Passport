@@ -3278,6 +3278,10 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
         </div>
       </div>
 
+      {/* Bulk result banner with the Undo countdown — rendered above every ops
+          tab so an open undo window stays visible while switching tabs */}
+      {bulkResultBanner}
+
       {/* Ops dashboard panel */}
       {opsTab === "dashboard" && <OpsDashboardPanel adminKey={adminKey} />}
 
@@ -3289,10 +3293,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
 
       {/* Duplicates panel */}
       {opsTab === "duplicates" && (
-        <>
-          {bulkResultBanner}
-          <DuplicatesPanel adminKey={adminKey} onChanged={refresh} onStatusChanged={registerSingleUndo} />
-        </>
+        <DuplicatesPanel adminKey={adminKey} onChanged={refresh} onStatusChanged={registerSingleUndo} />
       )}
 
       {/* Events panel (existing content) */}
@@ -3386,9 +3387,6 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           </button>
         </div>
       )}
-
-      {/* Bulk result banner (shown after a bulk action, with a short undo window) */}
-      {bulkResultBanner}
 
       {/* Bulk actions bar */}
       {selectedIds.size > 0 && (
