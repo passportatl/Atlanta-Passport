@@ -19,6 +19,7 @@ type FetchCall = { url: string; method: string; body: unknown };
 let fetchCalls: FetchCall[] = [];
 let duplicatePairs: { flagged: { id: string }; original: unknown }[] = [];
 let priorById: Record<string, string> = {};
+let restoreResponse: ((restore: { id: string }[]) => { updated: number; skipped: number }) | null = null;
 
 function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -68,7 +69,10 @@ function installFetchMock() {
       if (url.includes("/admin/events/bulk-status") && method === "PATCH") {
         const payload = body as { ids?: string[]; status?: string; restore?: { id: string; status: string; expected: string }[] };
         if (payload.restore) {
-          return jsonResponse({ updated: payload.restore.length, skipped: 0 });
+          const result = restoreResponse
+            ? restoreResponse(payload.restore)
+            : { updated: payload.restore.length, skipped: 0 };
+          return jsonResponse(result);
         }
         // Status change applied — the resolved pair disappears from the duplicates list
         const ids = payload.ids ?? [];
@@ -103,6 +107,7 @@ beforeEach(() => {
   fetchCalls = [];
   duplicatePairs = [{ flagged: makeFlaggedEvent(), original: null }];
   priorById = {};
+  restoreResponse = null;
   installFetchMock();
 });
 
@@ -232,6 +237,60 @@ describe("Undo from the Duplicates tab", () => {
     expect(restoredIds).not.toContain(FLAGGED_ID);
 
     // Undo window fully consumed — no second undo is possible
+    expect(screen.queryByRole("button", { name: /undo \(\d+s\)/i })).toBeNull();
+    expect(sessionStorage.getItem("adminBulkUndo")).toBeNull();
+  });
+
+  it("shows the skipped explanation and still clears undo when the restore reports skipped > 0", async () => {
+    restoreResponse = () => ({ updated: 0, skipped: 1 });
+
+    await resolveFromDuplicatesTab(/not a duplicate — send to review/i, "pending");
+
+    fireEvent.click(screen.getByRole("button", { name: /undo \(\d+s\)/i }));
+    await screen.findByText(
+      /↩️ Undone — 0 events restored to their previous status; 1 skipped because its status was changed by someone else after the bulk action\./,
+    );
+
+    // Undo state is still cleared after the partial restore
+    expect(screen.queryByRole("button", { name: /undo \(\d+s\)/i })).toBeNull();
+    expect(sessionStorage.getItem("adminBulkUndo")).toBeNull();
+
+    // The restore call carried the optimistic-concurrency `expected` value —
+    // the server (not the client) decided to skip, so nothing was overwritten
+    const restores = fetchCalls.filter(
+      (c) => c.method === "PATCH" && c.url.includes("/admin/events/bulk-status") && (c.body as { restore?: unknown }).restore,
+    );
+    expect(restores).toHaveLength(1);
+    expect(restores[0].body).toEqual({
+      restore: [{ id: FLAGGED_ID, status: PRIOR_STATUS, expected: "pending" }],
+    });
+  });
+
+  it("uses the plural skipped message when multiple events were changed by someone else", async () => {
+    const SECOND_ID = "evt-flagged-2";
+    duplicatePairs = [
+      { flagged: makeFlaggedEvent(), original: null },
+      {
+        flagged: { ...makeFlaggedEvent(), id: SECOND_ID, name: "Buckhead Art Walk" },
+        original: null,
+      },
+    ];
+    priorById = { [FLAGGED_ID]: PRIOR_STATUS, [SECOND_ID]: PRIOR_STATUS };
+    restoreResponse = () => ({ updated: 1, skipped: 2 });
+
+    renderPanel();
+    fireEvent.click(screen.getByRole("button", { name: /duplicates/i }));
+    await screen.findByText("Midtown Music Fest");
+
+    const cardA = screen.getByText("Midtown Music Fest").closest(".card-pop") as HTMLElement;
+    fireEvent.click(within(cardA).getByRole("button", { name: /not a duplicate — send to review/i }));
+    await screen.findByText('✅ 1 event updated to "pending".');
+
+    fireEvent.click(screen.getByRole("button", { name: /undo \(\d+s\)/i }));
+    await screen.findByText(
+      /↩️ Undone — 1 event restored to their previous status; 2 skipped because their statuses were changed by someone else after the bulk action\./,
+    );
+
     expect(screen.queryByRole("button", { name: /undo \(\d+s\)/i })).toBeNull();
     expect(sessionStorage.getItem("adminBulkUndo")).toBeNull();
   });
