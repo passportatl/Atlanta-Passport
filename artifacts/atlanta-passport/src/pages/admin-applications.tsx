@@ -2990,7 +2990,7 @@ const OPS_TABS: { id: OpsTab; label: string; icon: React.ReactNode }[] = [
   { id: "dashboard",  label: "Dashboard",  icon: <BarChart3 className="w-3.5 h-3.5" /> },
 ];
 
-function EventsOpsPanel({ adminKey }: { adminKey: string }) {
+export function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const qc = useQueryClient();
   const [opsTab, setOpsTab] = useState<OpsTab>("events");
   const [statusFilter, setStatusFilter] = useState<StatusTab>("all");
