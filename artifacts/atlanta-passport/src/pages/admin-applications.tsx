@@ -54,6 +54,7 @@ import {
 import AdminNav from "@/components/AdminNav";
 import { NotificationsBell, OpsDashboardPanel } from "@/components/admin/ops-dashboard";
 import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
+import { persistUndo, readPersistedUndo, clearPersistedUndo } from "@/lib/bulkUndoStorage";
 
 // ── Typed helpers for the two new bulk endpoints ────────────────────────────
 
@@ -2950,54 +2951,10 @@ function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged:
 }
 
 // ── Bulk undo persistence (survives page refresh via sessionStorage) ─────────
+// Storage helpers live in lib/bulkUndoStorage so they can be unit-tested.
 
 // How long the Undo option stays available after a bulk action (ms)
 const UNDO_WINDOW_MS = 20000;
-const UNDO_STORAGE_KEY = "adminBulkUndo";
-
-interface PersistedUndo {
-  entries: PriorStatusEntry[];
-  appliedStatus: string;
-  expiresAt: number;
-}
-
-function persistUndo(entries: PriorStatusEntry[], appliedStatus: string, expiresAt: number) {
-  try {
-    sessionStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify({ entries, appliedStatus, expiresAt }));
-  } catch {
-    // Storage unavailable/full — undo still works in-memory for this session
-  }
-}
-
-function clearPersistedUndo() {
-  try {
-    sessionStorage.removeItem(UNDO_STORAGE_KEY);
-  } catch {
-    // ignore
-  }
-}
-
-function readPersistedUndo(): PersistedUndo | null {
-  try {
-    const raw = sessionStorage.getItem(UNDO_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Partial<PersistedUndo>;
-    if (
-      !Array.isArray(parsed.entries) ||
-      parsed.entries.length === 0 ||
-      typeof parsed.appliedStatus !== "string" ||
-      typeof parsed.expiresAt !== "number" ||
-      parsed.expiresAt <= Date.now()
-    ) {
-      clearPersistedUndo();
-      return null;
-    }
-    return parsed as PersistedUndo;
-  } catch {
-    clearPersistedUndo();
-    return null;
-  }
-}
 
 // ── Bulk actions constant ─────────────────────────────────────────────────────
 
