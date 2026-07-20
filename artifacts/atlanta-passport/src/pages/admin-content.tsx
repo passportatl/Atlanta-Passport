@@ -7,6 +7,14 @@ import {
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 import { cn } from "@/lib/utils";
+import {
+  persistUndo,
+  readPersistedUndo,
+  clearPersistedUndo,
+  CONTENT_UNDO_STORAGE_KEY,
+  type PriorStatusEntry,
+  type PersistedUndo,
+} from "@/lib/bulkUndoStorage";
 
 const API_BASE = "/api";
 const ADMIN_KEY_STORAGE = "atl-passport-admin-key";
@@ -237,8 +245,6 @@ async function patchLocation(id: string, patch: Record<string, unknown>, adminKe
   return res.json() as Promise<LocationSubmission>;
 }
 
-type PriorStatusEntry = { id: string; status: string };
-
 async function bulkUpdateLocationStatus(
   ids: string[],
   status: string,
@@ -254,16 +260,16 @@ async function bulkUpdateLocationStatus(
 }
 
 async function bulkRestoreLocationStatus(
-  restore: PriorStatusEntry[],
+  restore: (PriorStatusEntry & { expected?: string })[],
   adminKey: string,
-): Promise<{ updated: number }> {
+): Promise<{ updated: number; skipped?: number }> {
   const res = await fetch(`${API_BASE}/admin/location-submissions/bulk-status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
     body: JSON.stringify({ restore }),
   });
   if (!res.ok) throw new Error(`Undo failed: ${res.status}`);
-  return res.json() as Promise<{ updated: number }>;
+  return res.json() as Promise<{ updated: number; skipped?: number }>;
 }
 
 async function bulkImportLocations(locations: Record<string, string>[], adminKey: string): Promise<BulkImportResult> {
@@ -635,7 +641,7 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkPending, setBulkPending] = useState(false);
   const [bulkMsg, setBulkMsg] = useState("");
-  const [undoState, setUndoState] = useState<PriorStatusEntry[] | null>(null);
+  const [undoState, setUndoState] = useState<PersistedUndo | null>(null);
   const [undoPending, setUndoPending] = useState(false);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -677,6 +683,21 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
       undoTimerRef.current = null;
     }
     setUndoState(null);
+    clearPersistedUndo(CONTENT_UNDO_STORAGE_KEY);
+  }, []);
+
+  // Restore a persisted undo window (survives page refresh) and re-arm its expiry timer
+  useEffect(() => {
+    const persisted = readPersistedUndo(CONTENT_UNDO_STORAGE_KEY);
+    if (!persisted) return;
+    setUndoState(persisted);
+    setBulkMsg(`✅ ${persisted.entries.length} location${persisted.entries.length !== 1 ? "s" : ""} updated to "${persisted.appliedStatus}".`);
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    undoTimerRef.current = setTimeout(() => {
+      setUndoState(null);
+      undoTimerRef.current = null;
+      clearPersistedUndo(CONTENT_UNDO_STORAGE_KEY);
+    }, Math.max(0, persisted.expiresAt - Date.now()));
   }, []);
 
   useEffect(() => () => {
@@ -693,10 +714,13 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
       const result = await bulkUpdateLocationStatus(ids, status, adminKey);
       setBulkMsg(`✅ ${result.updated} location${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
       if (result.prior && result.prior.length > 0) {
-        setUndoState(result.prior);
+        const expiresAt = Date.now() + UNDO_WINDOW_MS;
+        setUndoState({ entries: result.prior, appliedStatus: status, expiresAt });
+        persistUndo(result.prior, status, expiresAt, CONTENT_UNDO_STORAGE_KEY);
         undoTimerRef.current = setTimeout(() => {
           setUndoState(null);
           undoTimerRef.current = null;
+          clearPersistedUndo(CONTENT_UNDO_STORAGE_KEY);
         }, UNDO_WINDOW_MS);
       }
       setSelectedIds(new Set());
@@ -709,12 +733,20 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
   };
 
   const doUndoBulkAction = async () => {
-    if (!undoState || undoState.length === 0 || undoPending) return;
-    const entries = undoState;
+    if (!undoState || undoState.entries.length === 0 || undoPending) return;
+    // Attach expected = the status the bulk action set, so the server skips
+    // rows another admin has since changed instead of overwriting them.
+    const entries = undoState.entries.map((e) => ({ ...e, expected: undoState.appliedStatus }));
     setUndoPending(true);
     try {
       const result = await bulkRestoreLocationStatus(entries, adminKey);
-      setBulkMsg(`↩️ Undone — ${result.updated} location${result.updated !== 1 ? "s" : ""} restored to their previous status.`);
+      const skipped = result.skipped ?? 0;
+      const restoredMsg = `${result.updated} location${result.updated !== 1 ? "s" : ""} restored to their previous status`;
+      setBulkMsg(
+        skipped > 0
+          ? `↩️ Undone — ${restoredMsg}; ${skipped} skipped because ${skipped !== 1 ? "their statuses were" : "its status was"} changed by someone else after the bulk action.`
+          : `↩️ Undone — ${restoredMsg}.`,
+      );
       clearUndo();
       void load();
     } catch (err) {
@@ -819,7 +851,7 @@ function LocationsTab({ adminKey }: { adminKey: string }) {
       {bulkMsg && selectedIds.size === 0 && (
         <div className="card-pop bg-white border-2 border-foreground p-3 flex flex-wrap items-center gap-3">
           <span className="text-sm font-bold">{bulkMsg}</span>
-          {undoState && undoState.length > 0 && (
+          {undoState && undoState.entries.length > 0 && (
             <button
               type="button"
               disabled={undoPending}
