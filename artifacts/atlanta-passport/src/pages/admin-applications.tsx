@@ -3009,7 +3009,8 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const [bulkPending, setBulkPending] = useState(false);
   const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number } | null>(null);
   const [bulkMsg, setBulkMsg] = useState<string | null>(null);
-  const [undoState, setUndoState] = useState<{ entries: PriorStatusEntry[]; appliedStatus: string } | null>(null);
+  const [undoState, setUndoState] = useState<{ entries: PriorStatusEntry[]; appliedStatus: string; expiresAt: number } | null>(null);
+  const [undoNow, setUndoNow] = useState(() => Date.now());
   const [undoPending, setUndoPending] = useState(false);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showImporter, setShowImporter] = useState(false);
@@ -3137,7 +3138,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   useEffect(() => {
     const persisted = readPersistedUndo();
     if (!persisted) return;
-    setUndoState({ entries: persisted.entries, appliedStatus: persisted.appliedStatus });
+    setUndoState({ entries: persisted.entries, appliedStatus: persisted.appliedStatus, expiresAt: persisted.expiresAt });
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
     undoTimerRef.current = setTimeout(() => {
       setUndoState(null);
@@ -3149,6 +3150,16 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   useEffect(() => () => {
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
   }, []);
+
+  // Tick every second while an undo window is open so the countdown updates live
+  useEffect(() => {
+    if (!undoState) return;
+    setUndoNow(Date.now());
+    const interval = setInterval(() => setUndoNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, [undoState]);
+
+  const undoSecondsLeft = undoState ? Math.max(0, Math.ceil((undoState.expiresAt - undoNow) / 1000)) : 0;
 
   const doBulkAction = async (status: string) => {
     const ids = [...selectedIds];
@@ -3163,8 +3174,8 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       );
       setBulkMsg(`✅ ${result.updated} event${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
       if (result.prior.length > 0) {
-        setUndoState({ entries: result.prior, appliedStatus: status });
         const expiresAt = Date.now() + UNDO_WINDOW_MS;
+        setUndoState({ entries: result.prior, appliedStatus: status, expiresAt });
         persistUndo(result.prior, status, expiresAt);
         if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
         undoTimerRef.current = setTimeout(() => {
@@ -3337,7 +3348,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       {bulkMsg && selectedIds.size === 0 && (
         <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
           <span className="text-sm font-bold">{bulkMsg}</span>
-          {undoState && undoState.entries.length > 0 && (
+          {undoState && undoState.entries.length > 0 && undoSecondsLeft > 0 && (
             <button
               type="button"
               disabled={undoPending}
@@ -3345,7 +3356,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
               className="button-pop text-xs px-2.5 py-1.5 inline-flex items-center gap-1 bg-brand-yellow text-foreground disabled:opacity-50"
             >
               {undoPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              Undo
+              Undo ({undoSecondsLeft}s)
             </button>
           )}
           <button
