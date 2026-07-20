@@ -1615,7 +1615,17 @@ function AdminEventCard({
       assignedTo: draft.assignedTo || undefined,
       ...(republish ? { workflowStatus: "published" } : {}),
     };
-    updateMutation.mutate({ id: event.id, data: body });
+    const prior = event.workflowStatus;
+    updateMutation.mutate(
+      { id: event.id, data: body },
+      {
+        onSuccess: () => {
+          if (republish && prior !== "published") {
+            onStatusChanged?.({ id: event.id, status: prior }, "published");
+          }
+        },
+      },
+    );
   };
 
   const loadAudit = async () => {
