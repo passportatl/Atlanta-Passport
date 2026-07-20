@@ -26,8 +26,9 @@ const PASSPORT_STOP_SLUGS = new Set(Object.values(STAMP_SLUG));
 // PRIZE_TIER_STAMPS in the API's redemptions route.
 const PRIZE_TIER_STAMPS = [3, 7, 10, 13, 15];
 
-const ADMIN_PASSWORD = (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
+const API_BASE = "/api";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
+const ADMIN_KEY_STORAGE = "atlanta-passport-admin-key";
 const PUBLISHED_URL_KEY = "atlanta-passport-published-url";
 
 // Turn whatever the admin pasted into a clean origin (scheme + host), or null if
@@ -83,12 +84,19 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem(UNLOCK_KEY, "1");
-      onUnlock();
-    } else {
+    try {
+      // Validate against the server — no password baked into the bundle.
+      const res = await fetch(`${API_BASE}/admin/sources`, { headers: { "x-admin-key": pw } });
+      if (res.ok) {
+        sessionStorage.setItem(UNLOCK_KEY, "1");
+        sessionStorage.setItem(ADMIN_KEY_STORAGE, pw);
+        onUnlock();
+      } else {
+        setErr(true);
+      }
+    } catch {
       setErr(true);
     }
   };

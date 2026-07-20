@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 const API_BASE = "/api";
 const ADMIN_KEY_STORAGE = "atl-passport-admin-key";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
-const ADMIN_PASSWORD = "atlanta2026";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -1209,9 +1208,10 @@ export default function AdminRoutes() {
   const [activeTab, setActiveTab] = useState<"routes" | "migration" | "csv-import">("routes");
 
   useEffect(() => {
-    if (sessionStorage.getItem(UNLOCK_KEY) === "1") {
+    const storedKey = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+    if (sessionStorage.getItem(UNLOCK_KEY) === "1" && storedKey) {
       setUnlocked(true);
-      setAdminKey(sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? ADMIN_PASSWORD);
+      setAdminKey(storedKey);
     }
   }, []);
 

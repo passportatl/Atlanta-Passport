@@ -1071,8 +1071,6 @@ const SYNC_STATUS_COLORS: Record<string, string> = {
   partial: "bg-brand-yellow text-brand-yellow-foreground",
 };
 
-const ADMIN_PASSWORD =
-  (import.meta.env.VITE_ADMIN_PASSWORD as string | undefined) ?? "atlanta2026";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
 const ADMIN_KEY_STORAGE = "atlanta-passport-admin-key";
 
@@ -1106,15 +1104,26 @@ const WORKFLOW_COLORS: Record<string, string> = {
 function AdminGate({ onUnlock }: { onUnlock: (key: string) => void }) {
   const [pw, setPw] = useState("");
   const [err, setErr] = useState(false);
+  const [checking, setChecking] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem(UNLOCK_KEY, "1");
-      sessionStorage.setItem(ADMIN_KEY_STORAGE, pw);
-      onUnlock(pw);
-    } else {
+    if (checking) return;
+    setChecking(true);
+    try {
+      // Validate against the server — the password is never baked into the bundle.
+      const res = await fetch(`${API_BASE}/admin/sources`, { headers: { "x-admin-key": pw } });
+      if (res.ok) {
+        sessionStorage.setItem(UNLOCK_KEY, "1");
+        sessionStorage.setItem(ADMIN_KEY_STORAGE, pw);
+        onUnlock(pw);
+      } else {
+        setErr(true);
+      }
+    } catch {
       setErr(true);
+    } finally {
+      setChecking(false);
     }
   };
 
@@ -3474,9 +3483,10 @@ export default function AdminApplications() {
   useAdminActor();
 
   useEffect(() => {
-    if (sessionStorage.getItem(UNLOCK_KEY) === "1") {
+    const storedKey = sessionStorage.getItem(ADMIN_KEY_STORAGE);
+    if (sessionStorage.getItem(UNLOCK_KEY) === "1" && storedKey) {
       setUnlocked(true);
-      setAdminKey(sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? ADMIN_PASSWORD);
+      setAdminKey(storedKey);
     }
   }, []);
 
