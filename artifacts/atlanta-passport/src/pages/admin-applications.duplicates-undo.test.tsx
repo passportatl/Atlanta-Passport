@@ -6,7 +6,7 @@
 // pressing Undo restores the exact prior status via the restore endpoint.
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, screen, waitFor, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent, cleanup, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { EventsOpsPanel } from "./admin-applications";
 
@@ -17,7 +17,8 @@ const PRIOR_STATUS = "possible_duplicate";
 type FetchCall = { url: string; method: string; body: unknown };
 
 let fetchCalls: FetchCall[] = [];
-let duplicatePairs: unknown[] = [];
+let duplicatePairs: { flagged: { id: string }; original: unknown }[] = [];
+let priorById: Record<string, string> = {};
 
 function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
@@ -69,11 +70,12 @@ function installFetchMock() {
         if (payload.restore) {
           return jsonResponse({ updated: payload.restore.length, skipped: 0 });
         }
-        // Status change applied — pair disappears from the duplicates list
-        duplicatePairs = [];
+        // Status change applied — the resolved pair disappears from the duplicates list
+        const ids = payload.ids ?? [];
+        duplicatePairs = duplicatePairs.filter((p) => !ids.includes(p.flagged.id));
         return jsonResponse({
-          updated: payload.ids?.length ?? 0,
-          prior: (payload.ids ?? []).map((id) => ({ id, status: PRIOR_STATUS })),
+          updated: ids.length,
+          prior: ids.map((id) => ({ id, status: priorById[id] ?? PRIOR_STATUS })),
         });
       }
       if (url.includes("/admin/events/summary")) return jsonResponse(summary);
@@ -100,6 +102,7 @@ beforeEach(() => {
   sessionStorage.clear();
   fetchCalls = [];
   duplicatePairs = [{ flagged: makeFlaggedEvent(), original: null }];
+  priorById = {};
   installFetchMock();
 });
 
@@ -171,6 +174,66 @@ describe("Undo from the Duplicates tab", () => {
     expect(restore?.body).toEqual({
       restore: [{ id: FLAGGED_ID, status: PRIOR_STATUS, expected: "archived" }],
     });
+  });
+
+  it("two back-to-back resolutions: Undo reflects and restores only the second event", async () => {
+    const SECOND_ID = "evt-flagged-2";
+    const SECOND_PRIOR = "needs_verification";
+    duplicatePairs = [
+      { flagged: makeFlaggedEvent(), original: null },
+      {
+        flagged: {
+          ...makeFlaggedEvent(),
+          id: SECOND_ID,
+          name: "Buckhead Art Walk",
+          workflowStatus: SECOND_PRIOR,
+        },
+        original: null,
+      },
+    ];
+    priorById = { [FLAGGED_ID]: PRIOR_STATUS, [SECOND_ID]: SECOND_PRIOR };
+
+    renderPanel();
+    fireEvent.click(screen.getByRole("button", { name: /duplicates/i }));
+    await screen.findByText("Midtown Music Fest");
+    await screen.findByText("Buckhead Art Walk");
+
+    // Resolve pair A: Send to Review on the first flagged event
+    const cardA = screen.getByText("Midtown Music Fest").closest(".card-pop") as HTMLElement;
+    fireEvent.click(within(cardA).getByRole("button", { name: /not a duplicate — send to review/i }));
+    await screen.findByText('✅ 1 event updated to "pending".');
+
+    // Immediately resolve pair B: Archive on the second flagged event
+    const cardB = screen.getByText("Buckhead Art Walk").closest(".card-pop") as HTMLElement;
+    fireEvent.click(within(cardB).getByRole("button", { name: /confirm duplicate — archive/i }));
+    await screen.findByText('✅ 1 event updated to "archived".');
+
+    // The undo entry (and its persisted copy) must now hold only the second action
+    const persisted = JSON.parse(sessionStorage.getItem("adminBulkUndo")!) as {
+      entries: unknown;
+      appliedStatus: string;
+    };
+    expect(persisted.entries).toEqual([{ id: SECOND_ID, status: SECOND_PRIOR }]);
+    expect(persisted.appliedStatus).toBe("archived");
+
+    // Press Undo — the restore call must target the second event only,
+    // with its exact prior status; the first event must never be replayed
+    fireEvent.click(screen.getByRole("button", { name: /undo \(\d+s\)/i }));
+    await screen.findByText(/↩️ Undone — 1 event restored to their previous status\./);
+
+    const restores = fetchCalls.filter(
+      (c) => c.method === "PATCH" && c.url.includes("/admin/events/bulk-status") && (c.body as { restore?: unknown }).restore,
+    );
+    expect(restores).toHaveLength(1);
+    expect(restores[0].body).toEqual({
+      restore: [{ id: SECOND_ID, status: SECOND_PRIOR, expected: "archived" }],
+    });
+    const restoredIds = (restores[0].body as { restore: { id: string }[] }).restore.map((r) => r.id);
+    expect(restoredIds).not.toContain(FLAGGED_ID);
+
+    // Undo window fully consumed — no second undo is possible
+    expect(screen.queryByRole("button", { name: /undo \(\d+s\)/i })).toBeNull();
+    expect(sessionStorage.getItem("adminBulkUndo")).toBeNull();
   });
 
   it("persists the undo entry to sessionStorage so it survives a refresh", async () => {
