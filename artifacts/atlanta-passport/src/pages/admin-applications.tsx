@@ -1503,12 +1503,14 @@ function AdminEventCard({
   onUpdated,
   selected = false,
   onSelect,
+  onStatusChanged,
 }: {
   event: AdminEventRecord;
   adminKey: string;
   onUpdated: () => void;
   selected?: boolean;
   onSelect?: () => void;
+  onStatusChanged?: (prior: PriorStatusEntry, appliedStatus: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -1569,7 +1571,15 @@ function AdminEventCard({
   });
 
   const dispatch = (status: string) => {
-    updateMutation.mutate({ id: event.id, data: { workflowStatus: status } });
+    const prior = event.workflowStatus;
+    updateMutation.mutate(
+      { id: event.id, data: { workflowStatus: status } },
+      {
+        onSuccess: () => {
+          if (prior !== status) onStatusChanged?.({ id: event.id, status: prior }, status);
+        },
+      },
+    );
   };
 
   const saveEdits = (republish = false) => {
@@ -3194,6 +3204,20 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     }
   };
 
+  // Single-event status changes get the same undo window as bulk actions
+  const registerSingleUndo = useCallback((prior: PriorStatusEntry, appliedStatus: string) => {
+    const expiresAt = Date.now() + UNDO_WINDOW_MS;
+    setBulkMsg(`✅ 1 event updated to "${appliedStatus}".`);
+    setUndoState({ entries: [prior], appliedStatus, expiresAt });
+    persistUndo([prior], appliedStatus, expiresAt);
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    undoTimerRef.current = setTimeout(() => {
+      setUndoState(null);
+      undoTimerRef.current = null;
+      clearPersistedUndo();
+    }, UNDO_WINDOW_MS);
+  }, []);
+
   const doUndoBulkAction = async () => {
     if (!undoState || undoState.entries.length === 0 || undoPending) return;
     const entries = undoState.entries.map((e) => ({ ...e, expected: undoState.appliedStatus }));
@@ -3443,6 +3467,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
             onUpdated={refresh}
             selected={selectedIds.has(ev.id)}
             onSelect={() => toggleSelect(ev.id)}
+            onStatusChanged={registerSingleUndo}
           />
         ))}
       </div>
