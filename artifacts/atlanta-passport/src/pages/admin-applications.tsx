@@ -3379,7 +3379,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       )}
 
       {/* Bulk result banner (shown after a bulk action, with a short undo window) */}
-      {bulkMsg && selectedIds.size === 0 && (
+      {bulkMsg && (
         <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
           <span className="text-sm font-bold">{bulkMsg}</span>
           {undoState && undoState.entries.length > 0 && undoSecondsLeft > 0 && (
@@ -3440,11 +3440,6 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           {bulkPending && bulkProgress && (
             <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
               Processing… {bulkProgress.done} of {bulkProgress.total}
-            </div>
-          )}
-          {bulkMsg && (
-            <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
-              {bulkMsg}
             </div>
           )}
         </div>
