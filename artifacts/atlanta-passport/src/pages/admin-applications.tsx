@@ -2929,6 +2929,56 @@ function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged:
   );
 }
 
+// ── Bulk undo persistence (survives page refresh via sessionStorage) ─────────
+
+// How long the Undo option stays available after a bulk action (ms)
+const UNDO_WINDOW_MS = 20000;
+const UNDO_STORAGE_KEY = "adminBulkUndo";
+
+interface PersistedUndo {
+  entries: PriorStatusEntry[];
+  appliedStatus: string;
+  expiresAt: number;
+}
+
+function persistUndo(entries: PriorStatusEntry[], appliedStatus: string, expiresAt: number) {
+  try {
+    sessionStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify({ entries, appliedStatus, expiresAt }));
+  } catch {
+    // Storage unavailable/full — undo still works in-memory for this session
+  }
+}
+
+function clearPersistedUndo() {
+  try {
+    sessionStorage.removeItem(UNDO_STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function readPersistedUndo(): PersistedUndo | null {
+  try {
+    const raw = sessionStorage.getItem(UNDO_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<PersistedUndo>;
+    if (
+      !Array.isArray(parsed.entries) ||
+      parsed.entries.length === 0 ||
+      typeof parsed.appliedStatus !== "string" ||
+      typeof parsed.expiresAt !== "number" ||
+      parsed.expiresAt <= Date.now()
+    ) {
+      clearPersistedUndo();
+      return null;
+    }
+    return parsed as PersistedUndo;
+  } catch {
+    clearPersistedUndo();
+    return null;
+  }
+}
+
 // ── Bulk actions constant ─────────────────────────────────────────────────────
 
 const BULK_ACTIONS = [
@@ -3074,15 +3124,26 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     setSelectedIds(new Set(events.map((e) => e.id)));
   };
 
-  // How long the Undo option stays available after a bulk action (ms)
-  const UNDO_WINDOW_MS = 20000;
-
   const clearUndo = useCallback(() => {
     if (undoTimerRef.current) {
       clearTimeout(undoTimerRef.current);
       undoTimerRef.current = null;
     }
     setUndoState(null);
+    clearPersistedUndo();
+  }, []);
+
+  // Restore a persisted undo window (survives page refresh) and re-arm its expiry timer
+  useEffect(() => {
+    const persisted = readPersistedUndo();
+    if (!persisted) return;
+    setUndoState({ entries: persisted.entries, appliedStatus: persisted.appliedStatus });
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    undoTimerRef.current = setTimeout(() => {
+      setUndoState(null);
+      undoTimerRef.current = null;
+      clearPersistedUndo();
+    }, Math.max(0, persisted.expiresAt - Date.now()));
   }, []);
 
   useEffect(() => () => {
@@ -3103,10 +3164,13 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       setBulkMsg(`✅ ${result.updated} event${result.updated !== 1 ? "s" : ""} updated to "${status}".`);
       if (result.prior.length > 0) {
         setUndoState({ entries: result.prior, appliedStatus: status });
+        const expiresAt = Date.now() + UNDO_WINDOW_MS;
+        persistUndo(result.prior, status, expiresAt);
         if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
         undoTimerRef.current = setTimeout(() => {
           setUndoState(null);
           undoTimerRef.current = null;
+          clearPersistedUndo();
         }, UNDO_WINDOW_MS);
       }
       setSelectedIds(new Set());
