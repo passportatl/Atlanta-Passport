@@ -2,13 +2,14 @@ import { type ReactNode } from "react";
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
 import { businesses, businessCategories, events as sampleEvents } from "@/data/sample-data";
+import { LOCATION_BRANDING } from "@/data/locationBranding";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import MapSnapshot from "@/components/MapSnapshot";
 import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
-import { MapPin, Gift, Clock, Navigation, ArrowLeft, Bike, Utensils, Train, Globe } from "lucide-react";
+import { MapPin, Gift, Clock, Navigation, ArrowLeft, Bike, Utensils, Train, Globe, ExternalLink, Sparkles } from "lucide-react";
 
 const HQ_INTRO =
   "Your stop for all things Passport ATL. It's where you can pick up a physical, stampable copy of your passport and turn in your stamps for physical prize claims.";
@@ -50,6 +51,10 @@ export default function Listing() {
   // heterogeneous union safely.
   const logo =
     business && "logo" in business ? (business.logo as string) : undefined;
+
+  // Per-location custom branding — undefined when not configured, so all
+  // downstream checks are simple truthiness guards that never affect other pages.
+  const branding = business ? LOCATION_BRANDING[business.id] : undefined;
 
   if (!business) {
     return (
@@ -135,9 +140,28 @@ export default function Listing() {
                 ★ Passport ATL HQ
               </div>
             )}
+            {branding?.sponsorBadge && (
+              <div
+                className="badge-sticker rotate-1 inline-flex items-center gap-1 font-bold"
+                style={{
+                  backgroundColor: branding.accentColor ?? "#FFD700",
+                  color: branding.accentFg ?? "#000000",
+                }}
+              >
+                ★ {branding.sponsorBadge}
+              </div>
+            )}
           </div>
           <div className="hidden md:block">
             <h1 className="text-5xl lg:text-7xl font-serif font-bold mb-3">{business.name}</h1>
+            {branding?.partnerTagline ? (
+              <p
+                className="text-sm font-bold tracking-widest uppercase mb-2"
+                style={{ color: branding.accentColor ?? "rgba(255,255,255,0.85)" }}
+              >
+                {branding.partnerTagline}
+              </p>
+            ) : null}
             <div className="flex items-center text-white/90 text-lg">
               <MapPin className="w-5 h-5 mr-2" /> {business.neighborhood}
             </div>
@@ -159,25 +183,37 @@ export default function Listing() {
           {business.hq ? `${HQ_INTRO} ${business.description}` : business.description}
         </p>
 
-        {/* Offer Box */}
-        {business.offer && (
-          <div className="bg-accent/10 border-2 border-accent/30 rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-              <Gift className="w-32 h-32 text-accent" />
-            </div>
-            <div className="relative z-10">
-              <div className="flex items-center mb-3">
-                <div className="bg-accent text-accent-foreground w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md">
-                  <Gift className="w-4 h-4" />
-                </div>
-                <h3 className="font-bold text-accent tracking-wide uppercase text-sm">{t("listing_page.passport_offer_label")}</h3>
+        {/* Offer Box — uses brand accent colors when configured, standard styling otherwise */}
+        {business.offer && (() => {
+          const ac = branding?.accentColor;
+          const fg = branding?.accentFg ?? "#000000";
+          return (
+            <div
+              className={ac ? "rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden border-2" : "bg-accent/10 border-2 border-accent/30 rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden"}
+              style={ac ? { backgroundColor: `${ac}1a`, borderColor: `${ac}88` } : undefined}
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                <Gift className="w-32 h-32" style={ac ? { color: ac } : undefined} />
               </div>
-              <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
-                {renderOffer(business.offer)}
-              </p>
+              <div className="relative z-10">
+                <div className="flex items-center mb-3">
+                  <div
+                    className={ac ? "w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md" : "bg-accent text-accent-foreground w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md"}
+                    style={ac ? { backgroundColor: ac, color: fg } : undefined}
+                  >
+                    <Gift className="w-4 h-4" />
+                  </div>
+                  <h3 className={ac ? "font-bold tracking-wide uppercase text-sm text-foreground" : "font-bold text-accent tracking-wide uppercase text-sm"}>
+                    {t("listing_page.passport_offer_label")}
+                  </h3>
+                </div>
+                <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
+                  {renderOffer(business.offer)}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Main Details Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
@@ -322,15 +358,82 @@ export default function Listing() {
             )}
 
             <NearbyRoutes business={business} />
+
+            {/* Custom branded CTAs — only shown when configured for this location */}
+            {branding?.cta && branding.cta.length > 0 && (
+              <div className="space-y-3 pt-2">
+                {branding.cta.map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm font-bold"
+                    style={
+                      item.variant === "primary" && branding.accentColor
+                        ? {
+                            backgroundColor: branding.accentColor,
+                            color: branding.accentFg ?? "#000000",
+                            borderColor: branding.accentColor,
+                          }
+                        : undefined
+                    }
+                  >
+                    <ExternalLink className="w-4 h-4 shrink-0" />
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Coming-soon panel — visible while additional features are being prepared */}
+            {branding?.showComingSoonPanel && (
+              <div
+                className="card-pop rounded-2xl p-5 border-2 border-dashed space-y-2"
+                style={
+                  branding.accentColor
+                    ? { borderColor: `${branding.accentColor}66` }
+                    : undefined
+                }
+                aria-label="Additional partner features coming soon"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles
+                    className="w-4 h-4 shrink-0"
+                    style={{ color: branding.accentColor ?? undefined }}
+                  />
+                  <span
+                    className="font-display text-xs tracking-[0.18em] uppercase font-bold"
+                    style={{ color: branding.accentColor ?? undefined }}
+                  >
+                    More coming soon
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Exclusive partner features — custom gallery, loyalty perks, and
+                  event listings — are being prepared for this location.
+                </p>
+              </div>
+            )}
           </div>
 
         </div>
 
         {/* Bottom Nav */}
-        <div className="mt-20 pt-8 border-t border-border flex justify-center">
-          <Link href="/passport/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors uppercase">
-            {t("listing_page.more_in_area")} →
-          </Link>
+        <div className="mt-20 pt-8 border-t border-border">
+          {branding?.brandNote && (
+            <p
+              className="text-center text-xs text-muted-foreground mb-4 italic"
+              style={branding.accentColor ? { color: `${branding.accentColor}bb` } : undefined}
+            >
+              {branding.brandNote}
+            </p>
+          )}
+          <div className="flex justify-center">
+            <Link href="/passport/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors uppercase">
+              {t("listing_page.more_in_area")} →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
