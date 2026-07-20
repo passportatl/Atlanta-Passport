@@ -2829,7 +2829,11 @@ function ImportLogsPanel({ adminKey }: { adminKey: string }) {
 
 // ── DuplicatesPanel ───────────────────────────────────────────────────────────
 
-function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged: () => void }) {
+function DuplicatesPanel({ adminKey, onChanged, onStatusChanged }: {
+  adminKey: string;
+  onChanged: () => void;
+  onStatusChanged?: (prior: PriorStatusEntry, appliedStatus: string) => void;
+}) {
   const [pairs, setPairs] = useState<DuplicatePair[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -2851,7 +2855,9 @@ function DuplicatesPanel({ adminKey, onChanged }: { adminKey: string; onChanged:
   const resolve = async (id: string, resolution: "pending" | "archived") => {
     setProcessingId(id);
     try {
-      await bulkUpdateStatus([id], resolution, adminKey);
+      const result = await bulkUpdateStatus([id], resolution, adminKey);
+      const prior = result.prior?.[0];
+      if (prior && prior.status !== resolution) onStatusChanged?.(prior, resolution);
       await load();
       onChanged();
     } catch { /* ignore */ } finally {
@@ -3219,6 +3225,38 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
     }
   };
 
+  // Shared result banner with the Undo countdown — rendered on both the
+  // events tab and the duplicates tab so any status change can be undone.
+  const bulkResultBanner = bulkMsg && (
+    <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
+      <span className="text-sm font-bold">{bulkMsg}</span>
+      {undoState && undoState.entries.length > 0 && undoSecondsLeft > 0 && (
+        <button
+          type="button"
+          disabled={undoPending}
+          onClick={() => void doUndoBulkAction()}
+          className="button-pop text-xs px-2.5 py-1.5 inline-flex items-center gap-1 bg-brand-yellow text-foreground disabled:opacity-50"
+        >
+          {undoPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+          Undo ({undoSecondsLeft}s)
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={() => { setBulkMsg(null); clearUndo(); }}
+        className="text-foreground/40 hover:text-foreground ml-auto"
+        aria-label="Dismiss"
+      >
+        <X className="w-4 h-4" />
+      </button>
+      {undoPending && bulkProgress && (
+        <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
+          Undoing… {bulkProgress.done} of {bulkProgress.total}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div>
       {summary && <SummaryBar summary={summary} />}
@@ -3250,7 +3288,12 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       {opsTab === "logs" && <ImportLogsPanel adminKey={adminKey} />}
 
       {/* Duplicates panel */}
-      {opsTab === "duplicates" && <DuplicatesPanel adminKey={adminKey} onChanged={refresh} />}
+      {opsTab === "duplicates" && (
+        <>
+          {bulkResultBanner}
+          <DuplicatesPanel adminKey={adminKey} onChanged={refresh} onStatusChanged={registerSingleUndo} />
+        </>
+      )}
 
       {/* Events panel (existing content) */}
       {opsTab === "events" && <>
@@ -3345,35 +3388,7 @@ function EventsOpsPanel({ adminKey }: { adminKey: string }) {
       )}
 
       {/* Bulk result banner (shown after a bulk action, with a short undo window) */}
-      {bulkMsg && (
-        <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex flex-wrap items-center gap-3">
-          <span className="text-sm font-bold">{bulkMsg}</span>
-          {undoState && undoState.entries.length > 0 && undoSecondsLeft > 0 && (
-            <button
-              type="button"
-              disabled={undoPending}
-              onClick={() => void doUndoBulkAction()}
-              className="button-pop text-xs px-2.5 py-1.5 inline-flex items-center gap-1 bg-brand-yellow text-foreground disabled:opacity-50"
-            >
-              {undoPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              Undo ({undoSecondsLeft}s)
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => { setBulkMsg(null); clearUndo(); }}
-            className="text-foreground/40 hover:text-foreground ml-auto"
-            aria-label="Dismiss"
-          >
-            <X className="w-4 h-4" />
-          </button>
-          {undoPending && bulkProgress && (
-            <div className="w-full text-xs font-bold pt-1 border-t border-foreground/20">
-              Undoing… {bulkProgress.done} of {bulkProgress.total}
-            </div>
-          )}
-        </div>
-      )}
+      {bulkResultBanner}
 
       {/* Bulk actions bar */}
       {selectedIds.size > 0 && (
