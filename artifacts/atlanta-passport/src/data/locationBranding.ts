@@ -62,6 +62,21 @@ export interface LocationBranding {
    * Remove or set to false once the features are live.
    */
   showComingSoonPanel?: boolean;
+
+  /**
+   * When true, a compact event calendar add-on is rendered on this location's
+   * listing page showing only published events at this venue within the active
+   * Passport period. Disabled by default for all locations.
+   */
+  showEventCalendar?: boolean;
+
+  /**
+   * Venue name strings used to match events to this location. The match is
+   * case-insensitive and substring-aware, so partial name overlaps still
+   * resolve correctly. Should match how events are ingested for this venue.
+   * Required when showEventCalendar is true.
+   */
+  venueNames?: string[];
 }
 
 /**
@@ -100,5 +115,12 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
 
     // ── Coming-soon panel — remove once custom features go live ────────────
     showComingSoonPanel: true,
+
+    // ── Event calendar add-on ──────────────────────────────────────────────
+    // Shows published events at this venue within the Passport period.
+    // venueNames must match how events are ingested (case-insensitive,
+    // substring-aware). Add variants if ingested names differ.
+    showEventCalendar: true,
+    venueNames: ["Trap Museum", "Trap Music Museum", "Atlanta Trap Music Museum"],
   },
 };

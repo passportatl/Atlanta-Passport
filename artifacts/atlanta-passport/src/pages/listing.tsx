@@ -5,6 +5,7 @@ import { businesses, businessCategories, events as sampleEvents } from "@/data/s
 import { LOCATION_BRANDING } from "@/data/locationBranding";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
+import LocationEventCalendar from "@/components/LocationEventCalendar";
 import MapSnapshot from "@/components/MapSnapshot";
 import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
@@ -342,6 +343,18 @@ export default function Listing() {
                 </div>
                 <p className="text-xs text-muted-foreground mt-4 italic">Menu may rotate — call ahead for daily specials.</p>
               </section>
+            )}
+
+            {/* Location event calendar — opt-in add-on, disabled by default.
+                Enabled per-location via locationBranding.ts (showEventCalendar).
+                Renders only events at this venue within the active Passport period. */}
+            {branding?.showEventCalendar && branding.venueNames && branding.venueNames.length > 0 && (
+              <LocationEventCalendar
+                venueNames={branding.venueNames}
+                accentColor={branding.accentColor}
+                accentFg={branding.accentFg}
+                websiteUrl={business.website}
+              />
             )}
 
           </div>
