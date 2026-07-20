@@ -633,7 +633,7 @@ const BULK_ACTIONS = [
   { status: "archived",          label: "Archive All",         cls: "bg-gray-50 text-gray-700" },
 ];
 
-function LocationsTab({ adminKey }: { adminKey: string }) {
+export function LocationsTab({ adminKey }: { adminKey: string }) {
   const [locations, setLocations] = useState<LocationSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
