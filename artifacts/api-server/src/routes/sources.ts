@@ -24,21 +24,9 @@ import { fetchMeetupEvents } from "../lib/ingestion/sources/meetup";
 import { fetchBandsintownEvents } from "../lib/ingestion/sources/bandsintown";
 import { fetchSeatGeekEvents } from "../lib/ingestion/sources/seatgeek";
 import { logger } from "../lib/logger";
+import { requireAdmin } from "../lib/admin-auth";
 
 const router: IRouter = Router();
-
-function getAdminSecret(): string {
-  return process.env.ADMIN_SECRET ?? "atlanta2026";
-}
-
-function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  const key = req.headers["x-admin-key"] as string | undefined;
-  if (key !== getAdminSecret()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-  next();
-}
 
 const VALID_TYPES = [
   "ticketmaster", "google_sheets", "ical", "rss", "json_api", "csv_url",

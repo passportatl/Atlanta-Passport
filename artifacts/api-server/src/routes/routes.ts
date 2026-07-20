@@ -2,23 +2,9 @@ import { Router } from "express";
 import { db, masterRoutesTable, routeStopsTable } from "@workspace/db";
 import { eq, and, ilike, or, sql } from "drizzle-orm";
 import { stringParam } from "../lib/params";
+import { requireAdmin } from "../lib/admin-auth";
 
 const router = Router();
-
-const ADMIN_KEY = process.env["ADMIN_KEY"] ?? "atlanta2026";
-
-function requireAdmin(
-  req: import("express").Request,
-  res: import("express").Response,
-  next: import("express").NextFunction,
-) {
-  const key = (req.headers["x-admin-key"] as string | undefined) ?? (req.query["_k"] as string | undefined);
-  if (key !== ADMIN_KEY) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-  next();
-}
 
 // ── Completeness scoring ──────────────────────────────────────────────────────
 

@@ -36,6 +36,6 @@ Date: July 19, 2026
 3. Enqueue rolls back the in-memory lock if the DB insert fails.
 
 ## Known limitations
-- Admin auth falls back to a default key if `ADMIN_SECRET` is unset — set a real secret before production.
+- Admin auth requires the `ADMIN_SECRET` environment variable (Replit Secret). There is no built-in fallback key: when the secret is unset, all admin requests are refused with 503. Set a strong, unique value in both development and production.
 - In-flight syncs cannot be aborted; a timed-out job's source stays locked until the sync settles.
 - Bandsintown / Meetup / Eventbrite / SeatGeek connectors remain in `awaiting credentials` until API keys are provided.

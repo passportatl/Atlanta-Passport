@@ -3,6 +3,7 @@ import { desc, eq, or, and, inArray, isNotNull, isNull, lt } from "drizzle-orm";
 import { db, eventsTable, eventAuditLog, computeEventCompleteness, businessesTable } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { requireAdmin } from "../lib/admin-auth";
 import { todayIsoAtlanta } from "../lib/ingestion/past-event-cleanup";
 import { parseEventDate } from "../lib/ingestion/normalizer";
 
@@ -82,19 +83,6 @@ async function syncBonusStampBusiness(
       .set({ isActive: false })
       .where(eq(businessesTable.slug, slug));
   }
-}
-
-function getAdminSecret(): string {
-  return process.env.ADMIN_SECRET ?? "atlanta2026";
-}
-
-function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  const key = req.headers["x-admin-key"] as string | undefined;
-  if (key !== getAdminSecret()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-  next();
 }
 
 /**

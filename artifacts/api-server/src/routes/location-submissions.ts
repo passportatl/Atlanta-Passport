@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response, type NextFunction } 
 import { desc, eq, ilike, or, and, isNull, inArray } from "drizzle-orm";
 import { db, locationSubmissionsTable, businessesTable, computeLocationCompleteness } from "@workspace/db";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { requireAdmin } from "../lib/admin-auth";
 import { stringParam } from "../lib/params";
 
 const router: IRouter = Router();
@@ -29,19 +30,6 @@ function deriveSlug(name: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
-}
-
-function getAdminSecret(): string {
-  return process.env.ADMIN_SECRET ?? "atlanta2026";
-}
-
-function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  const key = req.headers["x-admin-key"] as string | undefined;
-  if (key !== getAdminSecret()) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-  next();
 }
 
 // ── Public ───────────────────────────────────────────────────────────────────

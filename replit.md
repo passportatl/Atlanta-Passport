@@ -9,7 +9,7 @@ A premium, mobile-first city-guide product (physical booklet + digital site) for
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks + Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL`. Clerk secrets: `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`.
+- Required env: `DATABASE_URL`, `ADMIN_SECRET` (admin API key — no built-in fallback; admin routes return 503 when unset). Clerk secrets: `CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`.
 
 ## Stack
 
