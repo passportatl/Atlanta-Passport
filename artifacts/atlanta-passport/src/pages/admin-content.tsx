@@ -391,7 +391,7 @@ function LocationCard({
         <button
           type="button"
           onClick={onSelect}
-          className="mt-0.5 shrink-0"
+          className="mt-0.5 shrink-0 p-1 -m-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow"
           aria-label={selected ? `Deselect ${loc.name}` : `Select ${loc.name}`}
           aria-pressed={selected}
         >

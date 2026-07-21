@@ -1683,7 +1683,7 @@ function AdminEventCard({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onSelect(); }}
-              className="mt-0.5 shrink-0 text-foreground/40 hover:text-foreground transition-colors"
+              className="mt-0.5 shrink-0 p-1 -m-1 rounded text-foreground/40 hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-yellow"
               aria-label={selected ? `Deselect ${event.name}` : `Select ${event.name}`}
               aria-pressed={selected}
             >
