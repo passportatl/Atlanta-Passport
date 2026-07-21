@@ -11,6 +11,9 @@
  *      substring-aware so minor suffixes don't break the match).
  *   2. Events whose dateIso falls within the active Passport period.
  *
+ * Temp events (dates confirmed, details pending) are merged into the same
+ * calendar and rendered with a distinct "Coming Soon" style.
+ *
  * No database changes, no map changes, no new packages.
  */
 
@@ -51,24 +54,48 @@ function parseDateBadge(dateStr: string): { mon: string; day: string } {
   return { mon: "ATL", day: "★" };
 }
 
-// Group events into month buckets for display.
-function groupByMonth(events: EventRecord[]): { label: string; events: EventRecord[] }[] {
-  const map = new Map<string, EventRecord[]>();
-  for (const ev of events) {
-    const iso = ev.dateIso;
+// Badge from a raw ISO date string like "2026-07-29".
+function badgeFromIso(iso: string): { mon: string; day: string } {
+  const parts = iso.split("-");
+  const mo = parseInt(parts[1] ?? "1", 10);
+  const dy = parseInt(parts[2] ?? "1", 10);
+  return { mon: MONTH_NAMES[mo - 1]?.slice(0, 3).toUpperCase() ?? "???", day: String(dy) };
+}
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export interface TempEventEntry {
+  /** ISO date string — "YYYY-MM-DD". Used for sorting and badge display. */
+  dateIso: string;
+  /** Placeholder title — should clearly communicate the name is TBD. */
+  label: string;
+  /** Optional note shown below the title, e.g. "Event name coming soon." */
+  note?: string;
+}
+
+// Internal union used for rendering the merged list.
+type CalendarRow =
+  | { kind: "live"; ev: EventRecord }
+  | { kind: "temp"; entry: TempEventEntry };
+
+// Group rows into month buckets for display.
+function groupByMonth(rows: CalendarRow[]): { label: string; key: string; rows: CalendarRow[] }[] {
+  const map = new Map<string, CalendarRow[]>();
+  for (const row of rows) {
+    const iso = row.kind === "live" ? row.ev.dateIso : row.entry.dateIso;
     const key = iso ? iso.slice(0, 7) : "unknown";
     if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(ev);
+    map.get(key)!.push(row);
   }
   return [...map.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, evs]) => {
+    .map(([key, rowList]) => {
       let label = key;
       if (key !== "unknown") {
         const [yr, mo] = key.split("-").map(Number);
         label = `${MONTH_NAMES[(mo ?? 1) - 1]} ${yr}`;
       }
-      return { label, events: evs };
+      return { label, key, rows: rowList };
     });
 }
 
@@ -83,6 +110,12 @@ interface LocationEventCalendarProps {
   accentFg?: string;
   /** Fallback website shown in the empty state. */
   websiteUrl?: string;
+  /**
+   * Temporary placeholder events — dates confirmed but final details pending.
+   * Merged into the calendar with a distinct "Coming Soon" visual.
+   * Remove each entry once the real event appears via the live API.
+   */
+  tempEvents?: TempEventEntry[];
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -92,27 +125,47 @@ export default function LocationEventCalendar({
   accentColor,
   accentFg = "#000000",
   websiteUrl,
+  tempEvents = [],
 }: LocationEventCalendarProps) {
   const { data: apiEvents, isLoading } = useListPublicEvents(
     undefined,
     { query: { queryKey: getListPublicEventsQueryKey(), staleTime: 60_000 } },
   );
 
-  // Filter to: (a) venue match, (b) within the Passport period.
-  const filteredEvents = useMemo<EventRecord[]>(() => {
+  // Filter live events: venue match + within Passport period.
+  const filteredLive = useMemo<EventRecord[]>(() => {
     if (!apiEvents) return [];
     return apiEvents.filter((ev) => {
       if (!venueMatches(ev.venue, venueNames)) return false;
       const iso = ev.dateIso;
-      if (!iso) return true; // no ISO date — include rather than silently drop
+      if (!iso) return true;
       const effectiveEnd = (ev as EventRecord & { endDateIso?: string | null }).endDateIso ?? iso;
-      // Keep if the event ends on or after the period start, and starts on or
-      // before the period end. Catches multi-day events that span boundaries.
       return effectiveEnd >= PERIOD_START && iso <= PERIOD_END;
     });
   }, [apiEvents, venueNames]);
 
-  const groups = useMemo(() => groupByMonth(filteredEvents), [filteredEvents]);
+  // Filter temp events to the Passport period too, so stale entries auto-hide.
+  const filteredTemp = useMemo<TempEventEntry[]>(() => {
+    return tempEvents.filter(
+      (t) => t.dateIso >= PERIOD_START && t.dateIso <= PERIOD_END,
+    );
+  }, [tempEvents]);
+
+  // Build the merged calendar row list, sorted by ISO date.
+  const allRows = useMemo<CalendarRow[]>(() => {
+    const rows: CalendarRow[] = [
+      ...filteredLive.map((ev): CalendarRow => ({ kind: "live", ev })),
+      ...filteredTemp.map((entry): CalendarRow => ({ kind: "temp", entry })),
+    ];
+    rows.sort((a, b) => {
+      const isoA = a.kind === "live" ? (a.ev.dateIso ?? "") : a.entry.dateIso;
+      const isoB = b.kind === "live" ? (b.ev.dateIso ?? "") : b.entry.dateIso;
+      return isoA.localeCompare(isoB);
+    });
+    return rows;
+  }, [filteredLive, filteredTemp]);
+
+  const groups = useMemo(() => groupByMonth(allRows), [allRows]);
 
   const accentStyle = accentColor
     ? { backgroundColor: accentColor, color: accentFg }
@@ -145,14 +198,14 @@ export default function LocationEventCalendar({
     );
   }
 
-  // ── Empty state ────────────────────────────────────────────────────────────
+  // ── Empty state (no live events, no temp events) ───────────────────────────
 
-  if (filteredEvents.length === 0) {
+  if (allRows.length === 0) {
     return (
       <section className="pt-6 border-t border-border" aria-label="Upcoming events">
         <div
           className="flex items-center font-bold mb-4"
-          style={accentTextStyle}
+          style={accentTextStyle ?? {}}
         >
           {!accentColor && <span className="text-primary flex items-center"><Calendar className="w-5 h-5 mr-2" /> Upcoming Events</span>}
           {accentColor && <><Calendar className="w-5 h-5 mr-2" /> Upcoming Events</>}
@@ -196,8 +249,8 @@ export default function LocationEventCalendar({
       </div>
 
       <div className="space-y-8">
-        {groups.map(({ label, events }) => (
-          <div key={label}>
+        {groups.map(({ label, key, rows }) => (
+          <div key={key}>
             {/* Month divider — only shown when there are multiple months */}
             {groups.length > 1 && (
               <p className="font-display text-xs tracking-[0.16em] uppercase text-muted-foreground mb-3">
@@ -206,26 +259,84 @@ export default function LocationEventCalendar({
             )}
 
             <ul className="space-y-3" role="list">
-              {events.map((ev) => {
-                const badge = parseDateBadge(ev.date);
-                const href = ev.slug
-                  ? `/events/${ev.slug}`
-                  : `/events/${ev.id}`;
+              {rows.map((row, rowIdx) => {
+                if (row.kind === "live") {
+                  const ev = row.ev;
+                  const badge = parseDateBadge(ev.date);
+                  const href = ev.slug ? `/events/${ev.slug}` : `/events/${ev.id}`;
 
+                  return (
+                    <li key={ev.id}>
+                      <Link
+                        href={href}
+                        className="flex gap-4 group rounded-xl hover:bg-muted/40 transition-colors p-2 -mx-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
+                        aria-label={`${ev.name} — ${ev.date}`}
+                      >
+                        {/* Date badge */}
+                        <div
+                          className="shrink-0 w-12 flex flex-col items-center justify-center rounded-lg border-2 border-foreground text-center py-1 shadow-pop-sm"
+                          style={
+                            accentColor
+                              ? { backgroundColor: accentColor, borderColor: accentColor, color: accentFg }
+                              : { backgroundColor: "hsl(var(--foreground))", color: "hsl(var(--background))" }
+                          }
+                          aria-hidden
+                        >
+                          <span className="text-[9px] font-bold tracking-widest leading-none uppercase opacity-80">
+                            {badge.mon}
+                          </span>
+                          <span className="text-xl font-black leading-tight">
+                            {badge.day}
+                          </span>
+                        </div>
+
+                        {/* Event info */}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-serif font-bold text-foreground leading-snug line-clamp-2 group-hover:underline underline-offset-2">
+                            {ev.name}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1">
+                            {ev.time && (
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Clock className="w-3 h-3 shrink-0" aria-hidden />
+                                {ev.time}
+                              </span>
+                            )}
+                            {ev.cost && (
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Ticket className="w-3 h-3 shrink-0" aria-hidden />
+                                {ev.cost}
+                              </span>
+                            )}
+                            {ev.category && (
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Tag className="w-3 h-3 shrink-0" aria-hidden />
+                                {ev.category}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                }
+
+                // ── Temp placeholder event ──────────────────────────────────
+                const entry = row.entry;
+                const badge = badgeFromIso(entry.dateIso);
                 return (
-                  <li key={ev.id}>
-                    <Link
-                      href={href}
-                      className="flex gap-4 group rounded-xl hover:bg-muted/40 transition-colors p-2 -mx-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-red focus-visible:ring-offset-2"
-                      aria-label={`${ev.name} — ${ev.date}`}
+                  <li key={`temp-${rowIdx}-${entry.dateIso}`}>
+                    <div
+                      className="flex gap-4 rounded-xl p-2 -mx-2 border border-dashed border-muted-foreground/30"
+                      aria-label={`${entry.label} — date confirmed, details coming soon`}
                     >
-                      {/* Date badge */}
+                      {/* Date badge — outlined style signals "pending" */}
                       <div
-                        className="shrink-0 w-12 flex flex-col items-center justify-center rounded-lg border-2 border-foreground text-center py-1 shadow-pop-sm"
+                        className="shrink-0 w-12 flex flex-col items-center justify-center rounded-lg border-2 border-dashed text-center py-1"
                         style={
                           accentColor
-                            ? { backgroundColor: accentColor, borderColor: accentColor, color: accentFg }
-                            : { backgroundColor: "hsl(var(--foreground))", color: "hsl(var(--background))" }
+                            ? { borderColor: accentColor, color: accentColor }
+                            : { borderColor: "hsl(var(--muted-foreground))", color: "hsl(var(--muted-foreground))" }
                         }
                         aria-hidden
                       >
@@ -237,33 +348,23 @@ export default function LocationEventCalendar({
                         </span>
                       </div>
 
-                      {/* Event info */}
+                      {/* Placeholder info */}
                       <div className="flex-1 min-w-0">
-                        <p className="font-serif font-bold text-foreground leading-snug line-clamp-2 group-hover:underline underline-offset-2">
-                          {ev.name}
+                        <p className="font-serif font-bold text-foreground leading-snug">
+                          {entry.label}
                         </p>
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1">
-                          {ev.time && (
-                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Clock className="w-3 h-3 shrink-0" aria-hidden />
-                              {ev.time}
-                            </span>
-                          )}
-                          {ev.cost && (
-                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Ticket className="w-3 h-3 shrink-0" aria-hidden />
-                              {ev.cost}
-                            </span>
-                          )}
-                          {ev.category && (
-                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Tag className="w-3 h-3 shrink-0" aria-hidden />
-                              {ev.category}
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <span className="inline-block text-[10px] font-bold tracking-widest uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-dashed border-muted-foreground/40">
+                            Details TBD
+                          </span>
+                          {entry.note && (
+                            <span className="text-xs text-muted-foreground italic">
+                              {entry.note}
                             </span>
                           )}
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </li>
                 );
               })}

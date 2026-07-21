@@ -10,7 +10,10 @@ import MapSnapshot from "@/components/MapSnapshot";
 import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
-import { MapPin, Gift, Clock, Navigation, ArrowLeft, Bike, Utensils, Train, Globe, ExternalLink, Sparkles } from "lucide-react";
+import {
+  MapPin, Gift, Clock, Navigation, ArrowLeft, Bike, Utensils, Train,
+  Globe, ExternalLink, Sparkles, AtSign, ShieldCheck, Car,
+} from "lucide-react";
 
 const HQ_INTRO =
   "Your stop for all things Passport ATL. It's where you can pick up a physical, stampable copy of your passport and turn in your stamps for physical prize claims.";
@@ -56,6 +59,7 @@ export default function Listing() {
   // Per-location custom branding — undefined when not configured, so all
   // downstream checks are simple truthiness guards that never affect other pages.
   const branding = business ? LOCATION_BRANDING[business.id] : undefined;
+  const lc = branding?.locationContent;
 
   if (!business) {
     return (
@@ -99,6 +103,10 @@ export default function Listing() {
     });
   }
 
+  // Shared accent style helpers — avoid repeating inline style logic below.
+  const accentTextStyle = branding?.accentColor
+    ? { color: branding.accentColor }
+    : undefined;
 
   return (
     <div className="w-full pb-24 bg-background">
@@ -221,6 +229,8 @@ export default function Listing() {
           
           {/* Left Column - Details */}
           <div className="lg:col-span-3 space-y-10">
+
+            {/* About */}
             {business.about && (
               <section>
                 <h2 className="text-2xl font-serif font-bold text-primary mb-4">{t("nav.about")}</h2>
@@ -230,6 +240,59 @@ export default function Listing() {
               </section>
             )}
 
+            {/* Gallery strip — opt-in via locationContent.gallery */}
+            {lc?.gallery && lc.gallery.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {lc.gallery.map((img, i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl overflow-hidden aspect-video border-2 border-foreground shadow-pop-sm"
+                    >
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        draggable={false}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Featured Experiences — opt-in via locationContent.featuredExperiences */}
+            {lc?.featuredExperiences && lc.featuredExperiences.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-5 text-primary"
+                  style={accentTextStyle}
+                >
+                  <Sparkles className="w-5 h-5 mr-2" /> What To Expect
+                </div>
+                <ul className="space-y-5">
+                  {lc.featuredExperiences.map((exp) => (
+                    <li key={exp.name} className="flex gap-4">
+                      <div
+                        className="w-1 rounded-full shrink-0 mt-1"
+                        style={{
+                          backgroundColor: branding?.accentColor ?? "hsl(var(--brand-red))",
+                          minHeight: "1.5rem",
+                        }}
+                        aria-hidden
+                      />
+                      <div>
+                        <p className="font-serif font-bold text-foreground text-base">{exp.name}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{exp.description}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* Hours + Address */}
             {(business.hours || business.address) && (
             <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-border">
               {business.hours && (
@@ -295,28 +358,96 @@ export default function Listing() {
             </div>
             )}
 
-            {business.transit && (
+            {/* Transit + Getting Here (enhanced with parking note when present) */}
+            {(business.transit || lc?.parkingNote) && (
               <section className="pt-6 border-t border-border">
                 <div className="flex items-center text-primary font-bold mb-4">
                   <Train className="w-5 h-5 mr-2" /> Getting here
                 </div>
                 <ul className="space-y-3 text-muted-foreground leading-relaxed">
-                  {business.transit.marta && (
+                  {business.transit?.marta && (
                     <li className="flex gap-3">
                       <span className="badge-sticker bg-brand-navy text-brand-cream text-[10px] shrink-0 self-start mt-0.5">MARTA</span>
                       <span>{business.transit.marta}</span>
                     </li>
                   )}
-                  {business.transit.beltline && (
+                  {business.transit?.beltline && (
                     <li className="flex gap-3">
                       <span className="badge-sticker bg-brand-lime text-foreground text-[10px] shrink-0 self-start mt-0.5">BELTLINE</span>
                       <span>{business.transit.beltline}</span>
+                    </li>
+                  )}
+                  {lc?.parkingNote && (
+                    <li className="flex gap-3">
+                      <span className="badge-sticker bg-muted text-foreground text-[10px] shrink-0 self-start mt-0.5 inline-flex items-center gap-1">
+                        <Car className="w-2.5 h-2.5" /> PARK
+                      </span>
+                      <span>{lc.parkingNote}</span>
                     </li>
                   )}
                 </ul>
               </section>
             )}
 
+            {/* Instagram / Social — opt-in via locationContent.instagramHandles */}
+            {lc?.instagramHandles && lc.instagramHandles.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-3 text-primary"
+                  style={accentTextStyle}
+                >
+                  <AtSign className="w-5 h-5 mr-2" /> Follow Along
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {lc.instagramHandles.map((handle) => (
+                    <a
+                      key={handle}
+                      href={`https://instagram.com/${handle.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="badge-sticker inline-flex items-center gap-1 font-bold hover:opacity-80 transition-opacity"
+                      style={
+                        branding?.accentColor
+                          ? { backgroundColor: branding.accentColor, color: branding.accentFg ?? "#fff" }
+                          : { backgroundColor: "hsl(var(--foreground))", color: "hsl(var(--background))" }
+                      }
+                    >
+                      <AtSign className="w-3 h-3" aria-hidden />
+                      {handle.replace("@", "")}
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Accessibility + Policies — opt-in via locationContent */}
+            {(lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0)) && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-4 text-primary"
+                  style={accentTextStyle}
+                >
+                  <ShieldCheck className="w-5 h-5 mr-2" /> Accessibility & Policies
+                </div>
+                {lc?.accessibilityNote && (
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                    {lc.accessibilityNote}
+                  </p>
+                )}
+                {lc?.policies && lc.policies.length > 0 && (
+                  <ul className="space-y-3">
+                    {lc.policies.map((policy) => (
+                      <li key={policy.label} className="flex gap-3 text-sm text-muted-foreground">
+                        <span className="font-bold text-foreground shrink-0 whitespace-nowrap">{policy.label}:</span>
+                        <span className="leading-relaxed">{policy.body}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            )}
+
+            {/* Menu — shown for locations that have a featured menu */}
             {business.menu && business.menu.length > 0 && (
               <section className="pt-6 border-t border-border">
                 <div className="flex items-center text-primary font-bold mb-5">
@@ -347,13 +478,15 @@ export default function Listing() {
 
             {/* Location event calendar — opt-in add-on, disabled by default.
                 Enabled per-location via locationBranding.ts (showEventCalendar).
-                Renders only events at this venue within the active Passport period. */}
+                Renders only events at this venue within the active Passport period.
+                Also renders any temp placeholder events from locationContent. */}
             {branding?.showEventCalendar && branding.venueNames && branding.venueNames.length > 0 && (
               <LocationEventCalendar
                 venueNames={branding.venueNames}
                 accentColor={branding.accentColor}
                 accentFg={branding.accentFg}
                 websiteUrl={business.website}
+                tempEvents={lc?.tempEvents}
               />
             )}
 

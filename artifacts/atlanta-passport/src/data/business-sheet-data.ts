@@ -244,11 +244,15 @@
     address: "565 Main St NE",
   },
   "trap-museum": {
-    description: "The world's FIRST hip-hop museum. \"One of the best musical landmarks in the deep south\", this is a cultural landmark & interactive exhibit founded by T.I.",
-    about: "A one-of-a-kind gallery celebrating the history and culture of trap music where you can explore the origins of Atlanta's most unique musical genres. Featuring themed rooms, an escape room, an art gallery & a bar. All escape room visits include entry into the museum! This cultural destination gives visitors a closer look at the music and movement that helped define modern Atlanta.",
-    offer: "50% exclusive signature trap drank",
-    hours: "Museum Hours: Fri 4-9pm, Sat 12-8pm, Sun 12-6pm Escape Room Hours: OPEN EVERY DAY - RESERVATION ONLY - BOOK ONLINE Mon-Thurs 4-8:30pm, Fri 4-9pm, Sat 12-8pm, Sun 12-6pm",
-    address: "630 Travis St NW",
+    description:
+      "The world's FIRST hip-hop museum. \"One of the best musical landmarks in the deep south\" — a cultural landmark & interactive exhibit founded by T.I.",
+    about:
+      "A one-of-a-kind gallery celebrating the history and culture of trap music where you can explore the origins of Atlanta's most unique musical genres. Featuring themed rooms, an escape room, an art gallery & a bar. All escape room visits include museum entry! This cultural destination gives visitors a closer look at the music and movement that helped define modern Atlanta.",
+    offer:
+      "BOGO Signature Cocktail · 20% Off all Merch — show your Passport ATL stamp at the bar or gift shop",
+    hours:
+      "Museum\nFri 4–9pm · Sat 12–8pm · Sun 12–6pm\nMon–Thurs: CLOSED\n\nEscape Room (Reservation Required — Book Online)\nMon–Thurs 4–8:30pm · Fri 4–9pm · Sat 12–8pm · Sun 12–6pm",
+    address: "630 Travis St NW, Atlanta, GA 30310",
   },
   "varasanos": {
     description: "Best pizza in Atlanta! Check out the bottomless drink specials!",
