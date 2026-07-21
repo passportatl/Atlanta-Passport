@@ -1,3 +1,4 @@
+- [Admin session gating](admin-session-gating.md) — validate the sessionStorage admin key server-side on mount and clear on 401; blind trust after secret rotation looks like total data loss.
 - [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).
 - [Clerk React v6 custom OAuth](clerk-react-v6-custom-oauth.md) — for custom social buttons (authenticateWithRedirect), import useSignUp/useSignIn from `@clerk/react/legacy`, not `@clerk/react`.
 - [Adding a passport stamp spot](stamp-spot-dual-layer.md) — a collectible stamp needs BOTH a STAMP_SLUG entry (frontend list) AND a seed.ts row (backend collectible); editing one only is broken.

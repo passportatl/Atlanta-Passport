@@ -55,6 +55,7 @@ import AdminNav from "@/components/AdminNav";
 import { NotificationsBell, OpsDashboardPanel } from "@/components/admin/ops-dashboard";
 import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
 import { persistUndo, readPersistedUndo, clearPersistedUndo } from "@/lib/bulkUndoStorage";
+import { restoreAdminKey } from "@/lib/adminSession";
 
 // ── Typed helpers for the two new bulk endpoints ────────────────────────────
 
@@ -3498,11 +3499,12 @@ export default function AdminApplications() {
   useAdminActor();
 
   useEffect(() => {
-    const storedKey = sessionStorage.getItem(ADMIN_KEY_STORAGE);
-    if (sessionStorage.getItem(UNLOCK_KEY) === "1" && storedKey) {
-      setUnlocked(true);
-      setAdminKey(storedKey);
-    }
+    void restoreAdminKey().then((key) => {
+      if (key) {
+        setUnlocked(true);
+        setAdminKey(key);
+      }
+    });
   }, []);
 
   if (!unlocked) {

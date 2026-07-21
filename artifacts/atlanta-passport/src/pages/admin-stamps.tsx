@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { NEIGHBORHOODS, STAMP_SLUG } from "@/passport/data";
 import AdminNav from "@/components/AdminNav";
+import { restoreAdminKey } from "@/lib/adminSession";
 
 // Slugs of the current passport stops — the only sponsor-location QRs shown.
 const PASSPORT_STOP_SLUGS = new Set(Object.values(STAMP_SLUG));
@@ -267,7 +268,9 @@ export default function AdminStamps() {
   const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem(UNLOCK_KEY) === "1") setUnlocked(true);
+    void restoreAdminKey().then((key) => {
+      if (key) setUnlocked(true);
+    });
   }, []);
 
   const { data: businessesRaw } = useListBusinesses({

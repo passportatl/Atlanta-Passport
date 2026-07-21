@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 import { cn } from "@/lib/utils";
+import { restoreAdminKey } from "@/lib/adminSession";
 import {
   persistUndo,
   readPersistedUndo,
@@ -1440,11 +1441,12 @@ export default function AdminContent() {
   const [contentTab, setContentTab] = useState<"locations" | "csv-import" | "migration" | "legends" | "experiences">("locations");
 
   useEffect(() => {
-    const storedKey = sessionStorage.getItem(ADMIN_KEY_STORAGE);
-    if (sessionStorage.getItem(UNLOCK_KEY) === "1" && storedKey) {
-      setUnlocked(true);
-      setAdminKey(storedKey);
-    }
+    void restoreAdminKey().then((key) => {
+      if (key) {
+        setUnlocked(true);
+        setAdminKey(key);
+      }
+    });
   }, []);
 
   const handleUnlock = async (e: React.FormEvent) => {
