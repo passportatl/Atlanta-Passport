@@ -9,7 +9,7 @@ import AdminNav from "@/components/AdminNav";
 import { cn } from "@/lib/utils";
 
 const API_BASE = "/api";
-const ADMIN_KEY_STORAGE = "atl-passport-admin-key";
+const ADMIN_KEY_STORAGE = "atlanta-passport-admin-key";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
