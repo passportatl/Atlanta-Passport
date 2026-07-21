@@ -1684,7 +1684,8 @@ function AdminEventCard({
               type="button"
               onClick={(e) => { e.stopPropagation(); onSelect(); }}
               className="mt-0.5 shrink-0 text-foreground/40 hover:text-foreground transition-colors"
-              aria-label={selected ? "Deselect" : "Select"}
+              aria-label={selected ? `Deselect ${event.name}` : `Select ${event.name}`}
+              aria-pressed={selected}
             >
               {selected ? <CheckSquare className="w-4 h-4 text-brand-yellow" /> : <Square className="w-4 h-4" />}
             </button>
@@ -3367,6 +3368,7 @@ export function EventsOpsPanel({ adminKey }: { adminKey: string }) {
             type="button"
             onClick={toggleSelectAll}
             className="button-pop text-sm px-3 py-2 bg-white text-foreground inline-flex items-center gap-1.5 shrink-0"
+            aria-pressed={allVisibleSelected}
           >
             {allVisibleSelected ? <CheckSquare className="w-4 h-4 text-brand-yellow" /> : <Square className="w-4 h-4" />}
             {allVisibleSelected ? "Deselect page" : "Select page"}

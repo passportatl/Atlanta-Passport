@@ -388,7 +388,13 @@ function LocationCard({
     <div className={cn("card-pop bg-white transition-all", selected && "ring-2 ring-brand-yellow")}>
       {/* Header row */}
       <div className="flex items-start gap-3 p-4">
-        <button type="button" onClick={onSelect} className="mt-0.5 shrink-0">
+        <button
+          type="button"
+          onClick={onSelect}
+          className="mt-0.5 shrink-0"
+          aria-label={selected ? `Deselect ${loc.name}` : `Select ${loc.name}`}
+          aria-pressed={selected}
+        >
           {selected
             ? <CheckSquare className="w-4 h-4 text-brand-yellow" />
             : <Square className="w-4 h-4 text-foreground/30" />}
@@ -802,6 +808,7 @@ export function LocationsTab({ adminKey }: { adminKey: string }) {
             type="button"
             onClick={toggleSelectAll}
             className="button-pop text-sm px-3 py-2 bg-white text-foreground inline-flex items-center gap-1.5 shrink-0"
+            aria-pressed={allVisibleSelected}
           >
             {allVisibleSelected ? <CheckSquare className="w-4 h-4 text-brand-yellow" /> : <Square className="w-4 h-4" />}
             {allVisibleSelected ? "Deselect all" : "Select all"}
