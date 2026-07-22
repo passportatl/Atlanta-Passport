@@ -166,7 +166,7 @@ export default function Listing() {
             {branding?.partnerTagline ? (
               <p
                 className="text-sm font-bold tracking-widest uppercase mb-2"
-                style={{ color: branding.accentColor ?? "rgba(255,255,255,0.85)" }}
+                style={{ color: "rgba(255,255,255,0.9)" }}
               >
                 {branding.partnerTagline}
               </p>
@@ -335,7 +335,7 @@ export default function Listing() {
                   )}
                   <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
                   {business.lat != null && business.lng != null && (
-                    <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} isStamp={Boolean(STAMP_SLUG[business.id])} />
+                    <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} isStamp={Boolean(STAMP_SLUG[business.id])} customMarkerSrc={branding?.mapMarkerSrc} />
                   )}
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}

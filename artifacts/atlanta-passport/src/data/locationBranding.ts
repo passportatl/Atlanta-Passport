@@ -12,6 +12,7 @@
 // Gallery images are imported here so Vite can fingerprint and bundle them.
 // Only import images for locations that actually have gallery content.
 import trapMuseumInteriorImg from "@/assets/images/trap-museum.jpg";
+import trapMuseumMarkerTmm from "@/assets/images/trap-museum-marker-tmm.png";
 
 // ── Sub-types ──────────────────────────────────────────────────────────────
 
@@ -133,6 +134,13 @@ export interface LocationBranding {
   brandNote?: string;
 
   /**
+   * Custom map marker image overlaid centred on the MapSnapshot.
+   * Must be an imported Vite asset (not a URL string).
+   * When set, suppresses the default red pin and soccer-ball overlays.
+   */
+  mapMarkerSrc?: string;
+
+  /**
    * When true, a "COMING SOON" placeholder panel is shown in the right column.
    * Remove once the rich content is live and populated.
    */
@@ -195,6 +203,9 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
     // ── Bottom attribution ─────────────────────────────────────────────────
     brandNote:
       "Atlanta Trap Music Museum is an official cultural partner of Passport ATL.",
+
+    // ── Map marker ────────────────────────────────────────────────────────
+    mapMarkerSrc: trapMuseumMarkerTmm,
 
     // ── Event calendar add-on ──────────────────────────────────────────────
     showEventCalendar: true,

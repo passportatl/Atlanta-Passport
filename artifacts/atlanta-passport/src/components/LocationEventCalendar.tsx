@@ -167,6 +167,19 @@ export default function LocationEventCalendar({
 
   const groups = useMemo(() => groupByMonth(allRows), [allRows]);
 
+  // Derive a dynamic date range label from the actual events present.
+  const dateRangeLabel = useMemo(() => {
+    if (groups.length === 0) return "";
+    const first = groups[0]!.label;
+    const last  = groups[groups.length - 1]!.label;
+    if (first === last) return first;
+    // e.g. "July 2026" + "August 2026" → "Jul–Aug 2026"
+    const firstMon = first.split(" ")[0]?.slice(0, 3) ?? "";
+    const lastMon  = last.split(" ")[0]?.slice(0, 3) ?? "";
+    const yr       = last.split(" ")[1] ?? "";
+    return `${firstMon}–${lastMon} ${yr}`;
+  }, [groups]);
+
   const accentStyle = accentColor
     ? { backgroundColor: accentColor, color: accentFg }
     : undefined;
@@ -236,16 +249,23 @@ export default function LocationEventCalendar({
   // ── Event list ─────────────────────────────────────────────────────────────
 
   return (
-    <section className="pt-6 border-t border-border" aria-label="Upcoming events">
-      <div
-        className="flex items-center font-bold mb-5 text-primary"
-        style={accentTextStyle}
-      >
-        <Calendar className="w-5 h-5 mr-2" />
-        Upcoming Events
-        <span className="ml-auto font-normal text-xs text-muted-foreground normal-case tracking-normal">
-          Jun–Aug 2026
-        </span>
+    <section className="pt-6 border-t-2 border-foreground" aria-label="Upcoming events">
+      {/* Section header — B&W treatment: bold label + dynamic date range */}
+      <div className="flex items-end justify-between mb-5 gap-2">
+        <div
+          className="flex items-center gap-2 font-bold"
+          style={accentTextStyle ?? { color: "hsl(var(--foreground))" }}
+        >
+          <Calendar className="w-4 h-4 shrink-0" aria-hidden />
+          <span className="font-display text-sm tracking-[0.14em] uppercase">
+            Upcoming Events
+          </span>
+        </div>
+        {dateRangeLabel && (
+          <span className="text-[11px] font-bold tracking-widest uppercase text-muted-foreground whitespace-nowrap">
+            {dateRangeLabel}
+          </span>
+        )}
       </div>
 
       <div className="space-y-8">
@@ -253,9 +273,17 @@ export default function LocationEventCalendar({
           <div key={key}>
             {/* Month divider — only shown when there are multiple months */}
             {groups.length > 1 && (
-              <p className="font-display text-xs tracking-[0.16em] uppercase text-muted-foreground mb-3">
-                {label}
-              </p>
+              <div className="flex items-center gap-3 mb-3">
+                <div
+                  className="h-4 w-1 rounded-full shrink-0"
+                  style={accentStyle ?? { backgroundColor: "hsl(var(--foreground))" }}
+                  aria-hidden
+                />
+                <p className="font-display text-xs tracking-[0.18em] uppercase font-bold text-foreground">
+                  {label}
+                </p>
+                <div className="flex-1 h-px bg-border" aria-hidden />
+              </div>
             )}
 
             <ul className="space-y-3" role="list">
@@ -374,10 +402,10 @@ export default function LocationEventCalendar({
       </div>
 
       {/* Footer link to full events feed */}
-      <div className="mt-6 text-center">
+      <div className="mt-6 pt-4 border-t border-border text-center">
         <Link
           href="/passport/events"
-          className="text-xs font-display tracking-[0.14em] uppercase text-muted-foreground hover:text-brand-red transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-display tracking-[0.14em] uppercase text-foreground hover:underline underline-offset-4 transition-colors"
         >
           See all Atlanta events →
         </Link>

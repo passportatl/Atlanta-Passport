@@ -616,4 +616,44 @@
     font-weight: 400;
     letter-spacing: 0.04em;
   }
+
+  /* ── B&W color overrides ────────────────────────────────────────────────
+     Replace Passport ATL's Americana palette with black/white/gray.
+     CategoryBadge is excluded automatically — it uses inline style attributes
+     which can't be overridden by class-based CSS. The map snapshot image and
+     the top nav are also unaffected (outside this scope or static images). */
+
+  /* Brand-red → black (section headers, icons, "Book in advance", links) */
+  .text-brand-red { color: #000 !important; }
+  .bg-brand-red   { background-color: #111 !important; border-color: #111 !important; }
+  a.text-brand-red, a.text-brand-red:visited { color: #000 !important; }
+
+  /* Brand-navy → black (MARTA transit badge) */
+  .bg-brand-navy  { background-color: #111 !important; border-color: #111 !important; }
+  .text-brand-navy { color: #111 !important; }
+
+  /* Brand-lime → light gray (BELTLINE transit badge) */
+  .bg-brand-lime  { background-color: #d4d4d4 !important; border-color: #d4d4d4 !important; color: #111 !important; }
+
+  /* Brand-yellow → near-white with black border (buttons, chips) */
+  .bg-brand-yellow  { background-color: #fff !important; border-color: #111 !important; color: #111 !important; }
+  .button-pop-yellow {
+    background-color: #fff !important;
+    border-color: #111 !important;
+    color: #111 !important;
+    box-shadow: 3px 3px 0 0 #111 !important;
+  }
+
+  /* Primary / accent text (deep-green section headers → black) */
+  .text-primary { color: #111 !important; }
+  .text-accent  { color: #111 !important; }
+
+  /* Focus ring color */
+  .focus-visible\:ring-brand-red:focus-visible { --tw-ring-color: #111 !important; }
+
+  /* Brand cream → white (background chips) */
+  .bg-brand-cream { background-color: #fafafa !important; }
+
+  /* Ensure map pin circle is also black */
+  .bg-brand-red.text-white { background-color: #111 !important; color: #fff !important; }
 }
