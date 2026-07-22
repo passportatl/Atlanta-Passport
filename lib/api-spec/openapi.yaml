@@ -348,6 +348,11 @@ paths:
         - in: query
           name: source
           schema: { type: string }
+        - in: query
+          name: locationFilter
+          schema:
+            type: string
+            enum: [ready, verified_address, missing_partial, unable_to_map, out_of_area, needs_location_review]
       responses:
         "200":
           description: All events
@@ -370,6 +375,35 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/AdminEventsSummary" }
+        "401":
+          description: Unauthorized
+
+  /admin/events/reprocess-location:
+    post:
+      operationId: reprocessEventLocations
+      tags: [admin]
+      summary: Re-run location classification for all events; optionally geocode a batch (admin, requires x-admin-key header)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReprocessLocationsInput" }
+      responses:
+        "200":
+          description: Reprocess summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scanned: { type: integer }
+                  classified: { type: integer }
+                  geocodeAttempted: { type: integer }
+                  geocodeResolved: { type: integer }
+                  skippedManuallyVerified: { type: integer }
+                  outOfArea: { type: integer }
+                  remainingNeedingGeocode: { type: integer }
+                required: [scanned, classified, geocodeAttempted, geocodeResolved, skippedManuallyVerified, outOfArea, remainingNeedingGeocode]
         "401":
           description: Unauthorized
 
@@ -837,6 +871,18 @@ components:
         url: { type: string, nullable: true }
         imageUrl: { type: string, nullable: true }
         ticketUrl: { type: string, nullable: true }
+        city: { type: string, nullable: true }
+        state: { type: string, nullable: true }
+        zip: { type: string, nullable: true }
+        county: { type: string, nullable: true }
+        latitude: { type: number, nullable: true }
+        longitude: { type: number, nullable: true }
+        addressStatus: { type: string }
+        mapReadiness: { type: string }
+        outOfArea: { type: boolean }
+        outOfAreaReason: { type: string, nullable: true }
+        addressSource: { type: string, nullable: true }
+        locationVerifiedByAdmin: { type: boolean }
         workflowStatus: { type: string }
         publishedAt: { type: string, format: date-time, nullable: true }
         scheduledPublishAt: { type: string, format: date-time, nullable: true }
@@ -887,8 +933,17 @@ components:
         - source
         - completenessScore
         - emailDelivered
+        - addressStatus
+        - mapReadiness
+        - outOfArea
+        - locationVerifiedByAdmin
         - createdAt
         - updatedAt
+
+    ReprocessLocationsInput:
+      type: object
+      properties:
+        geocodeLimit: { type: integer }
 
     AdminEventsSummary:
       type: object
@@ -907,6 +962,12 @@ components:
         freeCount: { type: integer }
         featuredCount: { type: integer }
         paidCount: { type: integer }
+        locationReady: { type: integer }
+        locationVerifiedAddress: { type: integer }
+        locationMissingPartial: { type: integer }
+        locationUnableToMap: { type: integer }
+        locationOutOfArea: { type: integer }
+        locationNeedsReview: { type: integer }
       required:
         - total
         - pending
@@ -922,6 +983,12 @@ components:
         - freeCount
         - featuredCount
         - paidCount
+        - locationReady
+        - locationVerifiedAddress
+        - locationMissingPartial
+        - locationUnableToMap
+        - locationOutOfArea
+        - locationNeedsReview
 
     SubmitEventInput:
       type: object
@@ -990,6 +1057,14 @@ components:
         venue: { type: string }
         address: { type: string }
         neighborhood: { type: string }
+        city: { type: string }
+        state: { type: string }
+        zip: { type: string }
+        county: { type: string }
+        latitude: { type: number, nullable: true }
+        longitude: { type: number, nullable: true }
+        outOfArea: { type: boolean }
+        locationVerifiedByAdmin: { type: boolean }
         description: { type: string }
         highlights:
           type: array

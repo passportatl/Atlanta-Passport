@@ -444,6 +444,16 @@ export const ListAdminEventsQueryParams = zod.object({
   search: zod.coerce.string().optional(),
   tier: zod.coerce.string().optional(),
   source: zod.coerce.string().optional(),
+  locationFilter: zod
+    .enum([
+      "ready",
+      "verified_address",
+      "missing_partial",
+      "unable_to_map",
+      "out_of_area",
+      "needs_location_review",
+    ])
+    .optional(),
 });
 
 export const ListAdminEventsResponseItem = zod.object({
@@ -464,6 +474,18 @@ export const ListAdminEventsResponseItem = zod.object({
   url: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   ticketUrl: zod.string().nullish(),
+  city: zod.string().nullish(),
+  state: zod.string().nullish(),
+  zip: zod.string().nullish(),
+  county: zod.string().nullish(),
+  latitude: zod.number().nullish(),
+  longitude: zod.number().nullish(),
+  addressStatus: zod.string(),
+  mapReadiness: zod.string(),
+  outOfArea: zod.boolean(),
+  outOfAreaReason: zod.string().nullish(),
+  addressSource: zod.string().nullish(),
+  locationVerifiedByAdmin: zod.boolean(),
   workflowStatus: zod.string(),
   publishedAt: zod.coerce.date().nullish(),
   scheduledPublishAt: zod.coerce.date().nullish(),
@@ -515,6 +537,29 @@ export const GetAdminEventsSummaryResponse = zod.object({
   freeCount: zod.number(),
   featuredCount: zod.number(),
   paidCount: zod.number(),
+  locationReady: zod.number(),
+  locationVerifiedAddress: zod.number(),
+  locationMissingPartial: zod.number(),
+  locationUnableToMap: zod.number(),
+  locationOutOfArea: zod.number(),
+  locationNeedsReview: zod.number(),
+});
+
+/**
+ * @summary Re-run location classification for all events; optionally geocode a batch (admin, requires x-admin-key header)
+ */
+export const ReprocessEventLocationsBody = zod.object({
+  geocodeLimit: zod.number().optional(),
+});
+
+export const ReprocessEventLocationsResponse = zod.object({
+  scanned: zod.number(),
+  classified: zod.number(),
+  geocodeAttempted: zod.number(),
+  geocodeResolved: zod.number(),
+  skippedManuallyVerified: zod.number(),
+  outOfArea: zod.number(),
+  remainingNeedingGeocode: zod.number(),
 });
 
 /**
@@ -543,6 +588,14 @@ export const UpdateAdminEventBody = zod.object({
   venue: zod.string().optional(),
   address: zod.string().optional(),
   neighborhood: zod.string().optional(),
+  city: zod.string().optional(),
+  state: zod.string().optional(),
+  zip: zod.string().optional(),
+  county: zod.string().optional(),
+  latitude: zod.number().nullish(),
+  longitude: zod.number().nullish(),
+  outOfArea: zod.boolean().optional(),
+  locationVerifiedByAdmin: zod.boolean().optional(),
   description: zod.string().optional(),
   highlights: zod.array(zod.string()).optional(),
   imageUrl: zod.string().optional(),
@@ -576,6 +629,18 @@ export const UpdateAdminEventResponse = zod.object({
   url: zod.string().nullish(),
   imageUrl: zod.string().nullish(),
   ticketUrl: zod.string().nullish(),
+  city: zod.string().nullish(),
+  state: zod.string().nullish(),
+  zip: zod.string().nullish(),
+  county: zod.string().nullish(),
+  latitude: zod.number().nullish(),
+  longitude: zod.number().nullish(),
+  addressStatus: zod.string(),
+  mapReadiness: zod.string(),
+  outOfArea: zod.boolean(),
+  outOfAreaReason: zod.string().nullish(),
+  addressSource: zod.string().nullish(),
+  locationVerifiedByAdmin: zod.boolean(),
   workflowStatus: zod.string(),
   publishedAt: zod.coerce.date().nullish(),
   scheduledPublishAt: zod.coerce.date().nullish(),

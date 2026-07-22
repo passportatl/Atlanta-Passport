@@ -36,6 +36,8 @@ import type {
   RedeemPrizeInput,
   RedeemPrizeResult,
   RedemptionList,
+  ReprocessEventLocations200,
+  ReprocessLocationsInput,
   StampCollection,
   StampList,
   SubmitApplicationInput,
@@ -1651,6 +1653,96 @@ export function useGetAdminEventsSummary<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Re-run location classification for all events; optionally geocode a batch (admin, requires x-admin-key header)
+ */
+export const getReprocessEventLocationsUrl = () => {
+  return `/api/admin/events/reprocess-location`;
+};
+
+export const reprocessEventLocations = async (
+  reprocessLocationsInput?: ReprocessLocationsInput,
+  options?: RequestInit,
+): Promise<ReprocessEventLocations200> => {
+  return customFetch<ReprocessEventLocations200>(
+    getReprocessEventLocationsUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(reprocessLocationsInput),
+    },
+  );
+};
+
+export const getReprocessEventLocationsMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof reprocessEventLocations>>,
+    TError,
+    { data: BodyType<ReprocessLocationsInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof reprocessEventLocations>>,
+  TError,
+  { data: BodyType<ReprocessLocationsInput> },
+  TContext
+> => {
+  const mutationKey = ["reprocessEventLocations"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof reprocessEventLocations>>,
+    { data: BodyType<ReprocessLocationsInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return reprocessEventLocations(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ReprocessEventLocationsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof reprocessEventLocations>>
+>;
+export type ReprocessEventLocationsMutationBody =
+  BodyType<ReprocessLocationsInput>;
+export type ReprocessEventLocationsMutationError = ErrorType<void>;
+
+/**
+ * @summary Re-run location classification for all events; optionally geocode a batch (admin, requires x-admin-key header)
+ */
+export const useReprocessEventLocations = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof reprocessEventLocations>>,
+    TError,
+    { data: BodyType<ReprocessLocationsInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof reprocessEventLocations>>,
+  TError,
+  { data: BodyType<ReprocessLocationsInput> },
+  TContext
+> => {
+  return useMutation(getReprocessEventLocationsMutationOptions(options));
+};
 
 /**
  * @summary Update event workflow status and metadata (admin, requires x-admin-key header)

@@ -18,9 +18,8 @@
 - [Monorepo stale dist/ after schema changes](monorepo-stale-dist.md) — after editing lib/db or lib/api-zod or lib/api-client-react source, run `pnpm run typecheck:libs` (root) to rebuild all dist/.d.ts; without this, tsc reads stale compiled types even though the source is correct.
 - [Listing-only events](listing-only-events.md) — calendar event with NO detail page needs listingOnly flag + detail-body NotFound guard + link gating in feed & carousel; keep price a tier, use ticketPrice for literal display.
 - [Dedup flag direction](dedup-flag-direction.md) — flag the INCOMING event as possible_duplicate (never mutate existing); literal /admin/events routes must register before /:id.
-- [OpenAPI spec drift](api-spec-drift.md) — openapi.yaml can lag committed generated clients; diff generated files after codegen and restore any dropped fields to the spec.
 - [Ingestion system](ingestion-system.md) — adapter types, verified Atlanta iCal sources, dedup tier rules (Tier 3 cross-source only!), and syncIntervalHours in config JSON.
-- [OpenAPI spec drift](openapi-spec-drift.md) — always add new API fields to lib/api-spec/openapi.yaml, never hand-edit generated clients; codegen clobbers unspecced fields.
+- [OpenAPI spec drift](openapi-spec-drift.md) — add new API fields to lib/api-spec/openapi.yaml, never hand-edit generated clients; after codegen, diff generated files and restore any spec-dropped fields.
 - [Drizzle lazy queries](drizzle-lazy-queries.md) — `void db.insert(...)` never runs (lazy thenable); always await Drizzle writes or the row silently never lands.
 - [Vitest setup](vitest-setup.md) — per-package pnpm test; atlanta-passport needs standalone vitest.config (vite.config requires PORT); api-server route tests use supertest + real dev DB with cleanup.
 - [LocationContent rich partner pages](location-content-pattern.md) — opt-in rich content for sponsor pages lives in locationBranding.ts (not Business type); all sub-fields optional so other locations unaffected.

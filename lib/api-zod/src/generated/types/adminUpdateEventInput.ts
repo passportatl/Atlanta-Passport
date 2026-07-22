@@ -25,6 +25,14 @@ export interface AdminUpdateEventInput {
   venue?: string;
   address?: string;
   neighborhood?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  county?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  outOfArea?: boolean;
+  locationVerifiedByAdmin?: boolean;
   description?: string;
   highlights?: string[];
   imageUrl?: string;

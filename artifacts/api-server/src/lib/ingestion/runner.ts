@@ -15,6 +15,7 @@ import {
   computeEventCompleteness,
 } from "@workspace/db";
 import { normalizeEvent, type NormalizedEvent } from "./normalizer";
+import { classifyLocation, geocodeEvent, isGenericLocation } from "./location";
 import { findDuplicate, type ExistingEventStub } from "./deduplicator";
 import { recordRunSuccess, recordRunFailure } from "./health";
 import { checkEventIntegrity } from "./integrity";
@@ -65,6 +66,78 @@ async function fetchFromSource(type: string, config: Record<string, unknown>) {
         `Unsupported source type: "${type}". Supported: ticketmaster, google_sheets, ical, rss, json_api, csv_url, eventbrite, meetup, bandsintown, seatgeek, manual`,
       );
   }
+}
+
+// ── Location enrichment ──────────────────────────────────────────────────────
+
+// Max geocode lookups per sync run — keeps runs fast and respects Nominatim's
+// 1 req/sec policy. Events beyond the budget are still classified rule-based
+// and can be resolved later via the admin "reprocess locations" action.
+const GEOCODE_BUDGET_PER_RUN = 15;
+
+type LocationFields = {
+  city: string | null;
+  state: string | null;
+  zip: string | null;
+  county: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  addressStatus: string;
+  mapReadiness: string;
+  outOfArea: boolean;
+  outOfAreaReason: string | null;
+  addressSource: string | null;
+  geocodeAttemptedAt: Date | null;
+};
+
+async function resolveEventLocation(
+  normalized: NormalizedEvent,
+  budget: { remaining: number },
+): Promise<LocationFields> {
+  let geo: Awaited<ReturnType<typeof geocodeEvent>> = null;
+  let geocodeFailed = false;
+  let geocodeAttemptedAt: Date | null = null;
+  const hasHints =
+    (!!normalized.address && !isGenericLocation(normalized.address)) ||
+    (!!normalized.venue && !isGenericLocation(normalized.venue));
+
+  if (hasHints && budget.remaining > 0) {
+    budget.remaining--;
+    geocodeAttemptedAt = new Date();
+    try {
+      geo = await geocodeEvent(normalized);
+    } catch {
+      geo = null;
+    }
+    if (!geo) geocodeFailed = true;
+  }
+
+  const cls = classifyLocation({
+    venue: normalized.venue,
+    address: normalized.address,
+    city: geo?.city ?? null,
+    state: geo?.state ?? null,
+    zip: geo?.zip ?? null,
+    county: geo?.county ?? null,
+    latitude: geo?.latitude ?? null,
+    longitude: geo?.longitude ?? null,
+    geocodeFailed,
+  });
+
+  return {
+    city: cls.city,
+    state: cls.state,
+    zip: cls.zip,
+    county: geo?.county ?? null,
+    latitude: geo?.latitude ?? null,
+    longitude: geo?.longitude ?? null,
+    addressStatus: cls.addressStatus,
+    mapReadiness: cls.mapReadiness,
+    outOfArea: cls.outOfArea,
+    outOfAreaReason: cls.outOfAreaReason,
+    addressSource: geo ? "geocoded" : normalized.address ? "source" : null,
+    geocodeAttemptedAt,
+  };
 }
 
 // ── Main runner ───────────────────────────────────────────────────────────────
@@ -165,6 +238,7 @@ export async function runSourceSync(sourceId: string): Promise<string> {
   const runRows: ImportRunRowInsert[] = [];
   const now = new Date();
   const seenExternalIds = new Set<string>();
+  const geocodeBudget = { remaining: GEOCODE_BUDGET_PER_RUN };
 
   for (const raw of rawEvents) {
     const normalized: NormalizedEvent = normalizeEvent(raw);
@@ -225,9 +299,11 @@ export async function runSourceSync(sourceId: string): Promise<string> {
         // (Never mutate the existing event: it may be published/approved.)
         try {
           const completenessScore = computeEventCompleteness(normalized);
+          const location = await resolveEventLocation(normalized, geocodeBudget);
           const [flaggedEvent] = await db
             .insert(eventsTable)
             .values({
+              ...location,
               name: normalized.name,
               category: normalized.category,
               date: normalized.date,
@@ -282,10 +358,12 @@ export async function runSourceSync(sourceId: string): Promise<string> {
       // New event — insert as pending
       try {
         const completenessScore = computeEventCompleteness(normalized);
+        const location = await resolveEventLocation(normalized, geocodeBudget);
 
         const [newEvent] = await db
           .insert(eventsTable)
           .values({
+            ...location,
             name: normalized.name,
             category: normalized.category,
             date: normalized.date,

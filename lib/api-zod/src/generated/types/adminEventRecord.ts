@@ -24,6 +24,18 @@ export interface AdminEventRecord {
   url?: string | null;
   imageUrl?: string | null;
   ticketUrl?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  county?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  addressStatus: string;
+  mapReadiness: string;
+  outOfArea: boolean;
+  outOfAreaReason?: string | null;
+  addressSource?: string | null;
+  locationVerifiedByAdmin: boolean;
   workflowStatus: string;
   publishedAt?: Date | null;
   scheduledPublishAt?: Date | null;

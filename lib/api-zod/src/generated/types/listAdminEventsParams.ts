@@ -5,10 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ListAdminEventsLocationFilter } from "./listAdminEventsLocationFilter";
 
 export type ListAdminEventsParams = {
   status?: string;
   search?: string;
   tier?: string;
   source?: string;
+  locationFilter?: ListAdminEventsLocationFilter;
 };

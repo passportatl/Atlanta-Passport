@@ -1,0 +1,227 @@
+Update the Passport ATL event ingestion system and Events Hub to improve location quality, mapping accuracy, and proofreading efficiency.
+
+Please make the following changes without deleting any existing event records.
+
+## 1. Show full physical addresses in the Events Hub
+
+In the Events Hub admin review interface, prominently display the event venue’s full physical address whenever available.
+
+Show these fields separately:
+
+* Venue name
+* Street address
+* City
+* State
+* ZIP code
+* Latitude
+* Longitude
+
+Do not treat “Atlanta,” “Atlanta, GA,” or another city-only location as a complete address.
+
+The address should be visible directly in the event review card or table without requiring the reviewer to open the event.
+
+## 2. Add address-quality statuses
+
+Assign each event one of these address statuses:
+
+* Verified Address
+* Partial Address
+* Missing Address
+* Unable to Map
+
+Use the following rules:
+
+### Verified Address
+
+The event has:
+
+* a venue name
+* a complete street address
+* city, state, and ZIP code
+* valid latitude and longitude
+
+### Partial Address
+
+Some location information exists, but the street address, ZIP code, or coordinates are missing or uncertain.
+
+### Missing Address
+
+The listing only contains a generic location such as:
+
+* Atlanta
+* Atlanta, GA
+* Georgia
+* Online
+* TBA
+
+or has no usable venue information.
+
+### Unable to Map
+
+An address was provided, but it could not be reliably geocoded or matched to valid coordinates.
+
+Display these statuses clearly in the Events Hub.
+
+## 3. Improve venue-address resolution during ingestion
+
+When a scraped event does not contain a complete physical address, attempt to resolve the address using:
+
+* event venue name
+* event title
+* source page
+* source URL
+* city and state
+* any venue information contained in the event description
+
+If the venue name is known but the address is missing, perform an additional venue lookup before marking the event as incomplete.
+
+Do not invent addresses. Only save an address when the lookup result is reasonably reliable.
+
+Store an address-confidence value or status so reviewers can distinguish verified and uncertain addresses.
+
+## 4. Prevent incomplete events from being treated as mappable
+
+An event should not be treated as map-ready unless it has:
+
+* a usable physical street address
+* valid latitude and longitude
+* a location within the approved Metro Atlanta service area
+
+Events without these requirements should remain available for admin review, but they should not appear as valid map markers or be automatically published as mappable events.
+
+## 5. Add Events Hub location filters
+
+Add quick filters to the Events Hub for:
+
+* All Events
+* Ready to Publish
+* Verified Address
+* Missing or Partial Address
+* Unable to Map
+* Outside Metro Atlanta
+* Needs Location Review
+
+The “Needs Location Review” filter should include all events that are missing a complete address, coordinates, or reliable Metro Atlanta location.
+
+Show the number of events in each filter when practical.
+
+## 6. Restrict event ingestion to Metro Atlanta
+
+Filter imported events so listings outside the Metro Atlanta service area do not enter the normal proofreading queue.
+
+Use Metro Atlanta counties as the primary boundary. Include at minimum:
+
+* Fulton
+* DeKalb
+* Cobb
+* Gwinnett
+* Clayton
+* Cherokee
+* Forsyth
+* Douglas
+* Fayette
+* Henry
+* Rockdale
+* Newton
+* Paulding
+
+Also allow legitimate Atlanta-area locations to be accepted based on verified coordinates if county information is unavailable.
+
+Events in places such as Savannah, Augusta, Macon, Columbus, or other clearly out-of-area cities should not appear in the main pending-review queue.
+
+## 7. Create an Out of Area review bucket
+
+Do not delete out-of-area events.
+
+Move or classify them into an “Out of Area” review bucket.
+
+For every out-of-area event, display:
+
+* Event title
+* Venue
+* Full detected address
+* City
+* County, when available
+* Distance or reason for exclusion
+* Original source
+* Source URL
+
+Allow an admin to manually override the classification and move a legitimate event back into the normal review queue.
+
+## 8. Add map-readiness indicators
+
+Give each event a simple map-readiness status:
+
+### Ready
+
+* Verified full address
+* Valid coordinates
+* Inside Metro Atlanta
+
+### Needs Review
+
+* Partial or uncertain address
+* Missing ZIP code
+* Unverified coordinates
+* Uncertain service-area match
+
+### Cannot Map
+
+* Missing street address
+* No coordinates
+* Generic city-only location
+* Outside Metro Atlanta
+
+Display this status prominently in the Events Hub.
+
+## 9. Reprocess existing event records
+
+Run the new validation and classification logic against all existing imported events.
+
+For existing records:
+
+* preserve all original event data
+* preserve source URLs
+* preserve current publication status
+* do not delete or overwrite reliable information
+* classify incomplete-address events
+* classify out-of-area events
+* attempt to resolve missing venue addresses
+* update map-readiness statuses
+
+Do not remove any existing events from the database.
+
+## 10. Improve error visibility
+
+The Events Hub should not silently display incomplete location data as if it were valid.
+
+Use clear warnings such as:
+
+* Missing Street Address
+* Venue Address Unverified
+* Coordinates Missing
+* Outside Metro Atlanta
+* Cannot Display on Map
+
+Make these warnings easy to scan during proofreading.
+
+## 11. Protect manual admin edits
+
+If an admin manually corrects or verifies an address, mark that record as manually verified.
+
+Future scraper or enrichment jobs must not overwrite a manually verified address unless an admin explicitly requests it.
+
+## 12. Acceptance criteria
+
+The update is complete when:
+
+1. Every event in the Events Hub visibly shows its venue and physical address status.
+2. Events containing only “Atlanta” are flagged as incomplete.
+3. Events outside Metro Atlanta no longer appear in the main proofreading queue.
+4. Savannah events appear in the Out of Area bucket.
+5. Reviewers can filter for missing addresses and out-of-area events.
+6. Only events with verified addresses and coordinates are treated as map-ready.
+7. Existing events are reclassified without deleting data.
+8. Admins can override location classifications.
+9. Manually verified addresses are protected from automatic overwrites.
+10. The development and production versions use the same location-validation behavior.

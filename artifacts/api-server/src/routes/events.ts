@@ -6,6 +6,7 @@ import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 import { requireAdmin } from "../lib/admin-auth";
 import { todayIsoAtlanta } from "../lib/ingestion/past-event-cleanup";
 import { parseEventDate } from "../lib/ingestion/normalizer";
+import { classifyLocation, geocodeEvent, isValidCoords } from "../lib/ingestion/location";
 
 const router: IRouter = Router();
 
@@ -429,11 +430,12 @@ router.post("/events", async (req, res) => {
 
 // GET /admin/events  — all events, with optional status/search/tier filters
 router.get("/admin/events", requireAdmin, async (req, res) => {
-  const { status, search, tier, source } = req.query as {
+  const { status, search, tier, source, locationFilter } = req.query as {
     status?: string;
     search?: string;
     tier?: string;
     source?: string;
+    locationFilter?: string;
   };
 
   const rows = await db
@@ -443,6 +445,38 @@ router.get("/admin/events", requireAdmin, async (req, res) => {
 
   let out = rows;
   if (status && status !== "all") out = out.filter((e) => e.workflowStatus === status);
+  if (locationFilter) {
+    switch (locationFilter) {
+      case "ready":
+        out = out.filter((e) => e.mapReadiness === "ready" && !e.outOfArea);
+        break;
+      case "verified_address":
+        out = out.filter((e) => e.addressStatus === "verified" && !e.outOfArea);
+        break;
+      case "missing_partial":
+        out = out.filter(
+          (e) => (e.addressStatus === "missing" || e.addressStatus === "partial") && !e.outOfArea,
+        );
+        break;
+      case "unable_to_map":
+        out = out.filter((e) => e.mapReadiness === "cannot_map" && !e.outOfArea);
+        break;
+      case "out_of_area":
+        out = out.filter((e) => e.outOfArea);
+        break;
+      case "needs_location_review":
+        // Everything not confidently mappable and not excluded as out-of-area.
+        out = out.filter((e) => e.mapReadiness !== "ready" && !e.outOfArea);
+        break;
+      default:
+        res.status(400).json({ error: `Unknown locationFilter: ${locationFilter}` });
+        return;
+    }
+  } else if (status === "pending") {
+    // Out-of-area events stay out of the main review queue; they live in the
+    // dedicated "Out of Area" bucket until an admin overrides the flag.
+    out = out.filter((e) => !e.outOfArea);
+  }
   if (tier) out = out.filter((e) => e.tier === tier);
   if (source && source !== "all") {
     // UUID → filter by ingest source id; otherwise by the source string (web_form, csv_import, …)
@@ -487,6 +521,157 @@ router.get("/admin/events/summary", requireAdmin, async (req, res) => {
     freeCount: rows.filter((e) => e.tier === "free").length,
     featuredCount: rows.filter((e) => e.tier === "featured").length,
     paidCount: rows.filter((e) => e.tier === "paid").length,
+    locationReady: rows.filter((e) => e.mapReadiness === "ready" && !e.outOfArea).length,
+    locationVerifiedAddress: rows.filter((e) => e.addressStatus === "verified" && !e.outOfArea).length,
+    locationMissingPartial: rows.filter(
+      (e) => (e.addressStatus === "missing" || e.addressStatus === "partial") && !e.outOfArea,
+    ).length,
+    locationUnableToMap: rows.filter((e) => e.mapReadiness === "cannot_map" && !e.outOfArea).length,
+    locationOutOfArea: rows.filter((e) => e.outOfArea).length,
+    locationNeedsReview: rows.filter((e) => e.mapReadiness !== "ready" && !e.outOfArea).length,
+  });
+});
+
+// POST /admin/events/reprocess-location — re-run rule-based location
+// classification for ALL events (fast, no network), then geocode up to
+// `geocodeLimit` events that still lack coordinates (slow: ~1.1s each).
+// Rows an admin has manually verified (locationVerifiedByAdmin) are skipped.
+// NOTE: must be registered BEFORE /admin/events/:id
+router.post("/admin/events/reprocess-location", requireAdmin, async (req, res) => {
+  const body = (req.body ?? {}) as { geocodeLimit?: number };
+  const geocodeLimit = Math.max(0, Math.min(500, Math.trunc(body.geocodeLimit ?? 0)));
+
+  const rows = await db.select().from(eventsTable);
+
+  let classified = 0;
+  let skippedManuallyVerified = 0;
+  let outOfAreaCount = 0;
+  const needsGeocode: typeof rows = [];
+
+  for (const e of rows) {
+    if (e.locationVerifiedByAdmin) {
+      skippedManuallyVerified++;
+      continue;
+    }
+    const c = classifyLocation({
+      venue: e.venue,
+      address: e.address,
+      city: e.city,
+      state: e.state,
+      zip: e.zip,
+      county: e.county,
+      latitude: e.latitude,
+      longitude: e.longitude,
+    });
+    if (c.outOfArea) outOfAreaCount++;
+    const changed =
+      c.addressStatus !== e.addressStatus ||
+      c.mapReadiness !== e.mapReadiness ||
+      c.outOfArea !== e.outOfArea ||
+      c.outOfAreaReason !== e.outOfAreaReason ||
+      (c.city ?? null) !== (e.city ?? null) ||
+      (c.state ?? null) !== (e.state ?? null) ||
+      (c.zip ?? null) !== (e.zip ?? null);
+    if (changed) {
+      await db
+        .update(eventsTable)
+        .set({
+          addressStatus: c.addressStatus,
+          mapReadiness: c.mapReadiness,
+          outOfArea: c.outOfArea,
+          outOfAreaReason: c.outOfAreaReason,
+          city: c.city,
+          state: c.state,
+          zip: c.zip,
+          updatedAt: new Date(),
+        })
+        .where(eq(eventsTable.id, e.id));
+      classified++;
+    }
+    // Geocode candidates: in-area (or unknown), no coords yet, has something to look up
+    if (
+      !c.outOfArea &&
+      !isValidCoords(e.latitude, e.longitude) &&
+      c.addressStatus !== "missing"
+    ) {
+      needsGeocode.push(e);
+    }
+  }
+
+  let geocodeAttempted = 0;
+  let geocodeResolved = 0;
+  for (const e of needsGeocode.slice(0, geocodeLimit)) {
+    geocodeAttempted++;
+    const g = await geocodeEvent({
+      venue: e.venue,
+      address: e.address,
+      name: e.name,
+      city: e.city,
+      state: e.state,
+    });
+    if (!g) {
+      // Record the failed attempt so classification can mark it unmappable.
+      const c = classifyLocation({
+        venue: e.venue,
+        address: e.address,
+        city: e.city,
+        state: e.state,
+        zip: e.zip,
+        county: e.county,
+        latitude: e.latitude,
+        longitude: e.longitude,
+        geocodeFailed: true,
+      });
+      await db
+        .update(eventsTable)
+        .set({
+          addressStatus: c.addressStatus,
+          mapReadiness: c.mapReadiness,
+          geocodeAttemptedAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .where(eq(eventsTable.id, e.id));
+      continue;
+    }
+    geocodeResolved++;
+    const c = classifyLocation({
+      venue: e.venue,
+      address: e.address,
+      city: e.city ?? g.city,
+      state: e.state ?? g.state,
+      zip: e.zip ?? g.zip,
+      county: e.county ?? g.county,
+      latitude: g.latitude,
+      longitude: g.longitude,
+    });
+    await db
+      .update(eventsTable)
+      .set({
+        latitude: g.latitude,
+        longitude: g.longitude,
+        city: c.city,
+        state: c.state,
+        zip: c.zip,
+        county: e.county ?? g.county,
+        addressStatus: c.addressStatus,
+        mapReadiness: c.mapReadiness,
+        outOfArea: c.outOfArea,
+        outOfAreaReason: c.outOfAreaReason,
+        addressSource: "geocoded",
+        geocodeAttemptedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(eventsTable.id, e.id));
+  }
+
+  res.json({
+    scanned: rows.length,
+    classified,
+    geocodeAttempted,
+    geocodeResolved,
+    skippedManuallyVerified,
+    outOfArea: outOfAreaCount,
+    remainingNeedingGeocode: Math.max(0, needsGeocode.length - geocodeAttempted),
   });
 });
 
@@ -783,6 +968,73 @@ router.patch("/admin/events/:id", requireAdmin, async (req, res) => {
   if (data.contactEmail !== undefined) updates.contactEmail = data.contactEmail;
   if (data.contactPhone !== undefined) updates.contactPhone = data.contactPhone;
   if (data.promoContactMethod !== undefined) updates.promoContactMethod = data.promoContactMethod;
+
+  // ── Location fields ──
+  if (data.city !== undefined) updates.city = data.city || null;
+  if (data.state !== undefined) updates.state = data.state || null;
+  if (data.zip !== undefined) updates.zip = data.zip || null;
+  if (data.county !== undefined) updates.county = data.county || null;
+  if (data.latitude !== undefined) updates.latitude = data.latitude;
+  if (data.longitude !== undefined) updates.longitude = data.longitude;
+  if (data.locationVerifiedByAdmin !== undefined) {
+    updates.locationVerifiedByAdmin = data.locationVerifiedByAdmin;
+  }
+
+  // An admin touching any location field counts as a manual edit: mark the row
+  // verified-by-admin (protects it from future automated enrichment) and
+  // reclassify address quality with the merged values.
+  // Only a real value CHANGE counts as a manual location edit — clients may
+  // resend unchanged fields, which must not lock the row against enrichment.
+  const changed = (key: "address" | "venue" | "city" | "state" | "zip" | "county" | "latitude" | "longitude") => {
+    const next = (data as Record<string, unknown>)[key];
+    if (next === undefined) return false;
+    const prev = (ev as Record<string, unknown>)[key];
+    return (next ?? null) !== (prev ?? null);
+  };
+  const locationEdited =
+    changed("address") ||
+    changed("venue") ||
+    changed("city") ||
+    changed("state") ||
+    changed("zip") ||
+    changed("county") ||
+    changed("latitude") ||
+    changed("longitude");
+  if (locationEdited || data.outOfArea !== undefined) {
+    const m = { ...ev, ...updates } as typeof ev;
+    const c = classifyLocation({
+      venue: m.venue,
+      address: m.address,
+      city: m.city,
+      state: m.state,
+      zip: m.zip,
+      county: m.county,
+      latitude: m.latitude,
+      longitude: m.longitude,
+    });
+    updates.addressStatus = c.addressStatus;
+    // Explicit outOfArea override (e.g. "actually in our area — move to queue")
+    // wins over the automatic classification.
+    const outOfArea = data.outOfArea !== undefined ? data.outOfArea : c.outOfArea;
+    updates.outOfArea = outOfArea;
+    updates.outOfAreaReason =
+      data.outOfArea !== undefined
+        ? (data.outOfArea ? "Manually marked out of area by admin" : null)
+        : c.outOfAreaReason;
+    updates.mapReadiness = outOfArea
+      ? "cannot_map"
+      : data.outOfArea === false && c.outOfArea
+        ? (isValidCoords(m.latitude, m.longitude) ? "needs_review" : "cannot_map")
+        : c.mapReadiness;
+    // Keep parsed city/state/zip only when the admin didn't set them explicitly
+    if (data.city === undefined && c.city) updates.city = c.city;
+    if (data.state === undefined && c.state) updates.state = c.state;
+    if (data.zip === undefined && c.zip) updates.zip = c.zip;
+    if (locationEdited && data.locationVerifiedByAdmin === undefined) {
+      updates.locationVerifiedByAdmin = true;
+      updates.addressSource = "manual";
+    }
+  }
 
   // Enabling a bonus stamp on an event that has no slug: persist a stable,
   // unique slug now (name + id fragment) so later renames/toggles always

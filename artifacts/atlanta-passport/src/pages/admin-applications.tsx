@@ -3,6 +3,7 @@ import {
   useListAdminEvents,
   useGetAdminEventsSummary,
   useUpdateAdminEvent,
+  useReprocessEventLocations,
   getListAdminEventsQueryKey,
   getGetAdminEventsSummaryQueryKey,
   type Application,
@@ -1462,6 +1463,70 @@ const STATUS_TABS = [
 
 type StatusTab = (typeof STATUS_TABS)[number]["id"];
 
+// ── Location quality filters (Events Hub) ───────────────────────────────────
+
+const LOCATION_FILTERS = [
+  { id: "ready", label: "Map Ready", countKey: "locationReady" },
+  { id: "verified_address", label: "Verified Address", countKey: "locationVerifiedAddress" },
+  { id: "missing_partial", label: "Missing/Partial", countKey: "locationMissingPartial" },
+  { id: "needs_location_review", label: "Needs Location Review", countKey: "locationNeedsReview" },
+  { id: "unable_to_map", label: "Unable to Map", countKey: "locationUnableToMap" },
+  { id: "out_of_area", label: "Out of Area", countKey: "locationOutOfArea" },
+] as const;
+
+type LocationFilterId = (typeof LOCATION_FILTERS)[number]["id"];
+
+/** Full display address assembled from structured fields + free-text address. */
+function fullAddress(e: AdminEventRecord): string {
+  const cityStZip = [e.city, [e.state, e.zip].filter(Boolean).join(" ")]
+    .filter(Boolean)
+    .join(", ");
+  const street = (e.address ?? "").trim();
+  if (!street) return cityStZip;
+  // Avoid repeating city/state when they're already in the free-text address
+  const lower = street.toLowerCase();
+  const parts = [street];
+  if (e.city && !lower.includes(e.city.toLowerCase())) parts.push(e.city);
+  if ((e.state && !new RegExp(`\\b${e.state}\\b`, "i").test(street)) || (e.zip && !street.includes(e.zip))) {
+    parts.push([!new RegExp(`\\b${e.state ?? ""}\\b`, "i").test(street) ? e.state : null, !street.includes(e.zip ?? "") ? e.zip : null].filter(Boolean).join(" "));
+  }
+  return parts.filter(Boolean).join(", ");
+}
+
+function LocationBadges({ event }: { event: AdminEventRecord }) {
+  const st = event.addressStatus;
+  const stCls =
+    st === "verified" ? "bg-brand-lime text-foreground"
+    : st === "partial" ? "bg-brand-yellow text-brand-yellow-foreground"
+    : st === "unmappable" ? "bg-brand-red text-white"
+    : "bg-foreground/10 text-foreground";
+  const mr = event.mapReadiness;
+  const mrCls =
+    mr === "ready" ? "bg-brand-navy text-white"
+    : mr === "needs_review" ? "bg-brand-orange text-white"
+    : "bg-foreground/10 text-foreground";
+  return (
+    <>
+      <span className={`badge-sticker ${stCls} text-[9px]`} title="Address quality">
+        ADDR: {st.toUpperCase()}
+      </span>
+      <span className={`badge-sticker ${mrCls} text-[9px]`} title="Map readiness">
+        MAP: {mr.replace(/_/g, " ").toUpperCase()}
+      </span>
+      {event.outOfArea && (
+        <span className="badge-sticker bg-brand-red text-white text-[9px]" title={event.outOfAreaReason ?? undefined}>
+          OUT OF AREA
+        </span>
+      )}
+      {event.locationVerifiedByAdmin && (
+        <span className="badge-sticker bg-brand-sky text-foreground text-[9px]" title="Location manually verified — automated enrichment will not overwrite it">
+          LOC VERIFIED
+        </span>
+      )}
+    </>
+  );
+}
+
 function SummaryBar({ summary }: { summary: AdminEventsSummary }) {
   const stats = [
     { label: "Total", value: summary.total, cls: "bg-foreground/10" },
@@ -1556,6 +1621,11 @@ function AdminEventCard({
     contactEmail: event.contactEmail ?? "",
     contactPhone: event.contactPhone ?? "",
     promoContactMethod: event.promoContactMethod ?? "",
+    city: event.city ?? "",
+    state: event.state ?? "",
+    zip: event.zip ?? "",
+    latitude: event.latitude != null ? String(event.latitude) : "",
+    longitude: event.longitude != null ? String(event.longitude) : "",
     isFeatured: event.isFeatured,
     isBonusStamp: event.isBonusStamp,
     adminNotes: event.adminNotes ?? "",
@@ -1595,7 +1665,32 @@ function AdminEventCard({
 
   const saveEdits = (republish = false) => {
     setSaveMsg(null);
+    const latNum = draft.latitude.trim() === "" ? null : Number(draft.latitude);
+    const lngNum = draft.longitude.trim() === "" ? null : Number(draft.longitude);
+    if ((latNum !== null && !Number.isFinite(latNum)) || (lngNum !== null && !Number.isFinite(lngNum))) {
+      setSaveMsg("Latitude/longitude must be numbers.");
+      return;
+    }
+    const locationChanged =
+      draft.address !== (event.address ?? "") ||
+      draft.venue !== event.venue ||
+      draft.city !== (event.city ?? "") ||
+      draft.state !== (event.state ?? "") ||
+      draft.zip !== (event.zip ?? "") ||
+      latNum !== (event.latitude ?? null) ||
+      lngNum !== (event.longitude ?? null);
     const body = {
+      // Location fields are only sent when actually changed, so an unrelated
+      // edit doesn't flip the row to "manually verified".
+      ...(locationChanged
+        ? {
+            city: draft.city || undefined,
+            state: draft.state || undefined,
+            zip: draft.zip || undefined,
+            latitude: latNum ?? undefined,
+            longitude: lngNum ?? undefined,
+          }
+        : {}),
       listingPackage: draft.listingPackage,
       addOns: draft.addOns,
       listingPrice: draft.listingPrice !== null ? draft.listingPrice : computedPrice,
@@ -1715,6 +1810,7 @@ function AdminEventCard({
           {event.isBonusStamp && (
             <span className="badge-sticker bg-brand-orange text-white text-[9px]">BONUS STAMP</span>
           )}
+          <LocationBadges event={event} />
           {event.paymentStatus && event.paymentStatus !== "unpaid" && (
             <span className={`badge-sticker text-[9px] ${event.paymentStatus === "paid" ? "bg-brand-lime text-foreground" : event.paymentStatus === "invoiced" ? "bg-brand-sky text-foreground" : "bg-foreground/10 text-foreground"}`}>
               {event.paymentStatus.toUpperCase()}
@@ -1728,6 +1824,19 @@ function AdminEventCard({
         {event.date && <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{event.date}</span>}
         {event.time && <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" />{event.time}</span>}
         {event.venue && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" />{event.venue}</span>}
+        {fullAddress(event) && (
+          <span className="inline-flex items-center gap-1 basis-full">
+            <MapPin className="w-3 h-3 opacity-50" />{fullAddress(event)}
+            {event.latitude != null && event.longitude != null && (
+              <span className="opacity-50">({event.latitude.toFixed(4)}, {event.longitude.toFixed(4)})</span>
+            )}
+          </span>
+        )}
+        {event.outOfArea && event.outOfAreaReason && (
+          <span className="basis-full text-brand-red font-bold flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3" /> {event.outOfAreaReason}
+          </span>
+        )}
         {event.cost && <span className="inline-flex items-center gap-1"><Ticket className="w-3 h-3" />{event.cost}</span>}
         {event.listingPrice != null && (
           <span className="inline-flex items-center gap-1 text-brand-lime-foreground font-bold">
@@ -1749,6 +1858,17 @@ function AdminEventCard({
             {a.icon} {a.label}
           </button>
         ))}
+        {event.outOfArea && (
+          <button
+            type="button"
+            disabled={updateMutation.isPending}
+            onClick={() => updateMutation.mutate({ id: event.id, data: { outOfArea: false } })}
+            className="button-pop text-[10px] px-2 py-1 inline-flex items-center gap-1 disabled:opacity-50 bg-brand-sky text-foreground"
+            title="Override the out-of-area flag and return this event to the review queue"
+          >
+            <MapPin className="w-3.5 h-3.5" /> Mark In Area
+          </button>
+        )}
         <label className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest cursor-pointer border-2 border-foreground rounded-lg px-2 py-1 bg-white hover:bg-[hsl(var(--brand-cream))]">
           <input
             type="checkbox"
@@ -2007,8 +2127,30 @@ function AdminEventCard({
                 <input value={draft.neighborhood} onChange={(e) => setDraft((d) => ({ ...d, neighborhood: e.target.value }))} className={inputCls} />
               </div>
               <div className="sm:col-span-2">
-                <label className={labelCls}>Address</label>
-                <input value={draft.address} onChange={(e) => setDraft((d) => ({ ...d, address: e.target.value }))} className={inputCls} />
+                <label className={labelCls}>Address (street)</label>
+                <input value={draft.address} onChange={(e) => setDraft((d) => ({ ...d, address: e.target.value }))} className={inputCls} placeholder="123 Peachtree St NE" />
+              </div>
+              <div>
+                <label className={labelCls}>City</label>
+                <input value={draft.city} onChange={(e) => setDraft((d) => ({ ...d, city: e.target.value }))} className={inputCls} placeholder="Atlanta" />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className={labelCls}>State</label>
+                  <input value={draft.state} onChange={(e) => setDraft((d) => ({ ...d, state: e.target.value }))} className={inputCls} placeholder="GA" />
+                </div>
+                <div>
+                  <label className={labelCls}>ZIP</label>
+                  <input value={draft.zip} onChange={(e) => setDraft((d) => ({ ...d, zip: e.target.value }))} className={inputCls} placeholder="30303" />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>Latitude</label>
+                <input value={draft.latitude} onChange={(e) => setDraft((d) => ({ ...d, latitude: e.target.value }))} className={inputCls} placeholder="33.7490" />
+              </div>
+              <div>
+                <label className={labelCls}>Longitude</label>
+                <input value={draft.longitude} onChange={(e) => setDraft((d) => ({ ...d, longitude: e.target.value }))} className={inputCls} placeholder="-84.3880" />
               </div>
               <div>
                 <label className={labelCls}>Ticket Price (display)</label>
@@ -2996,6 +3138,8 @@ export function EventsOpsPanel({ adminKey }: { adminKey: string }) {
   const qc = useQueryClient();
   const [opsTab, setOpsTab] = useState<OpsTab>("events");
   const [statusFilter, setStatusFilter] = useState<StatusTab>("all");
+  const [locationFilter, setLocationFilter] = useState<LocationFilterId | null>(null);
+  const [reprocessMsg, setReprocessMsg] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
@@ -3016,12 +3160,19 @@ export function EventsOpsPanel({ adminKey }: { adminKey: string }) {
 
   const reqOpts = { headers: { "x-admin-key": adminKey } };
 
+  const reprocessMutation = useReprocessEventLocations({ request: reqOpts });
+
   const { data: summary } = useGetAdminEventsSummary({
     query: { queryKey: getGetAdminEventsSummaryQueryKey(), refetchInterval: 30000 },
     request: reqOpts,
   });
 
-  const eventsParams = statusFilter !== "all" ? { status: statusFilter } : undefined;
+  const eventsParams = statusFilter !== "all" || locationFilter
+    ? {
+        ...(statusFilter !== "all" ? { status: statusFilter } : {}),
+        ...(locationFilter ? { locationFilter } : {}),
+      }
+    : undefined;
   const { data: eventsRaw, isLoading } = useListAdminEvents(
     eventsParams,
     {
@@ -3338,6 +3489,63 @@ export function EventsOpsPanel({ adminKey }: { adminKey: string }) {
           <Upload className="w-3.5 h-3.5" /> Import CSV
         </button>
       </div>
+
+      {/* Location quality filter chips */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <span className="text-[10px] font-black uppercase tracking-widest opacity-60 inline-flex items-center gap-1">
+          <MapPin className="w-3 h-3" /> Location
+        </span>
+        {LOCATION_FILTERS.map((f) => {
+          const count = summary ? (summary[f.countKey] as number | undefined) : undefined;
+          const active = locationFilter === f.id;
+          return (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => {
+                setLocationFilter(active ? null : f.id);
+                setSelectedIds(new Set());
+                setPage(0);
+              }}
+              className={`button-pop text-xs px-2.5 py-1 ${active ? "button-pop-yellow" : f.id === "out_of_area" ? "bg-white text-brand-red" : "bg-white text-foreground"}`}
+            >
+              {f.label}{count !== undefined ? ` (${count})` : ""}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          disabled={reprocessMutation.isPending}
+          onClick={() =>
+            reprocessMutation.mutate(
+              { data: { geocodeLimit: 25 } },
+              {
+                onSuccess: (r) => {
+                  setReprocessMsg(
+                    `Reprocessed ${r.scanned} events — ${r.classified} reclassified, ${r.geocodeResolved}/${r.geocodeAttempted} geocoded, ${r.skippedManuallyVerified} manually-verified skipped, ${r.remainingNeedingGeocode} still need geocoding (run again to continue).`,
+                  );
+                  refresh();
+                },
+                onError: (e) =>
+                  setReprocessMsg(`Reprocess failed: ${e instanceof Error ? e.message : "unknown error"}`),
+              },
+            )
+          }
+          className="button-pop text-xs px-2.5 py-1 bg-brand-navy text-white inline-flex items-center gap-1 disabled:opacity-50 ml-auto"
+          title="Re-run location classification for all events and geocode up to 25 missing coordinates"
+        >
+          {reprocessMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+          Fix Locations
+        </button>
+      </div>
+      {reprocessMsg && (
+        <div className="card-pop bg-white border-2 border-foreground p-3 mb-4 flex items-start gap-2 text-sm">
+          <span className="font-bold flex-1">{reprocessMsg}</span>
+          <button type="button" onClick={() => setReprocessMsg(null)} className="text-foreground/40 hover:text-foreground" aria-label="Dismiss">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Search + source filter + select-all row */}
       <div className="flex flex-wrap gap-2 mb-4">

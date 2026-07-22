@@ -273,6 +273,18 @@ export interface AdminEventRecord {
   url?: string | null;
   imageUrl?: string | null;
   ticketUrl?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  county?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  addressStatus: string;
+  mapReadiness: string;
+  outOfArea: boolean;
+  outOfAreaReason?: string | null;
+  addressSource?: string | null;
+  locationVerifiedByAdmin: boolean;
   workflowStatus: string;
   publishedAt?: string | null;
   scheduledPublishAt?: string | null;
@@ -305,6 +317,10 @@ export interface AdminEventRecord {
   updatedAt: string;
 }
 
+export interface ReprocessLocationsInput {
+  geocodeLimit?: number;
+}
+
 export interface AdminEventsSummary {
   total: number;
   pending: number;
@@ -320,6 +336,12 @@ export interface AdminEventsSummary {
   freeCount: number;
   featuredCount: number;
   paidCount: number;
+  locationReady: number;
+  locationVerifiedAddress: number;
+  locationMissingPartial: number;
+  locationUnableToMap: number;
+  locationOutOfArea: number;
+  locationNeedsReview: number;
 }
 
 export interface SubmitEventInput {
@@ -372,6 +394,14 @@ export interface AdminUpdateEventInput {
   venue?: string;
   address?: string;
   neighborhood?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  county?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  outOfArea?: boolean;
+  locationVerifiedByAdmin?: boolean;
   description?: string;
   highlights?: string[];
   imageUrl?: string;
@@ -397,4 +427,27 @@ export type ListAdminEventsParams = {
   search?: string;
   tier?: string;
   source?: string;
+  locationFilter?: ListAdminEventsLocationFilter;
+};
+
+export type ListAdminEventsLocationFilter =
+  (typeof ListAdminEventsLocationFilter)[keyof typeof ListAdminEventsLocationFilter];
+
+export const ListAdminEventsLocationFilter = {
+  ready: "ready",
+  verified_address: "verified_address",
+  missing_partial: "missing_partial",
+  unable_to_map: "unable_to_map",
+  out_of_area: "out_of_area",
+  needs_location_review: "needs_location_review",
+} as const;
+
+export type ReprocessEventLocations200 = {
+  scanned: number;
+  classified: number;
+  geocodeAttempted: number;
+  geocodeResolved: number;
+  skippedManuallyVerified: number;
+  outOfArea: number;
+  remainingNeedingGeocode: number;
 };

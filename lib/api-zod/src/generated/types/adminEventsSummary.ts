@@ -21,4 +21,10 @@ export interface AdminEventsSummary {
   freeCount: number;
   featuredCount: number;
   paidCount: number;
+  locationReady: number;
+  locationVerifiedAddress: number;
+  locationMissingPartial: number;
+  locationUnableToMap: number;
+  locationOutOfArea: number;
+  locationNeedsReview: number;
 }

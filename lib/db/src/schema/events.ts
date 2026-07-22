@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, doublePrecision, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const eventsTable = pgTable("events", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -12,6 +12,25 @@ export const eventsTable = pgTable("events", {
   venue: text("venue").notNull().default(""),
   address: text("address"),
   neighborhood: text("neighborhood").notNull().default(""),
+  // ── Location quality (address classification + map readiness) ──
+  city: text("city"),
+  state: text("state"),
+  zip: text("zip"),
+  county: text("county"),
+  latitude: doublePrecision("latitude"),
+  longitude: doublePrecision("longitude"),
+  // verified | partial | missing | unmappable
+  addressStatus: text("address_status").notNull().default("missing"),
+  // ready | needs_review | cannot_map
+  mapReadiness: text("map_readiness").notNull().default("cannot_map"),
+  outOfArea: boolean("out_of_area").notNull().default(false),
+  outOfAreaReason: text("out_of_area_reason"),
+  // source | geocoded | manual — provenance of the address/coords
+  addressSource: text("address_source"),
+  // When true, automated enrichment must never overwrite location fields.
+  locationVerifiedByAdmin: boolean("location_verified_by_admin").notNull().default(false),
+  // Last time a geocode was attempted for this row (success or failure).
+  geocodeAttemptedAt: timestamp("geocode_attempted_at"),
   description: text("description"),
   highlights: text("highlights").array(),
   instagram: text("instagram").array(),
