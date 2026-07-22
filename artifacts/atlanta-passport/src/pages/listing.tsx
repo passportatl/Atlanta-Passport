@@ -375,7 +375,18 @@ export default function Listing() {
             </div>
             )}
 
-            {/* Transit + Getting Here (enhanced with parking note when present) */}
+            {/* Transit + Getting Here and Accessibility + Policies — side by side
+                on desktop when both are present, stacked on mobile */}
+            {((business.transit || lc?.parkingNote) ||
+              (lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0))) && (
+            <div
+              className={`grid gap-x-10 gap-y-0 ${
+                (business.transit || lc?.parkingNote) &&
+                (lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0))
+                  ? "lg:grid-cols-2"
+                  : ""
+              }`}
+            >
             {(business.transit || lc?.parkingNote) && (
               <section className="pt-6 border-t border-border">
                 <div className="flex items-center text-primary font-bold mb-4">
@@ -406,6 +417,35 @@ export default function Listing() {
               </section>
             )}
 
+            {/* Accessibility + Policies — opt-in via locationContent */}
+            {(lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0)) && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-4 text-primary"
+                  style={accentTextStyle}
+                >
+                  <ShieldCheck className="w-5 h-5 mr-2" /> Accessibility & Policies
+                </div>
+                {lc?.accessibilityNote && (
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                    {lc.accessibilityNote}
+                  </p>
+                )}
+                {lc?.policies && lc.policies.length > 0 && (
+                  <ul className="space-y-3">
+                    {lc.policies.map((policy) => (
+                      <li key={policy.label} className="flex gap-3 text-sm text-muted-foreground">
+                        <span className="font-bold text-foreground shrink-0 whitespace-nowrap">{policy.label}:</span>
+                        <span className="leading-relaxed">{policy.body}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            )}
+            </div>
+            )}
+
             {/* Instagram / Social — opt-in via locationContent.instagramHandles */}
             {lc?.instagramHandles && lc.instagramHandles.length > 0 && (
               <section className="pt-6 border-t border-border">
@@ -434,33 +474,6 @@ export default function Listing() {
                     </a>
                   ))}
                 </div>
-              </section>
-            )}
-
-            {/* Accessibility + Policies — opt-in via locationContent */}
-            {(lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0)) && (
-              <section className="pt-6 border-t border-border">
-                <div
-                  className="flex items-center font-bold mb-4 text-primary"
-                  style={accentTextStyle}
-                >
-                  <ShieldCheck className="w-5 h-5 mr-2" /> Accessibility & Policies
-                </div>
-                {lc?.accessibilityNote && (
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                    {lc.accessibilityNote}
-                  </p>
-                )}
-                {lc?.policies && lc.policies.length > 0 && (
-                  <ul className="space-y-3">
-                    {lc.policies.map((policy) => (
-                      <li key={policy.label} className="flex gap-3 text-sm text-muted-foreground">
-                        <span className="font-bold text-foreground shrink-0 whitespace-nowrap">{policy.label}:</span>
-                        <span className="leading-relaxed">{policy.body}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </section>
             )}
 
