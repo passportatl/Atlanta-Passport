@@ -320,6 +320,23 @@ export default function Listing() {
                     {business.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
                   </a>
                 )}
+                {lc?.socialLinks && lc.socialLinks.length > 0 && (
+                  <ul className="mt-2 space-y-1">
+                    {lc.socialLinks.map((social) => (
+                      <li key={social.href}>
+                        <a
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm font-medium text-brand-red hover:underline break-all"
+                        >
+                          <AtSign className="w-4 h-4 shrink-0" />
+                          {social.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
               )}
               {(business.address || (business.lat != null && business.lng != null)) && (

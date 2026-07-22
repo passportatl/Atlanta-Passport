@@ -42,6 +42,13 @@ export interface LocationContent {
   instagramHandles?: string[];
 
   /**
+   * Official social media profiles, rendered as a compact linked list
+   * directly below the website link in the Hours card.
+   * Only include confirmed official accounts.
+   */
+  socialLinks?: { label: string; href: string }[];
+
+  /**
    * Contact phone number in displayable format (e.g. "(404) 555-0100").
    * Omit if not confirmed from the onboarding sheet.
    */
@@ -224,6 +231,13 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
 
       // Social: museum's official Instagram handle.
       instagramHandles: ["@trapmusicmuseum"],
+
+      // Social: official profiles verified against trapmusicmuseum.com.
+      socialLinks: [
+        { label: "Instagram", href: "https://www.instagram.com/trapmusicmuseum" },
+        { label: "Facebook", href: "https://www.facebook.com/trapmusicmuseum" },
+        { label: "TikTok", href: "https://www.tiktok.com/@trapmusicmuseum" },
+      ],
 
       // contact: phone and email omitted until confirmed from onboarding sheet.
 
