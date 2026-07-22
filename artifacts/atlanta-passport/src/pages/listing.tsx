@@ -328,36 +328,6 @@ export default function Listing() {
             same combined width as the description/gallery + right column. */}
         <div className="space-y-10 mt-10">
 
-            {/* Featured Experiences — opt-in via locationContent.featuredExperiences */}
-            {lc?.featuredExperiences && lc.featuredExperiences.length > 0 && (
-              <section className="pt-6 border-t border-border">
-                <div
-                  className="flex items-center font-bold mb-5 text-primary"
-                  style={accentTextStyle}
-                >
-                  <Sparkles className="w-5 h-5 mr-2" /> What To Expect
-                </div>
-                <ul className="space-y-5">
-                  {lc.featuredExperiences.map((exp) => (
-                    <li key={exp.name} className="flex gap-4">
-                      <div
-                        className="w-1 rounded-full shrink-0 mt-1"
-                        style={{
-                          backgroundColor: branding?.accentColor ?? "hsl(var(--brand-red))",
-                          minHeight: "1.5rem",
-                        }}
-                        aria-hidden
-                      />
-                      <div>
-                        <p className="font-serif font-bold text-foreground text-base">{exp.name}</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{exp.description}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
             {/* Hours + Address */}
             {(business.hours || business.address) && (
             <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-border">
@@ -439,6 +409,36 @@ export default function Listing() {
                 </div>
               )}
             </div>
+            )}
+
+            {/* Featured Experiences — opt-in via locationContent.featuredExperiences */}
+            {lc?.featuredExperiences && lc.featuredExperiences.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-5 text-primary"
+                  style={accentTextStyle}
+                >
+                  <Sparkles className="w-5 h-5 mr-2" /> What To Expect
+                </div>
+                <ul className="space-y-5">
+                  {lc.featuredExperiences.map((exp) => (
+                    <li key={exp.name} className="flex gap-4">
+                      <div
+                        className="w-1 rounded-full shrink-0 mt-1"
+                        style={{
+                          backgroundColor: branding?.accentColor ?? "hsl(var(--brand-red))",
+                          minHeight: "1.5rem",
+                        }}
+                        aria-hidden
+                      />
+                      <div>
+                        <p className="font-serif font-bold text-foreground text-base">{exp.name}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{exp.description}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             )}
 
             {/* Transit + Getting Here and Accessibility + Policies — side by side
