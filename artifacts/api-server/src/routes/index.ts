@@ -11,6 +11,7 @@ import adminExportRouter from "./admin-export";
 import sourcesRouter from "./sources";
 import locationSubmissionsRouter from "./location-submissions";
 import routesRouter from "./routes";
+import snapshotImportRouter from "./snapshot-import";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(adminExportRouter);
 router.use(sourcesRouter);
 router.use(locationSubmissionsRouter);
 router.use(routesRouter);
+router.use(snapshotImportRouter);
 
 export default router;
