@@ -1,5 +1,5 @@
 @layer theme, base, clerk, components, utilities;
-@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Bungee&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Bebas+Neue&family=Bungee&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 @import "@clerk/themes/shadcn.css";
 @import "tw-animate-css";
@@ -546,3 +546,74 @@
 .cl-formFieldInput::placeholder { color: #9a9a9a; opacity: 1; }
 .cl-formFieldInput:focus { outline: none; box-shadow: 3px 3px 0 0 hsl(var(--foreground)); }
 .cl-socialButtonsBlockButton:hover { background-color: hsl(var(--brand-cream)); }
+
+/* ── Trap Music Museum location page demo typography ───────────────────────────
+   Scoped exclusively to [data-location="trap-museum"]. No other location page,
+   shared component, or global style is affected by these rules.
+
+   Display font  : Bebas Neue — hero headings, section titles, card titles, CTAs
+   Body font     : Helvetica Neue Bold — body copy, labels, nav, metadata, descriptions
+   ────────────────────────────────────────────────────────────────────────────── */
+
+[data-location="trap-museum"] {
+  /* Hero heading — desktop h1 */
+  h1 {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 400; /* Bebas Neue is inherently heavy; 400 is its only weight */
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+  }
+
+  /* Section headings (h2–h4) and prominent labels */
+  h2, h3, h4 {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  /* Body copy, descriptions, paragraphs, list items */
+  p, li, span, label, address {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+  }
+
+  /* Muted / secondary text — keep readable weight on small text */
+  .text-muted-foreground {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+  }
+
+  /* Buttons / CTAs */
+  button, a.button-pop, [role="button"] {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  /* badge-sticker chips (category, sponsor, etc.) */
+  .badge-sticker {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  /* Intro / lead paragraph — make it stand out */
+  .text-xl.font-medium, .text-2xl.font-medium {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+  }
+
+  /* Navigation / metadata labels (font-display class used in the app) */
+  .font-display {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    letter-spacing: 0.1em;
+  }
+
+  /* Serif utility (font-serif class) → remap to Bebas Neue for headings */
+  .font-serif {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+}

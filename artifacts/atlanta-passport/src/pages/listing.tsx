@@ -109,7 +109,7 @@ export default function Listing() {
     : undefined;
 
   return (
-    <div className="w-full pb-24 bg-background">
+    <div className="w-full pb-24 bg-background" data-location={business.id}>
       {/* Hero Image */}
       <div className="w-full h-[40vh] md:h-[50vh] relative">
         <BusinessImage
