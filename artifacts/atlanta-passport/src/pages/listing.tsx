@@ -512,37 +512,6 @@ export default function Listing() {
             </div>
             )}
 
-            {/* Instagram / Social — opt-in via locationContent.instagramHandles */}
-            {lc?.instagramHandles && lc.instagramHandles.length > 0 && (
-              <section className="pt-6 border-t border-border">
-                <div
-                  className="flex items-center font-bold mb-3 text-primary"
-                  style={accentTextStyle}
-                >
-                  <AtSign className="w-5 h-5 mr-2" /> Follow Along
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {lc.instagramHandles.map((handle) => (
-                    <a
-                      key={handle}
-                      href={`https://instagram.com/${handle.replace("@", "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="badge-sticker inline-flex items-center gap-1 font-bold hover:opacity-80 transition-opacity"
-                      style={
-                        branding?.accentColor
-                          ? { backgroundColor: branding.accentColor, color: branding.accentFg ?? "#fff" }
-                          : { backgroundColor: "hsl(var(--foreground))", color: "hsl(var(--background))" }
-                      }
-                    >
-                      <AtSign className="w-3 h-3" aria-hidden />
-                      {handle.replace("@", "")}
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {/* Menu — shown for locations that have a featured menu */}
             {business.menu && business.menu.length > 0 && (
               <section className="pt-6 border-t border-border">
