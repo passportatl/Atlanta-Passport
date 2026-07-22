@@ -716,12 +716,21 @@
   /* Brand-lime → light gray (BELTLINE badge) */
   .bg-brand-lime               { background-color: #d4d4d4 !important; border-color: #d4d4d4 !important; color: #111 !important; }
 
+  /* All button-pop buttons → solid black with white text (B&W motif).
+     The base .button-pop rule uses hsl(var(--brand-red)) which bypasses the
+     utility-class override, so we target the class directly here. */
+  .button-pop {
+    background: #111 !important;
+    color: #fff !important;
+  }
+
   /* Brand-yellow / yellow button → white with black pop shadow */
   .bg-brand-yellow             { background-color: #fff !important; border-color: #111 !important; color: #111 !important; }
   .button-pop-yellow {
+    background: #fff !important;
     background-color: #fff !important;
-    border-color: #111 !important;
     color: #111 !important;
+    border-color: #111 !important;
     box-shadow: 3px 3px 0 0 #111 !important;
   }
 
