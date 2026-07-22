@@ -7,6 +7,7 @@ import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
 import LocationEventCalendar from "@/components/LocationEventCalendar";
 import MapSnapshot from "@/components/MapSnapshot";
+import MediaGallery from "@/components/MediaGallery";
 import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
@@ -240,27 +241,92 @@ export default function Listing() {
               </section>
             )}
 
-            {/* Gallery strip — opt-in via locationContent.gallery */}
+            {/* Media gallery hub — opt-in via locationContent.gallery.
+                Selectable thumbnails open a floating enlarged photo/video. */}
             {lc?.gallery && lc.gallery.length > 0 && (
               <section className="pt-6 border-t border-border">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {lc.gallery.map((img, i) => (
-                    <div
-                      key={i}
-                      className="rounded-xl overflow-hidden aspect-video border-2 border-foreground shadow-pop-sm"
-                    >
-                      <img
-                        src={img.src}
-                        alt={img.alt}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        draggable={false}
-                      />
-                    </div>
-                  ))}
-                </div>
+                <MediaGallery items={lc.gallery} />
               </section>
             )}
+
+          </div>
+
+          {/* Right Column — Stamps to collect */}
+          <div className="lg:col-span-2 space-y-8">
+            {stampTargets.length > 0 && (
+              <div>
+                <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-4 uppercase">
+                  ★ {t("listing_page.stamp_label")}
+                </div>
+                <StampChecklist targets={stampTargets} />
+              </div>
+            )}
+
+            <NearbyRoutes business={business} />
+
+            {/* Custom branded CTAs — only shown when configured for this location */}
+            {branding?.cta && branding.cta.length > 0 && (
+              <div className="space-y-3 pt-2">
+                {branding.cta.map((item, i) => (
+                  <a
+                    key={i}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm font-bold"
+                    style={
+                      item.variant === "primary" && branding.accentColor
+                        ? {
+                            backgroundColor: branding.accentColor,
+                            color: branding.accentFg ?? "#000000",
+                            borderColor: branding.accentColor,
+                          }
+                        : undefined
+                    }
+                  >
+                    <ExternalLink className="w-4 h-4 shrink-0" />
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Coming-soon panel — visible while additional features are being prepared */}
+            {branding?.showComingSoonPanel && (
+              <div
+                className="card-pop rounded-2xl p-5 border-2 border-dashed space-y-2"
+                style={
+                  branding.accentColor
+                    ? { borderColor: `${branding.accentColor}66` }
+                    : undefined
+                }
+                aria-label="Additional partner features coming soon"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles
+                    className="w-4 h-4 shrink-0"
+                    style={{ color: branding.accentColor ?? undefined }}
+                  />
+                  <span
+                    className="font-display text-xs tracking-[0.18em] uppercase font-bold"
+                    style={{ color: branding.accentColor ?? undefined }}
+                  >
+                    More coming soon
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Exclusive partner features — custom gallery, loyalty perks, and
+                  event listings — are being prepared for this location.
+                </p>
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        {/* Full-width sections — everything below the intro grid spans the
+            same combined width as the description/gallery + right column. */}
+        <div className="space-y-10 mt-10">
 
             {/* Featured Experiences — opt-in via locationContent.featuredExperiences */}
             {lc?.featuredExperiences && lc.featuredExperiences.length > 0 && (
@@ -519,79 +585,6 @@ export default function Listing() {
                 tempEvents={lc?.tempEvents}
               />
             )}
-
-          </div>
-
-          {/* Right Column — Stamps to collect */}
-          <div className="lg:col-span-2 space-y-8">
-            {stampTargets.length > 0 && (
-              <div>
-                <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-4 uppercase">
-                  ★ {t("listing_page.stamp_label")}
-                </div>
-                <StampChecklist targets={stampTargets} />
-              </div>
-            )}
-
-            <NearbyRoutes business={business} />
-
-            {/* Custom branded CTAs — only shown when configured for this location */}
-            {branding?.cta && branding.cta.length > 0 && (
-              <div className="space-y-3 pt-2">
-                {branding.cta.map((item, i) => (
-                  <a
-                    key={i}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm font-bold"
-                    style={
-                      item.variant === "primary" && branding.accentColor
-                        ? {
-                            backgroundColor: branding.accentColor,
-                            color: branding.accentFg ?? "#000000",
-                            borderColor: branding.accentColor,
-                          }
-                        : undefined
-                    }
-                  >
-                    <ExternalLink className="w-4 h-4 shrink-0" />
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {/* Coming-soon panel — visible while additional features are being prepared */}
-            {branding?.showComingSoonPanel && (
-              <div
-                className="card-pop rounded-2xl p-5 border-2 border-dashed space-y-2"
-                style={
-                  branding.accentColor
-                    ? { borderColor: `${branding.accentColor}66` }
-                    : undefined
-                }
-                aria-label="Additional partner features coming soon"
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles
-                    className="w-4 h-4 shrink-0"
-                    style={{ color: branding.accentColor ?? undefined }}
-                  />
-                  <span
-                    className="font-display text-xs tracking-[0.18em] uppercase font-bold"
-                    style={{ color: branding.accentColor ?? undefined }}
-                  >
-                    More coming soon
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Exclusive partner features — custom gallery, loyalty perks, and
-                  event listings — are being prepared for this location.
-                </p>
-              </div>
-            )}
-          </div>
 
         </div>
 

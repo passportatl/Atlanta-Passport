@@ -30,10 +30,12 @@ export interface LocationCta {
  */
 export interface LocationContent {
   /**
-   * Gallery images beyond the hero — displayed as a 2-up photo strip below
-   * the About section. Each src must be an imported Vite asset (not a URL).
+   * Media gallery hub shown below the About section: selectable thumbnails
+   * that open a floating enlarged photo or video lightbox.
+   * Each src must be an imported Vite asset (not a URL).
+   * type defaults to "image"; set "video" (with optional poster) for clips.
    */
-  gallery?: { src: string; alt: string }[];
+  gallery?: { src: string; alt: string; type?: "image" | "video"; poster?: string }[];
 
   /**
    * Official Instagram account handles (e.g. "@trapmusicmuseum").
