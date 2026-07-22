@@ -13,6 +13,11 @@
 // Only import images for locations that actually have gallery content.
 import trapMuseumInteriorImg from "@/assets/images/trap-museum.jpg";
 import trapMuseumMarkerTmm from "@/assets/images/trap-museum-marker-tmm.png";
+import tmmGalleryCornerstore from "@/assets/images/tmm-gallery-hero-cornerstore.jpg";
+import tmmGalleryOutkast from "@/assets/images/tmm-gallery-art-outkast.jpg";
+import tmmGalleryTrapHouse from "@/assets/images/tmm-gallery-art-trap-house.jpg";
+import tmmGalleryPimp from "@/assets/images/tmm-gallery-art-pimp.jpg";
+import tmmGalleryWeDidIt from "@/assets/images/tmm-gallery-art-we-did-it.jpg";
 
 // ── Sub-types ──────────────────────────────────────────────────────────────
 
@@ -223,11 +228,32 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
     // ── Rich location content ──────────────────────────────────────────────
     // All sub-fields are optional. Omit anything not yet confirmed.
     locationContent: {
-      // Gallery: interior image alongside the hero shot.
+      // Gallery: interior shot plus exhibit imagery sourced from
+      // trapmusicmuseum.com (official site assets).
       gallery: [
         {
           src: trapMuseumInteriorImg,
           alt: "Interior view of Atlanta Trap Music Museum featuring themed room displays and cultural exhibits",
+        },
+        {
+          src: tmmGalleryCornerstore,
+          alt: "Corner store exhibit recreation at the Trap Music Museum",
+        },
+        {
+          src: tmmGalleryOutkast,
+          alt: "OutKast tribute artwork on display at the Trap Music Museum",
+        },
+        {
+          src: tmmGalleryTrapHouse,
+          alt: "Trap house exhibit artwork at the Trap Music Museum",
+        },
+        {
+          src: tmmGalleryPimp,
+          alt: "Pimp C tribute artwork at the Trap Music Museum",
+        },
+        {
+          src: tmmGalleryWeDidIt,
+          alt: "\u201CWe Did It For Trap Muzik\u201D portrait collage artwork featuring Atlanta trap artists",
         },
       ],
 
