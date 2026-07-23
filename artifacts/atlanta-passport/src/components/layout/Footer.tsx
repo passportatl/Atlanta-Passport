@@ -31,9 +31,9 @@ export default function Footer({
     >
       <div className="absolute inset-0 dot-grid opacity-[0.06] pointer-events-none" />
       <div className="container mx-auto px-4 relative">
-        <div className="flex items-center flex-wrap gap-3 sm:gap-5">
+        <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-5">
           <Logo variant="stacked" className="shrink-0" />
-          <div className="space-y-1 min-w-0 flex-1 basis-48">
+          <div className="space-y-1 min-w-0 max-w-xs">
             <p className="text-xs sm:text-base text-background/75 break-words">
               {t("footer.built_by")}
             </p>
