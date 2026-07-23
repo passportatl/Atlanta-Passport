@@ -746,4 +746,16 @@
 
   /* Focus rings → black */
   .focus-visible\:ring-brand-red:focus-visible { --tw-ring-color: #111 !important; }
+
+  /* ── Card / bubble pop shadows → grey ────────────────────────────────────
+     Elsewhere the offset "pop" shadow uses the foreground color; on the
+     white TMM page a solid black shadow reads too heavy. Keep the same
+     offsets (so card sizing/spacing matches the rest of the site) but
+     render them in grey. */
+  .shadow-pop     { box-shadow: 6px 6px 0 0 #c7c7c7 !important; }
+  .shadow-pop-sm  { box-shadow: 4px 4px 0 0 #c7c7c7 !important; }
+  .shadow-pop-lg  { box-shadow: 10px 10px 0 0 #c7c7c7 !important; }
+  .button-pop        { box-shadow: 5px 5px 0 0 #c7c7c7 !important; }
+  .button-pop:hover  { box-shadow: 3px 3px 0 0 #c7c7c7 !important; }
+  .button-pop-yellow { box-shadow: 3px 3px 0 0 #c7c7c7 !important; }
 }
