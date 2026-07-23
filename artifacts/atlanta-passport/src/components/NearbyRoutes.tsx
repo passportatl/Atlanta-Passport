@@ -96,7 +96,7 @@ export default function NearbyRoutes({
                 )}
                 {route.pace}
               </div>
-              <p className="text-muted-foreground text-xs md:line-clamp-2 mb-3">
+              <p className="text-muted-foreground text-xs mb-3">
                 {route.vibe}
               </p>
               <span className="font-display text-[10px] tracking-[0.16em] text-brand-red mt-auto uppercase inline-flex items-center gap-1">

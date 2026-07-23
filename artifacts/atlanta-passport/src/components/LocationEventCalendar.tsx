@@ -320,7 +320,7 @@ export default function LocationEventCalendar({
 
                         {/* Event info */}
                         <div className="flex-1 min-w-0">
-                          <p className="font-serif font-bold text-foreground leading-snug line-clamp-2 group-hover:underline underline-offset-2">
+                          <p className="font-serif font-bold text-foreground leading-snug group-hover:underline underline-offset-2">
                             {ev.name}
                           </p>
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-1">
