@@ -37,3 +37,15 @@ GITHUB_TOKEN = "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"
 SESSION_SECRET = "Ctfxj8c7kSNqkh+CatrIbhK109js/AVI54S5PB1E8x75vGBoFiLcHhtk3EDjC6SpMlGlLoCiH0aFZ8C/fBHGOA=="
 VITE_CLERK_PUBLISHABLE_KEY = "pk_test_c21vb3RoLWhvcm5ldC02MC5jbGVyay5hY2NvdW50cy5kZXYk"
 VITE_GOOGLE_MAPS_API_KEY = "AIzaSyCMLcC7ys5LyTgQngrnA_VsHCLvlPepVKE"
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 80
+
+[[ports]]
+localPort = 24032
+externalPort = 3000

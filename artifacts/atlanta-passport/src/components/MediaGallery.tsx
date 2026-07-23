@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { X, Play } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { X, Play, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface MediaGalleryItem {
   src: string;
@@ -21,6 +21,35 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   // The thumbnail that opened the lightbox — focus returns here on close.
   const triggerRef = useRef<HTMLElement | null>(null);
+  // Single-row strip scrolling state.
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateArrows = useCallback(() => {
+    const el = stripRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 4);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    updateArrows();
+    const el = stripRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    window.addEventListener("resize", updateArrows);
+    return () => {
+      el.removeEventListener("scroll", updateArrows);
+      window.removeEventListener("resize", updateArrows);
+    };
+  }, [updateArrows, items.length]);
+
+  const scrollStrip = (dir: -1 | 1) => {
+    const el = stripRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.8), behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (selected === null) return;
@@ -68,7 +97,13 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="relative">
+        <div
+          ref={stripRef}
+          className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="group"
+          aria-label="Photo and video gallery"
+        >
         {items.map((item, i) => (
           <button
             key={i}
@@ -77,7 +112,7 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
               triggerRef.current = e.currentTarget;
               setSelected(i);
             }}
-            className="group relative rounded-xl overflow-hidden aspect-video border-2 border-foreground shadow-pop-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+            className="group relative rounded-xl overflow-hidden aspect-video w-56 sm:w-64 shrink-0 snap-start border-2 border-foreground shadow-pop-sm cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
             aria-label={`Open ${item.type === "video" ? "video" : "photo"}: ${item.alt}`}
           >
             {item.type === "video" ? (
@@ -116,6 +151,28 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
             )}
           </button>
         ))}
+        </div>
+
+        {canLeft && (
+          <button
+            type="button"
+            onClick={() => scrollStrip(-1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80 z-10"
+            aria-label="Scroll gallery left"
+          >
+            <ChevronLeft className="w-5 h-5 text-foreground" />
+          </button>
+        )}
+        {canRight && (
+          <button
+            type="button"
+            onClick={() => scrollStrip(1)}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80 z-10"
+            aria-label="Scroll gallery right"
+          >
+            <ChevronRight className="w-5 h-5 text-foreground" />
+          </button>
+        )}
       </div>
 
       {active && (

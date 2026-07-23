@@ -8,6 +8,7 @@ import BusinessImage from "@/components/BusinessImage";
 import LocationEventCalendar from "@/components/LocationEventCalendar";
 import MapSnapshot from "@/components/MapSnapshot";
 import MediaGallery from "@/components/MediaGallery";
+import GoogleReviews from "@/components/GoogleReviews";
 import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
@@ -246,6 +247,14 @@ export default function Listing() {
             {lc?.gallery && lc.gallery.length > 0 && (
               <section className="pt-6 border-t border-border">
                 <MediaGallery items={lc.gallery} />
+                {lc.googleReview && (
+                  <GoogleReviews
+                    rating={lc.googleReview.rating}
+                    count={lc.googleReview.count}
+                    placeId={lc.googleReview.placeId}
+                    name={business.name}
+                  />
+                )}
               </section>
             )}
 

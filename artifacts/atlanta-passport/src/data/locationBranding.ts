@@ -56,6 +56,13 @@ export interface LocationContent {
   socialLinks?: { label: string; href: string }[];
 
   /**
+   * Google reviews summary shown below the media gallery. Rating/count are
+   * a periodically refreshed snapshot; placeId powers the "write a review"
+   * and "see all reviews" deep links into Google.
+   */
+  googleReview?: { rating: number; count: number; placeId: string };
+
+  /**
    * Contact phone number in displayable format (e.g. "(404) 555-0100").
    * Omit if not confirmed from the onboarding sheet.
    */
@@ -256,6 +263,13 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
           alt: "\u201CWe Did It For Trap Muzik\u201D portrait collage artwork featuring Atlanta trap artists",
         },
       ],
+
+      // Google reviews snapshot (fetched July 2026) + place ID for deep links.
+      googleReview: {
+        rating: 4.3,
+        count: 5658,
+        placeId: "ChIJaQZPLF0F9YgRnI3FO0tHP9E",
+      },
 
       // Social: museum's official Instagram handle.
       instagramHandles: ["@trapmusicmuseum"],
