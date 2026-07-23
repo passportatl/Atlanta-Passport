@@ -459,6 +459,18 @@ export default function Listing() {
                       <div>
                         <p className="font-serif font-bold text-foreground text-base">{exp.name}</p>
                         <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{exp.description}</p>
+                        {exp.link && (
+                          <a
+                            href={exp.link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 mt-2 font-display text-[11px] tracking-[0.14em] uppercase underline underline-offset-2 text-foreground hover:text-brand-red transition-colors"
+                            style={accentTextStyle}
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                            {exp.link.label}
+                          </a>
+                        )}
                       </div>
                     </li>
                   ))}

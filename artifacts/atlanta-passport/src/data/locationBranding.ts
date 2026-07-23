@@ -105,7 +105,12 @@ export interface LocationContent {
    * Featured experiences / activities at this location.
    * Shown as a "What To Expect" section directly below the About paragraph.
    */
-  featuredExperiences?: { name: string; description: string }[];
+  featuredExperiences?: {
+    name: string;
+    description: string;
+    /** Optional external link shown at the bottom of the experience entry. */
+    link?: { label: string; href: string };
+  }[];
 
   /**
    * Temporary placeholder events for the event calendar add-on.
@@ -204,23 +209,6 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
     accentColor: "#000000",
     accentFg: "#FFFFFF",
 
-    // ── Custom calls to action ─────────────────────────────────────────────
-    // Primary: reservation-only escape room (most direct booking action).
-    // Secondary: main museum tickets page.
-    // Update hrefs with exact deep-link URLs once confirmed from the team.
-    cta: [
-      {
-        label: "Reserve Escape the Trap",
-        href: "https://trapmusicmuseum.com/escape-the-trap",
-        variant: "primary",
-      },
-      {
-        label: "Buy Museum Tickets",
-        href: "https://trapmusicmuseum.com/tickets",
-        variant: "secondary",
-      },
-    ],
-
     // ── Bottom attribution ─────────────────────────────────────────────────
     brandNote:
       "Atlanta Trap Music Museum is an official cultural partner of Passport ATL.",
@@ -315,11 +303,19 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
           name: "Museum Gallery Tour",
           description:
             "Walk through themed rooms honoring trap music's origins, the iconic artists who shaped it, and the culture that put Atlanta on the global map.",
+          link: {
+            label: "Buy Museum Tickets",
+            href: "https://trapmusicmuseum.com/tickets",
+          },
         },
         {
           name: "Escape the Trap",
           description:
             "An immersive, reservation-only escape room experience. All escape room visits include museum entry. Book online in advance.",
+          link: {
+            label: "Reserve Escape the Trap",
+            href: "https://trapmusicmuseum.com/escape-the-trap",
+          },
         },
         {
           name: "Bar & Signature Cocktails",
