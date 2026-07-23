@@ -176,6 +176,12 @@ export default function Listing() {
             <div className="flex items-center text-white/90 text-lg">
               <MapPin className="w-5 h-5 mr-2" /> {business.neighborhood}
             </div>
+            <Link
+              href="/passport/explore"
+              className="inline-block mt-2 font-display text-xs tracking-[0.18em] uppercase text-white/80 hover:text-white underline underline-offset-4 transition-colors"
+            >
+              {t("listing_page.more_in_area")} →
+            </Link>
           </div>
         </div>
       </div>
@@ -187,6 +193,12 @@ export default function Listing() {
           <div className="flex items-center text-muted-foreground">
             <MapPin className="w-4 h-4 mr-1" /> {business.neighborhood}
           </div>
+          <Link
+            href="/passport/explore"
+            className="inline-block mt-2 font-display text-xs tracking-[0.18em] uppercase text-muted-foreground hover:text-brand-red underline underline-offset-4 transition-colors"
+          >
+            {t("listing_page.more_in_area")} →
+          </Link>
         </div>
 
         {/* Intro Description */}
@@ -576,11 +588,6 @@ export default function Listing() {
               {branding.brandNote}
             </p>
           )}
-          <div className="flex justify-center">
-            <Link href="/passport/explore" className="font-display text-xs tracking-[0.18em] text-muted-foreground hover:text-brand-red transition-colors uppercase">
-              {t("listing_page.more_in_area")} →
-            </Link>
-          </div>
         </div>
       </div>
     </div>
