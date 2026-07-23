@@ -31,9 +31,9 @@ export default function Footer({
     >
       <div className="absolute inset-0 dot-grid opacity-[0.06] pointer-events-none" />
       <div className="container mx-auto px-4 relative">
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center flex-wrap gap-3 sm:gap-5">
           <Logo variant="stacked" className="shrink-0" />
-          <div className="space-y-1 min-w-0 flex-1">
+          <div className="space-y-1 min-w-0 flex-1 basis-48">
             <p className="text-xs sm:text-base text-background/75 break-words">
               {t("footer.built_by")}
             </p>
@@ -44,25 +44,25 @@ export default function Footer({
               </span>
             </p>
           </div>
+          <ul
+            className="flex items-center gap-2 sm:gap-3 shrink-0"
+            aria-label="Partner logos"
+          >
+            {PARTNER_LOGOS.map((logo) => (
+              <li
+                key={logo.alt}
+                className="flex items-center justify-center bg-white rounded-lg border-2 border-foreground shadow-pop-sm h-12 sm:h-14 w-16 sm:w-20 p-1.5"
+              >
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul
-          className="mt-4 grid grid-cols-4 gap-2 sm:gap-3 max-w-md"
-          aria-label="Partner logos"
-        >
-          {PARTNER_LOGOS.map((logo) => (
-            <li
-              key={logo.alt}
-              className="flex items-center justify-center bg-white rounded-lg border-2 border-foreground shadow-pop-sm h-12 sm:h-14 p-1.5"
-            >
-              <img
-                src={logo.src}
-                alt={logo.alt}
-                className="max-h-full max-w-full object-contain"
-                loading="lazy"
-              />
-            </li>
-          ))}
-        </ul>
 
         <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
           <p>{t("footer.disclaimer")}</p>
