@@ -752,6 +752,7 @@
      white TMM page a solid black shadow reads too heavy. Keep the same
      offsets (so card sizing/spacing matches the rest of the site) but
      render them in grey. */
+  .card-pop       { box-shadow: 8px 8px 0 0 #c7c7c7 !important; }
   .shadow-pop     { box-shadow: 6px 6px 0 0 #c7c7c7 !important; }
   .shadow-pop-sm  { box-shadow: 4px 4px 0 0 #c7c7c7 !important; }
   .shadow-pop-lg  { box-shadow: 10px 10px 0 0 #c7c7c7 !important; }
