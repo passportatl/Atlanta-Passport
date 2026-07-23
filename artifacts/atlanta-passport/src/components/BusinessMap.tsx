@@ -21,6 +21,7 @@ import { SOCCER_BALL_SRC } from "@/components/SoccerBall";
 import martaStopIcon from "@/assets/images/marta-stop.png";
 import { neighborhoodColors, categoryColor, businessCategories } from "@/data/sample-data";
 import { STAMP_SLUG } from "@/passport/data";
+import { LOCATION_BRANDING } from "@/data/locationBranding";
 
 const ATLANTA_CENTER = { lat: 33.749, lng: -84.388 };
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
@@ -382,6 +383,18 @@ function BusinessMarkers({
     };
   };
 
+  // Locations with a custom branded map marker (e.g. Trap Music Museum logo)
+  // use it instead of the generic soccer-ball stamp icon.
+  const brandedIcon = (b: MapBusiness) => {
+    const src = LOCATION_BRANDING[b.id]?.mapMarkerSrc;
+    if (!src || !coreLib) return undefined;
+    return {
+      url: src,
+      scaledSize: new coreLib.Size(34, 34),
+      anchor: new coreLib.Point(17, 17),
+    };
+  };
+
   return (
     <>
       {businesses.map((b) => (
@@ -390,7 +403,7 @@ function BusinessMarkers({
           position={{ lat: b.lat, lng: b.lng }}
           title={b.name}
           onClick={() => onSelect(b.id)}
-          icon={STAMP_SLUG[b.id] || b.offer ? ballIcon : dotIcon(b)}
+          icon={brandedIcon(b) ?? (STAMP_SLUG[b.id] || b.offer ? ballIcon : dotIcon(b))}
           // Stamp/offer soccer balls sit ABOVE plain category dots so that when
           // a dot shares the exact same coordinates (e.g. a Public Art spot at
           // the same address) the larger soccer ball covers it instead of the
