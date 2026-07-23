@@ -179,7 +179,7 @@ export default function Listing() {
               </span>
               <Link
                 href="/passport/explore"
-                className="font-display text-[11px] tracking-[0.18em] uppercase text-white/80 hover:text-white underline underline-offset-4 transition-colors"
+                className="font-display text-[9px] tracking-[0.18em] uppercase text-white/80 hover:text-white underline underline-offset-2 transition-colors"
               >
                 {t("listing_page.more_in_area")} →
               </Link>
@@ -198,7 +198,7 @@ export default function Listing() {
             </span>
             <Link
               href="/passport/explore"
-              className="font-display text-[10px] tracking-[0.18em] uppercase text-muted-foreground hover:text-brand-red underline underline-offset-4 transition-colors"
+              className="font-display text-[9px] tracking-[0.18em] uppercase text-muted-foreground hover:text-brand-red underline underline-offset-2 transition-colors"
             >
               {t("listing_page.more_in_area")} →
             </Link>
