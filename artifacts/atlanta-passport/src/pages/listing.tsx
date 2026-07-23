@@ -173,15 +173,17 @@ export default function Listing() {
                 {branding.partnerTagline}
               </p>
             ) : null}
-            <div className="flex items-center text-white/90 text-lg">
-              <MapPin className="w-5 h-5 mr-2" /> {business.neighborhood}
+            <div className="flex items-baseline flex-wrap gap-x-3 text-white/90 text-lg">
+              <span className="inline-flex items-center">
+                <MapPin className="w-5 h-5 mr-2" /> {business.neighborhood}
+              </span>
+              <Link
+                href="/passport/explore"
+                className="font-display text-[11px] tracking-[0.18em] uppercase text-white/80 hover:text-white underline underline-offset-4 transition-colors"
+              >
+                {t("listing_page.more_in_area")} →
+              </Link>
             </div>
-            <Link
-              href="/passport/explore"
-              className="inline-block mt-2 font-display text-xs tracking-[0.18em] uppercase text-white/80 hover:text-white underline underline-offset-4 transition-colors"
-            >
-              {t("listing_page.more_in_area")} →
-            </Link>
           </div>
         </div>
       </div>
@@ -190,15 +192,17 @@ export default function Listing() {
         {/* Hero Title Content (Mobile) */}
         <div className="bg-card rounded-xl p-6 shadow-xl mb-8 md:hidden border border-border">
           <h1 className="text-3xl font-serif font-bold text-foreground mb-2">{business.name}</h1>
-          <div className="flex items-center text-muted-foreground">
-            <MapPin className="w-4 h-4 mr-1" /> {business.neighborhood}
+          <div className="flex items-baseline flex-wrap gap-x-3 text-muted-foreground">
+            <span className="inline-flex items-center">
+              <MapPin className="w-4 h-4 mr-1" /> {business.neighborhood}
+            </span>
+            <Link
+              href="/passport/explore"
+              className="font-display text-[10px] tracking-[0.18em] uppercase text-muted-foreground hover:text-brand-red underline underline-offset-4 transition-colors"
+            >
+              {t("listing_page.more_in_area")} →
+            </Link>
           </div>
-          <Link
-            href="/passport/explore"
-            className="inline-block mt-2 font-display text-xs tracking-[0.18em] uppercase text-muted-foreground hover:text-brand-red underline underline-offset-4 transition-colors"
-          >
-            {t("listing_page.more_in_area")} →
-          </Link>
         </div>
 
         {/* Intro Description */}
