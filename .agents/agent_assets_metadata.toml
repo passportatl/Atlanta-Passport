@@ -149,3 +149,9 @@ id = "FUMk5rLs8rzkJMSfG8HSm"
 uri = "file://exports/package-json-files.md"
 type = "text"
 title = "All package.json files (combined)"
+
+[[outputs]]
+id = "ASUL09sjRC6eZQ7_3rSgZ"
+uri = "file://exports/REPOSITORY_AUDIT_TREE.md"
+type = "text"
+title = "Repository Audit Tree"
