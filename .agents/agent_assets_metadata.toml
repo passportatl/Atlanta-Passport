@@ -143,3 +143,9 @@ id = "-9zNvynU_-pF2ZD0N2fDC"
 uri = "file://exports/oakland-cemetery-stamp-qr.png"
 type = "image"
 title = "Oakland Cemetery Bonus Stamp QR Code"
+
+[[outputs]]
+id = "FUMk5rLs8rzkJMSfG8HSm"
+uri = "file://exports/package-json-files.md"
+type = "text"
+title = "All package.json files (combined)"
