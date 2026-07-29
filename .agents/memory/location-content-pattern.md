@@ -33,3 +33,5 @@ Must be imported at the top of `locationBranding.ts` as Vite assets (not URLs), 
 **How to apply:** When a new sponsored partner needs a rich page, add a `locationContent` block to their entry in `LOCATION_BRANDING` with only the confirmed fields. listing.tsx renders whatever is present; omit rather than fabricate unconfirmed data.
 
 **Per-location color themes:** optional `theme` object on LocationBranding injects scoped CSS vars in listing.tsx (page container only). Shared components (MediaGallery, StampChecklist) use `var(--surface-card, #ffffff)`-style fallbacks so non-themed pages stay byte-identical — never swap their hardcoded whites for global tokens like bg-background (cream, not white).
+
+**@theme inline gotcha:** atlanta-passport's Tailwind uses `@theme inline`, so utilities like `bg-background` compile to `hsl(var(--background))` — overriding `--color-*` vars does NOTHING for class-based colors. Theme injection must convert hex → HSL triplets and override the raw vars (`--background`, `--foreground`, `--card`, `--brand-*`, etc.) as well as the `--color-*` ones (which only matter for inline `var(--color-*)` styles).
