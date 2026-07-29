@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import { businesses, categories, neighborhoods, isDarkColor, categoryColor, businessCategories, mapRoutes, type ResolvedRoute } from "@/data/sample-data";
+import { categories, neighborhoods, isDarkColor, categoryColor, businessCategories, mapRoutes, type ResolvedRoute } from "@/data/sample-data";
 import BusinessImage from "@/components/BusinessImage";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, X, ChevronDown, Ticket, Map as MapIcon, ArrowRight, Clock } from "lucide-react";
@@ -16,15 +16,17 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import Footer from "@/components/layout/Footer";
+import type {
+  ExploreLocation,
+  ExploreLocationDataStatus,
+} from "@/hooks/useExploreLocations";
 
 const sortedNeighborhoods = [...neighborhoods].sort((a, b) =>
   a.name.localeCompare(b.name),
 );
 
-type Biz = (typeof businesses)[number];
-
 type ExploreContentProps = {
-  filteredBusinesses: Biz[];
+  filteredBusinesses: ExploreLocation[];
   activeCategories: string[];
   activeNeighborhoods: string[];
   searchQuery: string;
@@ -35,6 +37,7 @@ type ExploreContentProps = {
   toggleNeighborhood: (n: string) => void;
   onlyOffers: boolean;
   setOnlyOffers: (value: boolean) => void;
+  dataStatus: ExploreLocationDataStatus;
   onSelectBusiness: (id: string) => void;
   selectedRouteId?: string;
   onSelectRoute: (id?: string) => void;
@@ -53,6 +56,7 @@ export default function ExploreContent({
   toggleNeighborhood,
   onlyOffers,
   setOnlyOffers,
+  dataStatus,
   onSelectBusiness,
   selectedRouteId,
   onSelectRoute,
@@ -92,6 +96,22 @@ export default function ExploreContent({
       {/* Scrollable area — filters scroll together with the results */}
       <div className="flex-1 min-h-0 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 pt-3 pb-8">
+        {dataStatus === "loading" && (
+          <div
+            role="status"
+            className="mb-3 rounded-md border-2 border-foreground/20 bg-white px-3 py-2 text-xs text-muted-foreground"
+          >
+            Checking for the latest Passport ATL locations. Saved locations remain available.
+          </div>
+        )}
+        {(dataStatus === "fallback-error" || dataStatus === "fallback-empty") && (
+          <div
+            role="status"
+            className="mb-3 rounded-md border-2 border-brand-yellow bg-brand-yellow/20 px-3 py-2 text-xs text-foreground"
+          >
+            Showing saved Passport ATL locations while the live directory is unavailable.
+          </div>
+        )}
         {/* Curated routes picker — pick a route to trace it on the map above */}
         <div className="mb-4 card-pop bg-brand-navy text-brand-cream p-3">
           <div className="flex items-center justify-between gap-2 mb-2">
