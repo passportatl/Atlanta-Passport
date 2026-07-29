@@ -169,8 +169,9 @@ const NEIGHBORHOOD_MAP: Record<string, string> = {
   // Old Fourth Ward / Inman Park
   "old fourth ward": "Old Fourth Ward", "o4w": "Old Fourth Ward",
   "inman park": "Inman Park",
-  // Ponce / Poncey-Highland
-  "poncey-highland": "Poncey-Highland", "poncey highland": "Poncey-Highland",
+  // Ponce / Poncey-Highlands (singular spellings are accepted aliases)
+  "poncey-highland": "Poncey-Highlands", "poncey highland": "Poncey-Highlands",
+  "poncey-highlands": "Poncey-Highlands", "poncey highlands": "Poncey-Highlands",
   "ponce city market": "Old Fourth Ward",
   // Decatur
   decatur: "Decatur",
