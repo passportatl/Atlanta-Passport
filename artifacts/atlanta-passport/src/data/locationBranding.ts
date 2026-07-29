@@ -253,7 +253,7 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
       brandYellowForeground: "#000000",
       brandNavy: "#000000",
       brandLime: "#C78B28",
-      brandCream: "#222222",
+      brandCream: "#ffffff",
       popBorder: "#333333",
       popShadow: "#000000",
       buttonPopBg: "#C78B28",
