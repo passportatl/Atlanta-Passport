@@ -12,6 +12,9 @@ dates should be refined through issues, milestones, and decision records.
 
 ## Next: Explore redesign
 
+- Use the approved
+  [Explore redesign specification](docs/passport-atl-2.0/product/explore-redesign.md)
+  as the implementation contract.
 - Validate information architecture and mobile-first discovery journeys.
 - Improve search, filtering, map/list coordination, and location detail entry
   points.

@@ -3,6 +3,12 @@
 Product documents explain why Passport ATL 2.0 work matters and how success
 will be evaluated.
 
+## Active specifications
+
+- [Explore redesign](explore-redesign.md) — current-state audit, approved target
+  behavior, data requirements, acceptance criteria, and delivery slices for
+  authenticated location discovery.
+
 Include:
 
 - problem statements and target audiences;
