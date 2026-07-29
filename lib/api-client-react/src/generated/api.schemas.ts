@@ -29,7 +29,10 @@ export interface Business {
   slug: string;
   name: string;
   category: string;
+  categoryId: string;
+  tags: string[];
   neighborhood: string;
+  areaId: string;
   description: string;
   address: string;
   image?: string | null;
@@ -38,6 +41,17 @@ export interface Business {
   icon: string;
   latitude?: number | null;
   longitude?: number | null;
+  mapReadiness: "verified" | "coordinates-present" | "missing-coordinates";
+  publicStatus: string;
+  isStampStop: boolean;
+  priorityListing: boolean;
+  priorityRank: number;
+  detailPageEnabled: boolean;
+  entitlementStartsAt?: string | null;
+  entitlementEndsAt?: string | null;
+  hasPublicOffer: boolean;
+  publicUpdatedAt: string;
+  sortKey: string;
   isActive: boolean;
 }
 

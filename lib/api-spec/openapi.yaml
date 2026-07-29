@@ -352,7 +352,15 @@ paths:
           name: locationFilter
           schema:
             type: string
-            enum: [ready, verified_address, missing_partial, unable_to_map, out_of_area, needs_location_review]
+            enum:
+              [
+                ready,
+                verified_address,
+                missing_partial,
+                unable_to_map,
+                out_of_area,
+                needs_location_review,
+              ]
       responses:
         "200":
           description: All events
@@ -403,7 +411,16 @@ paths:
                   skippedManuallyVerified: { type: integer }
                   outOfArea: { type: integer }
                   remainingNeedingGeocode: { type: integer }
-                required: [scanned, classified, geocodeAttempted, geocodeResolved, skippedManuallyVerified, outOfArea, remainingNeedingGeocode]
+                required:
+                  [
+                    scanned,
+                    classified,
+                    geocodeAttempted,
+                    geocodeResolved,
+                    skippedManuallyVerified,
+                    outOfArea,
+                    remainingNeedingGeocode,
+                  ]
         "401":
           description: Unauthorized
 
@@ -502,7 +519,15 @@ components:
           type: string
         category:
           type: string
+        categoryId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
         neighborhood:
+          type: string
+        areaId:
           type: string
         description:
           type: string
@@ -523,6 +548,34 @@ components:
         longitude:
           type: number
           nullable: true
+        mapReadiness:
+          type: string
+          enum: [verified, coordinates-present, missing-coordinates]
+        publicStatus:
+          type: string
+        isStampStop:
+          type: boolean
+        priorityListing:
+          type: boolean
+        priorityRank:
+          type: integer
+        detailPageEnabled:
+          type: boolean
+        entitlementStartsAt:
+          type: string
+          format: date-time
+          nullable: true
+        entitlementEndsAt:
+          type: string
+          format: date-time
+          nullable: true
+        hasPublicOffer:
+          type: boolean
+        publicUpdatedAt:
+          type: string
+          format: date-time
+        sortKey:
+          type: string
         isActive:
           type: boolean
       required:
@@ -530,12 +583,24 @@ components:
         - slug
         - name
         - category
+        - categoryId
+        - tags
         - neighborhood
+        - areaId
         - description
         - address
         - stampName
         - stampColor
         - icon
+        - mapReadiness
+        - publicStatus
+        - isStampStop
+        - priorityListing
+        - priorityRank
+        - detailPageEnabled
+        - hasPublicOffer
+        - publicUpdatedAt
+        - sortKey
         - isActive
 
     BusinessList:
