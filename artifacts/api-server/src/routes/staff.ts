@@ -13,6 +13,8 @@ import {
   destroySession,
   getSessionUser,
   verifyPassword,
+  verifyPasswordOrBurn,
+  normalizeUsername,
   hashPassword,
   toPublicStaffUser,
   loginRateLimit,
@@ -38,15 +40,17 @@ router.post("/admin/auth/login", async (req, res) => {
     res.status(400).json({ error: "Username and password are required" });
     return;
   }
-  const { username, password } = parsed.data;
+  const password = parsed.data.password;
+  const username = normalizeUsername(parsed.data.username);
   const [user] = await db
     .select()
     .from(staffUsersTable)
-    .where(eq(staffUsersTable.username, username.trim()));
-  // Always verify against a hash to keep timing consistent.
-  const ok = user ? await verifyPassword(password, user.passwordHash) : false;
+    .where(eq(staffUsersTable.username, username));
+  // Always pay the bcrypt cost (dummy hash when the user is missing) so
+  // response timing cannot be used to enumerate usernames.
+  const ok = await verifyPasswordOrBurn(password, user?.passwordHash);
   if (!user || !ok) {
-    req.log.info({ username: username.trim() }, "Failed staff login attempt");
+    req.log.info({ username }, "Failed staff login attempt");
     res.status(401).json({ error: "Invalid username or password" });
     return;
   }

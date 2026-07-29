@@ -178,8 +178,23 @@ const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 const attempts = new Map<string, { count: number; firstAt: number }>();
 
+/** Single normalization used for BOTH rate-limit keying and DB lookup. */
+export function normalizeUsername(raw: unknown): string {
+  return typeof raw === "string" ? raw.trim() : "";
+}
+
+// Dummy hash (of a random value, generated at startup) so failed lookups
+// still pay the bcrypt cost — prevents username enumeration via timing.
+const DUMMY_HASH = bcrypt.hashSync(randomBytes(16).toString("hex"), BCRYPT_ROUNDS);
+
+export async function verifyPasswordOrBurn(password: string, hash: string | undefined): Promise<boolean> {
+  if (hash) return bcrypt.compare(password, hash);
+  await bcrypt.compare(password, DUMMY_HASH);
+  return false;
+}
+
 export function loginRateLimit(req: Request): { blocked: boolean; retryAfterMinutes: number } {
-  const username = typeof req.body?.username === "string" ? req.body.username.toLowerCase() : "";
+  const username = normalizeUsername(req.body?.username).toLowerCase();
   const key = `${username}|${req.ip ?? "unknown"}`;
   const now = Date.now();
   const entry = attempts.get(key);
@@ -198,7 +213,7 @@ export function loginRateLimit(req: Request): { blocked: boolean; retryAfterMinu
 }
 
 export function clearLoginAttempts(req: Request): void {
-  const username = typeof req.body?.username === "string" ? req.body.username.toLowerCase() : "";
+  const username = normalizeUsername(req.body?.username).toLowerCase();
   attempts.delete(`${username}|${req.ip ?? "unknown"}`);
 }
 
