@@ -481,7 +481,7 @@ export default function Listing() {
                       <div
                         className="w-1 rounded-full shrink-0 mt-1"
                         style={{
-                          backgroundColor: branding?.accentColor ?? "hsl(var(--brand-red))",
+                          backgroundColor: branding?.accentColor ?? "var(--color-brand-red)",
                           minHeight: "1.5rem",
                         }}
                         aria-hidden

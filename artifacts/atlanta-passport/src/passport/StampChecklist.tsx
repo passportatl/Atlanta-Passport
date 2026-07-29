@@ -70,7 +70,7 @@ function StampRow({
           </Link>
         )}
       </div>
-      <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-[hsl(var(--brand-cream))]/40 flex items-center justify-center">
+      <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-brand-cream/40 flex items-center justify-center">
         {stamp ? (
           <StampGraphic
             neighborhood={stamp.neighborhood}
@@ -184,7 +184,7 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
           />
         ))}
       </ul>
-      <div className="px-4 py-3 border-t-2 border-dashed border-foreground/15 bg-[hsl(var(--brand-cream))]/30">
+      <div className="px-4 py-3 border-t-2 border-dashed border-foreground/15 bg-brand-cream/30">
         {visitorId ? (
           <p className="text-xs font-bold text-foreground/70 leading-snug">
             Scan the QR code at the location or event — or speak to an employee there — to collect each stamp.
