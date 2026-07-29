@@ -406,7 +406,7 @@ const businessesRaw = [
   },
   {
     id: "trap-museum",
-    name: "Trap Museum",
+    name: "Trap Music Museum",
     image: trapMuseumFeatured,
     stampImage: trapMuseumStamp,
     logo: trapMuseumLogo,

@@ -239,14 +239,14 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
     accentFg: "#000000",
 
     theme: {
-      background: "#000000",
-      foreground: "#ffffff",
-      card: "#111111",
-      cardForeground: "#ffffff",
-      border: "#C78B28",
-      muted: "#222222",
-      mutedForeground: "#a3a3a3",
-      primary: "#C78B28",
+      background: "#ffffff",
+      foreground: "#000000",
+      card: "#ffffff",
+      cardForeground: "#000000",
+      border: "#000000",
+      muted: "#f5f5f5",
+      mutedForeground: "#666666",
+      primary: "#000000",
       brandRed: "#C78B28",
       brandRedForeground: "#000000",
       brandYellow: "#C78B28",
@@ -254,12 +254,12 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
       brandNavy: "#000000",
       brandLime: "#C78B28",
       brandCream: "#ffffff",
-      popBorder: "#C78B28",
-      popShadow: "#ffffff",
+      popBorder: "#000000",
+      popShadow: "#e0e0e0",
       buttonPopBg: "#C78B28",
       buttonPopFg: "#000000",
       buttonPopYellowBg: "#000000",
-      buttonPopYellowFg: "#C78B28",
+      buttonPopYellowFg: "#ffffff",
     },
 
     // ── Bottom attribution ─────────────────────────────────────────────────
@@ -378,7 +378,7 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
         {
           name: "Gift Shop",
           description:
-            "Take home exclusive Trap Museum merchandise, apparel, and collectibles. Passport ATL holders receive 20% off all merch.",
+            "Take home exclusive Trap Music Museum merchandise, apparel, and collectibles. Passport ATL holders receive 20% off all merch.",
         },
       ],
 
