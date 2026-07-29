@@ -3,7 +3,7 @@ import { useLocation, useSearch, useRoute, Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
-  businesses,
+  businesses as staticBusinesses,
   neighborhoods,
   exploreCategories,
   mapRoutes,
@@ -12,6 +12,7 @@ import {
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
+import { useExploreLocations } from "@/hooks/useExploreLocations";
 import BusinessMap, { type EventMarkerData } from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
@@ -91,6 +92,10 @@ export default function MapShell() {
   const [routeOptions, setRouteOptions] = useState<
     Record<string, RouteOptions>
   >({});
+  const {
+    locations: exploreBusinesses,
+    status: exploreDataStatus,
+  } = useExploreLocations();
 
   const getRouteOptions = (id: string): RouteOptions =>
     routeOptions[id] ?? DEFAULT_ROUTE_OPTIONS;
@@ -108,7 +113,7 @@ export default function MapShell() {
     const ev = events.find((e) => e.id === eventDetailParams?.id);
     if (!ev) return undefined;
     const evAddress = "address" in ev ? ev.address : "";
-    const venue = businesses.find(
+    const venue = staticBusinesses.find(
       (b) => b.name === ev.venue || (evAddress !== "" && b.address === evAddress),
     );
     return venue?.id;
@@ -142,7 +147,7 @@ export default function MapShell() {
   };
 
   const filteredBusinesses = useMemo(() => {
-    return businesses.filter((biz) => {
+    return exploreBusinesses.filter((biz) => {
       const bizCategories = [
         biz.category,
         ...(((biz as { categories?: string[] }).categories) ?? []),
@@ -163,7 +168,13 @@ export default function MapShell() {
 
       return matchCategory && matchNeighborhood && matchSearch && matchOffer;
     });
-  }, [activeCategories, activeNeighborhoods, searchQuery, onlyOffers]);
+  }, [
+    exploreBusinesses,
+    activeCategories,
+    activeNeighborhoods,
+    searchQuery,
+    onlyOffers,
+  ]);
 
   // The Routes view highlights one curated route at a time: the map shows only
   // that route's stops (in order) and draws a connecting line. With no route
@@ -198,9 +209,9 @@ export default function MapShell() {
       (view === "routes" || view === "explore" || view === "route-detail")
     )
       return routeBusinesses;
-    if (view === "routes") return businesses;
+    if (view === "routes") return staticBusinesses;
     if (view === "explore" || view === "events") return filteredBusinesses;
-    return businesses;
+    return staticBusinesses;
   }, [view, selectedRoute, routeBusinesses, filteredBusinesses]);
 
   // Drop a stale selection/InfoWindow only when the selected spot is no longer
@@ -381,6 +392,7 @@ export default function MapShell() {
           toggleNeighborhood={toggleNeighborhood}
           onlyOffers={onlyOffers}
           setOnlyOffers={setOnlyOffers}
+          dataStatus={exploreDataStatus}
           onSelectBusiness={setSelectedBizId}
           selectedRouteId={selectedRouteId}
           onSelectRoute={(id) => {
