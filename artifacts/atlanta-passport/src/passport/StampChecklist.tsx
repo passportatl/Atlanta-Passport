@@ -45,7 +45,7 @@ function StampRow({
   return (
     <li className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0">
       <div className="flex-1 min-w-0">
-        <div className="font-black text-sm leading-tight">{name}</div>
+        <div className="font-black text-sm leading-tight text-foreground">{name}</div>
         <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
           {meta}
         </div>
