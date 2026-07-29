@@ -3,6 +3,8 @@ import { logger } from "./lib/logger";
 import { seedBusinesses, seedCalendarEvents } from "./lib/seed";
 import { scheduleSignupSync } from "./lib/googleSheetSync";
 import { startScheduledPublish, startSourceAutoSync, startPastEventCleanup } from "./lib/scheduler";
+import { startReminderChecks } from "./lib/reminders";
+import { seedStaffUsers } from "./lib/staff-auth";
 
 const rawPort = process.env["PORT"];
 
@@ -31,4 +33,6 @@ app.listen(port, (err) => {
   startScheduledPublish();
   startSourceAutoSync();
   startPastEventCleanup();
+  startReminderChecks();
+  void seedStaffUsers().catch((err) => logger.error({ err }, "Staff user seeding failed"));
 });

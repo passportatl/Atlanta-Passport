@@ -12,6 +12,8 @@ import sourcesRouter from "./sources";
 import locationSubmissionsRouter from "./location-submissions";
 import routesRouter from "./routes";
 import snapshotImportRouter from "./snapshot-import";
+import crmRouter from "./crm";
+import staffRouter from "./staff";
 
 const router: IRouter = Router();
 
@@ -28,5 +30,7 @@ router.use(sourcesRouter);
 router.use(locationSubmissionsRouter);
 router.use(routesRouter);
 router.use(snapshotImportRouter);
+router.use(crmRouter);
+router.use(staffRouter);
 
 export default router;

@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { getAuth, clerkClient } from "@clerk/express";
 import { db, visitorsTable } from "@workspace/db";
-import { CreateVisitorBody } from "@workspace/api-zod";
+import { CreateVisitorBody, UpdateVisitorPreferencesBody } from "@workspace/api-zod";
 import { scheduleSignupSync } from "../lib/googleSheetSync";
 
 const router: IRouter = Router();
@@ -75,6 +75,43 @@ router.post("/visitors", async (req, res) => {
     .returning();
   scheduleSignupSync();
   res.json(visitor);
+});
+
+router.patch("/visitors/:id/preferences", async (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    res.status(400).json({ error: "Missing id" });
+    return;
+  }
+  const parsed = UpdateVisitorPreferencesBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
+    return;
+  }
+  // Ownership check: promo consent is sensitive. If the visitor record is
+  // linked to a Clerk account, only that signed-in user may change it.
+  const [target] = await db.select().from(visitorsTable).where(eq(visitorsTable.id, id));
+  if (!target) {
+    res.status(404).json({ error: "Visitor not found" });
+    return;
+  }
+  if (target.clerkUserId) {
+    const { userId } = getAuth(req);
+    if (!userId || userId !== target.clerkUserId) {
+      res.status(403).json({ error: "Not allowed to update this visitor's preferences" });
+      return;
+    }
+  }
+  const [updated] = await db
+    .update(visitorsTable)
+    .set({ promoOptIn: parsed.data.promoOptIn, promoOptInAt: new Date() })
+    .where(eq(visitorsTable.id, id))
+    .returning();
+  if (!updated) {
+    res.status(404).json({ error: "Visitor not found" });
+    return;
+  }
+  res.json(updated);
 });
 
 router.get("/visitors/:id", async (req, res) => {

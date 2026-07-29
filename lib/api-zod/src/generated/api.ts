@@ -29,6 +29,8 @@ export const CreateVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -42,6 +44,8 @@ export const LinkVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -57,6 +61,8 @@ export const GetVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -213,7 +219,7 @@ export const submitApplicationBodyAddressMin = 5;
 export const submitApplicationBodyOfferMin = 5;
 
 export const SubmitApplicationBody = zod.object({
-  submissionType: zod.enum(["business", "event"]),
+  submissionType: zod.enum(["business", "event", "vendor"]),
   businessName: zod.string().min(submitApplicationBodyBusinessNameMin),
   contactName: zod.string().min(submitApplicationBodyContactNameMin),
   email: zod.string().email(),
@@ -224,8 +230,22 @@ export const SubmitApplicationBody = zod.object({
   neighborhood: zod.string().min(1),
   address: zod.string().min(submitApplicationBodyAddressMin),
   package: zod
-    .enum(["starter", "featured", "premier", "route", "custom", "event"])
+    .enum([
+      "starter",
+      "featured",
+      "premier",
+      "route",
+      "custom",
+      "event",
+      "free",
+      "standard",
+      "market-day",
+      "weekend",
+      "featured-vendor",
+    ])
     .optional(),
+  addOns: zod.array(zod.string()).optional(),
+  vendorType: zod.string().optional(),
   routeId: zod.string().optional(),
   offer: zod.string().min(submitApplicationBodyOfferMin),
   prizeSponsorship: zod.string().optional(),
@@ -287,6 +307,15 @@ export const ListApplicationsResponseItem = zod.object({
   eventUrl: zod.string().nullish(),
   promoContact: zod.boolean().nullish(),
   promoContactMethod: zod.string().nullish(),
+  vendorType: zod.string().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  listingPrice: zod.number().nullish(),
+  salesStage: zod.string().optional(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.string().optional(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),
 });
@@ -690,4 +719,319 @@ export const SubmitContactMessageBody = zod.object({
 export const SubmitContactMessageResponse = zod.object({
   id: zod.string(),
   emailDelivered: zod.string(),
+});
+
+/**
+ * @summary Update a visitor's communication preferences (promo email consent)
+ */
+export const UpdateVisitorPreferencesParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateVisitorPreferencesBody = zod.object({
+  promoOptIn: zod.boolean(),
+});
+
+export const UpdateVisitorPreferencesResponse = zod.object({
+  id: zod.string(),
+  firstName: zod.string(),
+  email: zod.string(),
+  phone: zod.string().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Staff login with username and password
+ */
+
+export const StaffLoginBody = zod.object({
+  username: zod.string().min(1),
+  password: zod.string().min(1),
+});
+
+export const StaffLoginResponse = zod.object({
+  authenticated: zod.boolean(),
+  user: zod
+    .object({
+      id: zod.string(),
+      username: zod.string(),
+      email: zod.string().nullish(),
+      status: zod.string(),
+      mustChangePassword: zod.boolean(),
+      lastLoginAt: zod.coerce.date().nullish(),
+      passwordChangedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+});
+
+/**
+ * @summary Log out the current staff session
+ */
+export const StaffLogoutResponse = zod.object({
+  ok: zod.boolean(),
+});
+
+/**
+ * @summary Current staff session, if any
+ */
+export const GetStaffMeResponse = zod.object({
+  authenticated: zod.boolean(),
+  user: zod
+    .object({
+      id: zod.string(),
+      username: zod.string(),
+      email: zod.string().nullish(),
+      status: zod.string(),
+      mustChangePassword: zod.boolean(),
+      lastLoginAt: zod.coerce.date().nullish(),
+      passwordChangedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+});
+
+/**
+ * @summary Change the current staff user's password
+ */
+
+export const staffChangePasswordBodyNewPasswordMin = 10;
+
+export const StaffChangePasswordBody = zod.object({
+  currentPassword: zod.string().min(1),
+  newPassword: zod.string().min(staffChangePasswordBodyNewPasswordMin),
+});
+
+export const StaffChangePasswordResponse = zod.object({
+  authenticated: zod.boolean(),
+  user: zod
+    .object({
+      id: zod.string(),
+      username: zod.string(),
+      email: zod.string().nullish(),
+      status: zod.string(),
+      mustChangePassword: zod.boolean(),
+      lastLoginAt: zod.coerce.date().nullish(),
+      passwordChangedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+});
+
+/**
+ * @summary List staff users (never includes password hashes)
+ */
+export const ListStaffUsersResponseItem = zod.object({
+  id: zod.string(),
+  username: zod.string(),
+  email: zod.string().nullish(),
+  status: zod.string(),
+  mustChangePassword: zod.boolean(),
+  lastLoginAt: zod.coerce.date().nullish(),
+  passwordChangedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListStaffUsersResponse = zod.array(ListStaffUsersResponseItem);
+
+/**
+ * @summary Update a staff user's email or status
+ */
+export const UpdateStaffUserParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateStaffUserBody = zod.object({
+  email: zod.string().nullish(),
+  status: zod.enum(["active", "disabled"]).optional(),
+});
+
+export const UpdateStaffUserResponse = zod.object({
+  id: zod.string(),
+  username: zod.string(),
+  email: zod.string().nullish(),
+  status: zod.string(),
+  mustChangePassword: zod.boolean(),
+  lastLoginAt: zod.coerce.date().nullish(),
+  passwordChangedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Recent admin action history
+ */
+export const ListAdminAuditLogQueryParams = zod.object({
+  limit: zod.coerce.number().optional(),
+});
+
+export const ListAdminAuditLogResponseItem = zod.object({
+  id: zod.string(),
+  actor: zod.string(),
+  action: zod.string(),
+  entityType: zod.string().nullish(),
+  entityId: zod.string().nullish(),
+  detail: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListAdminAuditLogResponse = zod.array(
+  ListAdminAuditLogResponseItem,
+);
+
+/**
+ * @summary Whether the legacy shared admin secret is still accepted
+ */
+export const GetLegacyAccessStatusResponse = zod.object({
+  enabled: zod.boolean(),
+});
+
+/**
+ * @summary Enable or disable the legacy shared admin secret (staff session required)
+ */
+export const SetLegacyAccessStatusBody = zod.object({
+  enabled: zod.boolean(),
+});
+
+export const SetLegacyAccessStatusResponse = zod.object({
+  enabled: zod.boolean(),
+});
+
+/**
+ * @summary Unified partner totals across events, locations, and vendors
+ */
+export const GetPartnersSummaryResponse = zod.object({
+  events: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  locations: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  vendors: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  businesses: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  totalRevenue: zod.number(),
+  paidRevenue: zod.number(),
+});
+
+/**
+ * @summary Unified CRM records (events, locations, vendors, partners)
+ */
+export const ListCrmRecordsQueryParams = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]).optional(),
+  bucket: zod
+    .enum(["overdue", "upcoming", "unassigned", "paid"])
+    .optional()
+    .describe("Follow-up queue filter"),
+});
+
+export const ListCrmRecordsResponseItem = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]),
+  id: zod.string(),
+  name: zod.string(),
+  contactName: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  packageId: zod.string().nullish(),
+  listingPrice: zod.number().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  workflowStatus: zod.string().nullish(),
+  salesStage: zod.string(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListCrmRecordsResponse = zod.array(ListCrmRecordsResponseItem);
+
+/**
+ * @summary Update CRM fields on a submission record
+ */
+export const UpdateCrmRecordParams = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]),
+  id: zod.coerce.string(),
+});
+
+export const UpdateCrmRecordBody = zod.object({
+  salesStage: zod
+    .enum([
+      "new",
+      "contacted",
+      "negotiating",
+      "committed",
+      "closed-won",
+      "closed-lost",
+    ])
+    .optional(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.enum(["unpaid", "invoiced", "paid", "comped"]).optional(),
+});
+
+export const UpdateCrmRecordResponse = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]),
+  id: zod.string(),
+  name: zod.string(),
+  contactName: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  packageId: zod.string().nullish(),
+  listingPrice: zod.number().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  workflowStatus: zod.string().nullish(),
+  salesStage: zod.string(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Manually trigger the follow-up reminder check and email digest
+ */
+export const RunReminderCheckResponse = zod.object({
+  overdue: zod.number(),
+  dueToday: zod.number(),
+  digestSent: zod.boolean(),
+  digestSkippedReason: zod.string().nullish(),
+});
+
+/**
+ * @summary Platform insights — users, growth, engagement, stamps, rewards, events
+ */
+export const GetAdminInsightsResponse = zod.object({
+  registeredUsers: zod.number(),
+  newUsersLast7Days: zod.number(),
+  newUsersLast30Days: zod.number(),
+  activeStampers: zod.number(),
+  totalStamps: zod.number(),
+  stampsLast7Days: zod.number(),
+  totalRedemptions: zod.number(),
+  publishedEvents: zod.number(),
+  promoOptIns: zod.number(),
+  diagnostics: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      status: zod.enum(["ok", "warn", "error"]),
+    }),
+  ),
 });

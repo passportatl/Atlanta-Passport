@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -8,6 +8,10 @@ export const visitorsTable = pgTable("visitors", {
   email: text("email").notNull(),
   phone: text("phone"),
   clerkUserId: text("clerk_user_id").unique(),
+  // Promotional email consent. Existing + new users default to NOT opted in;
+  // promoOptInAt records when the user last changed their consent status.
+  promoOptIn: boolean("promo_opt_in").notNull().default(false),
+  promoOptInAt: timestamp("promo_opt_in_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

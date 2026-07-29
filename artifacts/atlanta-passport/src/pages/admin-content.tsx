@@ -6,6 +6,7 @@ import {
   BookOpen, Route, Check, Download,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
+import AdminGate from "@/components/AdminGate";
 import { cn } from "@/lib/utils";
 import { restoreAdminKey } from "@/lib/adminSession";
 import {
@@ -1434,61 +1435,18 @@ function MigrationTab({ adminKey }: { adminKey: string }) {
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default function AdminContent() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [adminKey, setAdminKey] = useState("");
-  const [keyInput, setKeyInput] = useState("");
-  const [keyError, setKeyError] = useState("");
   const [contentTab, setContentTab] = useState<"locations" | "csv-import" | "migration" | "legends" | "experiences">("locations");
 
-  useEffect(() => {
-    void restoreAdminKey().then((key) => {
-      if (key) {
-        setUnlocked(true);
-        setAdminKey(key);
-      }
-    });
-  }, []);
+  return (
+    <AdminGate>
+      {(adminKey) => (
+        <AdminContentInner adminKey={adminKey} contentTab={contentTab} setContentTab={setContentTab} />
+      )}
+    </AdminGate>
+  );
+}
 
-  const handleUnlock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setKeyError("");
-    const res = await fetch(`${API_BASE}/admin/location-submissions?status=pending`, {
-      headers: { "x-admin-key": keyInput },
-    });
-    if (res.status === 401) { setKeyError("Incorrect admin key."); return; }
-    sessionStorage.setItem(UNLOCK_KEY, "1");
-    sessionStorage.setItem(ADMIN_KEY_STORAGE, keyInput);
-    setAdminKey(keyInput);
-    setUnlocked(true);
-  };
-
-  if (!unlocked) {
-    return (
-      <div className="min-h-screen bg-[hsl(var(--brand-cream))] flex items-center justify-center p-4">
-        <div className="max-w-sm w-full card-pop bg-white p-8 space-y-6">
-          <div className="text-center">
-            <div className="text-3xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>ADMIN</div>
-            <div className="text-sm text-foreground/60">Locations Hub · Location Management</div>
-          </div>
-          <form onSubmit={handleUnlock} className="space-y-3">
-            <input
-              type="password"
-              value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
-              placeholder="Admin password"
-              className="w-full border-2 border-foreground rounded-xl px-4 py-2.5 text-sm"
-              autoFocus
-            />
-            {keyError && <p className="text-red-600 text-xs font-bold">{keyError}</p>}
-            <button type="submit" className="button-pop w-full bg-brand-navy text-white py-2.5 font-display text-sm tracking-widest uppercase">
-              Unlock →
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
+function AdminContentInner({ adminKey, contentTab, setContentTab }: { adminKey: string, contentTab: "locations" | "csv-import" | "migration" | "legends" | "experiences", setContentTab: (t: "locations" | "csv-import" | "migration" | "legends" | "experiences") => void }) {
   const CONTENT_TABS = [
     { key: "locations",   label: "Locations",   icon: <MapPin className="w-4 h-4" /> },
     { key: "csv-import",  label: "CSV Import",  icon: <Upload className="w-4 h-4" /> },

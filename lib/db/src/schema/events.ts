@@ -74,6 +74,11 @@ export const eventsTable = pgTable("events", {
   duplicateConfidence: integer("duplicate_confidence"),
   paymentId: text("payment_id"),
   paymentStatus: text("payment_status"),
+  // ── CRM fields ────────────────────────────────────────────────────────────
+  salesStage: text("sales_stage").notNull().default("new"),
+  lastContactAt: timestamp("last_contact_at", { withTimezone: true }),
+  nextFollowUpAt: timestamp("next_follow_up_at", { withTimezone: true }),
+  crmNotes: text("crm_notes"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

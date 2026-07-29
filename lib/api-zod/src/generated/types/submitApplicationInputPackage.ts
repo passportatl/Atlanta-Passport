@@ -16,4 +16,9 @@ export const SubmitApplicationInputPackage = {
   route: "route",
   custom: "custom",
   event: "event",
+  free: "free",
+  standard: "standard",
+  "market-day": "market-day",
+  weekend: "weekend",
+  "featured-vendor": "featured-vendor",
 } as const;

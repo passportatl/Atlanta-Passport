@@ -11,5 +11,7 @@ export interface Visitor {
   firstName: string;
   email: string;
   phone?: string | null;
+  promoOptIn: boolean;
+  promoOptInAt?: Date | null;
   createdAt: Date;
 }

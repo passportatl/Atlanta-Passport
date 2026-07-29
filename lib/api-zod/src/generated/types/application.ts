@@ -38,6 +38,15 @@ export interface Application {
   eventUrl?: string | null;
   promoContact?: boolean | null;
   promoContactMethod?: string | null;
+  vendorType?: string | null;
+  addOns?: string[] | null;
+  listingPrice?: number | null;
+  salesStage?: string;
+  assignedTo?: string | null;
+  lastContactAt?: Date | null;
+  nextFollowUpAt?: Date | null;
+  crmNotes?: string | null;
+  paymentStatus?: string;
   emailDelivered: string;
   createdAt: Date;
 }

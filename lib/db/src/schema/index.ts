@@ -14,3 +14,4 @@ export * from "./blog-posts";
 export * from "./passport-experiences";
 export * from "./location-submissions";
 export * from "./routes";
+export * from "./staff";
