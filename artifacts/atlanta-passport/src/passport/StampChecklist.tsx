@@ -157,8 +157,8 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
   const total = rows.length;
 
   return (
-    <section className="card-pop bg-white overflow-hidden">
-      <header className="flex items-center justify-between px-4 py-2.5 bg-foreground text-[hsl(var(--brand-cream))]">
+    <section className="card-pop bg-[var(--surface-card,#ffffff)] overflow-hidden">
+      <header className="flex items-center justify-between px-4 py-2.5 bg-foreground text-[var(--surface-header-fg,hsl(var(--brand-cream)))]">
         <span
           className="font-black text-xs tracking-widest uppercase"
           style={{ fontFamily: "Bungee, sans-serif" }}

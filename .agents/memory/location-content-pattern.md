@@ -31,3 +31,5 @@ Must be imported at the top of `locationBranding.ts` as Vite assets (not URLs), 
 **Why:** Keeps Business type stable across all 70+ locations; prevents accidental rendering of empty/stub sections for unonfigured partners; makes it safe to add rich content incrementally as onboarding data is confirmed field by field.
 
 **How to apply:** When a new sponsored partner needs a rich page, add a `locationContent` block to their entry in `LOCATION_BRANDING` with only the confirmed fields. listing.tsx renders whatever is present; omit rather than fabricate unconfirmed data.
+
+**Per-location color themes:** optional `theme` object on LocationBranding injects scoped CSS vars in listing.tsx (page container only). Shared components (MediaGallery, StampChecklist) use `var(--surface-card, #ffffff)`-style fallbacks so non-themed pages stay byte-identical — never swap their hardcoded whites for global tokens like bg-background (cream, not white).

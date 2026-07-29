@@ -110,8 +110,38 @@ export default function Listing() {
     ? { color: branding.accentColor }
     : undefined;
 
+  const themeVars = branding?.theme ? {
+    ...(branding.theme.background && { "--color-background": branding.theme.background }),
+    ...(branding.theme.foreground && { "--color-foreground": branding.theme.foreground }),
+    ...(branding.theme.card && {
+      "--color-card": branding.theme.card,
+      // Themed surfaces for shared components (default to white when unset).
+      "--surface-card": branding.theme.card,
+      "--surface-card-90": `${branding.theme.card}E6`,
+    }),
+    ...(branding.theme.background && { "--surface-header-fg": branding.theme.background }),
+    ...(branding.theme.cardForeground && { "--color-card-foreground": branding.theme.cardForeground }),
+    ...(branding.theme.border && { "--color-border": branding.theme.border }),
+    ...(branding.theme.muted && { "--color-muted": branding.theme.muted }),
+    ...(branding.theme.mutedForeground && { "--color-muted-foreground": branding.theme.mutedForeground }),
+    ...(branding.theme.primary && { "--color-primary": branding.theme.primary }),
+    ...(branding.theme.brandRed && { "--color-brand-red": branding.theme.brandRed }),
+    ...(branding.theme.brandRedForeground && { "--color-brand-red-foreground": branding.theme.brandRedForeground }),
+    ...(branding.theme.brandYellow && { "--color-brand-yellow": branding.theme.brandYellow }),
+    ...(branding.theme.brandYellowForeground && { "--color-brand-yellow-foreground": branding.theme.brandYellowForeground }),
+    ...(branding.theme.brandNavy && { "--color-brand-navy": branding.theme.brandNavy }),
+    ...(branding.theme.brandLime && { "--color-brand-lime": branding.theme.brandLime }),
+    ...(branding.theme.brandCream && { "--color-brand-cream": branding.theme.brandCream }),
+    ...(branding.theme.popBorder && { "--pop-border": branding.theme.popBorder }),
+    ...(branding.theme.popShadow && { "--pop-shadow": branding.theme.popShadow }),
+    ...(branding.theme.buttonPopBg && { "--button-pop-bg": branding.theme.buttonPopBg }),
+    ...(branding.theme.buttonPopFg && { "--button-pop-fg": branding.theme.buttonPopFg }),
+    ...(branding.theme.buttonPopYellowBg && { "--button-pop-yellow-bg": branding.theme.buttonPopYellowBg }),
+    ...(branding.theme.buttonPopYellowFg && { "--button-pop-yellow-fg": branding.theme.buttonPopYellowFg }),
+  } as React.CSSProperties : undefined;
+
   return (
-    <div className="w-full pb-24 bg-background" data-location={business.id}>
+    <div className="w-full pb-24 bg-background" data-location={business.id} style={themeVars}>
       {/* Hero Image */}
       <div className="w-full h-[40vh] md:h-[50vh] relative">
         <BusinessImage
@@ -403,7 +433,7 @@ export default function Listing() {
               {(business.address || (business.lat != null && business.lng != null)) && (
                 <div className="card-pop bg-card p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
+                    <div className="w-10 h-10 rounded-full bg-brand-red flex items-center justify-center border-2 border-foreground text-[var(--color-brand-red-foreground,#fff)]">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
