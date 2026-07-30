@@ -40,4 +40,5 @@ export * from "./submitApplicationInputSubmissionType";
 export * from "./submitContactMessageInput";
 export * from "./submitContactMessageInputTopic";
 export * from "./submitEventInput";
+export * from "./updateVisitorPreferencesInput";
 export * from "./visitor";

@@ -9,9 +9,11 @@ interface Props {
 
 function clerkErrorMessage(err: unknown): string | null {
   if (err && typeof err === "object" && "errors" in err) {
-    const arr = (err as {
-      errors?: Array<{ longMessage?: string; message?: string }>;
-    }).errors;
+    const arr = (
+      err as {
+        errors?: Array<{ longMessage?: string; message?: string }>;
+      }
+    ).errors;
     if (arr && arr[0]) return arr[0].longMessage || arr[0].message || null;
   }
   return null;
@@ -27,6 +29,9 @@ export function StartPassportForm({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [acceptPrivacy, setAcceptPrivacy] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(true);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -35,6 +40,12 @@ export function StartPassportForm({
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
     if (!isLoaded || !signUp) return;
+    if (!acceptTerms || !acceptPrivacy) {
+      setError(
+        "Please accept the Terms of Service and Privacy Policy to create your passport.",
+      );
+      return;
+    }
     setError(null);
     setBusy(true);
     try {
@@ -44,6 +55,9 @@ export function StartPassportForm({
         unsafeMetadata: {
           firstName: firstName.trim(),
           phone: phone.trim() || undefined,
+          acceptTerms,
+          acceptPrivacy,
+          marketingOptIn,
         },
       });
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
@@ -156,6 +170,63 @@ export function StartPassportForm({
               placeholder="Alex"
             />
           </div>
+          <fieldset className="space-y-2 rounded-lg border-2 border-foreground/20 bg-brand-cream/50 p-3">
+            <legend className="px-1 text-xs font-black uppercase tracking-wider">
+              Agreements
+            </legend>
+            <label className="flex cursor-pointer items-start gap-2 text-sm leading-snug">
+              <input
+                type="checkbox"
+                checked={acceptTerms}
+                onChange={(e) => setAcceptTerms(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--brand-navy))]"
+              />
+              <span>
+                I accept the{" "}
+                <a
+                  href="/terms-of-service"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-bold underline"
+                >
+                  Terms of Service
+                </a>
+                . <span aria-hidden="true">*</span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-start gap-2 text-sm leading-snug">
+              <input
+                type="checkbox"
+                checked={acceptPrivacy}
+                onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--brand-navy))]"
+              />
+              <span>
+                I acknowledge the{" "}
+                <a
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-bold underline"
+                >
+                  Privacy Policy
+                </a>
+                . <span aria-hidden="true">*</span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-start gap-2 text-sm leading-snug">
+              <input
+                type="checkbox"
+                checked={marketingOptIn}
+                onChange={(e) => setMarketingOptIn(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--brand-navy))]"
+              />
+              <span>
+                Send me Passport ATL newsletters, rewards, and promotions.
+                Optional; you can change this anytime.
+              </span>
+            </label>
+          </fieldset>
           <div>
             <label className={labelClass}>Email</label>
             <input
@@ -276,7 +347,11 @@ export function StartPassportForm({
             <span className="h-0.5 flex-1 bg-foreground/15" />
           </div>
 
-          <SocialAuthButtons />
+          <SocialAuthButtons
+            acceptTerms={acceptTerms}
+            acceptPrivacy={acceptPrivacy}
+            marketingOptIn={marketingOptIn}
+          />
 
           <p className="mt-4 text-center text-sm text-foreground/70">
             Already have a passport?{" "}

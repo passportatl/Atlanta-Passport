@@ -14,6 +14,12 @@ export interface Visitor {
   firstName: string;
   email: string;
   phone?: string | null;
+  termsAcceptedAt?: string | null;
+  termsVersion?: string | null;
+  privacyAcceptedAt?: string | null;
+  privacyVersion?: string | null;
+  marketingOptIn: boolean;
+  marketingConsentUpdatedAt?: string | null;
   createdAt: string;
 }
 
@@ -22,6 +28,12 @@ export interface CreateVisitorInput {
   firstName: string;
   email: string;
   phone?: string;
+}
+
+export interface UpdateVisitorPreferencesInput {
+  acceptTerms?: boolean;
+  acceptPrivacy?: boolean;
+  marketingOptIn: boolean;
 }
 
 export interface Business {
