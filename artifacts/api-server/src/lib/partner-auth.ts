@@ -58,3 +58,23 @@ export async function requirePartner(
   res.locals.partnerSession = session;
   next();
 }
+
+export async function requirePartnerOrganization(
+  req: Request,
+  res: Response,
+  organizationId: string,
+) {
+  const session = await resolvePartnerSession(req);
+  if (!session) {
+    res.status(403).json({ error: "Active partner access required" });
+    return null;
+  }
+  const membership = session.memberships.find(
+    (item) => item.organizationId === organizationId,
+  );
+  if (!membership) {
+    res.status(404).json({ error: "Partner organization not found" });
+    return null;
+  }
+  return { session, membership };
+}
