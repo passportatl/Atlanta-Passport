@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   getListBusinessesQueryKey,
   useListBusinesses,
@@ -10,6 +10,7 @@ import {
   resolveLocationCategoryId,
   toLocationTaxonomyId,
 } from "@/data/location-taxonomy";
+import { assessExploreRollout } from "@/lib/explore-rollout";
 
 export type ExploreLocation = (typeof staticBusinesses)[number] & {
   canonicalId?: string;
@@ -166,24 +167,49 @@ export function useExploreLocations() {
     status = "fallback-empty";
   else status = "canonical";
 
-  const locations =
-    status === "canonical"
-      ? merged.locations
-      : staticBusinesses.map(
-          (location): ExploreLocation => ({
-            ...location,
-            categoryId: resolveLocationCategoryId(location.category),
-            tags: legacyTagIds(location),
-            areaId: toLocationTaxonomyId(location.neighborhood),
-            mapReadiness: "coordinates-present",
-            isStampStop: legacyStampStop(location),
-            detailPageEnabled: status === "disabled",
-            priorityListing: false,
-            priorityRank: 0,
-            sortKey: `${location.name.toLocaleLowerCase("en-US")}:${location.id}`,
-            locationSource: "static-fallback",
-          }),
-        );
+  const locations = useMemo(
+    () =>
+      status === "canonical"
+        ? merged.locations
+        : staticBusinesses.map(
+            (location): ExploreLocation => ({
+              ...location,
+              categoryId: resolveLocationCategoryId(location.category),
+              tags: legacyTagIds(location),
+              areaId: toLocationTaxonomyId(location.neighborhood),
+              mapReadiness: "coordinates-present",
+              isStampStop: legacyStampStop(location),
+              detailPageEnabled: status === "disabled",
+              priorityListing: false,
+              priorityRank: 0,
+              sortKey: `${location.name.toLocaleLowerCase("en-US")}:${location.id}`,
+              locationSource: "static-fallback",
+            }),
+          ),
+    [merged.locations, status],
+  );
+
+  const rollout = useMemo(
+    () =>
+      assessExploreRollout({
+        status,
+        legacyCount: staticBusinesses.length,
+        matchedCount: status === "canonical" ? merged.matchedCanonicalCount : 0,
+        canonicalOnlyCount:
+          status === "canonical" ? merged.unmatchedCanonicalCount : 0,
+        locations,
+      }),
+    [locations, merged, status],
+  );
+
+  useEffect(() => {
+    if (!enabled || typeof window === "undefined") return;
+    window.dispatchEvent(
+      new CustomEvent("passport-atl:explore-rollout", {
+        detail: rollout,
+      }),
+    );
+  }, [enabled, rollout]);
 
   return {
     locations,
@@ -195,5 +221,6 @@ export function useExploreLocations() {
       status === "canonical"
         ? merged.unmatchedCanonicalCount
         : canonical.length,
+    rollout,
   };
 }
