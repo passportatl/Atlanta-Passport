@@ -43,6 +43,9 @@ jobs:
       - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check tracked files for credentials
+        run: node scripts/check-secrets.mjs
+
       - name: Typecheck workspace
         run: pnpm typecheck
 

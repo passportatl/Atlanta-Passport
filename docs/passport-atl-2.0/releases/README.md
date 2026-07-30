@@ -16,3 +16,7 @@ For each release or milestone, record:
 
 Use dated filenames such as `2026-09-explore-beta.md`. Never include secrets,
 tokens, production user data, or private contact details.
+
+Current launch runbooks:
+
+- [Partner portal launch runbook](../../database/partner-portal-rollout.md)

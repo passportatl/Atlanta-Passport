@@ -9,10 +9,13 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
+import { partnerOrganizationsTable } from "./partners";
 
 export const businessesTable = pgTable("businesses", {
   id: uuid("id").primaryKey().defaultRandom(),
-  partnerOrganizationId: uuid("partner_organization_id"),
+  partnerOrganizationId: uuid("partner_organization_id").references(
+    () => partnerOrganizationsTable.id,
+  ),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   category: text("category").notNull(),

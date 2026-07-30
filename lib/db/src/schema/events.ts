@@ -7,10 +7,13 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { partnerOrganizationsTable } from "./partners";
 
 export const eventsTable = pgTable("events", {
   id: uuid("id").primaryKey().defaultRandom(),
-  partnerOrganizationId: uuid("partner_organization_id"),
+  partnerOrganizationId: uuid("partner_organization_id").references(
+    () => partnerOrganizationsTable.id,
+  ),
   slug: text("slug").unique(),
   name: text("name").notNull(),
   category: text("category").notNull().default(""),
