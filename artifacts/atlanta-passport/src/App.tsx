@@ -28,6 +28,10 @@ import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
 import { PassportLayout } from "@/passport/PassportLayout";
 import MapShell from "@/passport/MapShell";
 import { ClerkProviders, SignInPage, SignUpPage } from "@/auth/clerk";
+import {
+  isProtectedRoute,
+  MEMBER_HOME_ROUTE,
+} from "@/auth/route-access";
 
 const queryClient = new QueryClient();
 
@@ -62,19 +66,6 @@ function MarketingRoutes() {
 // home from any protected route. Set to true to allow signed-out access to
 // every page (e.g. while designing the passport pages).
 const ALLOW_PUBLIC_ACCESS = false;
-
-// Almost everything requires a registered account. Only the marketing home (`/`),
-// partners, and apply pages stay open to signed-out visitors. Sign-in/up,
-// the /stamp QR landing, and admin are functional routes that must also stay reachable.
-function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/partners", "/apply", "/list-event", "/list-a-location", "/passport/contact", "/privacy-policy", "/admin"];
-  if (publicExact.includes(location)) return false;
-  const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/redeem/", "/admin/"];
-  if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
-    return false;
-  }
-  return true;
-}
 
 // Gate protected routes for signed-out visitors. The marketing home is always
 // the FIRST page an unregistered visitor sees: if their entry point (a fresh
@@ -117,7 +108,7 @@ function SignedInAuthRedirect() {
       return;
     }
     if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
-      setLocation("/passport/stamps", { replace: true });
+      setLocation(MEMBER_HOME_ROUTE, { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
   return null;
@@ -225,25 +216,6 @@ function Router() {
       </Switch>
     );
   }
-  if (location.startsWith("/redeem/")) {
-    return (
-      <Switch>
-        <Route path="/redeem/:tier" component={RedeemPage} />
-      </Switch>
-    );
-  }
-  if (location === "/admin" || location === "/admin/applications") {
-    return <AdminApplications />;
-  }
-  if (location === "/admin/stamps") {
-    return <AdminStamps />;
-  }
-  if (location === "/admin/content") {
-    return <AdminContent />;
-  }
-  if (location === "/admin/routes") {
-    return <AdminRoutes />;
-  }
   // Contact is reachable to everyone (opened in its own tab from the marketing
   // nav), so render it before the protected-route gate.
   if (location === "/passport/contact") {
@@ -254,6 +226,25 @@ function Router() {
     // redirected (to the marketing home or sign-up) — never flash gated content.
     if (!isLoaded || (!isSignedIn && !ALLOW_PUBLIC_ACCESS)) {
       return null;
+    }
+    if (location.startsWith("/redeem/")) {
+      return (
+        <Switch>
+          <Route path="/redeem/:tier" component={RedeemPage} />
+        </Switch>
+      );
+    }
+    if (location === "/admin" || location === "/admin/applications") {
+      return <AdminApplications />;
+    }
+    if (location === "/admin/stamps") {
+      return <AdminStamps />;
+    }
+    if (location === "/admin/content") {
+      return <AdminContent />;
+    }
+    if (location === "/admin/routes") {
+      return <AdminRoutes />;
     }
     if (isMapShellRoute(location)) {
       return null;

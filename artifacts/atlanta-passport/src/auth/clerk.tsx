@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLinkVisitor, type Visitor } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import logoSrc from "@/assets/images/passport-atl-logo.png";
+import { MEMBER_HOME_ROUTE } from "@/auth/route-access";
 
 // REQUIRED — copy verbatim. Resolves the key from window.location.hostname so the
 // same build serves multiple Clerk custom domains.
@@ -138,7 +139,7 @@ export function SignInPage() {
         routing="path"
         path={`${basePath}/sign-in`}
         signUpUrl={`${basePath}/sign-up`}
-        fallbackRedirectUrl={`${basePath}/passport/stamps`}
+        fallbackRedirectUrl={`${basePath}${MEMBER_HOME_ROUTE}`}
       />
     </div>
   );
@@ -151,7 +152,7 @@ export function SignUpPage() {
         routing="path"
         path={`${basePath}/sign-up`}
         signInUrl={`${basePath}/sign-in`}
-        fallbackRedirectUrl={`${basePath}/passport/stamps`}
+        fallbackRedirectUrl={`${basePath}${MEMBER_HOME_ROUTE}`}
       />
     </div>
   );
@@ -269,7 +270,7 @@ function SignedInHomeRedirect() {
     if (!isLoaded || evaluated.current) return;
     evaluated.current = true;
     if (isSignedIn && location === "/") {
-      setLocation("/passport/stamps", { replace: true });
+      setLocation(MEMBER_HOME_ROUTE, { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
 
@@ -372,7 +373,7 @@ export function SocialAuthButtons() {
       await signUp.authenticateWithRedirect({
         strategy: provider,
         redirectUrl: `${basePath}/sign-up/sso-callback`,
-        redirectUrlComplete: `${basePath}/passport/stamps`,
+        redirectUrlComplete: `${basePath}${MEMBER_HOME_ROUTE}`,
       });
     } catch {
       setError(`Couldn't start ${LABELS[provider]} sign-up. Please try again.`);
