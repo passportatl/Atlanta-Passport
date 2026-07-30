@@ -10,9 +10,13 @@ export type SubmitContactMessageInputTopic =
   (typeof SubmitContactMessageInputTopic)[keyof typeof SubmitContactMessageInputTopic];
 
 export const SubmitContactMessageInputTopic = {
-  question: "question",
-  suggestion: "suggestion",
-  feedback: "feedback",
-  business: "business",
+  general_question: "general_question",
+  technical_support: "technical_support",
+  media_press: "media_press",
+  partnership: "partnership",
+  event_listing: "event_listing",
+  location_listing: "location_listing",
+  sponsorship: "sponsorship",
+  billing: "billing",
   other: "other",
 } as const;

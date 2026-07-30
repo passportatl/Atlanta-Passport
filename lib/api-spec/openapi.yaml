@@ -845,7 +845,16 @@ components:
         email: { type: string, format: email }
         topic:
           type: string
-          enum: [question, suggestion, feedback, business, other]
+          enum:
+            - general_question
+            - technical_support
+            - media_press
+            - partnership
+            - event_listing
+            - location_listing
+            - sponsorship
+            - billing
+            - other
         message: { type: string, minLength: 10 }
       required:
         - name

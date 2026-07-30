@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarPlus, MapPinned } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
 
 export default function PassportContact() {
@@ -12,30 +12,51 @@ export default function PassportContact() {
         >
           GET IN TOUCH
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>
-          Contact Us
+        <h1
+          className="text-3xl sm:text-4xl font-black mb-1"
+          style={{ fontFamily: "Bungee, sans-serif" }}
+        >
+          Contact Us / Become a Partner
         </h1>
         <p className="text-sm text-foreground/70">
-          Questions, ideas, or a spot we should add? Send us a note — we'd love to hear from you.
+          Have a question, need support, or want to work with Passport ATL?
+          Choose the reason that best fits and our team will route your message
+          to the right person.
         </p>
-        <p className="text-sm text-foreground/70 mt-4">
-          If you're interested in having your event or venue featured, or advertising with us, please visit our partners page.
-        </p>
-        <div className="flex flex-wrap gap-3 mt-4">
-          <Link
-            href="/partners"
-            className="button-pop button-pop-yellow inline-flex items-center gap-2"
-          >
-            Partners Page
-            <ArrowRight className="w-5 h-5 rtl:rotate-180" />
-          </Link>
-          <Link
-            href="/list-event"
-            className="button-pop inline-flex items-center gap-2"
-          >
-            List an Event
-            <ArrowRight className="w-5 h-5 rtl:rotate-180" />
-          </Link>
+        <div className="grid gap-4 sm:grid-cols-2 mt-5">
+          <div className="card-pop bg-brand-yellow p-5">
+            <MapPinned className="h-7 w-7 mb-3" aria-hidden="true" />
+            <h2 className="font-black text-lg mb-2">List a location</h2>
+            <p className="text-sm leading-relaxed mb-4">
+              Apply to add a restaurant, attraction, shop, venue, or other
+              Atlanta destination. Start with the listing option that fits your
+              needs and provide the content for that package.
+            </p>
+            <Link
+              href="/partners"
+              className="button-pop inline-flex items-center gap-2"
+            >
+              Start location submission
+              <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+            </Link>
+          </div>
+
+          <div className="card-pop bg-card p-5">
+            <CalendarPlus className="h-7 w-7 mb-3" aria-hidden="true" />
+            <h2 className="font-black text-lg mb-2">List an event for free</h2>
+            <p className="text-sm leading-relaxed mb-4">
+              Every approved event can receive a free basic calendar listing.
+              Paid packages and add-ons are available when you want more
+              details, media, or promotional visibility.
+            </p>
+            <Link
+              href="/list-event"
+              className="button-pop button-pop-yellow inline-flex items-center gap-2"
+            >
+              Submit an event
+              <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+            </Link>
+          </div>
         </div>
       </div>
 
