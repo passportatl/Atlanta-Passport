@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { QrCode, Lock, Route, Calendar, MapPin } from "lucide-react";
+import { QrCode, Lock, Route, Calendar, MapPin, Handshake } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
@@ -8,6 +8,7 @@ const tabs = [
   { path: "/admin/content", label: "Locations Hub", icon: MapPin },
   { path: "/admin/applications", label: "Event Hub", icon: Calendar },
   { path: "/admin/routes", label: "Route Hub", icon: Route },
+  { path: "/admin/partners", label: "Partner Hub", icon: Handshake },
   { path: "/admin/stamps", label: "QR Codes", icon: QrCode },
 ];
 

@@ -24,6 +24,7 @@ import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
 import AdminRoutes from "@/pages/admin-routes";
+import AdminPartners from "@/pages/admin-partners";
 import ListALocation from "@/pages/list-a-location";
 import PartnerPortal from "@/pages/partner-portal";
 import { VisitorProvider } from "@/passport/VisitorProvider";
@@ -298,6 +299,9 @@ function Router() {
     }
     if (location === "/admin/routes") {
       return <AdminRoutes />;
+    }
+    if (location === "/admin/partners") {
+      return <AdminPartners />;
     }
     if (isMapShellRoute(location)) {
       return null;

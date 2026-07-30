@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { createHash, randomBytes } from "node:crypto";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { clerkClient, getAuth } from "@clerk/express";
 import {
   businessesTable,
@@ -222,6 +222,78 @@ router.post("/admin/partner-organizations", requireAdmin, async (req, res) => {
     recordId: organization!.id,
   });
   res.status(201).json(organization);
+});
+
+router.get("/admin/partner-hub", requireAdmin, async (_req, res) => {
+  const [organizations, memberships, invitations, locations, events, activity] =
+    await Promise.all([
+      db
+        .select()
+        .from(partnerOrganizationsTable)
+        .orderBy(partnerOrganizationsTable.name),
+      db
+        .select({
+          id: partnerMembershipsTable.id,
+          organizationId: partnerMembershipsTable.partnerOrganizationId,
+          role: partnerMembershipsTable.role,
+          status: partnerMembershipsTable.status,
+          email: partnerAccountsTable.primaryEmail,
+          displayName: partnerAccountsTable.displayName,
+        })
+        .from(partnerMembershipsTable)
+        .innerJoin(
+          partnerAccountsTable,
+          eq(partnerAccountsTable.id, partnerMembershipsTable.partnerAccountId),
+        ),
+      db
+        .select({
+          id: partnerInvitationsTable.id,
+          organizationId: partnerInvitationsTable.partnerOrganizationId,
+          intendedEmail: partnerInvitationsTable.intendedEmail,
+          role: partnerInvitationsTable.role,
+          expiresAt: partnerInvitationsTable.expiresAt,
+          acceptedAt: partnerInvitationsTable.acceptedAt,
+          revokedAt: partnerInvitationsTable.revokedAt,
+          createdAt: partnerInvitationsTable.createdAt,
+        })
+        .from(partnerInvitationsTable)
+        .orderBy(desc(partnerInvitationsTable.createdAt)),
+      db
+        .select({
+          id: businessesTable.id,
+          organizationId: businessesTable.partnerOrganizationId,
+          name: businessesTable.name,
+          category: businessesTable.category,
+          neighborhood: businessesTable.neighborhood,
+          publicStatus: businessesTable.publicStatus,
+        })
+        .from(businessesTable)
+        .orderBy(businessesTable.name),
+      db
+        .select({
+          id: eventsTable.id,
+          organizationId: eventsTable.partnerOrganizationId,
+          name: eventsTable.name,
+          venue: eventsTable.venue,
+          date: eventsTable.date,
+          workflowStatus: eventsTable.workflowStatus,
+        })
+        .from(eventsTable)
+        .orderBy(eventsTable.name),
+      db
+        .select()
+        .from(partnerActivityLogTable)
+        .orderBy(desc(partnerActivityLogTable.createdAt))
+        .limit(100),
+    ]);
+  res.json({
+    organizations,
+    memberships,
+    invitations,
+    locations,
+    events,
+    activity,
+  });
 });
 
 router.post(
