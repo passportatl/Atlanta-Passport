@@ -30,6 +30,36 @@ dates should be refined through issues, milestones, and decision records.
 - Expand event and destination discovery responsibly.
 - Mature reliability, privacy, analytics, and release practices.
 
+## Post-launch expansion track
+
+Begin this track early only if every August 5 launch-critical requirement is
+complete and verified, database changes have a rehearsed rollout and rollback,
+and no high-priority defects remain.
+
+### ATL Legends
+
+- Design the public editorial directory, article pages, categories, tags,
+  search, featured stories, and related locations, events, routes, and partners.
+- Build the staff workflow for drafts, review, scheduling, publishing, SEO,
+  media, and clearly labeled paid partner features.
+
+### Passport Storefront
+
+- Design products, variants, inventory, pricing, discounts, cart, checkout,
+  taxes, shipping, fulfillment, refunds, and transactional communication.
+- Build staff order management and support member-exclusive products and
+  reward-linked offers through established payment and commerce services.
+
+### AI-driven routes
+
+- Accept time, starting point, transportation, interests, age, budget,
+  accessibility, and group preferences.
+- Generate routes only from verified Passport ATL locations, events, hours,
+  offers, and travel constraints; never invent destinations or operating data.
+- Distinguish curated, sponsored, and AI-generated routes.
+- Add deterministic validation, staff controls, saving, sharing, analytics, and
+  user feedback before any public rollout.
+
 ## Definition of readiness
 
 A roadmap item is ready for implementation when it has an owner, measurable
