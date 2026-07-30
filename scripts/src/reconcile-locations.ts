@@ -40,10 +40,19 @@ export function reconcileLocations(
   const canonicalByKey = new Map(
     canonical.map((record) => [recordKey(record), record]),
   );
+  const matchedCanonicalKeys = new Set<string>();
   const issues: ReconciliationIssue[] = [];
 
   for (const record of legacy) {
-    const match = canonicalByKey.get(recordKey(record));
+    const match =
+      canonicalByKey.get(recordKey(record)) ??
+      canonical.find(
+        (candidate) =>
+          normalize(candidate.name) === normalize(record.name) ||
+          (candidate.address &&
+            record.address &&
+            normalize(candidate.address) === normalize(record.address)),
+      );
     if (!match) {
       issues.push({
         severity: "error",
@@ -54,6 +63,7 @@ export function reconcileLocations(
       });
       continue;
     }
+    matchedCanonicalKeys.add(recordKey(match));
 
     const comparisons: Array<[keyof LocationRecord, string]> = [
       ["address", "address"],
@@ -94,9 +104,8 @@ export function reconcileLocations(
     }
   }
 
-  const legacyKeys = new Set(legacy.map(recordKey));
   for (const record of canonical) {
-    if (!legacyKeys.has(recordKey(record))) {
+    if (!matchedCanonicalKeys.has(recordKey(record))) {
       issues.push({
         severity: "warning",
         code: "canonical-only-record",
@@ -120,6 +129,13 @@ function toMarkdown(
 ): string {
   const errors = issues.filter((issue) => issue.severity === "error").length;
   const warnings = issues.length - errors;
+  const matchedCount = legacyCount - errors;
+  const coveragePercent =
+    legacyCount === 0 ? 100 : Math.round((matchedCount / legacyCount) * 100);
+  const canonicalOnlyCount = issues.filter(
+    (issue) => issue.code === "canonical-only-record",
+  ).length;
+  const rolloutReady = errors === 0 && warnings === 0;
   const rows = issues.length
     ? issues
         .map(
@@ -133,8 +149,12 @@ function toMarkdown(
 
 - Static records: ${legacyCount}
 - Canonical records: ${canonicalCount}
+- Matched static records: ${matchedCount}
+- Static coverage: ${coveragePercent}%
+- Canonical-only records: ${canonicalOnlyCount}
 - Errors: ${errors}
 - Warnings: ${warnings}
+- Canonical rollout ready: ${rolloutReady ? "Yes" : "No"}
 
 | Severity | Code | Location | Finding |
 | --- | --- | --- | --- |
