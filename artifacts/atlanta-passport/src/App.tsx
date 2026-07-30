@@ -25,6 +25,7 @@ import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
 import AdminRoutes from "@/pages/admin-routes";
 import ListALocation from "@/pages/list-a-location";
+import PartnerPortal from "@/pages/partner-portal";
 import { VisitorProvider } from "@/passport/VisitorProvider";
 import {
   hasCurrentLegalConsent,
@@ -46,7 +47,6 @@ function MarketingRoutes() {
         {/* TEMPORARY: partner applications paused — /partners shows a holding page.
             To revert, change `PartnersComingSoon` back to `Partners` (the real page
             is still imported above and fully intact). */}
-        <Route path="/partners" component={ListALocation} />
         <Route path="/list-a-location" component={ListALocation} />
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/routes/:id" component={RouteDetail} />
@@ -248,6 +248,9 @@ function ScrollToTop() {
 function Router() {
   const [location] = useLocation();
   const { isLoaded, isSignedIn } = useUser();
+  if (location === "/partners" || location.startsWith("/partners/")) {
+    return <PartnerPortal />;
+  }
   if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
     // Already signed in? Don't flash the auth UI — SignedInAuthRedirect is
     // sending them to their stamps page.

@@ -191,11 +191,17 @@ function ClerkVisitorBridge() {
   const linking = useRef(false);
   const attempts = useRef(0);
   const [retryTick, setRetryTick] = useState(0);
+  const [location] = useLocation();
 
   const userId = user?.id ?? null;
 
   useEffect(() => {
     if (!isLoaded) return;
+
+    if (location === "/partners" || location.startsWith("/partners/")) {
+      setLinkedReady(false);
+      return;
+    }
 
     if (!isSignedIn) {
       // Only clear if THIS session previously linked a Clerk account.
@@ -252,6 +258,7 @@ function ClerkVisitorBridge() {
     setVisitorId,
     setLinkedReady,
     mutateAsync,
+    location,
   ]);
 
   return null;
