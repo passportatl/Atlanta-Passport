@@ -20,6 +20,27 @@ type PartnerSession = {
   }>;
 };
 
+type PartnerRecords = {
+  organizationId: string;
+  locations: Array<{
+    id: string;
+    name: string;
+    category: string;
+    neighborhood: string;
+    publicStatus: string;
+    isActive: boolean;
+  }>;
+  events: Array<{
+    id: string;
+    name: string;
+    category: string;
+    date: string;
+    venue: string;
+    workflowStatus: string;
+    listingPackage: string;
+  }>;
+};
+
 function PartnerFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-[100dvh] bg-paper text-foreground">
@@ -40,6 +61,12 @@ export default function PartnerPortal() {
   const { isLoaded, isSignedIn } = useUser();
   const { signOut } = useClerk();
   const [session, setSession] = useState<PartnerSession | null>(null);
+  const [records, setRecords] = useState<PartnerRecords | null>(null);
+  const [activeOrganizationId, setActiveOrganizationId] = useState<
+    string | null
+  >(null);
+  const [refreshTick, setRefreshTick] = useState(0);
+  const [invitationError, setInvitationError] = useState<string | null>(null);
   const [status, setStatus] = useState<
     "loading" | "ready" | "denied" | "error"
   >("loading");
@@ -48,7 +75,28 @@ export default function PartnerPortal() {
     if (!isLoaded || !isSignedIn) return;
     let active = true;
     setStatus("loading");
-    fetch("/api/partner/session", { credentials: "include" })
+    const invitation = new URLSearchParams(window.location.search).get(
+      "invitation",
+    );
+    const acceptInvitation = invitation
+      ? fetch("/api/partner/invitations/accept", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: invitation }),
+        }).then(async (response) => {
+          if (!response.ok) {
+            const body = (await response.json().catch(() => null)) as {
+              error?: string;
+            } | null;
+            throw new Error(body?.error || "Could not accept invitation");
+          }
+          window.history.replaceState({}, "", `${basePath}/partners`);
+        })
+      : Promise.resolve();
+
+    acceptInvitation
+      .then(() => fetch("/api/partner/session", { credentials: "include" }))
       .then(async (response) => {
         if (response.status === 401 || response.status === 403) {
           if (active) setStatus("denied");
@@ -58,16 +106,43 @@ export default function PartnerPortal() {
         const body = (await response.json()) as PartnerSession;
         if (active) {
           setSession(body);
+          setActiveOrganizationId(
+            (current) => current ?? body.memberships[0]?.organizationId ?? null,
+          );
           setStatus("ready");
         }
       })
       .catch(() => {
-        if (active) setStatus("error");
+        if (active) {
+          setInvitationError(
+            invitation
+              ? "This invitation could not be accepted. It may be expired or linked to another email."
+              : null,
+          );
+          setStatus(invitation ? "denied" : "error");
+        }
       });
     return () => {
       active = false;
     };
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, refreshTick]);
+
+  useEffect(() => {
+    const organizationId = activeOrganizationId;
+    if (!organizationId) {
+      setRecords(null);
+      return;
+    }
+    fetch(`/api/partner/organizations/${organizationId}/records`, {
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Records unavailable");
+        return response.json() as Promise<PartnerRecords>;
+      })
+      .then(setRecords)
+      .catch(() => setRecords(null));
+  }, [activeOrganizationId]);
 
   if (!isLoaded) {
     return (
@@ -128,6 +203,11 @@ export default function PartnerPortal() {
             ATL partner organization. Contact our team if you are waiting for an
             invitation or approval.
           </p>
+          {invitationError && (
+            <p className="mt-4 rounded-lg border-2 border-brand-red bg-red-50 p-4 font-bold text-brand-red">
+              {invitationError}
+            </p>
+          )}
           <div className="mt-7 flex flex-wrap gap-3">
             <a
               href="/passport/contact"
@@ -142,6 +222,13 @@ export default function PartnerPortal() {
             >
               <LogOut className="h-4 w-4" />
               Sign out
+            </button>
+            <button
+              type="button"
+              className="button-pop button-pop-dark"
+              onClick={() => setRefreshTick((value) => value + 1)}
+            >
+              Check access again
             </button>
           </div>
         </section>
@@ -174,7 +261,16 @@ export default function PartnerPortal() {
         <h2 className="font-display text-2xl">Your organizations</h2>
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           {session.memberships.map((membership) => (
-            <article key={membership.id} className="card-pop bg-white p-6">
+            <button
+              type="button"
+              key={membership.id}
+              onClick={() => setActiveOrganizationId(membership.organizationId)}
+              className={`card-pop p-6 text-left ${
+                membership.organizationId === activeOrganizationId
+                  ? "bg-brand-yellow"
+                  : "bg-white"
+              }`}
+            >
               <Building2 className="h-8 w-8 text-brand-red" />
               <h3 className="mt-4 font-display text-2xl">
                 {membership.organizationName}
@@ -185,10 +281,57 @@ export default function PartnerPortal() {
               <p className="mt-5 text-sm font-bold">
                 Listing management is being enabled in the next launch slice.
               </p>
-            </article>
+            </button>
           ))}
         </div>
       </section>
+
+      {records && (
+        <section className="mt-12 grid gap-8 lg:grid-cols-2">
+          <div>
+            <h2 className="font-display text-2xl">Locations</h2>
+            <div className="mt-4 space-y-4">
+              {records.locations.length === 0 && (
+                <p className="text-muted-foreground">
+                  No locations have been assigned yet.
+                </p>
+              )}
+              {records.locations.map((location) => (
+                <article key={location.id} className="card-pop bg-white p-5">
+                  <h3 className="font-display text-xl">{location.name}</h3>
+                  <p className="mt-2">
+                    {location.category} · {location.neighborhood}
+                  </p>
+                  <p className="mt-2 font-bold capitalize">
+                    {location.publicStatus}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h2 className="font-display text-2xl">Events</h2>
+            <div className="mt-4 space-y-4">
+              {records.events.length === 0 && (
+                <p className="text-muted-foreground">
+                  No events have been assigned yet.
+                </p>
+              )}
+              {records.events.map((event) => (
+                <article key={event.id} className="card-pop bg-white p-5">
+                  <h3 className="font-display text-xl">{event.name}</h3>
+                  <p className="mt-2">
+                    {event.date} · {event.venue}
+                  </p>
+                  <p className="mt-2 font-bold capitalize">
+                    {event.workflowStatus} · {event.listingPackage}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </PartnerFrame>
   );
 }
