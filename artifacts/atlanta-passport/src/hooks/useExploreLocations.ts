@@ -6,6 +6,10 @@ import {
 } from "@workspace/api-client-react";
 import { businesses as staticBusinesses } from "@/data/sample-data";
 import { STAMP_SLUG } from "@/passport/data";
+import {
+  resolveLocationCategoryId,
+  toLocationTaxonomyId,
+} from "@/data/location-taxonomy";
 
 export type ExploreLocation = (typeof staticBusinesses)[number] & {
   canonicalId?: string;
@@ -57,6 +61,14 @@ function findCanonicalMatch(
   );
 }
 
+function legacyTagIds(location: (typeof staticBusinesses)[number]): string[] {
+  const categories =
+    "categories" in location && Array.isArray(location.categories)
+      ? location.categories
+      : [location.category];
+  return [...new Set(categories.map(toLocationTaxonomyId).filter(Boolean))];
+}
+
 export function mergeCanonicalExploreLocations(
   canonical: readonly Business[],
 ): ExploreLocationMerge {
@@ -64,7 +76,14 @@ export function mergeCanonicalExploreLocations(
   const locations = staticBusinesses.map((location): ExploreLocation => {
     const record = findCanonicalMatch(location, canonical);
     if (!record) {
-      return { ...location, locationSource: "static-fallback" };
+      return {
+        ...location,
+        categoryId: resolveLocationCategoryId(location.category),
+        tags: legacyTagIds(location),
+        areaId: toLocationTaxonomyId(location.neighborhood),
+        mapReadiness: "coordinates-present",
+        locationSource: "static-fallback",
+      };
     }
 
     matchedIds.add(record.id);
@@ -80,7 +99,7 @@ export function mergeCanonicalExploreLocations(
       canonicalId: record.id,
       canonicalSlug: record.slug,
       categoryId: record.categoryId,
-      tags: record.tags,
+      tags: record.tags.length > 0 ? record.tags : legacyTagIds(location),
       areaId: record.areaId,
       mapReadiness: record.mapReadiness,
       detailPageEnabled: record.detailPageEnabled,
@@ -134,6 +153,10 @@ export function useExploreLocations() {
       : staticBusinesses.map(
           (location): ExploreLocation => ({
             ...location,
+            categoryId: resolveLocationCategoryId(location.category),
+            tags: legacyTagIds(location),
+            areaId: toLocationTaxonomyId(location.neighborhood),
+            mapReadiness: "coordinates-present",
             locationSource: "static-fallback",
           }),
         );
