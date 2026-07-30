@@ -64,14 +64,27 @@ export default function Footer({
           </ul>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-2 max-w-3xl">
+        <div className="mt-12 pt-8 border-t border-background/15 text-xs text-background/55 leading-relaxed space-y-3 max-w-3xl">
           <p>{t("footer.disclaimer")}</p>
-          <p>
-            <Link href="/privacy-policy" className="underline hover:text-background/80">
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>&copy; {new Date().getFullYear()} Passport ATL</span>
+            <span aria-hidden="true">·</span>
+            <Link
+              href="/terms-of-service"
+              className="underline hover:text-background/80"
+            >
+              Terms of Service
+            </Link>
+            <span aria-hidden="true">·</span>
+            <Link
+              href="/privacy-policy"
+              className="underline hover:text-background/80"
+            >
               Privacy Policy
             </Link>
+            <span aria-hidden="true">·</span>
+            <span>{t("footer.rights")}</span>
           </p>
-          <p>&copy; {new Date().getFullYear()} Passport ATL. {t("footer.rights")}</p>
         </div>
       </div>
     </footer>
