@@ -1,11 +1,13 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getAuth, clerkClient } from "@clerk/express";
 import { db, visitorsTable } from "@workspace/db";
 import { CreateVisitorBody } from "@workspace/api-zod";
 import { scheduleSignupSync } from "../lib/googleSheetSync";
 
 const router: IRouter = Router();
+const CURRENT_TERMS_VERSION = "2026-07-30";
+const CURRENT_PRIVACY_VERSION = "2026-07-30";
 
 router.post("/visitors/link", async (req, res) => {
   const { userId } = getAuth(req);
@@ -29,7 +31,13 @@ router.post("/visitors/link", async (req, res) => {
     user.emailAddresses[0]?.emailAddress ??
     `${userId}@passport.local`;
   const meta = user.unsafeMetadata as
-    | { firstName?: unknown; phone?: unknown }
+    | {
+        firstName?: unknown;
+        phone?: unknown;
+        acceptTerms?: unknown;
+        acceptPrivacy?: unknown;
+        marketingOptIn?: unknown;
+      }
     | undefined;
   const metaFirstName =
     typeof meta?.firstName === "string" ? meta.firstName.trim() : "";
@@ -38,10 +46,25 @@ router.post("/visitors/link", async (req, res) => {
       ? meta.phone.trim()
       : null;
   const firstName = user.firstName?.trim() || metaFirstName || "Friend";
+  const now = new Date();
+  const acceptedTerms = meta?.acceptTerms === true;
+  const acceptedPrivacy = meta?.acceptPrivacy === true;
+  const marketingOptIn = meta?.marketingOptIn === true;
 
   const [created] = await db
     .insert(visitorsTable)
-    .values({ firstName, email, phone: metaPhone, clerkUserId: userId })
+    .values({
+      firstName,
+      email,
+      phone: metaPhone,
+      clerkUserId: userId,
+      termsAcceptedAt: acceptedTerms ? now : null,
+      termsVersion: acceptedTerms ? CURRENT_TERMS_VERSION : null,
+      privacyAcceptedAt: acceptedPrivacy ? now : null,
+      privacyVersion: acceptedPrivacy ? CURRENT_PRIVACY_VERSION : null,
+      marketingOptIn,
+      marketingConsentUpdatedAt: now,
+    })
     .onConflictDoNothing({ target: visitorsTable.clerkUserId })
     .returning();
 
@@ -65,7 +88,9 @@ router.post("/visitors/link", async (req, res) => {
 router.post("/visitors", async (req, res) => {
   const parsed = CreateVisitorBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
+    res
+      .status(400)
+      .json({ error: "Invalid input", issues: parsed.error.issues });
     return;
   }
   const { firstName, email, phone } = parsed.data;
@@ -83,13 +108,85 @@ router.get("/visitors/:id", async (req, res) => {
     res.status(400).json({ error: "Missing id" });
     return;
   }
-  const rows = await db.select().from(visitorsTable).where(eq(visitorsTable.id, id));
+  const rows = await db
+    .select()
+    .from(visitorsTable)
+    .where(eq(visitorsTable.id, id));
   const visitor = rows[0];
   if (!visitor) {
     res.status(404).json({ error: "Visitor not found" });
     return;
   }
   res.json(visitor);
+});
+
+router.patch("/visitors/:id/preferences", async (req, res) => {
+  const { userId } = getAuth(req);
+  if (!userId) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
+  const id = req.params.id;
+  if (!id) {
+    res.status(400).json({ error: "Missing id" });
+    return;
+  }
+  const {
+    acceptTerms,
+    acceptPrivacy,
+    marketingOptIn,
+  }: {
+    acceptTerms?: unknown;
+    acceptPrivacy?: unknown;
+    marketingOptIn?: unknown;
+  } = req.body ?? {};
+  if (
+    typeof marketingOptIn !== "boolean" ||
+    (acceptTerms !== undefined && typeof acceptTerms !== "boolean") ||
+    (acceptPrivacy !== undefined && typeof acceptPrivacy !== "boolean")
+  ) {
+    res.status(400).json({ error: "Invalid preferences" });
+    return;
+  }
+
+  const owned = await db
+    .select()
+    .from(visitorsTable)
+    .where(
+      and(eq(visitorsTable.id, id), eq(visitorsTable.clerkUserId, userId)),
+    );
+  const visitor = owned[0];
+  if (!visitor) {
+    res.status(404).json({ error: "Visitor not found" });
+    return;
+  }
+
+  const now = new Date();
+  const [updated] = await db
+    .update(visitorsTable)
+    .set({
+      marketingOptIn,
+      marketingConsentUpdatedAt: now,
+      termsAcceptedAt:
+        !visitor.termsAcceptedAt && acceptTerms === true
+          ? now
+          : visitor.termsAcceptedAt,
+      termsVersion:
+        !visitor.termsAcceptedAt && acceptTerms === true
+          ? CURRENT_TERMS_VERSION
+          : visitor.termsVersion,
+      privacyAcceptedAt:
+        !visitor.privacyAcceptedAt && acceptPrivacy === true
+          ? now
+          : visitor.privacyAcceptedAt,
+      privacyVersion:
+        !visitor.privacyAcceptedAt && acceptPrivacy === true
+          ? CURRENT_PRIVACY_VERSION
+          : visitor.privacyVersion,
+    })
+    .where(eq(visitorsTable.id, id))
+    .returning();
+  res.json(updated);
 });
 
 export default router;

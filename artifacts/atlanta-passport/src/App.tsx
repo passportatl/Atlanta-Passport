@@ -17,21 +17,24 @@ import Listing from "@/pages/listing";
 import StampPage from "@/pages/stamp";
 import RedeemPage from "@/pages/redeem";
 import PassportContact from "@/pages/passport/contact";
+import PassportConsent from "@/pages/passport/consent";
 import PrivacyPolicy from "@/pages/privacy-policy";
+import TermsOfService from "@/pages/terms-of-service";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
 import AdminRoutes from "@/pages/admin-routes";
 import ListALocation from "@/pages/list-a-location";
 import { VisitorProvider } from "@/passport/VisitorProvider";
-import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
+import {
+  hasCurrentLegalConsent,
+  useVisitor,
+  PENDING_STAMP_KEY,
+} from "@/passport/visitor-context";
 import { PassportLayout } from "@/passport/PassportLayout";
 import MapShell from "@/passport/MapShell";
 import { ClerkProviders, SignInPage, SignUpPage } from "@/auth/clerk";
-import {
-  isProtectedRoute,
-  MEMBER_HOME_ROUTE,
-} from "@/auth/route-access";
+import { isProtectedRoute, MEMBER_HOME_ROUTE } from "@/auth/route-access";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +59,7 @@ function MarketingRoutes() {
         <Route path="/list-event" component={ListEvent} />
         <Route path="/listing/:id" component={Listing} />
         <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/terms-of-service" component={TermsOfService} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
@@ -104,13 +108,41 @@ function SignedInAuthRedirect() {
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     // If a stamp scan is pending, PendingStampRedirect owns the destination.
-    if (typeof window !== "undefined" && window.localStorage.getItem(PENDING_STAMP_KEY)) {
+    if (
+      typeof window !== "undefined" &&
+      window.localStorage.getItem(PENDING_STAMP_KEY)
+    ) {
       return;
     }
     if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
       setLocation(MEMBER_HOME_ROUTE, { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
+  return null;
+}
+
+function ConsentRequirementRedirect() {
+  const { isLoaded, isSignedIn } = useUser();
+  const { visitor, linkedReady } = useVisitor();
+  const [location, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !linkedReady || !visitor) return;
+    const needsConsent = !hasCurrentLegalConsent(visitor);
+    const isConsentPage = location === "/passport/consent";
+    const isConsumerRoute =
+      location === "/passport" ||
+      location.startsWith("/passport/") ||
+      location.startsWith("/stamp/") ||
+      location.startsWith("/redeem/");
+
+    if (needsConsent && isConsumerRoute && !isConsentPage) {
+      setLocation("/passport/consent", { replace: true });
+    } else if (!needsConsent && isConsentPage) {
+      setLocation(MEMBER_HOME_ROUTE, { replace: true });
+    }
+  }, [isLoaded, isSignedIn, linkedReady, visitor, location, setLocation]);
+
   return null;
 }
 
@@ -122,16 +154,31 @@ function SignedInAuthRedirect() {
 // too). The stamp page clears the pending key after collecting.
 function PendingStampRedirect() {
   const { isLoaded, isSignedIn } = useUser();
-  const { visitorId, linkedReady } = useVisitor();
+  const { visitorId, visitor, linkedReady } = useVisitor();
   const [location, setLocation] = useLocation();
   useEffect(() => {
-    if (!isLoaded || !isSignedIn || !linkedReady || !visitorId) return;
+    if (
+      !isLoaded ||
+      !isSignedIn ||
+      !linkedReady ||
+      !visitorId ||
+      !hasCurrentLegalConsent(visitor)
+    )
+      return;
     if (typeof window === "undefined") return;
     const pending = window.localStorage.getItem(PENDING_STAMP_KEY);
     if (!pending) return;
     const target = `/stamp/${pending}`;
     if (location !== target) setLocation(target, { replace: true });
-  }, [isLoaded, isSignedIn, linkedReady, visitorId, location, setLocation]);
+  }, [
+    isLoaded,
+    isSignedIn,
+    linkedReady,
+    visitorId,
+    visitor,
+    location,
+    setLocation,
+  ]);
   return null;
 }
 
@@ -181,6 +228,7 @@ function PassportRoutesGroup() {
     <PassportLayout>
       <Switch>
         <Route path="/passport/contact" component={PassportContact} />
+        <Route path="/passport/consent" component={PassportConsent} />
         <Route component={NotFound} />
       </Switch>
     </PassportLayout>
@@ -266,6 +314,7 @@ function App() {
               <ScrollToTop />
               <ProtectedRouteRedirect />
               <SignedInAuthRedirect />
+              <ConsentRequirementRedirect />
               <PendingStampRedirect />
               <Router />
               <PersistentMapShell />

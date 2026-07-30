@@ -14,6 +14,7 @@ describe("guest route access", () => {
     "/list-a-location",
     "/passport/contact",
     "/privacy-policy",
+    "/terms-of-service",
     "/sign-in",
     "/sign-in/sso-callback",
     "/sign-up",

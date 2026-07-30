@@ -96,6 +96,43 @@ paths:
         "404":
           description: Not found
 
+  /visitors/{id}/preferences:
+    patch:
+      operationId: updateVisitorPreferences
+      tags: [visitors]
+      summary: Record legal consent and update communication preferences
+      description: >
+        Updates the signed-in visitor's optional marketing preference. Required
+        legal acceptance is recorded once with the current policy versions and
+        cannot be revoked through this endpoint.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVisitorPreferencesInput"
+      responses:
+        "200":
+          description: Updated visitor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Visitor"
+        "400":
+          description: Invalid input
+        "401":
+          description: Not authenticated
+        "403":
+          description: Visitor does not belong to the signed-in account
+        "404":
+          description: Visitor not found
+
   /visitors/{id}/stamps:
     get:
       operationId: listVisitorStamps
@@ -490,10 +527,30 @@ components:
         phone:
           type: string
           nullable: true
+        termsAcceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        termsVersion:
+          type: string
+          nullable: true
+        privacyAcceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        privacyVersion:
+          type: string
+          nullable: true
+        marketingOptIn:
+          type: boolean
+        marketingConsentUpdatedAt:
+          type: string
+          format: date-time
+          nullable: true
         createdAt:
           type: string
           format: date-time
-      required: [id, firstName, email, createdAt]
+      required: [id, firstName, email, marketingOptIn, createdAt]
 
     CreateVisitorInput:
       type: object
@@ -507,6 +564,17 @@ components:
         phone:
           type: string
       required: [firstName, email]
+
+    UpdateVisitorPreferencesInput:
+      type: object
+      properties:
+        acceptTerms:
+          type: boolean
+        acceptPrivacy:
+          type: boolean
+        marketingOptIn:
+          type: boolean
+      required: [marketingOptIn]
 
     Business:
       type: object

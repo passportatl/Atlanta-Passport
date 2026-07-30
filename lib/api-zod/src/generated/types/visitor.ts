@@ -11,5 +11,11 @@ export interface Visitor {
   firstName: string;
   email: string;
   phone?: string | null;
+  termsAcceptedAt?: Date | null;
+  termsVersion?: string | null;
+  privacyAcceptedAt?: Date | null;
+  privacyVersion?: string | null;
+  marketingOptIn: boolean;
+  marketingConsentUpdatedAt?: Date | null;
   createdAt: Date;
 }

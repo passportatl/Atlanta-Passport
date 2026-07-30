@@ -8,6 +8,7 @@ const PUBLIC_GUEST_ROUTES = new Set([
   "/list-a-location",
   "/passport/contact",
   "/privacy-policy",
+  "/terms-of-service",
   "/sign-in",
   "/sign-up",
 ]);

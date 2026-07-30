@@ -29,6 +29,12 @@ export const CreateVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
+  termsAcceptedAt: zod.coerce.date().nullish(),
+  termsVersion: zod.string().nullish(),
+  privacyAcceptedAt: zod.coerce.date().nullish(),
+  privacyVersion: zod.string().nullish(),
+  marketingOptIn: zod.boolean(),
+  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -42,6 +48,12 @@ export const LinkVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
+  termsAcceptedAt: zod.coerce.date().nullish(),
+  termsVersion: zod.string().nullish(),
+  privacyAcceptedAt: zod.coerce.date().nullish(),
+  privacyVersion: zod.string().nullish(),
+  marketingOptIn: zod.boolean(),
+  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -57,8 +69,26 @@ export const GetVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
+  termsAcceptedAt: zod.coerce.date().nullish(),
+  termsVersion: zod.string().nullish(),
+  privacyAcceptedAt: zod.coerce.date().nullish(),
+  privacyVersion: zod.string().nullish(),
+  marketingOptIn: zod.boolean(),
+  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
+
+export const UpdateVisitorPreferencesParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateVisitorPreferencesBody = zod.object({
+  acceptTerms: zod.boolean().optional(),
+  acceptPrivacy: zod.boolean().optional(),
+  marketingOptIn: zod.boolean(),
+});
+
+export const UpdateVisitorPreferencesResponse = GetVisitorResponse;
 
 /**
  * @summary List a visitor's collected stamps
