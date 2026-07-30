@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, contactMessagesTable } from "@workspace/db";
 import { SubmitContactMessageBody } from "@workspace/api-zod";
-import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { CONTACT_EMAIL, sendNotification } from "../lib/mailer";
 
 const router: IRouter = Router();
 
@@ -15,17 +15,23 @@ function escapeHtml(s: string): string {
 }
 
 const TOPIC_LABELS: Record<string, string> = {
-  question: "General question",
-  suggestion: "Suggestion",
-  feedback: "Feedback",
-  business: "Business inquiry",
+  general_question: "General question",
+  technical_support: "Technical support",
+  media_press: "Media or press",
+  partnership: "Partnership inquiry",
+  event_listing: "Event listing",
+  location_listing: "Location listing",
+  sponsorship: "Sponsorship",
+  billing: "Billing",
   other: "Other",
 };
 
 router.post("/contact", async (req, res) => {
   const parsed = SubmitContactMessageBody.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
+    res
+      .status(400)
+      .json({ error: "Invalid input", issues: parsed.error.issues });
     return;
   }
   const data = parsed.data;
@@ -67,7 +73,12 @@ router.post("/contact", async (req, res) => {
     `Message id: ${row!.id}`,
   ].join("\n");
 
-  const delivery = await sendNotification({ to: NOTIFY_EMAIL, subject, text, html });
+  const delivery = await sendNotification({
+    to: CONTACT_EMAIL,
+    subject,
+    text,
+    html,
+  });
   await db
     .update(contactMessagesTable)
     .set({ emailDelivered: delivery })
