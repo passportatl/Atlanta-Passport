@@ -1,6 +1,14 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { CheckCircle2, ChevronDown, MapPin, Search, X } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  MapPin,
+  Search,
+  Sparkles,
+  Stamp,
+  X,
+} from "lucide-react";
 import BusinessImage from "@/components/BusinessImage";
 import CategoryBadge from "@/components/CategoryBadge";
 import Footer from "@/components/layout/Footer";
@@ -177,6 +185,19 @@ function LocationCard({
             )}
           </div>
 
+          {business.isStampStop && (
+            <span className="badge-sticker mb-2 inline-flex items-center gap-1 self-start whitespace-normal bg-brand-lime text-[9px] text-foreground">
+              <Stamp className="h-3 w-3 shrink-0" />
+              Passport Stamp Location
+            </span>
+          )}
+          {!business.isStampStop && business.priorityListing && (
+            <span className="badge-sticker mb-2 inline-flex items-center gap-1 self-start whitespace-normal bg-brand-yellow text-[9px] text-brand-yellow-foreground">
+              <Sparkles className="h-3 w-3 shrink-0" />
+              Priority Listing
+            </span>
+          )}
+
           <div className="mb-2 flex items-start gap-1 text-xs text-muted-foreground">
             <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
             <span className="break-words">{business.neighborhood}</span>
@@ -201,13 +222,19 @@ function LocationCard({
 
           <div className="mt-auto flex flex-wrap items-center justify-between gap-2">
             <MapReadiness location={business} />
-            <Link
-              href={`/listing/${business.id}`}
-              onClick={(event) => event.stopPropagation()}
-              className="text-[11px] font-semibold text-foreground underline-offset-4 hover:underline"
-            >
-              View details →
-            </Link>
+            {business.detailPageEnabled ? (
+              <Link
+                href={`/listing/${business.id}`}
+                onClick={(event) => event.stopPropagation()}
+                className="text-[11px] font-semibold text-foreground underline-offset-4 hover:underline"
+              >
+                View details →
+              </Link>
+            ) : (
+              <span className="text-[10px] font-display uppercase tracking-wide text-muted-foreground">
+                Basic listing
+              </span>
+            )}
           </div>
         </div>
       </div>
