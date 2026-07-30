@@ -51,6 +51,10 @@ describe("Explore canonical location compatibility adapter", () => {
       canonicalSlug: "atlantucky",
       categoryId: "restaurant",
       description: "Canonical description",
+      isStampStop: true,
+      priorityListing: true,
+      priorityRank: 100,
+      detailPageEnabled: true,
       locationSource: "canonical",
     });
     expect(result.matchedCanonicalCount).toBe(1);
@@ -62,7 +66,12 @@ describe("Explore canonical location compatibility adapter", () => {
       (candidate) => candidate.id === "peachtree-wellness",
     );
 
-    expect(unmatched?.locationSource).toBe("static-fallback");
+    expect(unmatched).toMatchObject({
+      locationSource: "static-fallback",
+      priorityListing: false,
+      priorityRank: 0,
+      detailPageEnabled: true,
+    });
   });
 
   it("reports canonical records that do not yet map to static identities", () => {

@@ -28,6 +28,10 @@ import {
   getExploreFilterOptions,
   matchesExploreFilters,
 } from "@/lib/explore-filtering";
+import {
+  getExploreSessionSeed,
+  rankExploreLocations,
+} from "@/lib/explore-ranking";
 import BusinessMap, { type EventMarkerData } from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
@@ -102,6 +106,7 @@ export default function MapShell() {
   );
   const [activeTagIds, setActiveTagIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [exploreSessionSeed] = useState(getExploreSessionSeed);
   const [selectedBizId, setSelectedBizId] = useState<string | undefined>(
     undefined,
   );
@@ -170,7 +175,7 @@ export default function MapShell() {
   );
 
   const filteredBusinesses = useMemo(() => {
-    return exploreBusinesses.filter((business) =>
+    const matching = exploreBusinesses.filter((business) =>
       matchesExploreFilters(business, {
         query: searchQuery,
         areaIds: activeAreaIds,
@@ -178,12 +183,14 @@ export default function MapShell() {
         tagIds: activeTagIds,
       }),
     );
+    return rankExploreLocations(matching, exploreSessionSeed);
   }, [
     exploreBusinesses,
     activeAreaIds,
     activeCategoryIds,
     activeTagIds,
     searchQuery,
+    exploreSessionSeed,
   ]);
 
   // The Routes view highlights one curated route at a time: the map shows only

@@ -18,9 +18,13 @@ export type ExploreLocation = (typeof staticBusinesses)[number] & {
   tags?: string[];
   areaId?: string;
   mapReadiness?: Business["mapReadiness"];
+  isStampStop?: boolean;
   detailPageEnabled?: boolean;
   priorityListing?: boolean;
   priorityRank?: number;
+  entitlementStartsAt?: string | null;
+  entitlementEndsAt?: string | null;
+  sortKey?: string;
   locationSource?: "canonical" | "static-fallback";
 };
 
@@ -69,6 +73,12 @@ function legacyTagIds(location: (typeof staticBusinesses)[number]): string[] {
   return [...new Set(categories.map(toLocationTaxonomyId).filter(Boolean))];
 }
 
+function legacyStampStop(location: (typeof staticBusinesses)[number]): boolean {
+  return Boolean(
+    STAMP_SLUG[location.id] || ("stampSpot" in location && location.stampSpot),
+  );
+}
+
 export function mergeCanonicalExploreLocations(
   canonical: readonly Business[],
 ): ExploreLocationMerge {
@@ -82,6 +92,11 @@ export function mergeCanonicalExploreLocations(
         tags: legacyTagIds(location),
         areaId: toLocationTaxonomyId(location.neighborhood),
         mapReadiness: "coordinates-present",
+        isStampStop: legacyStampStop(location),
+        detailPageEnabled: true,
+        priorityListing: false,
+        priorityRank: 0,
+        sortKey: `${location.name.toLocaleLowerCase("en-US")}:${location.id}`,
         locationSource: "static-fallback",
       };
     }
@@ -102,9 +117,13 @@ export function mergeCanonicalExploreLocations(
       tags: record.tags.length > 0 ? record.tags : legacyTagIds(location),
       areaId: record.areaId,
       mapReadiness: record.mapReadiness,
+      isStampStop: record.isStampStop,
       detailPageEnabled: record.detailPageEnabled,
       priorityListing: record.priorityListing,
       priorityRank: record.priorityRank,
+      entitlementStartsAt: record.entitlementStartsAt,
+      entitlementEndsAt: record.entitlementEndsAt,
+      sortKey: record.sortKey,
       locationSource: "canonical",
     };
   });
@@ -157,6 +176,11 @@ export function useExploreLocations() {
             tags: legacyTagIds(location),
             areaId: toLocationTaxonomyId(location.neighborhood),
             mapReadiness: "coordinates-present",
+            isStampStop: legacyStampStop(location),
+            detailPageEnabled: status === "disabled",
+            priorityListing: false,
+            priorityRank: 0,
+            sortKey: `${location.name.toLocaleLowerCase("en-US")}:${location.id}`,
             locationSource: "static-fallback",
           }),
         );
