@@ -30,6 +30,8 @@ describe("guest route access", () => {
     "/passport/stamps",
     "/passport/explore",
     "/passport/events",
+    "/passport/legends",
+    "/passport/shop",
     "/passport/routes",
     "/redeem/5",
     "/events/example",

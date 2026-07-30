@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Compass, Stamp as StampIcon, Map, Mail, Trophy, Calendar, Menu, X, ArrowLeft } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Calendar,
+  Compass,
+  Mail,
+  Map,
+  Menu,
+  ShoppingBag,
+  Stamp as StampIcon,
+  Trophy,
+  X,
+} from "lucide-react";
 import Logo from "@/components/Logo";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { SocialLinks } from "@/components/SocialLinks";
@@ -20,6 +32,8 @@ const TABS = [
   { href: "/passport/explore", label: "Explore", icon: Compass, exact: true },
   { href: "/passport/routes", label: "Routes", icon: Map },
   { href: "/passport/events", label: "Events", icon: Calendar },
+  { href: "/passport/legends", label: "Legends", icon: BookOpen },
+  { href: "/passport/shop", label: "Shop", icon: ShoppingBag },
   { href: "/passport/stamps", label: "Stamps", icon: StampIcon },
   { href: "/passport/contact", label: "Contact", icon: Mail },
   { href: "/passport", label: "Rewards", icon: Trophy, exact: true },
@@ -44,7 +58,9 @@ function renderTab(tab: Tab, location: string) {
       <Icon className="w-5 h-5 mb-0.5" strokeWidth={2.5} />
       <span
         className={`transition-opacity duration-150 ${
-          active ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
+          active
+            ? "opacity-100"
+            : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
         }`}
       >
         {tab.label.toUpperCase()}
@@ -227,8 +243,8 @@ export function PassportBottomNav() {
           </Link>
 
           {/* Desktop: full tab bar + social bubble */}
-          <div className="hidden md:grid grid-cols-7 items-center flex-1 min-w-0">
-            {TABS.slice(0, 3).map((tab) => renderTab(tab, location))}
+          <div className="hidden md:grid grid-cols-9 items-center flex-1 min-w-0">
+            {TABS.slice(0, 4).map((tab) => renderTab(tab, location))}
             <Link
               href="/passport"
               aria-label="Passport ATL profile"
@@ -240,7 +256,7 @@ export function PassportBottomNav() {
                 className="absolute bottom-2 left-1/2 -translate-x-1/2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]"
               />
             </Link>
-            {TABS.slice(3).map((tab) => renderTab(tab, location))}
+            {TABS.slice(4).map((tab) => renderTab(tab, location))}
           </div>
           <div className="hidden md:inline-flex h-10 px-1 items-center border-2 border-foreground bg-brand-cream rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]">
             <SocialLinks linkClassName="h-7 w-7 text-foreground/80 hover:text-brand-red hover:bg-foreground/10" />
@@ -255,7 +271,11 @@ export function PassportBottomNav() {
             aria-expanded={menuOpen}
             className="md:hidden h-10 w-16 shrink-0 inline-flex items-center justify-center border-2 border-foreground bg-brand-cream text-foreground rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))]"
           >
-            {menuOpen ? <X className="w-5 h-5" strokeWidth={2.5} /> : <Menu className="w-5 h-5" strokeWidth={2.5} />}
+            {menuOpen ? (
+              <X className="w-5 h-5" strokeWidth={2.5} />
+            ) : (
+              <Menu className="w-5 h-5" strokeWidth={2.5} />
+            )}
           </button>
         </div>
       </nav>

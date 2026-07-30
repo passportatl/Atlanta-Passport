@@ -7,7 +7,7 @@ import {
   type SetStateAction,
 } from "react";
 import { useLocation, useSearch, useRoute, Link } from "wouter";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen, ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   businesses as staticBusinesses,
@@ -42,6 +42,7 @@ import EventDetailBody from "@/pages/event-detail-body";
 import RouteDetailBody from "@/pages/route-detail-body";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import Footer from "@/components/layout/Footer";
+import { MemberComingSoon } from "@/passport/MemberComingSoon";
 
 export type RouteOptions = { start: RouteStart; time: RouteTime };
 const DEFAULT_ROUTE_OPTIONS: RouteOptions = { start: "marta", time: "noon" };
@@ -76,9 +77,13 @@ export default function MapShell() {
           ? "events"
           : location === "/passport/stamps"
             ? "stamps"
-            : location === "/passport/routes"
-              ? "routes"
-              : "explore";
+            : location === "/passport/legends"
+              ? "legends"
+              : location === "/passport/shop"
+                ? "shop"
+                : location === "/passport/routes"
+                  ? "routes"
+                  : "explore";
 
   const params =
     typeof window !== "undefined"
@@ -400,6 +405,26 @@ export default function MapShell() {
       {view === "stamps" && (
         <PassportPanel>
           <PassportStamps onSelectBusiness={setSelectedBizId} />
+        </PassportPanel>
+      )}
+      {view === "legends" && (
+        <PassportPanel>
+          <MemberComingSoon
+            eyebrow="Stories from the city"
+            title="ATL Legends"
+            description="Restaurant features, event spotlights, neighborhood guides, and the people shaping Atlanta are coming in the next major Passport ATL update."
+            icon={BookOpen}
+          />
+        </PassportPanel>
+      )}
+      {view === "shop" && (
+        <PassportPanel>
+          <MemberComingSoon
+            eyebrow="Passport ATL goods"
+            title="Shop"
+            description="Passport merchandise, Atlanta keepsakes, and member-exclusive drops are coming in the next major Passport ATL update."
+            icon={ShoppingBag}
+          />
         </PassportPanel>
       )}
       {view === "explore" && (
