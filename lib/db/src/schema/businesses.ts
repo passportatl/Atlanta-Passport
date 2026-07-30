@@ -12,6 +12,7 @@ import { z } from "zod/v4";
 
 export const businessesTable = pgTable("businesses", {
   id: uuid("id").primaryKey().defaultRandom(),
+  partnerOrganizationId: uuid("partner_organization_id"),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
   category: text("category").notNull(),

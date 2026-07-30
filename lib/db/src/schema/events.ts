@@ -1,7 +1,16 @@
-import { boolean, doublePrecision, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  doublePrecision,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 export const eventsTable = pgTable("events", {
   id: uuid("id").primaryKey().defaultRandom(),
+  partnerOrganizationId: uuid("partner_organization_id"),
   slug: text("slug").unique(),
   name: text("name").notNull(),
   category: text("category").notNull().default(""),
@@ -28,7 +37,9 @@ export const eventsTable = pgTable("events", {
   // source | geocoded | manual — provenance of the address/coords
   addressSource: text("address_source"),
   // When true, automated enrichment must never overwrite location fields.
-  locationVerifiedByAdmin: boolean("location_verified_by_admin").notNull().default(false),
+  locationVerifiedByAdmin: boolean("location_verified_by_admin")
+    .notNull()
+    .default(false),
   // Last time a geocode was attempted for this row (success or failure).
   geocodeAttemptedAt: timestamp("geocode_attempted_at"),
   description: text("description"),
@@ -75,8 +86,12 @@ export const eventsTable = pgTable("events", {
   paymentId: text("payment_id"),
   paymentStatus: text("payment_status"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export type Event = typeof eventsTable.$inferSelect;
@@ -89,7 +104,9 @@ export const eventAuditLog = pgTable("event_audit_log", {
   oldValue: text("old_value"),
   newValue: text("new_value"),
   note: text("note"),
-  changedAt: timestamp("changed_at", { withTimezone: true }).notNull().defaultNow(),
+  changedAt: timestamp("changed_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export type EventAuditEntry = typeof eventAuditLog.$inferSelect;
