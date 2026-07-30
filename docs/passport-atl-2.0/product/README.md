@@ -8,6 +8,9 @@ will be evaluated.
 - [Explore redesign](explore-redesign.md) — current-state audit, approved target
   behavior, data requirements, acceptance criteria, and delivery slices for
   authenticated location discovery.
+- [Partner portal foundation](partner-portal-foundation.md) — separate partner
+  authentication context, organization ownership, authorization, migration,
+  and secure delivery slices.
 
 Include:
 
