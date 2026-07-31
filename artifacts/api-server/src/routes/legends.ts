@@ -80,7 +80,9 @@ router.get("/legends", async (req, res) => {
 });
 
 router.get("/legends/:slug", async (req, res) => {
-  const slug = req.params.slug;
+  const slug = Array.isArray(req.params.slug)
+    ? req.params.slug[0]
+    : req.params.slug;
   if (!slug) {
     res.status(400).json({ error: "Missing legend slug" });
     return;
@@ -156,7 +158,7 @@ router.post("/admin/legends", requireAdmin, async (req, res) => {
 });
 
 router.patch("/admin/legends/:id", requireAdmin, async (req, res) => {
-  const id = req.params.id;
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   if (!id) {
     res.status(400).json({ error: "Missing legend ID" });
     return;
@@ -221,10 +223,7 @@ router.patch("/admin/legends/:id", requireAdmin, async (req, res) => {
   }
 
   const requestedSlug = optionalString(req.body?.slug);
-  const nextSlug =
-    requestedSlug === undefined
-      ? current.slug
-      : slugify(requestedSlug ?? nextTitle);
+  const nextSlug = slugify(requestedSlug ?? current.slug ?? nextTitle);
 
   const update: Partial<typeof legendsPostsTable.$inferInsert> = {
     updatedAt: new Date(),
@@ -242,7 +241,6 @@ router.patch("/admin/legends/:id", requireAdmin, async (req, res) => {
     "subtitle",
     "excerpt",
     "body",
-    "category",
     "authorName",
     "authorBio",
     "authorImage",
@@ -256,6 +254,8 @@ router.patch("/admin/legends/:id", requireAdmin, async (req, res) => {
     const value = optionalString(req.body?.[field]);
     if (value !== undefined) update[field] = value;
   }
+  const category = optionalString(req.body?.category);
+  if (category) update.category = category;
 
   const arrayFields = [
     "tags",
