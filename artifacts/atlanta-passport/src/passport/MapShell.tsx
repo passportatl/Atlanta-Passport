@@ -7,7 +7,7 @@ import {
   type SetStateAction,
 } from "react";
 import { useLocation, useSearch, useRoute, Link } from "wouter";
-import { ArrowLeft, BookOpen, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   businesses as staticBusinesses,
@@ -32,6 +32,8 @@ import {
   getExploreSessionSeed,
   rankExploreLocations,
 } from "@/lib/explore-ranking";
+import { LegendsFeed } from "@/passport/LegendsFeed";
+import { LegendDetail } from "@/passport/LegendDetail";
 import BusinessMap, { type EventMarkerData } from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
@@ -67,10 +69,15 @@ export default function MapShell() {
   const { t } = useTranslation();
   const [isEventDetail, eventDetailParams] = useRoute("/passport/events/:id");
   const [isRouteDetail, routeDetailParams] = useRoute("/passport/routes/:id");
+  const [isLegendDetail, legendDetailParams] = useRoute(
+    "/passport/legends/:slug",
+  );
   const view = isEventDetail
     ? "event-detail"
     : isRouteDetail
       ? "route-detail"
+      : isLegendDetail
+        ? "legend-detail"
       : location === "/passport"
         ? "profile"
         : location === "/passport/events"
@@ -409,12 +416,19 @@ export default function MapShell() {
       )}
       {view === "legends" && (
         <PassportPanel>
-          <MemberComingSoon
-            eyebrow="Stories from the city"
-            title="ATL Legends"
-            description="Restaurant features, event spotlights, neighborhood guides, and the people shaping Atlanta are coming in the next major Passport ATL update."
-            icon={BookOpen}
-          />
+          <LegendsFeed />
+        </PassportPanel>
+      )}
+      {view === "legend-detail" && (
+        <PassportPanel>
+          <Link
+            href="/passport/legends"
+            className="mb-4 inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.16em] text-brand-red hover:underline"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" />
+            Back to ATL Legends
+          </Link>
+          <LegendDetail slug={legendDetailParams?.slug ?? ""} />
         </PassportPanel>
       )}
       {view === "shop" && (

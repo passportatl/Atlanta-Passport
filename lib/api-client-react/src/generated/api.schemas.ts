@@ -5,6 +5,35 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface LegendSummary {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle?: string | null;
+  excerpt?: string | null;
+  category: string;
+  tags: string[];
+  authorName?: string | null;
+  authorImage?: string | null;
+  heroImage?: string | null;
+  publishedAt: string;
+  isFeatured: boolean;
+  readingTimeMinutes?: number | null;
+}
+
+export type Legend = LegendSummary & {
+  body?: string | null;
+  authorBio?: string | null;
+  galleryImages: string[];
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  socialPreviewImage?: string | null;
+  relatedLocationSlugs: string[];
+  relatedEventIds: string[];
+  relatedRouteSlugs: string[];
+  relatedExperienceSlugs: string[];
+};
+
 export interface HealthStatus {
   status: string;
 }
@@ -36,6 +65,15 @@ export interface UpdateVisitorPreferencesInput {
   marketingOptIn: boolean;
 }
 
+export type BusinessMapReadiness =
+  (typeof BusinessMapReadiness)[keyof typeof BusinessMapReadiness];
+
+export const BusinessMapReadiness = {
+  verified: "verified",
+  "coordinates-present": "coordinates-present",
+  "missing-coordinates": "missing-coordinates",
+} as const;
+
 export interface Business {
   id: string;
   slug: string;
@@ -53,7 +91,7 @@ export interface Business {
   icon: string;
   latitude?: number | null;
   longitude?: number | null;
-  mapReadiness: "verified" | "coordinates-present" | "missing-coordinates";
+  mapReadiness: BusinessMapReadiness;
   publicStatus: string;
   isStampStop: boolean;
   priorityListing: boolean;
@@ -480,4 +518,9 @@ export type ReprocessEventLocations200 = {
   skippedManuallyVerified: number;
   outOfArea: number;
   remainingNeedingGeocode: number;
+};
+
+export type ListLegendsParams = {
+  search?: string;
+  category?: string;
 };

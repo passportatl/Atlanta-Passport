@@ -13,6 +13,7 @@ import locationSubmissionsRouter from "./location-submissions";
 import routesRouter from "./routes";
 import snapshotImportRouter from "./snapshot-import";
 import partnerRouter from "./partner";
+import legendsRouter from "./legends";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,6 @@ router.use(locationSubmissionsRouter);
 router.use(routesRouter);
 router.use(snapshotImportRouter);
 router.use(partnerRouter);
+router.use(legendsRouter);
 
 export default router;
