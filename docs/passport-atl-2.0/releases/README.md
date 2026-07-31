@@ -21,3 +21,4 @@ Current launch runbooks:
 
 - [Partner portal launch runbook](../../database/partner-portal-rollout.md)
 - [Partner portal release candidate](2026-08-partner-portal-release-candidate.md)
+- [August 5 launch readiness audit](2026-08-05-launch-readiness-audit.md)
