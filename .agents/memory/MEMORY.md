@@ -1,5 +1,5 @@
 - [Staff admin accounts](staff-auth.md) — staff cookie sessions + legacy x-admin-key coexist in requireAdmin; seeding from INITIAL_STAFF_PASSWORD; AdminGate wraps all admin pages; audit prefers session user.
-- [Pricing single source](pricing-single-source.md) — @workspace/pricing is the only price list; intake routes recompute totals server-side; ids must mirror the live forms (event basic/signature, location starter/growth/premier).
+- [Pricing single source](pricing-single-source.md) — @workspace/pricing is the only price list; intake routes recompute totals server-side, never trust client prices.
 - [Dev→prod data copy](dev-prod-data-copy.md) — publishing never copies data; use the flag-gated admin snapshot-import route, parents first, and filter seeded-slug collisions.
 - [Admin session gating](admin-session-gating.md) — validate the sessionStorage admin key server-side on mount and clear on 401; blind trust after secret rotation looks like total data loss.
 - [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).

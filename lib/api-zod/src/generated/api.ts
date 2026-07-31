@@ -215,9 +215,6 @@ export const submitApplicationBodyContactNameMin = 2;
 export const submitApplicationBodyPhoneMin = 7;
 
 export const submitApplicationBodyAddressMin = 5;
-
-export const submitApplicationBodyOfferMin = 5;
-
 export const SubmitApplicationBody = zod.object({
   submissionType: zod.enum(["business", "event", "vendor"]),
   businessName: zod.string().min(submitApplicationBodyBusinessNameMin),
@@ -247,7 +244,7 @@ export const SubmitApplicationBody = zod.object({
   addOns: zod.array(zod.string()).optional(),
   vendorType: zod.string().optional(),
   routeId: zod.string().optional(),
-  offer: zod.string().min(submitApplicationBodyOfferMin),
+  offer: zod.string(),
   prizeSponsorship: zod.string().optional(),
   nearMarta: zod.boolean().optional(),
   nearBeltline: zod.boolean().optional(),

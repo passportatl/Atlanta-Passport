@@ -8,7 +8,6 @@ import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
 import Home from "@/pages/home";
 import Partners from "@/pages/partners";
-import PartnersComingSoon from "@/pages/partners-coming-soon";
 import EventDetail from "@/pages/event-detail";
 import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
@@ -47,10 +46,9 @@ function MarketingRoutes() {
         <Route path="/list-a-location" component={ListALocation} />
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/routes/:id" component={RouteDetail} />
-        {/* TEMPORARY: applications paused — /apply shows the same holding page
-            as /partners. To revert, change `PartnersComingSoon` back to `Apply`
-            (the real page is still imported above and fully intact). */}
-        <Route path="/apply" component={PartnersComingSoon} />
+        <Route path="/apply">
+          <Apply />
+        </Route>
         {/* Event submissions stay open while partner applications are paused:
             /list-event renders the full event listing form. */}
         <Route path="/list-event" component={ListEvent} />

@@ -1006,7 +1006,9 @@ components:
           items: { type: string }
         vendorType: { type: string }
         routeId: { type: string }
-        offer: { type: string, minLength: 5 }
+        # Empty for vendor/event submissions; the business form and server-side
+        # checks enforce a meaningful offer where it's required.
+        offer: { type: string }
         prizeSponsorship: { type: string }
         nearMarta: { type: boolean }
         nearBeltline: { type: boolean }
