@@ -6,7 +6,6 @@ import {
 import { Loader2, Download, RefreshCw, BarChart3, Users, Mail, Activity } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 import AdminGate from "@/components/AdminGate";
-import { restoreAdminKey } from "@/lib/adminSession";
 
 export default function AdminInsights() {
   return (
