@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   isGuestAccessibleRoute,
+  isPartnerRoute,
   isProtectedRoute,
   MEMBER_HOME_ROUTE,
 } from "./route-access";
@@ -9,6 +10,7 @@ describe("guest route access", () => {
   it.each([
     "/",
     "/partners",
+    "/partners/sso-callback",
     "/apply",
     "/list-event",
     "/list-a-location",
@@ -55,6 +57,24 @@ describe("guest route access", () => {
     expect(isGuestAccessibleRoute("/partners/?source=home#form")).toBe(true);
     expect(isProtectedRoute("/passport/stamps/?month=july")).toBe(true);
   });
+});
+
+describe("partner context", () => {
+  it.each([
+    "/partners",
+    "/partners/",
+    "/partners/sso-callback",
+    "/partners?invitation=token",
+  ])("recognizes the partner route %s", (route) => {
+    expect(isPartnerRoute(route)).toBe(true);
+  });
+
+  it.each(["/", "/passport", "/sign-in", "/list-a-location"])(
+    "does not treat %s as a partner route",
+    (route) => {
+      expect(isPartnerRoute(route)).toBe(false);
+    },
+  );
 });
 
 describe("member entry", () => {

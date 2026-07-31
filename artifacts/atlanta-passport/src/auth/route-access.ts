@@ -13,7 +13,12 @@ const PUBLIC_GUEST_ROUTES = new Set([
   "/sign-up",
 ]);
 
-const PUBLIC_GUEST_PREFIXES = ["/sign-in/", "/sign-up/", "/stamp/"];
+const PUBLIC_GUEST_PREFIXES = [
+  "/sign-in/",
+  "/sign-up/",
+  "/partners/",
+  "/stamp/",
+];
 
 function normalizePathname(location: string): string {
   const pathname = location.split(/[?#]/, 1)[0] || "/";
@@ -43,4 +48,9 @@ export function isGuestAccessibleRoute(location: string): boolean {
 
 export function isProtectedRoute(location: string): boolean {
   return !isGuestAccessibleRoute(location);
+}
+
+export function isPartnerRoute(location: string): boolean {
+  const pathname = normalizePathname(location);
+  return pathname === "/partners" || pathname.startsWith("/partners/");
 }
