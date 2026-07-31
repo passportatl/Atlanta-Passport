@@ -24,6 +24,8 @@ tags:
     description: Partner applications
   - name: events
     description: Event calendar and intake
+  - name: legends
+    description: ATL Legends editorial content
 paths:
   /healthz:
     get:
@@ -506,8 +508,147 @@ paths:
               schema:
                 $ref: "#/components/schemas/ContactReceipt"
 
+  /legends:
+    get:
+      operationId: listLegends
+      tags: [legends]
+      summary: List published ATL Legends
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Published Legends
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LegendSummary"
+
+  /legends/{slug}:
+    get:
+      operationId: getLegend
+      tags: [legends]
+      summary: Get a published ATL Legend
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Published Legend
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Legend"
+        "404":
+          description: Not found
+
 components:
   schemas:
+    LegendSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+          nullable: true
+        excerpt:
+          type: string
+          nullable: true
+        category:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        authorName:
+          type: string
+          nullable: true
+        authorImage:
+          type: string
+          nullable: true
+        heroImage:
+          type: string
+          nullable: true
+        publishedAt:
+          type: string
+          format: date-time
+        isFeatured:
+          type: boolean
+        readingTimeMinutes:
+          type: integer
+          nullable: true
+      required:
+        - id
+        - slug
+        - title
+        - category
+        - tags
+        - publishedAt
+        - isFeatured
+
+    Legend:
+      allOf:
+        - $ref: "#/components/schemas/LegendSummary"
+        - type: object
+          properties:
+            body:
+              type: string
+              nullable: true
+            authorBio:
+              type: string
+              nullable: true
+            galleryImages:
+              type: array
+              items:
+                type: string
+            seoTitle:
+              type: string
+              nullable: true
+            seoDescription:
+              type: string
+              nullable: true
+            socialPreviewImage:
+              type: string
+              nullable: true
+            relatedLocationSlugs:
+              type: array
+              items:
+                type: string
+            relatedEventIds:
+              type: array
+              items:
+                type: string
+            relatedRouteSlugs:
+              type: array
+              items:
+                type: string
+            relatedExperienceSlugs:
+              type: array
+              items:
+                type: string
+          required:
+            - galleryImages
+            - relatedLocationSlugs
+            - relatedEventIds
+            - relatedRouteSlugs
+            - relatedExperienceSlugs
+
     HealthStatus:
       type: object
       properties:

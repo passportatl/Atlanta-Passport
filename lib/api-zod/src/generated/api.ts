@@ -78,6 +78,11 @@ export const GetVisitorResponse = zod.object({
   createdAt: zod.coerce.date(),
 });
 
+/**
+ * Updates the signed-in visitor's optional marketing preference. Required legal acceptance is recorded once with the current policy versions and cannot be revoked through this endpoint.
+
+ * @summary Record legal consent and update communication preferences
+ */
 export const UpdateVisitorPreferencesParams = zod.object({
   id: zod.coerce.string(),
 });
@@ -88,7 +93,19 @@ export const UpdateVisitorPreferencesBody = zod.object({
   marketingOptIn: zod.boolean(),
 });
 
-export const UpdateVisitorPreferencesResponse = GetVisitorResponse;
+export const UpdateVisitorPreferencesResponse = zod.object({
+  id: zod.string(),
+  firstName: zod.string(),
+  email: zod.string(),
+  phone: zod.string().nullish(),
+  termsAcceptedAt: zod.coerce.date().nullish(),
+  termsVersion: zod.string().nullish(),
+  privacyAcceptedAt: zod.coerce.date().nullish(),
+  privacyVersion: zod.string().nullish(),
+  marketingOptIn: zod.boolean(),
+  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
 
 /**
  * @summary List a visitor's collected stamps
@@ -767,3 +784,66 @@ export const SubmitContactMessageResponse = zod.object({
   id: zod.string(),
   emailDelivered: zod.string(),
 });
+
+/**
+ * @summary List published ATL Legends
+ */
+export const ListLegendsQueryParams = zod.object({
+  search: zod.coerce.string().optional(),
+  category: zod.coerce.string().optional(),
+});
+
+export const ListLegendsResponseItem = zod.object({
+  id: zod.string(),
+  slug: zod.string(),
+  title: zod.string(),
+  subtitle: zod.string().nullish(),
+  excerpt: zod.string().nullish(),
+  category: zod.string(),
+  tags: zod.array(zod.string()),
+  authorName: zod.string().nullish(),
+  authorImage: zod.string().nullish(),
+  heroImage: zod.string().nullish(),
+  publishedAt: zod.coerce.date(),
+  isFeatured: zod.boolean(),
+  readingTimeMinutes: zod.number().nullish(),
+});
+export const ListLegendsResponse = zod.array(ListLegendsResponseItem);
+
+/**
+ * @summary Get a published ATL Legend
+ */
+export const GetLegendParams = zod.object({
+  slug: zod.coerce.string(),
+});
+
+export const GetLegendResponse = zod
+  .object({
+    id: zod.string(),
+    slug: zod.string(),
+    title: zod.string(),
+    subtitle: zod.string().nullish(),
+    excerpt: zod.string().nullish(),
+    category: zod.string(),
+    tags: zod.array(zod.string()),
+    authorName: zod.string().nullish(),
+    authorImage: zod.string().nullish(),
+    heroImage: zod.string().nullish(),
+    publishedAt: zod.coerce.date(),
+    isFeatured: zod.boolean(),
+    readingTimeMinutes: zod.number().nullish(),
+  })
+  .and(
+    zod.object({
+      body: zod.string().nullish(),
+      authorBio: zod.string().nullish(),
+      galleryImages: zod.array(zod.string()),
+      seoTitle: zod.string().nullish(),
+      seoDescription: zod.string().nullish(),
+      socialPreviewImage: zod.string().nullish(),
+      relatedLocationSlugs: zod.array(zod.string()),
+      relatedEventIds: zod.array(zod.string()),
+      relatedRouteSlugs: zod.array(zod.string()),
+      relatedExperienceSlugs: zod.array(zod.string()),
+    }),
+  );

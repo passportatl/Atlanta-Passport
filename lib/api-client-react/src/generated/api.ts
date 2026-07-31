@@ -31,7 +31,10 @@ import type {
   ExportQrInput,
   ExportQrResult,
   HealthStatus,
+  Legend,
+  LegendSummary,
   ListAdminEventsParams,
+  ListLegendsParams,
   ListPublicEventsParams,
   RedeemPrizeInput,
   RedeemPrizeResult,
@@ -43,6 +46,7 @@ import type {
   SubmitApplicationInput,
   SubmitContactMessageInput,
   SubmitEventInput,
+  UpdateVisitorPreferencesInput,
   Visitor,
 } from "./api.schemas";
 
@@ -383,6 +387,96 @@ export function useGetVisitor<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Updates the signed-in visitor's optional marketing preference. Required legal acceptance is recorded once with the current policy versions and cannot be revoked through this endpoint.
+
+ * @summary Record legal consent and update communication preferences
+ */
+export const getUpdateVisitorPreferencesUrl = (id: string) => {
+  return `/api/visitors/${id}/preferences`;
+};
+
+export const updateVisitorPreferences = async (
+  id: string,
+  updateVisitorPreferencesInput: UpdateVisitorPreferencesInput,
+  options?: RequestInit,
+): Promise<Visitor> => {
+  return customFetch<Visitor>(getUpdateVisitorPreferencesUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateVisitorPreferencesInput),
+  });
+};
+
+export const getUpdateVisitorPreferencesMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateVisitorPreferences>>,
+    TError,
+    { id: string; data: BodyType<UpdateVisitorPreferencesInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateVisitorPreferences>>,
+  TError,
+  { id: string; data: BodyType<UpdateVisitorPreferencesInput> },
+  TContext
+> => {
+  const mutationKey = ["updateVisitorPreferences"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateVisitorPreferences>>,
+    { id: string; data: BodyType<UpdateVisitorPreferencesInput> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateVisitorPreferences(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateVisitorPreferencesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateVisitorPreferences>>
+>;
+export type UpdateVisitorPreferencesMutationBody =
+  BodyType<UpdateVisitorPreferencesInput>;
+export type UpdateVisitorPreferencesMutationError = ErrorType<void>;
+
+/**
+ * @summary Record legal consent and update communication preferences
+ */
+export const useUpdateVisitorPreferences = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateVisitorPreferences>>,
+    TError,
+    { id: string; data: BodyType<UpdateVisitorPreferencesInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateVisitorPreferences>>,
+  TError,
+  { id: string; data: BodyType<UpdateVisitorPreferencesInput> },
+  TContext
+> => {
+  return useMutation(getUpdateVisitorPreferencesMutationOptions(options));
+};
 
 /**
  * @summary List a visitor's collected stamps
@@ -1917,3 +2011,182 @@ export const useSubmitContactMessage = <
 > => {
   return useMutation(getSubmitContactMessageMutationOptions(options));
 };
+
+/**
+ * @summary List published ATL Legends
+ */
+export const getListLegendsUrl = (params?: ListLegendsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/legends?${stringifiedParams}`
+    : `/api/legends`;
+};
+
+export const listLegends = async (
+  params?: ListLegendsParams,
+  options?: RequestInit,
+): Promise<LegendSummary[]> => {
+  return customFetch<LegendSummary[]>(getListLegendsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListLegendsQueryKey = (params?: ListLegendsParams) => {
+  return [`/api/legends`, ...(params ? [params] : [])] as const;
+};
+
+export const getListLegendsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listLegends>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListLegendsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listLegends>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListLegendsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listLegends>>> = ({
+    signal,
+  }) => listLegends(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listLegends>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListLegendsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listLegends>>
+>;
+export type ListLegendsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List published ATL Legends
+ */
+
+export function useListLegends<
+  TData = Awaited<ReturnType<typeof listLegends>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListLegendsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listLegends>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListLegendsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get a published ATL Legend
+ */
+export const getGetLegendUrl = (slug: string) => {
+  return `/api/legends/${slug}`;
+};
+
+export const getLegend = async (
+  slug: string,
+  options?: RequestInit,
+): Promise<Legend> => {
+  return customFetch<Legend>(getGetLegendUrl(slug), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetLegendQueryKey = (slug: string) => {
+  return [`/api/legends/${slug}`] as const;
+};
+
+export const getGetLegendQueryOptions = <
+  TData = Awaited<ReturnType<typeof getLegend>>,
+  TError = ErrorType<void>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getLegend>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetLegendQueryKey(slug);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getLegend>>> = ({
+    signal,
+  }) => getLegend(slug, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getLegend>>, TError, TData> & {
+    queryKey: QueryKey;
+  };
+};
+
+export type GetLegendQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getLegend>>
+>;
+export type GetLegendQueryError = ErrorType<void>;
+
+/**
+ * @summary Get a published ATL Legend
+ */
+
+export function useGetLegend<
+  TData = Awaited<ReturnType<typeof getLegend>>,
+  TError = ErrorType<void>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getLegend>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetLegendQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
