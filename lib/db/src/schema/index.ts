@@ -15,3 +15,4 @@ export * from "./passport-experiences";
 export * from "./location-submissions";
 export * from "./routes";
 export * from "./partners";
+export * from "./storefront";
