@@ -23,3 +23,9 @@ Include:
 Start each proposal with its status, owner, last-updated date, and links to
 related issues or decision records. Avoid prescribing implementation unless it
 is a genuine product constraint.
+
+## Approved expansion specifications
+
+- [ATL Legends](atl-legends.md)
+- [Passport Storefront](passport-storefront.md)
+- [AI-driven routes](ai-driven-routes.md)
