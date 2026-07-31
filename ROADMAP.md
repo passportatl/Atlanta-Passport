@@ -42,6 +42,8 @@ and no high-priority defects remain.
   search, featured stories, and related locations, events, routes, and partners.
 - Build the staff workflow for drafts, review, scheduling, publishing, SEO,
   media, and clearly labeled paid partner features.
+- Follow the approved
+  [ATL Legends specification](docs/passport-atl-2.0/product/atl-legends.md).
 
 ### Passport Storefront
 
@@ -49,6 +51,8 @@ and no high-priority defects remain.
   taxes, shipping, fulfillment, refunds, and transactional communication.
 - Build staff order management and support member-exclusive products and
   reward-linked offers through established payment and commerce services.
+- Follow the approved
+  [Passport Storefront specification](docs/passport-atl-2.0/product/passport-storefront.md).
 
 ### AI-driven routes
 
@@ -59,6 +63,11 @@ and no high-priority defects remain.
 - Distinguish curated, sponsored, and AI-generated routes.
 - Add deterministic validation, staff controls, saving, sharing, analytics, and
   user feedback before any public rollout.
+- Follow the approved
+  [AI-driven routes specification](docs/passport-atl-2.0/product/ai-driven-routes.md).
+
+The shared delivery boundary is documented in
+[Expansion Platform Architecture](docs/passport-atl-2.0/architecture/expansion-platform.md).
 
 ## Definition of readiness
 
