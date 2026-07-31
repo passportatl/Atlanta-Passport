@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { createHash, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { clerkClient, getAuth } from "@clerk/express";
 import {
@@ -18,15 +18,14 @@ import {
   resolvePartnerSession,
 } from "../lib/partner-auth";
 import { stringParam } from "../lib/params";
+import {
+  hashPartnerInvitationToken,
+  isPartnerRole,
+  normalizePartnerEmail,
+  validatePartnerInvitation,
+} from "../domain/partner-security";
 
 const router: IRouter = Router();
-const PARTNER_ROLES = new Set([
-  "owner",
-  "manager",
-  "editor",
-  "analyst",
-  "billing",
-]);
 
 function slugify(value: string) {
   return value
@@ -35,10 +34,6 @@ function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 80);
-}
-
-function hashToken(token: string) {
-  return createHash("sha256").update(token).digest("hex");
 }
 
 router.get("/partner/session", async (req, res) => {
@@ -81,30 +76,30 @@ router.post("/partner/invitations/accept", async (req, res) => {
   const [invitation] = await db
     .select()
     .from(partnerInvitationsTable)
-    .where(eq(partnerInvitationsTable.tokenHash, hashToken(token)));
-  if (
-    !invitation ||
-    invitation.acceptedAt ||
-    invitation.revokedAt ||
-    invitation.expiresAt <= new Date()
-  ) {
+    .where(
+      eq(partnerInvitationsTable.tokenHash, hashPartnerInvitationToken(token)),
+    );
+  if (!invitation) {
     res.status(400).json({ error: "Invitation is invalid or expired" });
     return;
   }
 
   const clerkUser = await clerkClient.users.getUser(userId);
-  const emails = clerkUser.emailAddresses.map((item) =>
-    item.emailAddress.trim().toLowerCase(),
-  );
-  if (!emails.includes(invitation.intendedEmail.toLowerCase())) {
-    res
-      .status(403)
-      .json({ error: "Invitation email does not match this account" });
+  const emails = clerkUser.emailAddresses.map((item) => item.emailAddress);
+  const invitationStatus = validatePartnerInvitation(invitation, emails);
+  if (invitationStatus !== "valid") {
+    const status = invitationStatus === "email_mismatch" ? 403 : 400;
+    res.status(status).json({
+      error:
+        invitationStatus === "email_mismatch"
+          ? "Invitation email does not match this account"
+          : "Invitation is invalid or expired",
+    });
     return;
   }
-  const primaryEmail =
-    clerkUser.primaryEmailAddress?.emailAddress.toLowerCase() ??
-    invitation.intendedEmail.toLowerCase();
+  const primaryEmail = normalizePartnerEmail(
+    clerkUser.primaryEmailAddress?.emailAddress ?? invitation.intendedEmail,
+  );
   const displayName =
     [clerkUser.firstName, clerkUser.lastName]
       .filter(Boolean)
@@ -306,7 +301,7 @@ router.post(
         ? req.body.email.trim().toLowerCase()
         : "";
     const role = typeof req.body?.role === "string" ? req.body.role : "owner";
-    if (!intendedEmail.includes("@") || !PARTNER_ROLES.has(role)) {
+    if (!intendedEmail.includes("@") || !isPartnerRole(role)) {
       res.status(400).json({ error: "Valid email and partner role required" });
       return;
     }
@@ -327,7 +322,7 @@ router.post(
         partnerOrganizationId: organizationId,
         intendedEmail,
         role,
-        tokenHash: hashToken(token),
+        tokenHash: hashPartnerInvitationToken(token),
         invitedByActor: "admin",
         expiresAt,
       })

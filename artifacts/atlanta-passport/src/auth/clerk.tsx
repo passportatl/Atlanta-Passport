@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLinkVisitor, type Visitor } from "@workspace/api-client-react";
 import { useVisitor } from "@/passport/visitor-context";
 import logoSrc from "@/assets/images/passport-atl-logo.png";
-import { MEMBER_HOME_ROUTE } from "@/auth/route-access";
+import { isPartnerRoute, MEMBER_HOME_ROUTE } from "@/auth/route-access";
 
 // REQUIRED — copy verbatim. Resolves the key from window.location.hostname so the
 // same build serves multiple Clerk custom domains.
@@ -198,7 +198,7 @@ function ClerkVisitorBridge() {
   useEffect(() => {
     if (!isLoaded) return;
 
-    if (location === "/partners" || location.startsWith("/partners/")) {
+    if (isPartnerRoute(location)) {
       setLinkedReady(false);
       return;
     }

@@ -36,7 +36,11 @@ import {
 import { PassportLayout } from "@/passport/PassportLayout";
 import MapShell from "@/passport/MapShell";
 import { ClerkProviders, SignInPage, SignUpPage } from "@/auth/clerk";
-import { isProtectedRoute, MEMBER_HOME_ROUTE } from "@/auth/route-access";
+import {
+  isPartnerRoute,
+  isProtectedRoute,
+  MEMBER_HOME_ROUTE,
+} from "@/auth/route-access";
 
 const queryClient = new QueryClient();
 
@@ -249,7 +253,7 @@ function ScrollToTop() {
 function Router() {
   const [location] = useLocation();
   const { isLoaded, isSignedIn } = useUser();
-  if (location === "/partners" || location.startsWith("/partners/")) {
+  if (isPartnerRoute(location)) {
     return <PartnerPortal />;
   }
   if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
