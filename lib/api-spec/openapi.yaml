@@ -714,6 +714,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/ReminderRunResult"
 
+  /admin/staff-directory:
+    get:
+      operationId: getStaffDirectory
+      tags: [admin]
+      summary: Staff directory (name -> email) used to route per-staff reminder digests
+      responses:
+        "200":
+          description: Directory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffDirectory"
+    put:
+      operationId: updateStaffDirectory
+      tags: [admin]
+      summary: Replace the staff directory (admin-editable name -> email mapping)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffDirectoryInput"
+      responses:
+        "200":
+          description: Updated directory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffDirectory"
+
   /admin/insights:
     get:
       operationId: getAdminInsights
@@ -1220,7 +1250,33 @@ components:
         dueToday: { type: number }
         digestSent: { type: boolean }
         digestSkippedReason: { type: string, nullable: true }
+        staffDigestsSent: { type: number }
       required: [overdue, dueToday, digestSent]
+
+    StaffMember:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+      required: [name, email]
+
+    StaffDirectory:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/StaffMember"
+      required: [entries]
+
+    StaffDirectoryInput:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/StaffMember"
+      required: [entries]
 
     AdminInsights:
       type: object

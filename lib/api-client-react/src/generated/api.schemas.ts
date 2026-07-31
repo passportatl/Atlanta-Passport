@@ -362,6 +362,20 @@ export interface ReminderRunResult {
   dueToday: number;
   digestSent: boolean;
   digestSkippedReason?: string | null;
+  staffDigestsSent?: number;
+}
+
+export interface StaffMember {
+  name: string;
+  email: string;
+}
+
+export interface StaffDirectory {
+  entries: StaffMember[];
+}
+
+export interface StaffDirectoryInput {
+  entries: StaffMember[];
 }
 
 export type AdminInsightsDiagnosticsItemStatus =

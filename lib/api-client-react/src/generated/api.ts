@@ -48,6 +48,8 @@ import type {
   ReprocessEventLocations200,
   ReprocessLocationsInput,
   StaffChangePasswordInput,
+  StaffDirectory,
+  StaffDirectoryInput,
   StaffLoginInput,
   StaffLogout200,
   StaffSessionInfo,
@@ -3130,6 +3132,167 @@ export const useRunReminderCheck = <
   TContext
 > => {
   return useMutation(getRunReminderCheckMutationOptions(options));
+};
+
+/**
+ * @summary Staff directory (name -> email) used to route per-staff reminder digests
+ */
+export const getGetStaffDirectoryUrl = () => {
+  return `/api/admin/staff-directory`;
+};
+
+export const getStaffDirectory = async (
+  options?: RequestInit,
+): Promise<StaffDirectory> => {
+  return customFetch<StaffDirectory>(getGetStaffDirectoryUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetStaffDirectoryQueryKey = () => {
+  return [`/api/admin/staff-directory`] as const;
+};
+
+export const getGetStaffDirectoryQueryOptions = <
+  TData = Awaited<ReturnType<typeof getStaffDirectory>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getStaffDirectory>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetStaffDirectoryQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getStaffDirectory>>
+  > = ({ signal }) => getStaffDirectory({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getStaffDirectory>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetStaffDirectoryQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getStaffDirectory>>
+>;
+export type GetStaffDirectoryQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Staff directory (name -> email) used to route per-staff reminder digests
+ */
+
+export function useGetStaffDirectory<
+  TData = Awaited<ReturnType<typeof getStaffDirectory>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getStaffDirectory>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetStaffDirectoryQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Replace the staff directory (admin-editable name -> email mapping)
+ */
+export const getUpdateStaffDirectoryUrl = () => {
+  return `/api/admin/staff-directory`;
+};
+
+export const updateStaffDirectory = async (
+  staffDirectoryInput: StaffDirectoryInput,
+  options?: RequestInit,
+): Promise<StaffDirectory> => {
+  return customFetch<StaffDirectory>(getUpdateStaffDirectoryUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(staffDirectoryInput),
+  });
+};
+
+export const getUpdateStaffDirectoryMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateStaffDirectory>>,
+    TError,
+    { data: BodyType<StaffDirectoryInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateStaffDirectory>>,
+  TError,
+  { data: BodyType<StaffDirectoryInput> },
+  TContext
+> => {
+  const mutationKey = ["updateStaffDirectory"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateStaffDirectory>>,
+    { data: BodyType<StaffDirectoryInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateStaffDirectory(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateStaffDirectoryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateStaffDirectory>>
+>;
+export type UpdateStaffDirectoryMutationBody = BodyType<StaffDirectoryInput>;
+export type UpdateStaffDirectoryMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Replace the staff directory (admin-editable name -> email mapping)
+ */
+export const useUpdateStaffDirectory = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateStaffDirectory>>,
+    TError,
+    { data: BodyType<StaffDirectoryInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateStaffDirectory>>,
+  TError,
+  { data: BodyType<StaffDirectoryInput> },
+  TContext
+> => {
+  return useMutation(getUpdateStaffDirectoryMutationOptions(options));
 };
 
 /**

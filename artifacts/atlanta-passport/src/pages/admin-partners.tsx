@@ -4,12 +4,15 @@ import {
   useUpdateCrmRecord,
   useGetPartnersSummary,
   useRunReminderCheck,
+  useGetStaffDirectory,
+  useUpdateStaffDirectory,
   getListCrmRecordsQueryKey,
   getGetPartnersSummaryQueryKey,
+  getGetStaffDirectoryQueryKey,
   type ListCrmRecordsBucket,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Users, Loader2, RefreshCw, Send, DollarSign, Briefcase, Calendar, MapPin, Store, CalendarClock } from "lucide-react";
+import { Users, Loader2, RefreshCw, Send, DollarSign, Briefcase, Calendar, MapPin, Store, CalendarClock, Trash2, Plus, Mail } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
 import AdminGate from "@/components/AdminGate";
 import { Input } from "@/components/ui/input";
@@ -25,6 +28,109 @@ import { SALES_STAGES, PAYMENT_STATUSES } from "@workspace/pricing";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
+function StaffDirectoryEditor({ adminKey }: { adminKey: string }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<{ name: string; email: string }[] | null>(null);
+
+  // Empty adminKey means the user is authenticated via the staff session cookie.
+  const request = adminKey ? { headers: { "x-admin-key": adminKey } } : undefined;
+  const { data } = useGetStaffDirectory({
+    query: { queryKey: getGetStaffDirectoryQueryKey() },
+    request,
+  });
+  const saveMutation = useUpdateStaffDirectory({ request });
+
+  const entries = draft ?? data?.entries ?? [];
+  const dirty = draft !== null;
+
+  const setEntry = (i: number, patch: Partial<{ name: string; email: string }>) => {
+    const next = entries.map((e, idx) => (idx === i ? { ...e, ...patch } : e));
+    setDraft(next);
+  };
+
+  const save = () => {
+    const cleaned = entries.filter((e) => e.name.trim() && e.email.trim());
+    saveMutation.mutate(
+      { data: { entries: cleaned } },
+      {
+        onSuccess: () => {
+          setDraft(null);
+          queryClient.invalidateQueries({ queryKey: getGetStaffDirectoryQueryKey() });
+          toast({ title: "Staff directory saved", description: `${cleaned.length} staff member(s) will get their own reminder digests.` });
+        },
+        onError: (err: any) => {
+          toast({ title: "Save failed", description: err.message, variant: "destructive" });
+        },
+      },
+    );
+  };
+
+  return (
+    <div className="card-pop bg-white p-5 mb-6">
+      <button onClick={() => setOpen(!open)} className="flex items-center gap-2 w-full text-left">
+        <Mail className="w-4 h-4" />
+        <span className="font-display font-bold uppercase tracking-wider text-sm">Staff Directory</span>
+        <span className="text-xs text-muted-foreground ml-2">
+          {entries.length === 0
+            ? "No staff mapped — all reminders go to the shared inbox"
+            : `${entries.length} staff member(s) get their own reminder digest`}
+        </span>
+        <span className="ml-auto text-xs font-bold">{open ? "Hide" : "Edit"}</span>
+      </button>
+      {open && (
+        <div className="mt-4 space-y-2">
+          <p className="text-xs text-muted-foreground">
+            Map the names used in "Assigned To" to email addresses. Each mapped person gets a daily
+            digest of only their own follow-ups; unassigned or unmapped items still go to the shared inbox.
+          </p>
+          {entries.map((entry, i) => (
+            <div key={i} className="flex gap-2 items-center">
+              <Input
+                value={entry.name}
+                onChange={(e) => setEntry(i, { name: e.target.value })}
+                placeholder="Staff name (as used in Assigned To)"
+                className="h-8 text-xs border-foreground/30"
+              />
+              <Input
+                value={entry.email}
+                onChange={(e) => setEntry(i, { email: e.target.value })}
+                placeholder="email@example.com"
+                type="email"
+                className="h-8 text-xs border-foreground/30"
+              />
+              <button
+                onClick={() => setDraft(entries.filter((_, idx) => idx !== i))}
+                className="p-2 text-muted-foreground hover:text-destructive"
+                aria-label="Remove staff member"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={() => setDraft([...entries, { name: "", email: "" }])}
+              className="button-pop bg-white text-foreground text-xs"
+            >
+              <Plus className="w-3 h-3" /> Add Staff
+            </button>
+            <button
+              onClick={save}
+              disabled={!dirty || saveMutation.isPending}
+              className="button-pop button-pop-yellow text-xs disabled:opacity-50"
+            >
+              {saveMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+              Save Directory
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const TABS: { id: ListCrmRecordsBucket | "all"; label: string }[] = [
   { id: "all", label: "All Records" },
   { id: "overdue", label: "Overdue" },
@@ -36,19 +142,22 @@ const TABS: { id: ListCrmRecordsBucket | "all"; label: string }[] = [
 export default function AdminPartners() {
   return (
     <AdminGate>
-      {(adminKey) => <AdminPartnersInner adminKey={adminKey} />}
+      {(adminKey) => <AdminPartnersContent adminKey={adminKey} />}
     </AdminGate>
   );
 }
 
-function AdminPartnersInner({ adminKey }: { adminKey: string }) {
+function AdminPartnersContent({ adminKey }: { adminKey: string }) {
   const [activeTab, setActiveTab] = useState<ListCrmRecordsBucket | "all">("all");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Empty adminKey means the user is authenticated via the staff session cookie.
+  const request = adminKey ? { headers: { "x-admin-key": adminKey } } : undefined;
+
   const { data: summary, refetch: refetchSummary } = useGetPartnersSummary({
     query: { queryKey: getGetPartnersSummaryQueryKey() },
-    request: adminKey ? { headers: { "x-admin-key": adminKey } } : undefined,
+    request,
   });
 
   const { data: records, isLoading, refetch: refetchRecords } = useListCrmRecords(
@@ -57,15 +166,14 @@ function AdminPartnersInner({ adminKey }: { adminKey: string }) {
       query: {
         queryKey: getListCrmRecordsQueryKey({ bucket: activeTab === "all" ? undefined : activeTab }),
       },
-      request: adminKey ? { headers: { "x-admin-key": adminKey } } : undefined,
+      request,
     }
   );
 
-  const updateMutation = useUpdateCrmRecord({ request: adminKey ? { headers: { "x-admin-key": adminKey } } : undefined });
-  const reminderMutation = useRunReminderCheck({ request: adminKey ? { headers: { "x-admin-key": adminKey } } : undefined });
+  const updateMutation = useUpdateCrmRecord({ request });
+  const reminderMutation = useRunReminderCheck({ request });
 
   const handleUpdate = (id: string, recordType: any, updates: any) => {
-    if (!adminKey) return;
     updateMutation.mutate(
       {
         recordType,
@@ -84,12 +192,11 @@ function AdminPartnersInner({ adminKey }: { adminKey: string }) {
   };
 
   const handleReminders = () => {
-    if (!adminKey) return;
     reminderMutation.mutate(undefined, {
       onSuccess: (res) => {
         toast({
           title: "Reminders Check Complete",
-          description: `Overdue: ${res.overdue}, Due Today: ${res.dueToday}. ${res.digestSent ? "Digest sent." : "Digest skipped: " + res.digestSkippedReason}`,
+          description: `Overdue: ${res.overdue}, Due Today: ${res.dueToday}. ${res.digestSent ? `Digest sent${res.staffDigestsSent ? ` (+${res.staffDigestsSent} per-staff)` : ""}.` : "Digest skipped: " + res.digestSkippedReason}`,
         });
       },
       onError: (err: any) => {
@@ -164,6 +271,8 @@ function AdminPartnersInner({ adminKey }: { adminKey: string }) {
             </div>
           </div>
         )}
+
+        <StaffDirectoryEditor adminKey={adminKey} />
 
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none mb-6">
           {TABS.map((tab) => (

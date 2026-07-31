@@ -2,7 +2,8 @@ import { eq } from "drizzle-orm";
 import { db, appConfigTable } from "@workspace/db";
 import { sendNotification, NOTIFY_EMAIL } from "./mailer";
 import { logger } from "./logger";
-import { loadAllCrmRecords, bucketFilter } from "../routes/crm";
+import { loadAllCrmRecords, bucketFilter, type CrmRecordOut } from "../routes/crm";
+import { loadStaffDirectory, staffEmailFor, type StaffMember } from "./staff-directory";
 
 const DIGEST_CONFIG_KEY = "crm_reminder_digest_last_sent";
 
@@ -11,6 +12,51 @@ export interface ReminderRunResult {
   dueToday: number;
   digestSent: boolean;
   digestSkippedReason: string | null;
+  /** Number of per-staff digest emails delivered (excludes the shared inbox digest). */
+  staffDigestsSent: number;
+}
+
+interface DigestGroup {
+  /** Email address the digest goes to. */
+  to: string;
+  /** Display label for the digest header (staff name or "shared inbox"). */
+  label: string;
+  overdue: CrmRecordOut[];
+  dueToday: CrmRecordOut[];
+}
+
+/**
+ * Split records into one group per mapped assignee plus a shared-inbox group
+ * holding unassigned records and records whose assignee has no directory entry.
+ * Exported for tests.
+ */
+export function splitDigestGroups(
+  directory: StaffMember[],
+  overdue: CrmRecordOut[],
+  dueToday: CrmRecordOut[],
+): DigestGroup[] {
+  const groups = new Map<string, DigestGroup>();
+  const groupFor = (r: CrmRecordOut): DigestGroup => {
+    const email = staffEmailFor(directory, r.assignedTo);
+    const key = email ?? NOTIFY_EMAIL;
+    let g = groups.get(key);
+    if (!g) {
+      g = {
+        to: key,
+        label: email ? r.assignedTo!.trim() : "shared inbox",
+        overdue: [],
+        dueToday: [],
+      };
+      groups.set(key, g);
+    }
+    return g;
+  };
+  for (const r of overdue) groupFor(r).overdue.push(r);
+  for (const r of dueToday) groupFor(r).dueToday.push(r);
+  // Shared inbox first, then staff alphabetically — deterministic order.
+  return [...groups.values()].sort((a, b) =>
+    a.to === NOTIFY_EMAIL ? -1 : b.to === NOTIFY_EMAIL ? 1 : a.label.localeCompare(b.label),
+  );
 }
 
 function todayKey(): string {
@@ -56,7 +102,13 @@ export async function runReminderCheck(opts: { manual?: boolean } = {}): Promise
   });
 
   if (overdue.length === 0 && dueToday.length === 0) {
-    return { overdue: 0, dueToday: 0, digestSent: false, digestSkippedReason: "Nothing due or overdue" };
+    return {
+      overdue: 0,
+      dueToday: 0,
+      digestSent: false,
+      digestSkippedReason: "Nothing due or overdue",
+      staffDigestsSent: 0,
+    };
   }
 
   const day = todayKey();
@@ -68,36 +120,63 @@ export async function runReminderCheck(opts: { manual?: boolean } = {}): Promise
         dueToday: dueToday.length,
         digestSent: false,
         digestSkippedReason: "Digest already sent today",
+        staffDigestsSent: 0,
       };
     }
   }
 
-  const fmt = (r: (typeof overdue)[number]) =>
-    `- ${r.name} (${r.recordType}) — stage: ${r.salesStage}, payment: ${r.paymentStatus}, assigned: ${r.assignedTo ?? "unassigned"}, follow-up: ${r.nextFollowUpAt ? r.nextFollowUpAt.slice(0, 10) : "n/a"}`;
-  const text = [
-    `Passport ATL follow-up digest — ${day}`,
-    ``,
-    `Overdue (${overdue.length}):`,
-    ...overdue.map(fmt),
-    ``,
-    `Due today (${dueToday.length}):`,
-    ...dueToday.map(fmt),
-  ].join("\n");
-  const html = `<div style="font-family:system-ui,sans-serif;max-width:640px;"><h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;">Follow-up digest — ${day}</h2><pre style="font-family:inherit;white-space:pre-wrap;">${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</pre></div>`;
+  const directory = await loadStaffDirectory();
+  const groups = splitDigestGroups(directory, overdue, dueToday);
 
-  const delivery = await sendNotification({
-    to: NOTIFY_EMAIL,
-    subject: `Passport ATL follow-ups: ${overdue.length} overdue, ${dueToday.length} due today`,
-    text,
-    html,
-  });
-  const digestSent = delivery === "sent";
-  if (digestSent) await setLastDigestDay(day);
+  const fmt = (r: CrmRecordOut) =>
+    `- ${r.name} (${r.recordType}) — stage: ${r.salesStage}, payment: ${r.paymentStatus}, assigned: ${r.assignedTo ?? "unassigned"}, follow-up: ${r.nextFollowUpAt ? r.nextFollowUpAt.slice(0, 10) : "n/a"}`;
+
+  let anySent = false;
+  let anyFailedDelivery: string | null = null;
+  let staffDigestsSent = 0;
+  for (const group of groups) {
+    const isShared = group.to === NOTIFY_EMAIL;
+    const title = isShared
+      ? `Follow-up digest — ${day}`
+      : `Follow-up digest for ${group.label} — ${day}`;
+    const text = [
+      `Passport ATL ${isShared ? "follow-up digest (shared inbox)" : `follow-ups for ${group.label}`} — ${day}`,
+      ``,
+      `Overdue (${group.overdue.length}):`,
+      ...group.overdue.map(fmt),
+      ``,
+      `Due today (${group.dueToday.length}):`,
+      ...group.dueToday.map(fmt),
+    ].join("\n");
+    const html = `<div style="font-family:system-ui,sans-serif;max-width:640px;"><h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;">${title}</h2><pre style="font-family:inherit;white-space:pre-wrap;">${text.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</pre></div>`;
+    const delivery = await sendNotification({
+      to: group.to,
+      subject: `Passport ATL follow-ups${isShared ? "" : ` (${group.label})`}: ${group.overdue.length} overdue, ${group.dueToday.length} due today`,
+      text,
+      html,
+    });
+    if (delivery === "sent") {
+      anySent = true;
+      if (!isShared) staffDigestsSent += 1;
+    } else {
+      anyFailedDelivery = delivery;
+      logger.warn({ to: group.to, delivery }, "Reminder digest email not delivered");
+    }
+  }
+
+  // Only mark the day done when every digest went out, so a partial failure
+  // is retried on the next hourly run.
+  if (anySent && !anyFailedDelivery) await setLastDigestDay(day);
   return {
     overdue: overdue.length,
     dueToday: dueToday.length,
-    digestSent,
-    digestSkippedReason: digestSent ? null : `Email delivery ${delivery}`,
+    digestSent: anySent,
+    digestSkippedReason: anySent
+      ? anyFailedDelivery
+        ? `Some digests not delivered (${anyFailedDelivery})`
+        : null
+      : `Email delivery ${anyFailedDelivery}`,
+    staffDigestsSent,
   };
 }
 

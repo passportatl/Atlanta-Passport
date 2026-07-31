@@ -1012,6 +1012,40 @@ export const RunReminderCheckResponse = zod.object({
   dueToday: zod.number(),
   digestSent: zod.boolean(),
   digestSkippedReason: zod.string().nullish(),
+  staffDigestsSent: zod.number().optional(),
+});
+
+/**
+ * @summary Staff directory (name -> email) used to route per-staff reminder digests
+ */
+export const GetStaffDirectoryResponse = zod.object({
+  entries: zod.array(
+    zod.object({
+      name: zod.string(),
+      email: zod.string().email(),
+    }),
+  ),
+});
+
+/**
+ * @summary Replace the staff directory (admin-editable name -> email mapping)
+ */
+export const UpdateStaffDirectoryBody = zod.object({
+  entries: zod.array(
+    zod.object({
+      name: zod.string(),
+      email: zod.string().email(),
+    }),
+  ),
+});
+
+export const UpdateStaffDirectoryResponse = zod.object({
+  entries: zod.array(
+    zod.object({
+      name: zod.string(),
+      email: zod.string().email(),
+    }),
+  ),
 });
 
 /**

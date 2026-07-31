@@ -11,4 +11,5 @@ export interface ReminderRunResult {
   dueToday: number;
   digestSent: boolean;
   digestSkippedReason?: string | null;
+  staffDigestsSent?: number;
 }

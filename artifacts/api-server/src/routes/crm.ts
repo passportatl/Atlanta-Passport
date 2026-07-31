@@ -9,10 +9,11 @@ import {
   stampsTable,
   redemptionsTable,
 } from "@workspace/db";
-import { UpdateCrmRecordBody } from "@workspace/api-zod";
+import { UpdateCrmRecordBody, UpdateStaffDirectoryBody } from "@workspace/api-zod";
 import { requireAdmin } from "../lib/admin-auth";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 import { runReminderCheck } from "../lib/reminders";
+import { loadStaffDirectory, saveStaffDirectory, staffEmailFor } from "../lib/staff-directory";
 import { logAdminAction } from "../lib/staff-auth";
 
 const router: IRouter = Router();
@@ -225,16 +226,23 @@ router.patch("/admin/crm/:recordType/:id", requireAdmin, async (req, res) => {
     return;
   }
 
-  // Immediate staff alert when a submission transitions to paid.
+  // Immediate staff alert when a submission transitions to paid. Goes to the
+  // shared inbox and, when the assignee is in the staff directory, to them too.
   if (!wasPaid && out.paymentStatus === "paid") {
     const subject = `PAID — ${out.name} (${out.recordType}${out.packageId ? ` · ${out.packageId}` : ""}${out.listingPrice != null ? ` · $${out.listingPrice}` : ""})`;
     const line = `${out.name} (${out.recordType}) is now marked PAID.${out.listingPrice != null ? ` Amount: $${out.listingPrice}.` : ""}${out.assignedTo ? ` Assigned to: ${out.assignedTo}.` : ""}`;
-    void sendNotification({
-      to: NOTIFY_EMAIL,
-      subject,
-      text: line,
-      html: `<div style="font-family:system-ui,sans-serif;"><h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;">New paid submission</h2><p>${line}</p></div>`,
-    }).catch(() => undefined);
+    const html = `<div style="font-family:system-ui,sans-serif;"><h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;">New paid submission</h2><p>${line}</p></div>`;
+    void (async () => {
+      const directory = await loadStaffDirectory();
+      const assigneeEmail = staffEmailFor(directory, out.assignedTo);
+      const recipients =
+        assigneeEmail && assigneeEmail !== NOTIFY_EMAIL
+          ? [NOTIFY_EMAIL, assigneeEmail]
+          : [NOTIFY_EMAIL];
+      for (const to of recipients) {
+        await sendNotification({ to, subject, text: line, html });
+      }
+    })().catch(() => undefined);
   }
 
   await logAdminAction(req, "crm-update", {
@@ -279,6 +287,25 @@ router.post("/admin/reminders/run", requireAdmin, async (req, res) => {
     detail: `overdue=${result.overdue} dueToday=${result.dueToday} digestSent=${result.digestSent}`,
   });
   res.json(result);
+});
+
+router.get("/admin/staff-directory", requireAdmin, async (_req, res) => {
+  const entries = await loadStaffDirectory();
+  res.json({ entries });
+});
+
+router.put("/admin/staff-directory", requireAdmin, async (req, res) => {
+  const parsed = UpdateStaffDirectoryBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
+    return;
+  }
+  const entries = await saveStaffDirectory(parsed.data.entries);
+  await logAdminAction(req, "staff-directory-update", {
+    type: "staff-directory",
+    detail: JSON.stringify(entries.map((e) => e.name)),
+  });
+  res.json({ entries });
 });
 
 router.get("/admin/insights", requireAdmin, async (_req, res) => {
