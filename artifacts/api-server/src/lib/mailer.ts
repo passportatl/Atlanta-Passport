@@ -2,6 +2,8 @@ import { Resend } from "resend";
 import { logger } from "./logger";
 
 export const NOTIFY_EMAIL = "touristpassportatl@gmail.com";
+export const CONTACT_EMAIL =
+  process.env.CONTACT_NOTIFY_EMAIL ?? "info@passportatl.com";
 const FROM_ADDRESS = "Atlanta Passport <onboarding@resend.dev>";
 
 type SendArgs = {
@@ -16,7 +18,10 @@ export async function sendNotification(
 ): Promise<"sent" | "skipped" | "failed"> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    logger.info({ to: args.to, subject: args.subject }, "RESEND_API_KEY not set; skipping email");
+    logger.info(
+      { to: args.to, subject: args.subject },
+      "RESEND_API_KEY not set; skipping email",
+    );
     return "skipped";
   }
   try {

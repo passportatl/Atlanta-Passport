@@ -16,6 +16,12 @@ export interface Visitor {
   phone?: string | null;
   promoOptIn: boolean;
   promoOptInAt?: string | null;
+  termsAcceptedAt?: string | null;
+  termsVersion?: string | null;
+  privacyAcceptedAt?: string | null;
+  privacyVersion?: string | null;
+  marketingOptIn: boolean;
+  marketingConsentUpdatedAt?: string | null;
   createdAt: string;
 }
 
@@ -26,12 +32,24 @@ export interface CreateVisitorInput {
   phone?: string;
 }
 
+export type BusinessMapReadiness =
+  (typeof BusinessMapReadiness)[keyof typeof BusinessMapReadiness];
+
+export const BusinessMapReadiness = {
+  verified: "verified",
+  "coordinates-present": "coordinates-present",
+  "missing-coordinates": "missing-coordinates",
+} as const;
+
 export interface Business {
   id: string;
   slug: string;
   name: string;
   category: string;
+  categoryId: string;
+  tags: string[];
   neighborhood: string;
+  areaId: string;
   description: string;
   address: string;
   image?: string | null;
@@ -40,6 +58,17 @@ export interface Business {
   icon: string;
   latitude?: number | null;
   longitude?: number | null;
+  mapReadiness: BusinessMapReadiness;
+  publicStatus: string;
+  isStampStop: boolean;
+  priorityListing: boolean;
+  priorityRank: number;
+  detailPageEnabled: boolean;
+  entitlementStartsAt?: string | null;
+  entitlementEndsAt?: string | null;
+  hasPublicOffer: boolean;
+  publicUpdatedAt: string;
+  sortKey: string;
   isActive: boolean;
 }
 
@@ -277,7 +306,10 @@ export interface LegacyAccessStatus {
 }
 
 export interface UpdateVisitorPreferencesInput {
-  promoOptIn: boolean;
+  promoOptIn?: boolean;
+  acceptTerms?: boolean;
+  acceptPrivacy?: boolean;
+  marketingOptIn?: boolean;
 }
 
 export type CrmUpdateInputSalesStage =
@@ -409,10 +441,14 @@ export type SubmitContactMessageInputTopic =
   (typeof SubmitContactMessageInputTopic)[keyof typeof SubmitContactMessageInputTopic];
 
 export const SubmitContactMessageInputTopic = {
-  question: "question",
-  suggestion: "suggestion",
-  feedback: "feedback",
-  business: "business",
+  general_question: "general_question",
+  technical_support: "technical_support",
+  media_press: "media_press",
+  partnership: "partnership",
+  event_listing: "event_listing",
+  location_listing: "location_listing",
+  sponsorship: "sponsorship",
+  billing: "billing",
   other: "other",
 } as const;
 

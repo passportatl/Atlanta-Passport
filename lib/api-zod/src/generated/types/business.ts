@@ -5,13 +5,17 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { BusinessMapReadiness } from "./businessMapReadiness";
 
 export interface Business {
   id: string;
   slug: string;
   name: string;
   category: string;
+  categoryId: string;
+  tags: string[];
   neighborhood: string;
+  areaId: string;
   description: string;
   address: string;
   image?: string | null;
@@ -20,5 +24,16 @@ export interface Business {
   icon: string;
   latitude?: number | null;
   longitude?: number | null;
+  mapReadiness: BusinessMapReadiness;
+  publicStatus: string;
+  isStampStop: boolean;
+  priorityListing: boolean;
+  priorityRank: number;
+  detailPageEnabled: boolean;
+  entitlementStartsAt?: Date | null;
+  entitlementEndsAt?: Date | null;
+  hasPublicOffer: boolean;
+  publicUpdatedAt: Date;
+  sortKey: string;
   isActive: boolean;
 }

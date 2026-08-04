@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { QrCode, Lock, Route, Calendar, MapPin, Store, Users, BarChart3, LogOut, User as UserIcon } from "lucide-react";
+import { QrCode, Lock, Route, Calendar, MapPin, Store, Users, BarChart3, LogOut, User as UserIcon, Handshake } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useGetStaffMe, useStaffLogout, getGetStaffMeQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,12 +7,13 @@ import { useQueryClient } from "@tanstack/react-query";
 const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
 
 const tabs = [
-  { path: "/admin/content", label: "Locations", icon: MapPin },
-  { path: "/admin/applications", label: "Events", icon: Calendar },
-  { path: "/admin/routes", label: "Routes", icon: Route },
-  { path: "/admin/stamps", label: "QRs", icon: QrCode },
+  { path: "/admin/content", label: "Locations Hub", icon: MapPin },
+  { path: "/admin/applications", label: "Event Hub", icon: Calendar },
+  { path: "/admin/routes", label: "Route Hub", icon: Route },
+  { path: "/admin/stamps", label: "QR Codes", icon: QrCode },
   { path: "/admin/vendors", label: "Vendors", icon: Store },
-  { path: "/admin/partners", label: "Partners", icon: Users },
+  { path: "/admin/partners", label: "Partner Access", icon: Handshake },
+  { path: "/admin/crm", label: "Partner CRM", icon: Users },
   { path: "/admin/users", label: "Users", icon: UserIcon },
   { path: "/admin/insights", label: "Insights", icon: BarChart3 },
 ];

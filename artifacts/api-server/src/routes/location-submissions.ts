@@ -1,6 +1,11 @@
 import { Router, type IRouter, type Request, type Response, type NextFunction } from "express";
 import { desc, eq, ilike, or, and, isNull, inArray } from "drizzle-orm";
 import { db, locationSubmissionsTable, businessesTable, computeLocationCompleteness } from "@workspace/db";
+import {
+  normalizeLocationTags,
+  resolveLocationCategory,
+  slugifyLocationValue,
+} from "../domain/location-taxonomy";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 import { computeQuote } from "@workspace/pricing";
 import { requireAdmin } from "../lib/admin-auth";
@@ -484,6 +489,7 @@ router.post("/admin/location-submissions/promote-bulk", requireAdmin, async (req
     }
 
     const description = sub.description || sub.passportSummary || sub.featuredItems;
+    const category = resolveLocationCategory(sub.primaryCategory);
     const warnings: string[] = [];
     if (!description) warnings.push("No description — used placeholder text");
 
@@ -493,8 +499,11 @@ router.post("/admin/location-submissions/promote-bulk", requireAdmin, async (req
         .values({
           slug,
           name: sub.name,
-          category: sub.primaryCategory,
+          category: category.name,
+          categoryId: category.id,
+          tags: normalizeLocationTags(sub.tags),
           neighborhood: sub.neighborhood,
+          areaId: slugifyLocationValue(sub.neighborhood),
           description: description || "Visit this location to learn more.",
           address: sub.address,
           image: sub.heroImage || undefined,
@@ -502,6 +511,10 @@ router.post("/admin/location-submissions/promote-bulk", requireAdmin, async (req
           stampName: sub.name,
           stampColor: "#4A9B7F",
           icon: "📍",
+          mapReadiness: "unverified",
+          isStampStop: sub.isStampStop ?? false,
+          priorityListing: sub.isFeaturedInterest ?? false,
+          priorityRank: sub.isSponsoredInterest ? 200 : sub.isFeaturedInterest ? 100 : 0,
           isActive: true,
         })
         .returning();
@@ -570,6 +583,10 @@ router.post("/admin/location-submissions/:id/promote", requireAdmin, async (req,
   }
 
   const description = sub.description || sub.passportSummary || sub.featuredItems;
+  const category = resolveLocationCategory(
+    ((req.body as Record<string, unknown>).category as string | undefined) ||
+      sub.primaryCategory,
+  );
   const warnings: string[] = [];
   if (!description) warnings.push("No description — used placeholder text");
   if (!sub.heroImage) warnings.push("No hero image — business will show without a photo");
@@ -581,8 +598,13 @@ router.post("/admin/location-submissions/:id/promote", requireAdmin, async (req,
     .values({
       slug: (overrides.slug as string | undefined) || slug,
       name: (overrides.name as string | undefined) || sub.name,
-      category: (overrides.category as string | undefined) || sub.primaryCategory,
+      category: category.name,
+      categoryId: category.id,
+      tags: normalizeLocationTags((overrides.tags as string[] | undefined) || sub.tags),
       neighborhood: (overrides.neighborhood as string | undefined) || sub.neighborhood,
+      areaId: slugifyLocationValue(
+        (overrides.neighborhood as string | undefined) || sub.neighborhood,
+      ),
       description: (overrides.description as string | undefined) || description || "Visit this location to learn more.",
       address: (overrides.address as string | undefined) || sub.address,
       image: (overrides.image as string | undefined) || sub.heroImage || undefined,
@@ -590,6 +612,10 @@ router.post("/admin/location-submissions/:id/promote", requireAdmin, async (req,
       stampName: (overrides.stampName as string | undefined) || sub.name,
       stampColor: (overrides.stampColor as string | undefined) || "#4A9B7F",
       icon: (overrides.icon as string | undefined) || "📍",
+      mapReadiness: "unverified",
+      isStampStop: sub.isStampStop ?? false,
+      priorityListing: sub.isFeaturedInterest ?? false,
+      priorityRank: sub.isSponsoredInterest ? 200 : sub.isFeaturedInterest ? 100 : 0,
       isActive: true,
     })
     .returning();

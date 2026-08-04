@@ -13,5 +13,11 @@ export interface Visitor {
   phone?: string | null;
   promoOptIn: boolean;
   promoOptInAt?: Date | null;
+  termsAcceptedAt?: Date | null;
+  termsVersion?: string | null;
+  privacyAcceptedAt?: Date | null;
+  privacyVersion?: string | null;
+  marketingOptIn: boolean;
+  marketingConsentUpdatedAt?: Date | null;
   createdAt: Date;
 }

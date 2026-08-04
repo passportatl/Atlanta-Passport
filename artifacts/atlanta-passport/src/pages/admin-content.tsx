@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Loader2, Search, CheckCircle, XCircle, AlertTriangle, Eye, Archive,
   RefreshCw, ChevronDown, ChevronUp, Upload, FileText, CheckSquare, Square,
-  X, MapPin, Globe, Phone, Tag, Star, Zap, Crown, Inbox, Newspaper,
+  X, MapPin, Globe, Phone, Tag, Star, Zap, Crown, Inbox,
   BookOpen, Route, Check, Download,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
@@ -17,6 +17,7 @@ import {
   type PriorStatusEntry,
   type PersistedUndo,
 } from "@/lib/bulkUndoStorage";
+import { LegendsAdmin } from "@/components/admin/LegendsAdmin";
 
 const API_BASE = "/api";
 const ADMIN_KEY_STORAGE = "atlanta-passport-admin-key";
@@ -1494,13 +1495,7 @@ function AdminContentInner({ adminKey, contentTab, setContentTab }: { adminKey: 
             {contentTab === "csv-import" && <CsvImportTab adminKey={adminKey} />}
             {contentTab === "migration" && <MigrationTab adminKey={adminKey} />}
             {contentTab === "legends" && (
-              <div className="text-center py-16 space-y-3">
-                <Newspaper className="w-12 h-12 mx-auto opacity-30" />
-                <p className="font-black text-xl" style={{ fontFamily: "Bungee, sans-serif" }}>ATL LEGENDS</p>
-                <p className="text-sm text-foreground/60 max-w-sm mx-auto">
-                  Blog post management for stories about Atlanta's iconic people, places, and culture. Coming soon.
-                </p>
-              </div>
+              <LegendsAdmin adminKey={adminKey} />
             )}
             {contentTab === "experiences" && (
               <div className="text-center py-16 space-y-3">

@@ -12,7 +12,17 @@ export const visitorsTable = pgTable("visitors", {
   // promoOptInAt records when the user last changed their consent status.
   promoOptIn: boolean("promo_opt_in").notNull().default(false),
   promoOptInAt: timestamp("promo_opt_in_at", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
+  termsVersion: text("terms_version"),
+  privacyAcceptedAt: timestamp("privacy_accepted_at", { withTimezone: true }),
+  privacyVersion: text("privacy_version"),
+  marketingOptIn: boolean("marketing_opt_in").notNull().default(false),
+  marketingConsentUpdatedAt: timestamp("marketing_consent_updated_at", {
+    withTimezone: true,
+  }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 export const insertVisitorSchema = createInsertSchema(visitorsTable).omit({

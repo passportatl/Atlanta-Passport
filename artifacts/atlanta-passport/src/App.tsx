@@ -7,7 +7,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
 import Home from "@/pages/home";
-import Partners from "@/pages/partners";
 import EventDetail from "@/pages/event-detail";
 import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
@@ -16,21 +15,34 @@ import Listing from "@/pages/listing";
 import StampPage from "@/pages/stamp";
 import RedeemPage from "@/pages/redeem";
 import PassportContact from "@/pages/passport/contact";
+import PassportConsent from "@/pages/passport/consent";
 import PrivacyPolicy from "@/pages/privacy-policy";
+import TermsOfService from "@/pages/terms-of-service";
 import AdminStamps from "@/pages/admin-stamps";
 import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
 import AdminRoutes from "@/pages/admin-routes";
-import AdminVendors from "@/pages/admin-vendors";
 import AdminPartners from "@/pages/admin-partners";
+import AdminCrm from "@/pages/admin-crm";
+import AdminVendors from "@/pages/admin-vendors";
 import AdminUsers from "@/pages/admin-users";
 import AdminInsights from "@/pages/admin-insights";
 import ListALocation from "@/pages/list-a-location";
+import PartnerPortal from "@/pages/partner-portal";
 import { VisitorProvider } from "@/passport/VisitorProvider";
-import { useVisitor, PENDING_STAMP_KEY } from "@/passport/visitor-context";
+import {
+  hasCurrentLegalConsent,
+  useVisitor,
+  PENDING_STAMP_KEY,
+} from "@/passport/visitor-context";
 import { PassportLayout } from "@/passport/PassportLayout";
 import MapShell from "@/passport/MapShell";
 import { ClerkProviders, SignInPage, SignUpPage } from "@/auth/clerk";
+import {
+  isPartnerRoute,
+  isProtectedRoute,
+  MEMBER_HOME_ROUTE,
+} from "@/auth/route-access";
 
 const queryClient = new QueryClient();
 
@@ -42,18 +54,19 @@ function MarketingRoutes() {
         {/* TEMPORARY: partner applications paused — /partners shows a holding page.
             To revert, change `PartnersComingSoon` back to `Partners` (the real page
             is still imported above and fully intact). */}
-        <Route path="/partners" component={ListALocation} />
         <Route path="/list-a-location" component={ListALocation} />
         <Route path="/events/:id" component={EventDetail} />
         <Route path="/routes/:id" component={RouteDetail} />
-        <Route path="/apply">
-          <Apply />
-        </Route>
+        {/* TEMPORARY: applications paused — /apply shows the same holding page
+            as /partners. To revert, change `PartnersComingSoon` back to `Apply`
+            (the real page is still imported above and fully intact). */}
+        <Route path="/apply">{() => <Apply />}</Route>
         {/* Event submissions stay open while partner applications are paused:
             /list-event renders the full event listing form. */}
         <Route path="/list-event" component={ListEvent} />
         <Route path="/listing/:id" component={Listing} />
         <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/terms-of-service" component={TermsOfService} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
@@ -64,19 +77,6 @@ function MarketingRoutes() {
 // home from any protected route. Set to true to allow signed-out access to
 // every page (e.g. while designing the passport pages).
 const ALLOW_PUBLIC_ACCESS = false;
-
-// Almost everything requires a registered account. Only the marketing home (`/`),
-// partners, and apply pages stay open to signed-out visitors. Sign-in/up,
-// the /stamp QR landing, and admin are functional routes that must also stay reachable.
-function isProtectedRoute(location: string) {
-  const publicExact = ["/", "/partners", "/apply", "/list-event", "/list-a-location", "/passport/contact", "/privacy-policy", "/admin"];
-  if (publicExact.includes(location)) return false;
-  const publicPrefixes = ["/sign-in", "/sign-up", "/stamp/", "/redeem/", "/admin/"];
-  if (publicPrefixes.some((p) => location === p || location.startsWith(p))) {
-    return false;
-  }
-  return true;
-}
 
 // Gate protected routes for signed-out visitors. The marketing home is always
 // the FIRST page an unregistered visitor sees: if their entry point (a fresh
@@ -115,13 +115,41 @@ function SignedInAuthRedirect() {
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     // If a stamp scan is pending, PendingStampRedirect owns the destination.
-    if (typeof window !== "undefined" && window.localStorage.getItem(PENDING_STAMP_KEY)) {
+    if (
+      typeof window !== "undefined" &&
+      window.localStorage.getItem(PENDING_STAMP_KEY)
+    ) {
       return;
     }
     if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
-      setLocation("/passport/stamps", { replace: true });
+      setLocation(MEMBER_HOME_ROUTE, { replace: true });
     }
   }, [isLoaded, isSignedIn, location, setLocation]);
+  return null;
+}
+
+function ConsentRequirementRedirect() {
+  const { isLoaded, isSignedIn } = useUser();
+  const { visitor, linkedReady } = useVisitor();
+  const [location, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !linkedReady || !visitor) return;
+    const needsConsent = !hasCurrentLegalConsent(visitor);
+    const isConsentPage = location === "/passport/consent";
+    const isConsumerRoute =
+      location === "/passport" ||
+      location.startsWith("/passport/") ||
+      location.startsWith("/stamp/") ||
+      location.startsWith("/redeem/");
+
+    if (needsConsent && isConsumerRoute && !isConsentPage) {
+      setLocation("/passport/consent", { replace: true });
+    } else if (!needsConsent && isConsentPage) {
+      setLocation(MEMBER_HOME_ROUTE, { replace: true });
+    }
+  }, [isLoaded, isSignedIn, linkedReady, visitor, location, setLocation]);
+
   return null;
 }
 
@@ -133,16 +161,31 @@ function SignedInAuthRedirect() {
 // too). The stamp page clears the pending key after collecting.
 function PendingStampRedirect() {
   const { isLoaded, isSignedIn } = useUser();
-  const { visitorId, linkedReady } = useVisitor();
+  const { visitorId, visitor, linkedReady } = useVisitor();
   const [location, setLocation] = useLocation();
   useEffect(() => {
-    if (!isLoaded || !isSignedIn || !linkedReady || !visitorId) return;
+    if (
+      !isLoaded ||
+      !isSignedIn ||
+      !linkedReady ||
+      !visitorId ||
+      !hasCurrentLegalConsent(visitor)
+    )
+      return;
     if (typeof window === "undefined") return;
     const pending = window.localStorage.getItem(PENDING_STAMP_KEY);
     if (!pending) return;
     const target = `/stamp/${pending}`;
     if (location !== target) setLocation(target, { replace: true });
-  }, [isLoaded, isSignedIn, linkedReady, visitorId, location, setLocation]);
+  }, [
+    isLoaded,
+    isSignedIn,
+    linkedReady,
+    visitorId,
+    visitor,
+    location,
+    setLocation,
+  ]);
   return null;
 }
 
@@ -154,6 +197,9 @@ function isMapShellRoute(location: string) {
     location === "/passport/events" ||
     location.startsWith("/passport/events/") ||
     location === "/passport/stamps" ||
+    location === "/passport/legends" ||
+    location.startsWith("/passport/legends/") ||
+    location === "/passport/shop" ||
     location === "/passport/routes" ||
     location.startsWith("/passport/routes/")
   );
@@ -192,6 +238,7 @@ function PassportRoutesGroup() {
     <PassportLayout>
       <Switch>
         <Route path="/passport/contact" component={PassportContact} />
+        <Route path="/passport/consent" component={PassportConsent} />
         <Route component={NotFound} />
       </Switch>
     </PassportLayout>
@@ -209,6 +256,9 @@ function ScrollToTop() {
 function Router() {
   const [location] = useLocation();
   const { isLoaded, isSignedIn } = useUser();
+  if (isPartnerRoute(location)) {
+    return <PartnerPortal />;
+  }
   if (location.startsWith("/sign-in") || location.startsWith("/sign-up")) {
     // Already signed in? Don't flash the auth UI — SignedInAuthRedirect is
     // sending them to their stamps page.
@@ -227,37 +277,6 @@ function Router() {
       </Switch>
     );
   }
-  if (location.startsWith("/redeem/")) {
-    return (
-      <Switch>
-        <Route path="/redeem/:tier" component={RedeemPage} />
-      </Switch>
-    );
-  }
-  if (location === "/admin" || location === "/admin/applications") {
-    return <AdminApplications />;
-  }
-  if (location === "/admin/stamps") {
-    return <AdminStamps />;
-  }
-  if (location === "/admin/content") {
-    return <AdminContent />;
-  }
-  if (location === "/admin/routes") {
-    return <AdminRoutes />;
-  }
-  if (location === "/admin/vendors") {
-    return <AdminVendors />;
-  }
-  if (location === "/admin/partners") {
-    return <AdminPartners />;
-  }
-  if (location === "/admin/users") {
-    return <AdminUsers />;
-  }
-  if (location === "/admin/insights") {
-    return <AdminInsights />;
-  }
   // Contact is reachable to everyone (opened in its own tab from the marketing
   // nav), so render it before the protected-route gate.
   if (location === "/passport/contact") {
@@ -268,6 +287,40 @@ function Router() {
     // redirected (to the marketing home or sign-up) — never flash gated content.
     if (!isLoaded || (!isSignedIn && !ALLOW_PUBLIC_ACCESS)) {
       return null;
+    }
+    if (location.startsWith("/redeem/")) {
+      return (
+        <Switch>
+          <Route path="/redeem/:tier" component={RedeemPage} />
+        </Switch>
+      );
+    }
+    if (location === "/admin" || location === "/admin/applications") {
+      return <AdminApplications />;
+    }
+    if (location === "/admin/stamps") {
+      return <AdminStamps />;
+    }
+    if (location === "/admin/content") {
+      return <AdminContent />;
+    }
+    if (location === "/admin/routes") {
+      return <AdminRoutes />;
+    }
+    if (location === "/admin/partners") {
+      return <AdminPartners />;
+    }
+    if (location === "/admin/crm") {
+      return <AdminCrm />;
+    }
+    if (location === "/admin/vendors") {
+      return <AdminVendors />;
+    }
+    if (location === "/admin/users") {
+      return <AdminUsers />;
+    }
+    if (location === "/admin/insights") {
+      return <AdminInsights />;
     }
     if (isMapShellRoute(location)) {
       return null;
@@ -289,6 +342,7 @@ function App() {
               <ScrollToTop />
               <ProtectedRouteRedirect />
               <SignedInAuthRedirect />
+              <ConsentRequirementRedirect />
               <PendingStampRedirect />
               <Router />
               <PersistentMapShell />

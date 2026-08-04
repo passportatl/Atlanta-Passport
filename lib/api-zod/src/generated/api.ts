@@ -726,7 +726,10 @@ export const UpdateVisitorPreferencesParams = zod.object({
 });
 
 export const UpdateVisitorPreferencesBody = zod.object({
-  promoOptIn: zod.boolean(),
+  promoOptIn: zod.boolean().optional(),
+  acceptTerms: zod.boolean().optional(),
+  acceptPrivacy: zod.boolean().optional(),
+  marketingOptIn: zod.boolean().optional(),
 });
 
 export const UpdateVisitorPreferencesResponse = zod.object({
@@ -736,6 +739,12 @@ export const UpdateVisitorPreferencesResponse = zod.object({
   phone: zod.string().nullish(),
   promoOptIn: zod.boolean(),
   promoOptInAt: zod.coerce.date().nullish(),
+  termsAcceptedAt: zod.coerce.date().nullish(),
+  termsVersion: zod.string().nullish(),
+  privacyAcceptedAt: zod.coerce.date().nullish(),
+  privacyVersion: zod.string().nullish(),
+  marketingOptIn: zod.boolean(),
+  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 

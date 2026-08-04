@@ -14,6 +14,8 @@ import routesRouter from "./routes";
 import snapshotImportRouter from "./snapshot-import";
 import crmRouter from "./crm";
 import staffRouter from "./staff";
+import partnerRouter from "./partner";
+import legendsRouter from "./legends";
 
 const router: IRouter = Router();
 
@@ -32,5 +34,7 @@ router.use(routesRouter);
 router.use(snapshotImportRouter);
 router.use(crmRouter);
 router.use(staffRouter);
+router.use(partnerRouter);
+router.use(legendsRouter);
 
 export default router;

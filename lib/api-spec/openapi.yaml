@@ -769,8 +769,105 @@ paths:
             text/csv:
               schema: { type: string }
 
+  /legends:
+    get:
+      operationId: listLegends
+      tags: [legends]
+      summary: List published ATL Legends
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Published Legends
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LegendSummary"
+
+  /legends/{slug}:
+    get:
+      operationId: getLegend
+      tags: [legends]
+      summary: Get a published ATL Legend
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Published Legend
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Legend"
+        "404":
+          description: Not found
+
 components:
   schemas:
+    LegendSummary:
+      type: object
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        title: { type: string }
+        subtitle: { type: string, nullable: true }
+        excerpt: { type: string, nullable: true }
+        category: { type: string }
+        tags:
+          type: array
+          items: { type: string }
+        authorName: { type: string, nullable: true }
+        authorImage: { type: string, nullable: true }
+        heroImage: { type: string, nullable: true }
+        publishedAt: { type: string, format: date-time }
+        isFeatured: { type: boolean }
+        readingTimeMinutes: { type: integer, nullable: true }
+      required: [id, slug, title, category, tags, publishedAt, isFeatured]
+
+    Legend:
+      allOf:
+        - $ref: "#/components/schemas/LegendSummary"
+        - type: object
+          properties:
+            body: { type: string, nullable: true }
+            authorBio: { type: string, nullable: true }
+            galleryImages:
+              type: array
+              items: { type: string }
+            seoTitle: { type: string, nullable: true }
+            seoDescription: { type: string, nullable: true }
+            socialPreviewImage: { type: string, nullable: true }
+            relatedLocationSlugs:
+              type: array
+              items: { type: string }
+            relatedEventIds:
+              type: array
+              items: { type: string }
+            relatedRouteSlugs:
+              type: array
+              items: { type: string }
+            relatedExperienceSlugs:
+              type: array
+              items: { type: string }
+          required:
+            - galleryImages
+            - relatedLocationSlugs
+            - relatedEventIds
+            - relatedRouteSlugs
+            - relatedExperienceSlugs
+
     HealthStatus:
       type: object
       properties:
@@ -796,10 +893,30 @@ components:
           type: string
           format: date-time
           nullable: true
+        termsAcceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        termsVersion:
+          type: string
+          nullable: true
+        privacyAcceptedAt:
+          type: string
+          format: date-time
+          nullable: true
+        privacyVersion:
+          type: string
+          nullable: true
+        marketingOptIn:
+          type: boolean
+        marketingConsentUpdatedAt:
+          type: string
+          format: date-time
+          nullable: true
         createdAt:
           type: string
           format: date-time
-      required: [id, firstName, email, promoOptIn, createdAt]
+      required: [id, firstName, email, promoOptIn, marketingOptIn, createdAt]
 
     CreateVisitorInput:
       type: object
@@ -823,10 +940,17 @@ components:
           type: string
         name:
           type: string
-        category:
-          type: string
-        neighborhood:
-          type: string
+          category:
+            type: string
+          categoryId:
+            type: string
+          tags:
+            type: array
+            items: { type: string }
+          neighborhood:
+            type: string
+          areaId:
+            type: string
         description:
           type: string
         address:
@@ -843,23 +967,48 @@ components:
         latitude:
           type: number
           nullable: true
-        longitude:
-          type: number
-          nullable: true
-        isActive:
-          type: boolean
+          longitude:
+            type: number
+            nullable: true
+          mapReadiness:
+            type: string
+            enum: [verified, coordinates-present, missing-coordinates]
+          publicStatus: { type: string }
+          isStampStop: { type: boolean }
+          priorityListing: { type: boolean }
+          priorityRank: { type: integer }
+          detailPageEnabled: { type: boolean }
+          entitlementStartsAt: { type: string, format: date-time, nullable: true }
+          entitlementEndsAt: { type: string, format: date-time, nullable: true }
+          hasPublicOffer: { type: boolean }
+          publicUpdatedAt: { type: string, format: date-time }
+          sortKey: { type: string }
+          isActive:
+            type: boolean
       required:
         - id
         - slug
         - name
-        - category
-        - neighborhood
+          - category
+          - categoryId
+          - tags
+          - neighborhood
+          - areaId
         - description
         - address
         - stampName
         - stampColor
-        - icon
-        - isActive
+          - icon
+          - mapReadiness
+          - publicStatus
+          - isStampStop
+          - priorityListing
+          - priorityRank
+          - detailPageEnabled
+          - hasPublicOffer
+          - publicUpdatedAt
+          - sortKey
+          - isActive
 
     BusinessList:
       type: array
@@ -1179,7 +1328,9 @@ components:
       type: object
       properties:
         promoOptIn: { type: boolean }
-      required: [promoOptIn]
+        acceptTerms: { type: boolean }
+        acceptPrivacy: { type: boolean }
+        marketingOptIn: { type: boolean }
 
     CrmUpdateInput:
       type: object
@@ -1322,7 +1473,7 @@ components:
         email: { type: string, format: email }
         topic:
           type: string
-          enum: [question, suggestion, feedback, business, other]
+            enum: [general_question, technical_support, media_press, partnership, event_listing, location_listing, sponsorship, billing, other]
         message: { type: string, minLength: 10 }
       required:
         - name

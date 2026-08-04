@@ -18,6 +18,7 @@ import { PrizeLadder } from "@/passport/PrizeLadder";
 import Sticker from "@/components/Sticker";
 import { NEIGHBORHOOD_BY_NAME } from "@/passport/data";
 import { STAMP_IMAGE_BY_SLUG } from "@/data/sample-data";
+import { CommunicationPreferences } from "@/passport/CommunicationPreferences";
 
 export default function PassportHome() {
   const { visitorId, visitor } = useVisitor();
@@ -41,9 +42,9 @@ export default function PassportHome() {
       enabled: !!visitorId,
     },
   });
-  const redeemedTiers = ((redemptionsRaw as Redemption[] | undefined) ?? []).map(
-    (r) => ({ tierStamps: r.tierStamps, redeemedAt: r.redeemedAt }),
-  );
+  const redeemedTiers = (
+    (redemptionsRaw as Redemption[] | undefined) ?? []
+  ).map((r) => ({ tierStamps: r.tierStamps, redeemedAt: r.redeemedAt }));
 
   if (!visitorId) {
     return (
@@ -55,11 +56,15 @@ export default function PassportHome() {
           >
             DIGITAL PASSPORT
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>
+          <h1
+            className="text-3xl sm:text-4xl font-black mb-1"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
             Passport Rewards
           </h1>
           <p className="text-sm text-foreground/70">
-            Collect stamps at participating spots. Unlock secret routes & rewards.
+            Collect stamps at participating spots. Unlock secret routes &
+            rewards.
           </p>
         </div>
         <StartPassportForm />
@@ -73,7 +78,11 @@ export default function PassportHome() {
   // Passport history — keeps a record of past + current passports and what each
   // was redeemed for. Add new seasons here as they launch (mark the live one
   // "Current" and set the prior one's `redeemedFor`).
-  const passports: { name: string; status: string; redeemedFor: string | null }[] = [
+  const passports: {
+    name: string;
+    status: string;
+    redeemedFor: string | null;
+  }[] = [
     { name: "Summer 2026 Passport", status: "Current", redeemedFor: null },
   ];
 
@@ -82,18 +91,26 @@ export default function PassportHome() {
   return (
     <div className="space-y-6">
       <div>
-        <Sticker color="lime" className="mb-3">YOUR PASSPORT</Sticker>
+        <Sticker color="lime" className="mb-3">
+          YOUR PASSPORT
+        </Sticker>
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h1 className="text-3xl sm:text-4xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
+          <h1
+            className="text-3xl sm:text-4xl font-black"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
             Hey, {visitor?.firstName ?? "Explorer"}.
           </h1>
           {visitor?.createdAt && (
             <span className="text-sm font-bold text-[hsl(var(--brand-gold))]">
               Member since{" "}
-              {new Date(visitor.createdAt as unknown as string).toLocaleDateString(
-                undefined,
-                { month: "long", day: "numeric", year: "numeric" },
-              )}
+              {new Date(
+                visitor.createdAt as unknown as string,
+              ).toLocaleDateString(undefined, {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
             </span>
           )}
           {isSignedIn && (
@@ -122,18 +139,27 @@ export default function PassportHome() {
 
       <div className="grid grid-cols-2 gap-3">
         <div className="card-pop bg-white p-4">
-          <div className="text-xs font-black uppercase tracking-wider opacity-60">Stamps</div>
-          <div className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
+          <div className="text-xs font-black uppercase tracking-wider opacity-60">
+            Stamps
+          </div>
+          <div
+            className="text-3xl font-black"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
             {total}
           </div>
         </div>
         <div className="card-pop bg-white p-4">
-          <div className="text-xs font-black uppercase tracking-wider opacity-60">Passports</div>
+          <div className="text-xs font-black uppercase tracking-wider opacity-60">
+            Passports
+          </div>
           <ul className="mt-2 space-y-2">
             {passports.map((p) => (
               <li key={p.name}>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-black text-sm leading-tight">{p.name}</span>
+                  <span className="font-black text-sm leading-tight">
+                    {p.name}
+                  </span>
                   <span
                     className={`shrink-0 rounded-full border-2 border-foreground px-2 py-0.5 font-display text-[9px] tracking-[0.1em] uppercase shadow-pop-sm ${
                       p.status === "Current"
@@ -161,12 +187,27 @@ export default function PassportHome() {
         title="Summer 2026 Passport Prize Ladder"
       />
 
+      <section className="card-pop bg-white p-5">
+        <h2 className="mb-2 text-xl font-black">Communication Preferences</h2>
+        <p className="mb-4 text-sm leading-relaxed text-foreground/70">
+          Choose whether you receive Passport ATL newsletters, rewards, and
+          promotional updates.
+        </p>
+        <CommunicationPreferences />
+      </section>
+
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
+          <h2
+            className="text-xl font-black"
+            style={{ fontFamily: "Bungee, sans-serif" }}
+          >
             Recent Stamps
           </h2>
-          <Link href="/passport/stamps" className="text-xs font-black underline">
+          <Link
+            href="/passport/stamps"
+            className="text-xs font-black underline"
+          >
             See all
           </Link>
         </div>
@@ -196,7 +237,6 @@ export default function PassportHome() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
