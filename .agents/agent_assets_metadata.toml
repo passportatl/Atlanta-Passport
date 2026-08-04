@@ -161,3 +161,17 @@ id = "dAEikH6Fq2978FHcD80dr"
 uri = "file://exports/atlanta-passport-source.zip"
 type = "unspecified"
 title = "Atlanta Passport source code (zip)"
+
+[[outputs]]
+id = "AGm8OT2BD6BB3o0yozDvW"
+uri = "file://backups-download/passport-atl-production-2026-08-04.dump"
+type = "unspecified"
+title = "Production DB backup (custom format)"
+description = "PostgreSQL custom-format backup of Passport ATL production, 2026-08-04 17:30 EDT. Restore with pg_restore."
+
+[[outputs]]
+id = "tED8L9DeCQY_ThgWN7rW9"
+uri = "file://backups-download/passport-atl-production-2026-08-04.sql"
+type = "unspecified"
+title = "Production DB backup (plain SQL)"
+description = "Plain SQL backup of Passport ATL production, 2026-08-04 17:30 EDT."
