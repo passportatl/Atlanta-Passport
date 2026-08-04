@@ -1,9 +1,13 @@
 import { Router, type IRouter } from "express";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getAuth, clerkClient } from "@clerk/express";
 import { db, visitorsTable } from "@workspace/db";
 import { CreateVisitorBody } from "@workspace/api-zod";
 import { scheduleSignupSync } from "../lib/googleSheetSync";
+import {
+  identityRecoveryEnabled,
+  verifiedPrimaryEmail,
+} from "../domain/clerk-identity-recovery";
 
 const router: IRouter = Router();
 const CURRENT_TERMS_VERSION = "2026-07-30";
@@ -26,10 +30,40 @@ router.post("/visitors/link", async (req, res) => {
   }
 
   const user = await clerkClient.users.getUser(userId);
-  const email =
-    user.primaryEmailAddress?.emailAddress ??
-    user.emailAddresses[0]?.emailAddress ??
-    `${userId}@passport.local`;
+  const email = verifiedPrimaryEmail(user);
+  if (!email) {
+    res.status(403).json({
+      error: "A verified primary email address is required to link a passport",
+    });
+    return;
+  }
+
+  // A replacement Clerk tenant assigns a new user ID. Reattach a single
+  // existing record by verified email so its visitor UUID—and therefore its
+  // stamps, redemptions, preferences, and orders—remain unchanged.
+  if (identityRecoveryEnabled()) {
+    const emailMatches = await db
+      .select()
+      .from(visitorsTable)
+      .where(sql`lower(${visitorsTable.email}) = ${email}`)
+      .limit(2);
+    if (emailMatches.length > 1) {
+      res.status(409).json({
+        error:
+          "Multiple passport records use this email; staff review required",
+      });
+      return;
+    }
+    if (emailMatches[0]) {
+      const [relinked] = await db
+        .update(visitorsTable)
+        .set({ clerkUserId: userId, email })
+        .where(eq(visitorsTable.id, emailMatches[0].id))
+        .returning();
+      res.json(relinked);
+      return;
+    }
+  }
   const meta = user.unsafeMetadata as
     | {
         firstName?: unknown;
