@@ -22,6 +22,9 @@ describe("guest route access", () => {
     "/sign-up",
     "/sign-up/verify-email-address",
     "/stamp/trap-music-museum",
+    "/admin",
+    "/admin/applications",
+    "/admin/content",
   ])("allows the approved guest route %s", (route) => {
     expect(isGuestAccessibleRoute(route)).toBe(true);
     expect(isProtectedRoute(route)).toBe(false);
@@ -39,10 +42,7 @@ describe("guest route access", () => {
     "/events/example",
     "/routes/example",
     "/listing/example",
-    "/admin",
-    "/admin/applications",
-    "/admin/content",
-  ])("protects member and operational route %s", (route) => {
+  ])("protects member route %s", (route) => {
     expect(isGuestAccessibleRoute(route)).toBe(false);
     expect(isProtectedRoute(route)).toBe(true);
   });

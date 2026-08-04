@@ -1,8 +1,8 @@
 import { Clock } from "lucide-react";
-import { useGetLegend } from "@workspace/api-client-react";
+import { useLegend } from "@/lib/legend-api";
 
 export function LegendDetail({ slug }: { slug: string }) {
-  const query = useGetLegend(slug);
+  const query = useLegend(slug);
   const post = query.data;
 
   if (query.isPending) {

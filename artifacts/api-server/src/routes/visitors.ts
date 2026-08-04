@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { and, eq, sql } from "drizzle-orm";
 import { getAuth, clerkClient } from "@clerk/express";
 import { db, visitorsTable } from "@workspace/db";
-import { CreateVisitorBody } from "@workspace/api-zod";
+import { CreateVisitorBody, UpdateVisitorPreferencesBody } from "@workspace/api-zod";
 import { scheduleSignupSync } from "../lib/googleSheetSync";
 import {
   identityRecoveryEnabled,
@@ -165,17 +165,26 @@ router.patch("/visitors/:id/preferences", async (req, res) => {
     res.status(400).json({ error: "Missing id" });
     return;
   }
+  const parsed = UpdateVisitorPreferencesBody.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
+    return;
+  }
   const {
     acceptTerms,
     acceptPrivacy,
     marketingOptIn,
+    promoOptIn,
   }: {
     acceptTerms?: unknown;
     acceptPrivacy?: unknown;
     marketingOptIn?: unknown;
-  } = req.body ?? {};
+    promoOptIn?: unknown;
+  } = parsed.data;
+  const requestedOptIn =
+    typeof marketingOptIn === "boolean" ? marketingOptIn : promoOptIn;
   if (
-    typeof marketingOptIn !== "boolean" ||
+    typeof requestedOptIn !== "boolean" ||
     (acceptTerms !== undefined && typeof acceptTerms !== "boolean") ||
     (acceptPrivacy !== undefined && typeof acceptPrivacy !== "boolean")
   ) {
@@ -199,7 +208,9 @@ router.patch("/visitors/:id/preferences", async (req, res) => {
   const [updated] = await db
     .update(visitorsTable)
     .set({
-      marketingOptIn,
+      promoOptIn: requestedOptIn,
+      promoOptInAt: now,
+      marketingOptIn: requestedOptIn,
       marketingConsentUpdatedAt: now,
       termsAcceptedAt:
         !visitor.termsAcceptedAt && acceptTerms === true

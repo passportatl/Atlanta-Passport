@@ -6,6 +6,7 @@ import {
   GripVertical, Check, X, Archive, Eye, Edit3,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
+import AdminGate from "@/components/AdminGate";
 import { cn } from "@/lib/utils";
 import { restoreAdminKey } from "@/lib/adminSession";
 
@@ -1202,61 +1203,18 @@ function CsvImportTab({ adminKey }: { adminKey: string }) {
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default function AdminRoutes() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [adminKey, setAdminKey] = useState("");
-  const [keyInput, setKeyInput] = useState("");
-  const [keyError, setKeyError] = useState("");
   const [activeTab, setActiveTab] = useState<"routes" | "migration" | "csv-import">("routes");
 
-  useEffect(() => {
-    void restoreAdminKey().then((key) => {
-      if (key) {
-        setUnlocked(true);
-        setAdminKey(key);
-      }
-    });
-  }, []);
+  return (
+    <AdminGate>
+      {(adminKey) => (
+        <AdminRoutesInner adminKey={adminKey} activeTab={activeTab} setActiveTab={setActiveTab} />
+      )}
+    </AdminGate>
+  );
+}
 
-  const handleUnlock = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setKeyError("");
-    const res = await fetch(`${API_BASE}/admin/routes`, {
-      headers: { "x-admin-key": keyInput },
-    });
-    if (res.status === 401) { setKeyError("Incorrect admin key."); return; }
-    sessionStorage.setItem(UNLOCK_KEY, "1");
-    sessionStorage.setItem(ADMIN_KEY_STORAGE, keyInput);
-    setAdminKey(keyInput);
-    setUnlocked(true);
-  };
-
-  if (!unlocked) {
-    return (
-      <div className="min-h-screen bg-[hsl(var(--brand-cream))] flex items-center justify-center p-4">
-        <div className="max-w-sm w-full card-pop bg-white p-8 space-y-6">
-          <div className="text-center">
-            <div className="text-3xl font-black mb-1" style={{ fontFamily: "Bungee, sans-serif" }}>ADMIN</div>
-            <div className="text-sm text-foreground/60">Route Hub</div>
-          </div>
-          <form onSubmit={handleUnlock} className="space-y-3">
-            <input
-              type="password"
-              value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
-              placeholder="Admin password"
-              className="w-full border-2 border-foreground rounded-xl px-4 py-2.5 text-sm"
-              autoFocus
-            />
-            {keyError && <p className="text-red-600 text-xs font-bold">{keyError}</p>}
-            <button type="submit" className="button-pop w-full bg-brand-navy text-white py-2.5 font-display text-sm tracking-widest uppercase">
-              Unlock →
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
+function AdminRoutesInner({ adminKey, activeTab, setActiveTab }: { adminKey: string, activeTab: "routes" | "migration" | "csv-import", setActiveTab: (t: "routes" | "migration" | "csv-import") => void }) {
   const TABS = [
     { key: "routes" as const, label: "All Routes", icon: <Route className="w-4 h-4" /> },
     { key: "migration" as const, label: "Migration", icon: <RefreshCw className="w-4 h-4" /> },

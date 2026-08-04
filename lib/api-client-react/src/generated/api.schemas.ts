@@ -5,35 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface LegendSummary {
-  id: string;
-  slug: string;
-  title: string;
-  subtitle?: string | null;
-  excerpt?: string | null;
-  category: string;
-  tags: string[];
-  authorName?: string | null;
-  authorImage?: string | null;
-  heroImage?: string | null;
-  publishedAt: string;
-  isFeatured: boolean;
-  readingTimeMinutes?: number | null;
-}
-
-export type Legend = LegendSummary & {
-  body?: string | null;
-  authorBio?: string | null;
-  galleryImages: string[];
-  seoTitle?: string | null;
-  seoDescription?: string | null;
-  socialPreviewImage?: string | null;
-  relatedLocationSlugs: string[];
-  relatedEventIds: string[];
-  relatedRouteSlugs: string[];
-  relatedExperienceSlugs: string[];
-};
-
 export interface HealthStatus {
   status: string;
 }
@@ -43,6 +14,8 @@ export interface Visitor {
   firstName: string;
   email: string;
   phone?: string | null;
+  promoOptIn: boolean;
+  promoOptInAt?: string | null;
   termsAcceptedAt?: string | null;
   termsVersion?: string | null;
   privacyAcceptedAt?: string | null;
@@ -57,12 +30,6 @@ export interface CreateVisitorInput {
   firstName: string;
   email: string;
   phone?: string;
-}
-
-export interface UpdateVisitorPreferencesInput {
-  acceptTerms?: boolean;
-  acceptPrivacy?: boolean;
-  marketingOptIn: boolean;
 }
 
 export type BusinessMapReadiness =
@@ -168,6 +135,7 @@ export type SubmitApplicationInputSubmissionType =
 export const SubmitApplicationInputSubmissionType = {
   business: "business",
   event: "event",
+  vendor: "vendor",
 } as const;
 
 export type SubmitApplicationInputPackage =
@@ -180,6 +148,11 @@ export const SubmitApplicationInputPackage = {
   route: "route",
   custom: "custom",
   event: "event",
+  free: "free",
+  standard: "standard",
+  "market-day": "market-day",
+  weekend: "weekend",
+  "featured-vendor": "featured-vendor",
 } as const;
 
 export interface SubmitApplicationInput {
@@ -200,8 +173,9 @@ export interface SubmitApplicationInput {
   /** @minLength 5 */
   address: string;
   package?: SubmitApplicationInputPackage;
+  addOns?: string[];
+  vendorType?: string;
   routeId?: string;
-  /** @minLength 5 */
   offer: string;
   prizeSponsorship?: string;
   nearMarta?: boolean;
@@ -254,6 +228,15 @@ export interface Application {
   eventUrl?: string | null;
   promoContact?: boolean | null;
   promoContactMethod?: string | null;
+  vendorType?: string | null;
+  addOns?: string[] | null;
+  listingPrice?: number | null;
+  salesStage?: string;
+  assignedTo?: string | null;
+  lastContactAt?: string | null;
+  nextFollowUpAt?: string | null;
+  crmNotes?: string | null;
+  paymentStatus?: string;
   emailDelivered: string;
   createdAt: string;
 }
@@ -263,6 +246,195 @@ export type ApplicationList = Application[];
 export interface ApplicationReceipt {
   id: string;
   emailDelivered: string;
+}
+
+export interface StaffLoginInput {
+  /** @minLength 1 */
+  username: string;
+  /** @minLength 1 */
+  password: string;
+}
+
+export interface StaffChangePasswordInput {
+  /** @minLength 1 */
+  currentPassword: string;
+  /** @minLength 10 */
+  newPassword: string;
+}
+
+export interface StaffUser {
+  id: string;
+  username: string;
+  email?: string | null;
+  status: string;
+  mustChangePassword: boolean;
+  lastLoginAt?: string | null;
+  passwordChangedAt?: string | null;
+  createdAt: string;
+}
+
+export interface StaffSessionInfo {
+  authenticated: boolean;
+  user?: StaffUser;
+}
+
+export type UpdateStaffUserInputStatus =
+  (typeof UpdateStaffUserInputStatus)[keyof typeof UpdateStaffUserInputStatus];
+
+export const UpdateStaffUserInputStatus = {
+  active: "active",
+  disabled: "disabled",
+} as const;
+
+export interface UpdateStaffUserInput {
+  email?: string | null;
+  status?: UpdateStaffUserInputStatus;
+}
+
+export interface AdminAuditEntry {
+  id: string;
+  actor: string;
+  action: string;
+  entityType?: string | null;
+  entityId?: string | null;
+  detail?: string | null;
+  createdAt: string;
+}
+
+export interface LegacyAccessStatus {
+  enabled: boolean;
+}
+
+export interface UpdateVisitorPreferencesInput {
+  promoOptIn?: boolean;
+  acceptTerms?: boolean;
+  acceptPrivacy?: boolean;
+  marketingOptIn?: boolean;
+}
+
+export type CrmUpdateInputSalesStage =
+  (typeof CrmUpdateInputSalesStage)[keyof typeof CrmUpdateInputSalesStage];
+
+export const CrmUpdateInputSalesStage = {
+  new: "new",
+  contacted: "contacted",
+  negotiating: "negotiating",
+  committed: "committed",
+  "closed-won": "closed-won",
+  "closed-lost": "closed-lost",
+} as const;
+
+export type CrmUpdateInputPaymentStatus =
+  (typeof CrmUpdateInputPaymentStatus)[keyof typeof CrmUpdateInputPaymentStatus];
+
+export const CrmUpdateInputPaymentStatus = {
+  unpaid: "unpaid",
+  invoiced: "invoiced",
+  paid: "paid",
+  comped: "comped",
+} as const;
+
+export interface CrmUpdateInput {
+  salesStage?: CrmUpdateInputSalesStage;
+  assignedTo?: string | null;
+  lastContactAt?: string | null;
+  nextFollowUpAt?: string | null;
+  crmNotes?: string | null;
+  paymentStatus?: CrmUpdateInputPaymentStatus;
+}
+
+export type CrmRecordRecordType =
+  (typeof CrmRecordRecordType)[keyof typeof CrmRecordRecordType];
+
+export const CrmRecordRecordType = {
+  event: "event",
+  location: "location",
+  vendor: "vendor",
+  business: "business",
+} as const;
+
+export interface CrmRecord {
+  recordType: CrmRecordRecordType;
+  id: string;
+  name: string;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  packageId?: string | null;
+  listingPrice?: number | null;
+  addOns?: string[] | null;
+  workflowStatus?: string | null;
+  salesStage: string;
+  assignedTo?: string | null;
+  lastContactAt?: string | null;
+  nextFollowUpAt?: string | null;
+  crmNotes?: string | null;
+  paymentStatus: string;
+  createdAt: string;
+}
+
+export interface PartnerKindTotals {
+  total: number;
+  paid: number;
+  pendingFollowUp: number;
+  revenue: number;
+}
+
+export interface PartnersSummary {
+  events: PartnerKindTotals;
+  locations: PartnerKindTotals;
+  vendors: PartnerKindTotals;
+  businesses: PartnerKindTotals;
+  totalRevenue: number;
+  paidRevenue: number;
+}
+
+export interface ReminderRunResult {
+  overdue: number;
+  dueToday: number;
+  digestSent: boolean;
+  digestSkippedReason?: string | null;
+  staffDigestsSent?: number;
+}
+
+export interface StaffMember {
+  name: string;
+  email: string;
+}
+
+export interface StaffDirectory {
+  entries: StaffMember[];
+}
+
+export interface StaffDirectoryInput {
+  entries: StaffMember[];
+}
+
+export type AdminInsightsDiagnosticsItemStatus =
+  (typeof AdminInsightsDiagnosticsItemStatus)[keyof typeof AdminInsightsDiagnosticsItemStatus];
+
+export const AdminInsightsDiagnosticsItemStatus = {
+  ok: "ok",
+  warn: "warn",
+  error: "error",
+} as const;
+
+export type AdminInsightsDiagnosticsItem = {
+  label: string;
+  value: string;
+  status: AdminInsightsDiagnosticsItemStatus;
+};
+
+export interface AdminInsights {
+  registeredUsers: number;
+  newUsersLast7Days: number;
+  newUsersLast30Days: number;
+  activeStampers: number;
+  totalStamps: number;
+  stampsLast7Days: number;
+  totalRedemptions: number;
+  publishedEvents: number;
+  promoOptIns: number;
+  diagnostics: AdminInsightsDiagnosticsItem[];
 }
 
 export type SubmitContactMessageInputTopic =
@@ -520,7 +692,38 @@ export type ReprocessEventLocations200 = {
   remainingNeedingGeocode: number;
 };
 
-export type ListLegendsParams = {
-  search?: string;
-  category?: string;
+export type StaffLogout200 = {
+  ok: boolean;
 };
+
+export type ListAdminAuditLogParams = {
+  limit?: number;
+};
+
+export type ListCrmRecordsParams = {
+  recordType?: ListCrmRecordsRecordType;
+  /**
+   * Follow-up queue filter
+   */
+  bucket?: ListCrmRecordsBucket;
+};
+
+export type ListCrmRecordsRecordType =
+  (typeof ListCrmRecordsRecordType)[keyof typeof ListCrmRecordsRecordType];
+
+export const ListCrmRecordsRecordType = {
+  event: "event",
+  location: "location",
+  vendor: "vendor",
+  business: "business",
+} as const;
+
+export type ListCrmRecordsBucket =
+  (typeof ListCrmRecordsBucket)[keyof typeof ListCrmRecordsBucket];
+
+export const ListCrmRecordsBucket = {
+  overdue: "overdue",
+  upcoming: "upcoming",
+  unassigned: "unassigned",
+  paid: "paid",
+} as const;

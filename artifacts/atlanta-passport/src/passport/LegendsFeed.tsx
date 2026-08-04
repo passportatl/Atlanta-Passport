@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { BookOpen, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
-import { useListLegends } from "@workspace/api-client-react";
+import { useLegends } from "@/lib/legend-api";
 
 export function LegendsFeed() {
   const [search, setSearch] = useState("");
-  const query = useListLegends(search.trim() ? { search: search.trim() } : undefined);
+  const query = useLegends(search);
   const posts = query.data ?? [];
 
   return (

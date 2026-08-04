@@ -28,6 +28,30 @@ export interface LocationCta {
   variant?: "primary" | "secondary";
 }
 
+export interface LocationTheme {
+  background?: string;
+  foreground?: string;
+  card?: string;
+  cardForeground?: string;
+  border?: string;
+  muted?: string;
+  mutedForeground?: string;
+  primary?: string;
+  brandRed?: string;
+  brandRedForeground?: string;
+  brandYellow?: string;
+  brandYellowForeground?: string;
+  brandNavy?: string;
+  brandLime?: string;
+  brandCream?: string;
+  popBorder?: string;
+  popShadow?: string;
+  buttonPopBg?: string;
+  buttonPopFg?: string;
+  buttonPopYellowBg?: string;
+  buttonPopYellowFg?: string;
+}
+
 /**
  * Optional rich content for sponsored partner location pages.
  * Each field is individually gated — omit any that are not yet confirmed.
@@ -191,6 +215,11 @@ export interface LocationBranding {
    * All sub-fields are individually optional — omit anything not yet confirmed.
    */
   locationContent?: LocationContent;
+
+  /**
+   * Optional custom CSS variable overrides to theme the entire location page.
+   */
+  theme?: LocationTheme;
 }
 
 // ── Per-location config ────────────────────────────────────────────────────
@@ -205,9 +234,33 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
     partnerTagline: "Official Cultural Partner of Passport ATL",
     sponsorBadge: "Cultural Partner",
 
-    // ── Brand colors (Official: Black + White) ────────────────────────────
-    accentColor: "#000000",
-    accentFg: "#FFFFFF",
+    // ── Brand colors (Official: Black + White + Gold) ─────────────────────────
+    accentColor: "#C78B28",
+    accentFg: "#000000",
+
+    theme: {
+      background: "#000000",
+      foreground: "#ffffff",
+      card: "#111111",
+      cardForeground: "#ffffff",
+      border: "#333333",
+      muted: "#222222",
+      mutedForeground: "#a3a3a3",
+      primary: "#ffffff",
+      brandRed: "#C78B28",
+      brandRedForeground: "#000000",
+      brandYellow: "#C78B28",
+      brandYellowForeground: "#000000",
+      brandNavy: "#000000",
+      brandLime: "#C78B28",
+      brandCream: "#ffffff",
+      popBorder: "#333333",
+      popShadow: "#000000",
+      buttonPopBg: "#C78B28",
+      buttonPopFg: "#000000",
+      buttonPopYellowBg: "#222222",
+      buttonPopYellowFg: "#ffffff",
+    },
 
     // ── Bottom attribution ─────────────────────────────────────────────────
     brandNote:
@@ -325,7 +378,7 @@ export const LOCATION_BRANDING: Record<string, LocationBranding> = {
         {
           name: "Gift Shop",
           description:
-            "Take home exclusive Trap Museum merchandise, apparel, and collectibles. Passport ATL holders receive 20% off all merch.",
+            "Take home exclusive Trap Music Museum merchandise, apparel, and collectibles. Passport ATL holders receive 20% off all merch.",
         },
       ],
 

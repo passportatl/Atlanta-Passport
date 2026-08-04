@@ -7,7 +7,8 @@
  */
 
 export interface UpdateVisitorPreferencesInput {
+  promoOptIn?: boolean;
   acceptTerms?: boolean;
   acceptPrivacy?: boolean;
-  marketingOptIn: boolean;
+  marketingOptIn?: boolean;
 }

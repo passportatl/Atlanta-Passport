@@ -1,11 +1,7 @@
 import { type ReactNode } from "react";
 import { useParams, Link } from "wouter";
 import { useTranslation } from "react-i18next";
-import {
-  businesses,
-  businessCategories,
-  events as sampleEvents,
-} from "@/data/sample-data";
+import { businesses, businessCategories, events as sampleEvents } from "@/data/sample-data";
 import { LOCATION_BRANDING } from "@/data/locationBranding";
 import CategoryBadge from "@/components/CategoryBadge";
 import BusinessImage from "@/components/BusinessImage";
@@ -16,22 +12,9 @@ import GoogleReviews from "@/components/GoogleReviews";
 import NearbyRoutes from "@/components/NearbyRoutes";
 import StampChecklist, { type StampTarget } from "@/passport/StampChecklist";
 import { STAMP_SLUG } from "@/passport/data";
-import { useExploreLocations } from "@/hooks/useExploreLocations";
 import {
-  MapPin,
-  Gift,
-  Clock,
-  Navigation,
-  ArrowLeft,
-  Bike,
-  Utensils,
-  Train,
-  Globe,
-  ExternalLink,
-  Sparkles,
-  AtSign,
-  ShieldCheck,
-  Car,
+  MapPin, Gift, Clock, Navigation, ArrowLeft, Bike, Utensils, Train,
+  Globe, ExternalLink, Sparkles, AtSign, ShieldCheck, Car,
 } from "lucide-react";
 
 const HQ_INTRO =
@@ -69,15 +52,7 @@ function renderOffer(offer: string): ReactNode[] {
 export default function Listing() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const business = businesses.find((b) => b.id === id);
-  const { locations: exploreLocations, status: exploreDataStatus } =
-    useExploreLocations();
-  const publicLocation = exploreLocations.find(
-    (location) =>
-      location.id === id ||
-      location.canonicalId === id ||
-      location.canonicalSlug === id,
-  );
+  const business = businesses.find(b => b.id === id);
   // Logo only exists on a subset of sponsored businesses, so read it off the
   // heterogeneous union safely.
   const logo =
@@ -92,60 +67,10 @@ export default function Listing() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4 bg-muted/20">
         <div className="card-pop bg-card max-w-md w-full p-8 text-center">
-          <h2 className="text-2xl font-serif font-bold text-foreground mb-4">
-            {t("common.error")}
-          </h2>
+          <h2 className="text-2xl font-serif font-bold text-foreground mb-4">{t("common.error")}</h2>
           <p className="text-muted-foreground mb-8">{t("common.error")}</p>
-          <Link
-            href="/passport/explore"
-            className="button-pop inline-flex items-center justify-center gap-2 w-full"
-          >
-            <ArrowLeft className="w-4 h-4 rtl:rotate-180" />{" "}
-            {t("listing_page.back")}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (exploreDataStatus === "loading") {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center p-4 bg-muted/20">
-        <div
-          role="status"
-          className="card-pop bg-card max-w-md w-full p-8 text-center"
-        >
-          <h2 className="text-2xl font-serif font-bold text-foreground mb-4">
-            Checking listing access
-          </h2>
-          <p className="text-muted-foreground">
-            Passport ATL is confirming the current listing details.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!publicLocation?.detailPageEnabled) {
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center p-4 bg-muted/20">
-        <div className="card-pop bg-card max-w-md w-full p-8 text-center">
-          <h1 className="text-2xl font-serif font-bold text-foreground mb-3">
-            {business.name}
-          </h1>
-          <p className="text-sm font-display uppercase tracking-wider text-brand-red mb-4">
-            {business.neighborhood}
-          </p>
-          <p className="text-muted-foreground mb-8">
-            This location currently has a basic Passport ATL listing. Full
-            location details are not available at this time.
-          </p>
-          <Link
-            href="/passport/explore"
-            className="button-pop inline-flex items-center justify-center gap-2 w-full"
-          >
-            <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
-            Back to Explore
+          <Link href="/passport/explore" className="button-pop inline-flex items-center justify-center gap-2 w-full">
+            <ArrowLeft className="w-4 h-4 rtl:rotate-180" /> {t("listing_page.back")}
           </Link>
         </div>
       </div>
@@ -185,8 +110,82 @@ export default function Listing() {
     ? { color: branding.accentColor }
     : undefined;
 
+  // Tailwind is configured with `@theme inline`, so utility classes like
+  // `bg-background` compile to `hsl(var(--background))` — overriding the
+  // derived `--color-*` vars alone does nothing. We must also override the
+  // raw HSL-triplet vars. Convert theme hex values to "H S% L%" triplets.
+  const hexToHslTriplet = (hex: string): string => {
+    const m = hex.replace("#", "");
+    const r = parseInt(m.slice(0, 2), 16) / 255;
+    const g = parseInt(m.slice(2, 4), 16) / 255;
+    const b = parseInt(m.slice(4, 6), 16) / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    let h = 0;
+    let s = 0;
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+      else if (max === g) h = ((b - r) / d + 2) / 6;
+      else h = ((r - g) / d + 4) / 6;
+    }
+    return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+  };
+  const rawVar = (name: string, hex?: string) =>
+    hex ? { [name]: hexToHslTriplet(hex) } : {};
+
+  const themeVars = branding?.theme ? {
+    // Raw HSL-triplet overrides (used by compiled Tailwind utilities).
+    ...rawVar("--background", branding.theme.background),
+    ...rawVar("--foreground", branding.theme.foreground),
+    ...rawVar("--card", branding.theme.card),
+    ...rawVar("--card-foreground", branding.theme.cardForeground),
+    ...rawVar("--border", branding.theme.border),
+    ...rawVar("--card-border", branding.theme.border),
+    ...rawVar("--muted", branding.theme.muted),
+    ...rawVar("--muted-foreground", branding.theme.mutedForeground),
+    ...rawVar("--primary", branding.theme.primary),
+    ...rawVar("--brand-red", branding.theme.brandRed),
+    ...rawVar("--brand-red-foreground", branding.theme.brandRedForeground),
+    ...rawVar("--brand-yellow", branding.theme.brandYellow),
+    ...rawVar("--brand-yellow-foreground", branding.theme.brandYellowForeground),
+    ...rawVar("--brand-navy", branding.theme.brandNavy),
+    ...rawVar("--brand-lime", branding.theme.brandLime),
+    ...rawVar("--brand-cream", branding.theme.brandCream),
+    // Derived vars (used by inline `var(--color-*)` styles in shared components).
+    ...(branding.theme.background && { "--color-background": branding.theme.background }),
+    ...(branding.theme.foreground && { "--color-foreground": branding.theme.foreground }),
+    ...(branding.theme.card && {
+      "--color-card": branding.theme.card,
+      // Themed surfaces for shared components (default to white when unset).
+      "--surface-card": branding.theme.card,
+      "--surface-card-90": `${branding.theme.card}E6`,
+    }),
+    ...(branding.theme.background && { "--surface-header-fg": branding.theme.background }),
+    ...(branding.theme.cardForeground && { "--color-card-foreground": branding.theme.cardForeground }),
+    ...(branding.theme.border && { "--color-border": branding.theme.border }),
+    ...(branding.theme.muted && { "--color-muted": branding.theme.muted }),
+    ...(branding.theme.mutedForeground && { "--color-muted-foreground": branding.theme.mutedForeground }),
+    ...(branding.theme.primary && { "--color-primary": branding.theme.primary }),
+    ...(branding.theme.brandRed && { "--color-brand-red": branding.theme.brandRed }),
+    ...(branding.theme.brandRedForeground && { "--color-brand-red-foreground": branding.theme.brandRedForeground }),
+    ...(branding.theme.brandYellow && { "--color-brand-yellow": branding.theme.brandYellow }),
+    ...(branding.theme.brandYellowForeground && { "--color-brand-yellow-foreground": branding.theme.brandYellowForeground }),
+    ...(branding.theme.brandNavy && { "--color-brand-navy": branding.theme.brandNavy }),
+    ...(branding.theme.brandLime && { "--color-brand-lime": branding.theme.brandLime }),
+    ...(branding.theme.brandCream && { "--color-brand-cream": branding.theme.brandCream }),
+    ...(branding.theme.popBorder && { "--pop-border": branding.theme.popBorder }),
+    ...(branding.theme.popShadow && { "--pop-shadow": branding.theme.popShadow }),
+    ...(branding.theme.buttonPopBg && { "--button-pop-bg": branding.theme.buttonPopBg }),
+    ...(branding.theme.buttonPopFg && { "--button-pop-fg": branding.theme.buttonPopFg }),
+    ...(branding.theme.buttonPopYellowBg && { "--button-pop-yellow-bg": branding.theme.buttonPopYellowBg }),
+    ...(branding.theme.buttonPopYellowFg && { "--button-pop-yellow-fg": branding.theme.buttonPopYellowFg }),
+  } as React.CSSProperties : undefined;
+
   return (
-    <div className="w-full pb-24 bg-background" data-location={business.id}>
+    <div className="w-full pb-24 bg-background" data-location={business.id} style={themeVars}>
       {/* Hero Image */}
       <div className="w-full h-[40vh] md:h-[50vh] relative">
         <BusinessImage
@@ -214,11 +213,7 @@ export default function Listing() {
         <div className="absolute bottom-6 md:bottom-8 left-6 md:left-12 lg:left-24 right-28 md:right-32 text-white">
           <div className="flex gap-2 flex-wrap mb-3">
             {businessCategories(business).map((cat, i) => (
-              <CategoryBadge
-                key={cat}
-                category={cat}
-                className={i % 2 === 0 ? "-rotate-2" : "rotate-1"}
-              />
+              <CategoryBadge key={cat} category={cat} className={i % 2 === 0 ? "-rotate-2" : "rotate-1"} />
             ))}
             {business.bikePickup && (
               <div className="badge-sticker bg-brand-navy text-brand-cream rotate-1 inline-flex items-center gap-1">
@@ -243,9 +238,7 @@ export default function Listing() {
             )}
           </div>
           <div className="hidden md:block">
-            <h1 className="text-5xl lg:text-7xl font-serif font-bold mb-3">
-              {business.name}
-            </h1>
+            <h1 className="text-5xl lg:text-7xl font-serif font-bold mb-3">{business.name}</h1>
             {branding?.partnerTagline ? (
               <p
                 className="text-sm font-bold tracking-widest uppercase mb-2"
@@ -272,9 +265,7 @@ export default function Listing() {
       <div className="container mx-auto px-4 md:px-12 lg:px-24 -mt-6 md:mt-12 relative z-10">
         {/* Hero Title Content (Mobile) */}
         <div className="bg-card rounded-xl p-6 shadow-xl mb-8 md:hidden border border-border">
-          <h1 className="text-3xl font-serif font-bold text-foreground mb-2">
-            {business.name}
-          </h1>
+          <h1 className="text-3xl font-serif font-bold text-foreground mb-2">{business.name}</h1>
           <div className="flex items-baseline flex-wrap gap-x-3 text-muted-foreground">
             <span className="inline-flex items-center">
               <MapPin className="w-4 h-4 mr-1" /> {business.neighborhood}
@@ -290,77 +281,51 @@ export default function Listing() {
 
         {/* Intro Description */}
         <p className="text-xl md:text-2xl text-foreground/90 font-medium leading-relaxed mb-10 max-w-3xl">
-          {business.hq
-            ? `${HQ_INTRO} ${business.description}`
-            : business.description}
+          {business.hq ? `${HQ_INTRO} ${business.description}` : business.description}
         </p>
 
         {/* Offer Box — uses brand accent colors when configured, standard styling otherwise */}
-        {business.offer &&
-          (() => {
-            const ac = branding?.accentColor;
-            const fg = branding?.accentFg ?? "#000000";
-            return (
-              <div
-                className={
-                  ac
-                    ? "rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden border-2"
-                    : "bg-accent/10 border-2 border-accent/30 rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden"
-                }
-                style={
-                  ac
-                    ? { backgroundColor: `${ac}1a`, borderColor: `${ac}88` }
-                    : undefined
-                }
-              >
-                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                  <Gift
-                    className="w-32 h-32"
-                    style={ac ? { color: ac } : undefined}
-                  />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center mb-3">
-                    <div
-                      className={
-                        ac
-                          ? "w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md"
-                          : "bg-accent text-accent-foreground w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md"
-                      }
-                      style={
-                        ac ? { backgroundColor: ac, color: fg } : undefined
-                      }
-                    >
-                      <Gift className="w-4 h-4" />
-                    </div>
-                    <h3
-                      className={
-                        ac
-                          ? "font-bold tracking-wide uppercase text-sm text-foreground"
-                          : "font-bold text-accent tracking-wide uppercase text-sm"
-                      }
-                    >
-                      {t("listing_page.passport_offer_label")}
-                    </h3>
-                  </div>
-                  <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
-                    {renderOffer(business.offer)}
-                  </p>
-                </div>
+        {business.offer && (() => {
+          const ac = branding?.accentColor;
+          const fg = branding?.accentFg ?? "#000000";
+          return (
+            <div
+              className={ac ? "rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden border-2" : "bg-accent/10 border-2 border-accent/30 rounded-2xl p-6 md:p-8 mb-12 shadow-sm relative overflow-hidden"}
+              style={ac ? { backgroundColor: `${ac}1a`, borderColor: `${ac}88` } : undefined}
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                <Gift className="w-32 h-32" style={ac ? { color: ac } : undefined} />
               </div>
-            );
-          })()}
+              <div className="relative z-10">
+                <div className="flex items-center mb-3">
+                  <div
+                    className={ac ? "w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md" : "bg-accent text-accent-foreground w-8 h-8 rounded-full flex items-center justify-center mr-3 shadow-md"}
+                    style={ac ? { backgroundColor: ac, color: fg } : undefined}
+                  >
+                    <Gift className="w-4 h-4" />
+                  </div>
+                  <h3 className={ac ? "font-bold tracking-wide uppercase text-sm text-foreground" : "font-bold text-accent tracking-wide uppercase text-sm"}>
+                    {t("listing_page.passport_offer_label")}
+                  </h3>
+                </div>
+                <p className="text-xl md:text-2xl font-serif text-foreground font-semibold">
+                  {renderOffer(business.offer)}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Main Details Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+          
           {/* Left Column - Details */}
           <div className="lg:col-span-3 space-y-10">
+
             {/* About */}
             {business.about && (
               <section>
-                <h2 className="text-2xl font-serif font-bold text-primary mb-4">
-                  {t("nav.about")}
-                </h2>
+                <h2 className="text-2xl font-serif font-bold text-primary mb-4">{t("nav.about")}</h2>
                 <p className="text-muted-foreground leading-relaxed text-lg">
                   {business.about}
                 </p>
@@ -382,6 +347,7 @@ export default function Listing() {
                 )}
               </section>
             )}
+
           </div>
 
           {/* Right Column — Stamps to collect */}
@@ -448,101 +414,80 @@ export default function Listing() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Exclusive partner features — custom gallery, loyalty perks,
-                  and event listings — are being prepared for this location.
+                  Exclusive partner features — custom gallery, loyalty perks, and
+                  event listings — are being prepared for this location.
                 </p>
               </div>
             )}
           </div>
+
         </div>
 
         {/* Full-width sections — everything below the intro grid spans the
             same combined width as the description/gallery + right column. */}
         <div className="space-y-10 mt-10">
-          {/* Hours + Address */}
-          {(business.hours || business.address) && (
+
+            {/* Hours + Address */}
+            {(business.hours || business.address) && (
             <div className="grid sm:grid-cols-2 gap-6 pt-6 border-t border-border">
               {business.hours && (
-                <div>
-                  <div className="flex items-center text-primary font-bold mb-2">
-                    <Clock className="w-5 h-5 mr-2" />{" "}
-                    {t("listing_page.hours_label")}
-                  </div>
-                  <p className="text-muted-foreground whitespace-pre-line">
-                    {business.hours
-                      .split(/(Book in advance)/g)
-                      .map((part, i) =>
-                        part === "Book in advance" ? (
-                          <span
-                            key={i}
-                            className="text-brand-red font-semibold"
-                          >
-                            {part}
-                          </span>
-                        ) : (
-                          part
-                        ),
-                      )}
-                  </p>
-                  {business.website && (
-                    <a
-                      href={business.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-brand-red hover:underline break-all"
-                    >
-                      <Globe className="w-4 h-4 shrink-0" />
-                      {business.website
-                        .replace(/^https?:\/\//, "")
-                        .replace(/\/$/, "")}
-                    </a>
-                  )}
-                  {lc?.socialLinks && lc.socialLinks.length > 0 && (
-                    <ul className="mt-2 space-y-1">
-                      {lc.socialLinks.map((social) => (
-                        <li key={social.href}>
-                          <a
-                            href={social.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-sm font-medium text-brand-red hover:underline break-all"
-                          >
-                            <AtSign className="w-4 h-4 shrink-0" />
-                            {social.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+              <div>
+                <div className="flex items-center text-primary font-bold mb-2">
+                  <Clock className="w-5 h-5 mr-2" /> {t("listing_page.hours_label")}
                 </div>
+                <p className="text-muted-foreground whitespace-pre-line">
+                  {business.hours.split(/(Book in advance)/g).map((part, i) =>
+                    part === "Book in advance" ? (
+                      <span key={i} className="text-brand-red font-semibold">{part}</span>
+                    ) : (
+                      part
+                    ),
+                  )}
+                </p>
+                {business.website && (
+                  <a
+                    href={business.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-brand-red hover:underline break-all"
+                  >
+                    <Globe className="w-4 h-4 shrink-0" />
+                    {business.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                  </a>
+                )}
+                {lc?.socialLinks && lc.socialLinks.length > 0 && (
+                  <ul className="mt-2 space-y-1">
+                    {lc.socialLinks.map((social) => (
+                      <li key={social.href}>
+                        <a
+                          href={social.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm font-medium text-brand-red hover:underline break-all"
+                        >
+                          <AtSign className="w-4 h-4 shrink-0" />
+                          {social.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               )}
-              {(business.address ||
-                (business.lat != null && business.lng != null)) && (
+              {(business.address || (business.lat != null && business.lng != null)) && (
                 <div className="card-pop bg-card p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
+                    <div className="w-10 h-10 rounded-full bg-brand-red flex items-center justify-center border-2 border-foreground text-[var(--color-brand-red-foreground,#fff)]">
                       <MapPin className="w-5 h-5" />
                     </div>
-                    <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">
-                      {t("listing_page.address_label")}
-                    </h4>
+                    <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
                   </div>
                   {business.address && (
-                    <p className="text-base font-medium text-foreground leading-snug mb-2">
-                      {business.address}
-                    </p>
+                    <p className="text-base font-medium text-foreground leading-snug mb-2">{business.address}</p>
                   )}
-                  <p className="text-sm text-muted-foreground mb-5">
-                    {business.neighborhood} · Atlanta, GA
-                  </p>
+                  <p className="text-sm text-muted-foreground mb-5">{business.neighborhood} · Atlanta, GA</p>
                   {business.lat != null && business.lng != null && (
-                    <MapSnapshot
-                      lat={business.lat}
-                      lng={business.lng}
-                      name={business.name}
-                      isStamp={Boolean(STAMP_SLUG[business.id])}
-                      customMarkerSrc={branding?.mapMarkerSrc}
-                    />
+                    <MapSnapshot lat={business.lat} lng={business.lng} name={business.name} isStamp={Boolean(STAMP_SLUG[business.id])} customMarkerSrc={branding?.mapMarkerSrc} />
                   )}
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
@@ -550,8 +495,7 @@ export default function Listing() {
                     rel="noopener noreferrer"
                     className="button-pop button-pop-yellow w-full inline-flex items-center justify-center gap-2 text-sm"
                   >
-                    <Navigation className="w-4 h-4" />{" "}
-                    {t("listing_page.view_on_map")}
+                    <Navigation className="w-4 h-4" /> {t("listing_page.view_on_map")}
                   </a>
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`}
@@ -559,191 +503,160 @@ export default function Listing() {
                     rel="noopener noreferrer"
                     className="button-pop w-full inline-flex items-center justify-center gap-2 text-sm mt-3"
                   >
-                    <Navigation className="w-4 h-4" />{" "}
-                    {t("listing_page.directions_label")}
+                    <Navigation className="w-4 h-4" /> {t("listing_page.directions_label")}
                   </a>
                 </div>
               )}
             </div>
-          )}
+            )}
 
-          {/* Featured Experiences — opt-in via locationContent.featuredExperiences */}
-          {lc?.featuredExperiences && lc.featuredExperiences.length > 0 && (
-            <section className="pt-6 border-t border-border">
-              <div
-                className="flex items-center font-bold mb-5 text-primary"
-                style={accentTextStyle}
-              >
-                <Sparkles className="w-5 h-5 mr-2" /> What To Expect
-              </div>
-              <ul className="space-y-5">
-                {lc.featuredExperiences.map((exp) => (
-                  <li key={exp.name} className="flex gap-4">
-                    <div
-                      className="w-1 rounded-full shrink-0 mt-1"
-                      style={{
-                        backgroundColor:
-                          branding?.accentColor ?? "hsl(var(--brand-red))",
-                        minHeight: "1.5rem",
-                      }}
-                      aria-hidden
-                    />
-                    <div>
-                      <p className="font-serif font-bold text-foreground text-base">
-                        {exp.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">
-                        {exp.description}
-                      </p>
-                      {exp.link && (
-                        <a
-                          href={exp.link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 mt-2 font-display text-[11px] tracking-[0.14em] uppercase underline underline-offset-2 text-foreground hover:text-brand-red transition-colors"
-                          style={accentTextStyle}
-                        >
-                          <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-                          {exp.link.label}
-                        </a>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+            {/* Featured Experiences — opt-in via locationContent.featuredExperiences */}
+            {lc?.featuredExperiences && lc.featuredExperiences.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-5 text-primary"
+                  style={accentTextStyle}
+                >
+                  <Sparkles className="w-5 h-5 mr-2" /> What To Expect
+                </div>
+                <ul className="space-y-5">
+                  {lc.featuredExperiences.map((exp) => (
+                    <li key={exp.name} className="flex gap-4">
+                      <div
+                        className="w-1 rounded-full shrink-0 mt-1"
+                        style={{
+                          backgroundColor: branding?.accentColor ?? "var(--color-brand-red)",
+                          minHeight: "1.5rem",
+                        }}
+                        aria-hidden
+                      />
+                      <div>
+                        <p className="font-serif font-bold text-foreground text-base">{exp.name}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed mt-0.5">{exp.description}</p>
+                        {exp.link && (
+                          <a
+                            href={exp.link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 mt-2 font-display text-[11px] tracking-[0.14em] uppercase underline underline-offset-2 text-foreground hover:text-brand-red transition-colors"
+                            style={accentTextStyle}
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                            {exp.link.label}
+                          </a>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-          {/* Transit + Getting Here and Accessibility + Policies — side by side
+            {/* Transit + Getting Here and Accessibility + Policies — side by side
                 on desktop when both are present, stacked on mobile */}
-          {(business.transit ||
-            lc?.parkingNote ||
-            lc?.accessibilityNote ||
-            (lc?.policies && lc.policies.length > 0)) && (
+            {((business.transit || lc?.parkingNote) ||
+              (lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0))) && (
             <div
               className={`grid gap-x-10 gap-y-0 ${
                 (business.transit || lc?.parkingNote) &&
-                (lc?.accessibilityNote ||
-                  (lc?.policies && lc.policies.length > 0))
+                (lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0))
                   ? "lg:grid-cols-2"
                   : ""
               }`}
             >
-              {(business.transit || lc?.parkingNote) && (
-                <section className="pt-6 border-t border-border">
-                  <div className="flex items-center text-primary font-bold mb-4">
-                    <Train className="w-5 h-5 mr-2" /> Getting here
-                  </div>
-                  <ul className="space-y-3 text-muted-foreground leading-relaxed">
-                    {business.transit?.marta && (
-                      <li className="flex gap-3">
-                        <span className="badge-sticker bg-brand-navy text-brand-cream text-[10px] shrink-0 self-start mt-0.5">
-                          MARTA
-                        </span>
-                        <span>{business.transit.marta}</span>
+            {(business.transit || lc?.parkingNote) && (
+              <section className="pt-6 border-t border-border">
+                <div className="flex items-center text-primary font-bold mb-4">
+                  <Train className="w-5 h-5 mr-2" /> Getting here
+                </div>
+                <ul className="space-y-3 text-muted-foreground leading-relaxed">
+                  {business.transit?.marta && (
+                    <li className="flex gap-3">
+                      <span className="badge-sticker bg-brand-navy text-brand-cream text-[10px] shrink-0 self-start mt-0.5">MARTA</span>
+                      <span>{business.transit.marta}</span>
+                    </li>
+                  )}
+                  {business.transit?.beltline && (
+                    <li className="flex gap-3">
+                      <span className="badge-sticker bg-brand-lime text-foreground text-[10px] shrink-0 self-start mt-0.5">BELTLINE</span>
+                      <span>{business.transit.beltline}</span>
+                    </li>
+                  )}
+                  {lc?.parkingNote && (
+                    <li className="flex gap-3">
+                      <span className="badge-sticker bg-muted text-foreground text-[10px] shrink-0 self-start mt-0.5 inline-flex items-center gap-1">
+                        <Car className="w-2.5 h-2.5" /> PARK
+                      </span>
+                      <span>{lc.parkingNote}</span>
+                    </li>
+                  )}
+                </ul>
+              </section>
+            )}
+
+            {/* Accessibility + Policies — opt-in via locationContent */}
+            {(lc?.accessibilityNote || (lc?.policies && lc.policies.length > 0)) && (
+              <section className="pt-6 border-t border-border">
+                <div
+                  className="flex items-center font-bold mb-4 text-primary"
+                  style={accentTextStyle}
+                >
+                  <ShieldCheck className="w-5 h-5 mr-2" /> Accessibility & Policies
+                </div>
+                {lc?.accessibilityNote && (
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                    {lc.accessibilityNote}
+                  </p>
+                )}
+                {lc?.policies && lc.policies.length > 0 && (
+                  <ul className="space-y-3">
+                    {lc.policies.map((policy) => (
+                      <li key={policy.label} className="flex gap-3 text-sm text-muted-foreground">
+                        <span className="font-bold text-foreground shrink-0 whitespace-nowrap">{policy.label}:</span>
+                        <span className="leading-relaxed">{policy.body}</span>
                       </li>
-                    )}
-                    {business.transit?.beltline && (
-                      <li className="flex gap-3">
-                        <span className="badge-sticker bg-brand-lime text-foreground text-[10px] shrink-0 self-start mt-0.5">
-                          BELTLINE
-                        </span>
-                        <span>{business.transit.beltline}</span>
-                      </li>
-                    )}
-                    {lc?.parkingNote && (
-                      <li className="flex gap-3">
-                        <span className="badge-sticker bg-muted text-foreground text-[10px] shrink-0 self-start mt-0.5 inline-flex items-center gap-1">
-                          <Car className="w-2.5 h-2.5" /> PARK
-                        </span>
-                        <span>{lc.parkingNote}</span>
-                      </li>
-                    )}
+                    ))}
                   </ul>
-                </section>
-              )}
-
-              {/* Accessibility + Policies — opt-in via locationContent */}
-              {(lc?.accessibilityNote ||
-                (lc?.policies && lc.policies.length > 0)) && (
-                <section className="pt-6 border-t border-border">
-                  <div
-                    className="flex items-center font-bold mb-4 text-primary"
-                    style={accentTextStyle}
-                  >
-                    <ShieldCheck className="w-5 h-5 mr-2" /> Accessibility &
-                    Policies
-                  </div>
-                  {lc?.accessibilityNote && (
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                      {lc.accessibilityNote}
-                    </p>
-                  )}
-                  {lc?.policies && lc.policies.length > 0 && (
-                    <ul className="space-y-3">
-                      {lc.policies.map((policy) => (
-                        <li
-                          key={policy.label}
-                          className="flex gap-3 text-sm text-muted-foreground"
-                        >
-                          <span className="font-bold text-foreground shrink-0 whitespace-nowrap">
-                            {policy.label}:
-                          </span>
-                          <span className="leading-relaxed">{policy.body}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </section>
-              )}
+                )}
+              </section>
+            )}
             </div>
-          )}
+            )}
 
-          {/* Menu — shown for locations that have a featured menu */}
-          {business.menu && business.menu.length > 0 && (
-            <section className="pt-6 border-t border-border">
-              <div className="flex items-center text-primary font-bold mb-5">
-                <Utensils className="w-5 h-5 mr-2" /> Featured menu
-              </div>
-              <div className="space-y-7">
-                {business.menu.map((group) => (
-                  <div key={group.section}>
-                    <h4 className="font-display text-xs tracking-[0.18em] uppercase text-brand-red mb-3">
-                      {group.section}
-                    </h4>
-                    <ul className="space-y-3">
-                      {group.items.map((item) => (
-                        <li
-                          key={item.name}
-                          className="border-b border-border/60 pb-3 last:border-b-0 last:pb-0"
-                        >
-                          <div className="font-serif font-bold text-lg text-foreground">
-                            {item.name}
-                          </div>
-                          {item.description && (
-                            <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-                              {item.description}
-                            </p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground mt-4 italic">
-                Menu may rotate — call ahead for daily specials.
-              </p>
-            </section>
-          )}
+            {/* Menu — shown for locations that have a featured menu */}
+            {business.menu && business.menu.length > 0 && (
+              <section className="pt-6 border-t border-border">
+                <div className="flex items-center text-primary font-bold mb-5">
+                  <Utensils className="w-5 h-5 mr-2" /> Featured menu
+                </div>
+                <div className="space-y-7">
+                  {business.menu.map((group) => (
+                    <div key={group.section}>
+                      <h4 className="font-display text-xs tracking-[0.18em] uppercase text-brand-red mb-3">
+                        {group.section}
+                      </h4>
+                      <ul className="space-y-3">
+                        {group.items.map((item) => (
+                          <li key={item.name} className="border-b border-border/60 pb-3 last:border-b-0 last:pb-0">
+                            <div className="font-serif font-bold text-lg text-foreground">{item.name}</div>
+                            {item.description && (
+                              <p className="text-sm text-muted-foreground leading-relaxed mt-1">{item.description}</p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 italic">Menu may rotate — call ahead for daily specials.</p>
+              </section>
+            )}
 
-          {/* Location event calendar — opt-in add-on, disabled by default.
+            {/* Location event calendar — opt-in add-on, disabled by default.
                 Enabled per-location via locationBranding.ts (showEventCalendar).
                 Renders only events at this venue within the active Passport period.
                 Also renders any temp placeholder events from locationContent. */}
-          {branding?.showEventCalendar &&
-            branding.venueNames &&
-            branding.venueNames.length > 0 && (
+            {branding?.showEventCalendar && branding.venueNames && branding.venueNames.length > 0 && (
               <LocationEventCalendar
                 venueNames={branding.venueNames}
                 accentColor={branding.accentColor}
@@ -752,6 +665,7 @@ export default function Listing() {
                 tempEvents={lc?.tempEvents}
               />
             )}
+
         </div>
 
         {/* Bottom Nav */}
@@ -759,11 +673,7 @@ export default function Listing() {
           {branding?.brandNote && (
             <p
               className="text-center text-xs text-muted-foreground mb-4 italic"
-              style={
-                branding.accentColor
-                  ? { color: `${branding.accentColor}bb` }
-                  : undefined
-              }
+              style={branding.accentColor ? { color: `${branding.accentColor}bb` } : undefined}
             >
               {branding.brandNote}
             </p>

@@ -11,6 +11,8 @@ export interface Visitor {
   firstName: string;
   email: string;
   phone?: string | null;
+  promoOptIn: boolean;
+  promoOptInAt?: Date | null;
   termsAcceptedAt?: Date | null;
   termsVersion?: string | null;
   privacyAcceptedAt?: Date | null;

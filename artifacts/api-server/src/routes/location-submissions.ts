@@ -7,6 +7,7 @@ import {
   slugifyLocationValue,
 } from "../domain/location-taxonomy";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { computeQuote } from "@workspace/pricing";
 import { requireAdmin } from "../lib/admin-auth";
 import { stringParam } from "../lib/params";
 
@@ -70,6 +71,18 @@ router.post("/location-submissions", async (req, res) => {
   const galleryImages = Array.isArray(body.galleryImages) ? (body.galleryImages as string[]) : [];
   const listingTier = ((body.listingTier as string | undefined) || "free");
 
+  // Authoritative server-side pricing: tier must exist in @workspace/pricing;
+  // any client-supplied price is ignored and the total is computed here.
+  const locationQuote = computeQuote(
+    "location",
+    listingTier,
+    Array.isArray(body.addOns) ? (body.addOns as string[]) : [],
+  );
+  if (!locationQuote.valid) {
+    res.status(400).json({ error: locationQuote.reason ?? "Invalid listing tier or add-ons." });
+    return;
+  }
+
   const [row] = await db
     .insert(locationSubmissionsTable)
     .values({
@@ -99,6 +112,8 @@ router.post("/location-submissions", async (req, res) => {
       isFeaturedInterest: typeof body.isFeaturedInterest === "boolean" ? body.isFeaturedInterest : null,
       isSponsoredInterest: typeof body.isSponsoredInterest === "boolean" ? body.isSponsoredInterest : null,
       listingTier,
+      addOns: Array.isArray(body.addOns) ? (body.addOns as string[]) : [],
+      listingPrice: locationQuote.total,
       contactName,
       contactEmail,
       contactPhone: (body.contactPhone as string | undefined) || null,

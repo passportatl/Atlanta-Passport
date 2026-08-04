@@ -74,68 +74,14 @@ function isPublicHostname(h: string): boolean {
   return true;
 }
 
+import AdminGate from "@/components/AdminGate";
+
 function isPublicHost(): boolean {
   if (typeof window === "undefined") return true;
   return isPublicHostname(window.location.hostname);
 }
 
 const NEIGHBORHOOD_ORDER = NEIGHBORHOODS.map((n) => n.name);
-
-function AdminGate({ onUnlock }: { onUnlock: () => void }) {
-  const [pw, setPw] = useState("");
-  const [err, setErr] = useState(false);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      // Validate against the server — no password baked into the bundle.
-      const res = await fetch(`${API_BASE}/admin/sources`, { headers: { "x-admin-key": pw } });
-      if (res.ok) {
-        sessionStorage.setItem(UNLOCK_KEY, "1");
-        sessionStorage.setItem(ADMIN_KEY_STORAGE, pw);
-        onUnlock();
-      } else {
-        setErr(true);
-      }
-    } catch {
-      setErr(true);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper grid place-items-center px-4">
-      <form onSubmit={submit} className="card-pop bg-white p-6 max-w-sm w-full">
-        <div className="flex items-center gap-2 mb-3">
-          <Lock className="w-5 h-5" />
-          <h1 className="text-xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-            Admin access
-          </h1>
-        </div>
-        <p className="text-sm text-foreground/70 mb-4">
-          Enter the admin password to view stamp QR codes.
-        </p>
-        <label className="block text-xs font-black uppercase tracking-wider mb-1">Password</label>
-        <input
-          type="password"
-          value={pw}
-          onChange={(e) => {
-            setPw(e.target.value);
-            setErr(false);
-          }}
-          autoFocus
-          className="w-full border-2 border-foreground rounded-md px-3 py-2 font-mono text-sm bg-[hsl(var(--brand-cream))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--brand-yellow))]"
-          placeholder="••••••••"
-        />
-        {err && (
-          <p className="text-xs text-[hsl(var(--brand-red))] font-bold mt-2">Incorrect password.</p>
-        )}
-        <button type="submit" className="button-pop button-pop-yellow w-full mt-4">
-          Unlock
-        </button>
-      </form>
-    </div>
-  );
-}
 
 interface LocationCardProps {
   business: Business;
@@ -265,16 +211,16 @@ function ExportCard({ publishedOrigin }: { publishedOrigin: string | null }) {
 }
 
 export default function AdminStamps() {
-  const [unlocked, setUnlocked] = useState(false);
+  return (
+    <AdminGate>
+      {() => <AdminStampsInner />}
+    </AdminGate>
+  );
+}
 
-  useEffect(() => {
-    void restoreAdminKey().then((key) => {
-      if (key) setUnlocked(true);
-    });
-  }, []);
-
+function AdminStampsInner() {
   const { data: businessesRaw } = useListBusinesses({
-    query: { enabled: unlocked, queryKey: getListBusinessesQueryKey() },
+    query: { queryKey: getListBusinessesQueryKey() },
   });
   const businesses = (businessesRaw as Business[] | undefined) ?? [];
   const [copied, setCopied] = useState<string | null>(null);
@@ -346,12 +292,10 @@ export default function AdminStamps() {
     }
   };
 
-  if (!unlocked) return <AdminGate onUnlock={() => setUnlocked(true)} />;
-
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <AdminNav onLock={() => setUnlocked(false)} />
+        <AdminNav />
         <div className="mb-6">
           <h1 className="text-3xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
             QR Codes

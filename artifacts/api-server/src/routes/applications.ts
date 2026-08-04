@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { desc, eq } from "drizzle-orm";
 import { db, applicationsTable } from "@workspace/db";
 import { SubmitApplicationBody } from "@workspace/api-zod";
+import { computeQuote, type SubmissionKind } from "@workspace/pricing";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
 
 const router: IRouter = Router();
@@ -29,6 +30,7 @@ router.post("/applications", async (req, res) => {
 
   const submissionType = data.submissionType ?? "business";
   const isEvent = submissionType === "event";
+  const isVendor = submissionType === "vendor";
 
   if (isEvent) {
     if (!data.eventDate?.trim() || !data.eventVenue?.trim()) {
@@ -36,11 +38,31 @@ router.post("/applications", async (req, res) => {
       return;
     }
   } else if (!data.package) {
-    res.status(400).json({ error: "Business submissions require a package." });
+    res.status(400).json({ error: `${isVendor ? "Vendor" : "Business"} submissions require a package.` });
+    return;
+  }
+  if (isVendor && !data.vendorType?.trim()) {
+    res.status(400).json({ error: "Vendor submissions require a vendorType." });
     return;
   }
 
   const packageValue = data.package ?? "event";
+
+  // Authoritative server-side pricing: the client never sets its own price.
+  // Package + add-ons are validated against @workspace/pricing and the total
+  // is computed here.
+  let addOns: string[] = [];
+  let listingPrice: number | null = null;
+  if (!isEvent && packageValue !== "custom") {
+    const kind: SubmissionKind = isVendor ? "vendor" : "business";
+    const quote = computeQuote(kind, packageValue, data.addOns ?? []);
+    if (!quote.valid) {
+      res.status(400).json({ error: quote.reason ?? "Invalid package or add-on selection." });
+      return;
+    }
+    addOns = quote.addOnIds;
+    listingPrice = quote.total;
+  }
 
   const [row] = await db
     .insert(applicationsTable)
@@ -75,12 +97,15 @@ router.post("/applications", async (req, res) => {
       eventUrl: isEvent ? data.eventUrl ?? null : null,
       promoContact: isEvent ? data.promoContact ?? null : null,
       promoContactMethod: isEvent ? data.promoContactMethod ?? null : null,
+      vendorType: isVendor ? data.vendorType ?? null : null,
+      addOns,
+      listingPrice,
     })
     .returning();
 
   const subject = isEvent
     ? `New Atlanta Passport event — ${data.businessName}`
-    : `New Atlanta Passport application — ${data.businessName} (${packageValue.toUpperCase()})`;
+    : `New Atlanta Passport ${isVendor ? "vendor" : "partner"} application — ${data.businessName} (${packageValue.toUpperCase()}${listingPrice != null ? ` · $${listingPrice}` : ""})`;
   const html = `
     <div style="font-family:system-ui,sans-serif;max-width:640px;">
       <h2 style="background:#facc15;color:#111;padding:12px 16px;border:2px solid #111;margin:0 0 16px;">${isEvent ? "New Event Submission" : "New Partner Application"}</h2>

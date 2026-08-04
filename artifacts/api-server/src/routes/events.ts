@@ -3,6 +3,7 @@ import { desc, eq, or, and, inArray, isNotNull, isNull, lt } from "drizzle-orm";
 import { db, eventsTable, eventAuditLog, computeEventCompleteness, businessesTable } from "@workspace/db";
 import { SubmitEventBody, UpdateAdminEventBody } from "@workspace/api-zod";
 import { sendNotification, NOTIFY_EMAIL } from "../lib/mailer";
+import { computeQuote } from "@workspace/pricing";
 import { requireAdmin } from "../lib/admin-auth";
 import { todayIsoAtlanta } from "../lib/ingestion/past-event-cleanup";
 import { parseEventDate } from "../lib/ingestion/normalizer";
@@ -93,6 +94,9 @@ async function syncBonusStampBusiness(
  * Falls back to "admin" when absent so the audit trail never breaks.
  */
 function getAdminActor(req: Request): string {
+  // Authenticated staff sessions are the trusted source of identity; the
+  // x-admin-actor header is only a legacy fallback.
+  if (req.staffUser) return req.staffUser.username;
   const raw = req.headers["x-admin-actor"];
   if (typeof raw !== "string" || raw.trim().length === 0) return "admin";
   let decoded = raw;
@@ -256,6 +260,15 @@ router.post("/events", async (req, res) => {
   const listingPackage = data.listingPackage ?? "free";
   const tier = listingPackage === "free" ? "free" : "paid";
 
+  // Authoritative server-side pricing for event listings: the package and
+  // add-ons must exist in @workspace/pricing and the total is computed here —
+  // any client-supplied listingPrice is ignored.
+  const eventQuote = computeQuote("event", listingPackage, data.addOns ?? []);
+  if (!eventQuote.valid) {
+    res.status(400).json({ error: eventQuote.reason ?? "Invalid listing package or add-ons." });
+    return;
+  }
+
   // Pack extra metadata that has no dedicated column into intake notes
   const extraNotes: string[] = [];
   if (data.ageCategory) extraNotes.push(`Age Category: ${data.ageCategory}`);
@@ -265,7 +278,7 @@ router.post("/events", async (req, res) => {
     extraNotes.push(`Ticket URL: ${data.ticketUrl}`);
   if (listingPackage !== "free") extraNotes.push(`Listing Package: ${listingPackage}`);
   if (data.addOns && data.addOns.length > 0) extraNotes.push(`Add-ons: ${data.addOns.join(", ")}`);
-  if (data.listingPrice != null) extraNotes.push(`Quoted Total: $${data.listingPrice}`);
+  extraNotes.push(`Server-verified total: $${eventQuote.total}`);
   if (data.endDate) extraNotes.push(`End Date: ${data.endDate}`);
 
   const intakeNotes = [
@@ -321,7 +334,7 @@ router.post("/events", async (req, res) => {
       tier,
       listingPackage,
       addOns: data.addOns && data.addOns.length > 0 ? data.addOns : null,
-      listingPrice: data.listingPrice ?? null,
+      listingPrice: eventQuote.total,
       workflowStatus: "pending",
       completenessScore,
     })

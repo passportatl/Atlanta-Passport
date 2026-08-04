@@ -29,12 +29,8 @@ export const CreateVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
-  termsAcceptedAt: zod.coerce.date().nullish(),
-  termsVersion: zod.string().nullish(),
-  privacyAcceptedAt: zod.coerce.date().nullish(),
-  privacyVersion: zod.string().nullish(),
-  marketingOptIn: zod.boolean(),
-  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -48,12 +44,8 @@ export const LinkVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
-  termsAcceptedAt: zod.coerce.date().nullish(),
-  termsVersion: zod.string().nullish(),
-  privacyAcceptedAt: zod.coerce.date().nullish(),
-  privacyVersion: zod.string().nullish(),
-  marketingOptIn: zod.boolean(),
-  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -69,41 +61,8 @@ export const GetVisitorResponse = zod.object({
   firstName: zod.string(),
   email: zod.string(),
   phone: zod.string().nullish(),
-  termsAcceptedAt: zod.coerce.date().nullish(),
-  termsVersion: zod.string().nullish(),
-  privacyAcceptedAt: zod.coerce.date().nullish(),
-  privacyVersion: zod.string().nullish(),
-  marketingOptIn: zod.boolean(),
-  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
-  createdAt: zod.coerce.date(),
-});
-
-/**
- * Updates the signed-in visitor's optional marketing preference. Required legal acceptance is recorded once with the current policy versions and cannot be revoked through this endpoint.
-
- * @summary Record legal consent and update communication preferences
- */
-export const UpdateVisitorPreferencesParams = zod.object({
-  id: zod.coerce.string(),
-});
-
-export const UpdateVisitorPreferencesBody = zod.object({
-  acceptTerms: zod.boolean().optional(),
-  acceptPrivacy: zod.boolean().optional(),
-  marketingOptIn: zod.boolean(),
-});
-
-export const UpdateVisitorPreferencesResponse = zod.object({
-  id: zod.string(),
-  firstName: zod.string(),
-  email: zod.string(),
-  phone: zod.string().nullish(),
-  termsAcceptedAt: zod.coerce.date().nullish(),
-  termsVersion: zod.string().nullish(),
-  privacyAcceptedAt: zod.coerce.date().nullish(),
-  privacyVersion: zod.string().nullish(),
-  marketingOptIn: zod.boolean(),
-  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -136,10 +95,7 @@ export const ListBusinessesResponseItem = zod.object({
   slug: zod.string(),
   name: zod.string(),
   category: zod.string(),
-  categoryId: zod.string(),
-  tags: zod.array(zod.string()),
   neighborhood: zod.string(),
-  areaId: zod.string(),
   description: zod.string(),
   address: zod.string(),
   image: zod.string().nullish(),
@@ -148,21 +104,6 @@ export const ListBusinessesResponseItem = zod.object({
   icon: zod.string(),
   latitude: zod.number().nullish(),
   longitude: zod.number().nullish(),
-  mapReadiness: zod.enum([
-    "verified",
-    "coordinates-present",
-    "missing-coordinates",
-  ]),
-  publicStatus: zod.string(),
-  isStampStop: zod.boolean(),
-  priorityListing: zod.boolean(),
-  priorityRank: zod.number(),
-  detailPageEnabled: zod.boolean(),
-  entitlementStartsAt: zod.coerce.date().nullish(),
-  entitlementEndsAt: zod.coerce.date().nullish(),
-  hasPublicOffer: zod.boolean(),
-  publicUpdatedAt: zod.coerce.date(),
-  sortKey: zod.string(),
   isActive: zod.boolean(),
 });
 export const ListBusinessesResponse = zod.array(ListBusinessesResponseItem);
@@ -179,10 +120,7 @@ export const GetBusinessBySlugResponse = zod.object({
   slug: zod.string(),
   name: zod.string(),
   category: zod.string(),
-  categoryId: zod.string(),
-  tags: zod.array(zod.string()),
   neighborhood: zod.string(),
-  areaId: zod.string(),
   description: zod.string(),
   address: zod.string(),
   image: zod.string().nullish(),
@@ -191,21 +129,6 @@ export const GetBusinessBySlugResponse = zod.object({
   icon: zod.string(),
   latitude: zod.number().nullish(),
   longitude: zod.number().nullish(),
-  mapReadiness: zod.enum([
-    "verified",
-    "coordinates-present",
-    "missing-coordinates",
-  ]),
-  publicStatus: zod.string(),
-  isStampStop: zod.boolean(),
-  priorityListing: zod.boolean(),
-  priorityRank: zod.number(),
-  detailPageEnabled: zod.boolean(),
-  entitlementStartsAt: zod.coerce.date().nullish(),
-  entitlementEndsAt: zod.coerce.date().nullish(),
-  hasPublicOffer: zod.boolean(),
-  publicUpdatedAt: zod.coerce.date(),
-  sortKey: zod.string(),
   isActive: zod.boolean(),
 });
 
@@ -292,11 +215,8 @@ export const submitApplicationBodyContactNameMin = 2;
 export const submitApplicationBodyPhoneMin = 7;
 
 export const submitApplicationBodyAddressMin = 5;
-
-export const submitApplicationBodyOfferMin = 5;
-
 export const SubmitApplicationBody = zod.object({
-  submissionType: zod.enum(["business", "event"]),
+  submissionType: zod.enum(["business", "event", "vendor"]),
   businessName: zod.string().min(submitApplicationBodyBusinessNameMin),
   contactName: zod.string().min(submitApplicationBodyContactNameMin),
   email: zod.string().email(),
@@ -307,10 +227,24 @@ export const SubmitApplicationBody = zod.object({
   neighborhood: zod.string().min(1),
   address: zod.string().min(submitApplicationBodyAddressMin),
   package: zod
-    .enum(["starter", "featured", "premier", "route", "custom", "event"])
+    .enum([
+      "starter",
+      "featured",
+      "premier",
+      "route",
+      "custom",
+      "event",
+      "free",
+      "standard",
+      "market-day",
+      "weekend",
+      "featured-vendor",
+    ])
     .optional(),
+  addOns: zod.array(zod.string()).optional(),
+  vendorType: zod.string().optional(),
   routeId: zod.string().optional(),
-  offer: zod.string().min(submitApplicationBodyOfferMin),
+  offer: zod.string(),
   prizeSponsorship: zod.string().optional(),
   nearMarta: zod.boolean().optional(),
   nearBeltline: zod.boolean().optional(),
@@ -370,6 +304,15 @@ export const ListApplicationsResponseItem = zod.object({
   eventUrl: zod.string().nullish(),
   promoContact: zod.boolean().nullish(),
   promoContactMethod: zod.string().nullish(),
+  vendorType: zod.string().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  listingPrice: zod.number().nullish(),
+  salesStage: zod.string().optional(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.string().optional(),
   emailDelivered: zod.string(),
   createdAt: zod.coerce.date(),
 });
@@ -786,64 +729,359 @@ export const SubmitContactMessageResponse = zod.object({
 });
 
 /**
- * @summary List published ATL Legends
+ * @summary Update a visitor's communication preferences (promo email consent)
  */
-export const ListLegendsQueryParams = zod.object({
-  search: zod.coerce.string().optional(),
-  category: zod.coerce.string().optional(),
+export const UpdateVisitorPreferencesParams = zod.object({
+  id: zod.coerce.string(),
 });
 
-export const ListLegendsResponseItem = zod.object({
-  id: zod.string(),
-  slug: zod.string(),
-  title: zod.string(),
-  subtitle: zod.string().nullish(),
-  excerpt: zod.string().nullish(),
-  category: zod.string(),
-  tags: zod.array(zod.string()),
-  authorName: zod.string().nullish(),
-  authorImage: zod.string().nullish(),
-  heroImage: zod.string().nullish(),
-  publishedAt: zod.coerce.date(),
-  isFeatured: zod.boolean(),
-  readingTimeMinutes: zod.number().nullish(),
+export const UpdateVisitorPreferencesBody = zod.object({
+  promoOptIn: zod.boolean().optional(),
+  acceptTerms: zod.boolean().optional(),
+  acceptPrivacy: zod.boolean().optional(),
+  marketingOptIn: zod.boolean().optional(),
 });
-export const ListLegendsResponse = zod.array(ListLegendsResponseItem);
+
+export const UpdateVisitorPreferencesResponse = zod.object({
+  id: zod.string(),
+  firstName: zod.string(),
+  email: zod.string(),
+  phone: zod.string().nullish(),
+  promoOptIn: zod.boolean(),
+  promoOptInAt: zod.coerce.date().nullish(),
+  termsAcceptedAt: zod.coerce.date().nullish(),
+  termsVersion: zod.string().nullish(),
+  privacyAcceptedAt: zod.coerce.date().nullish(),
+  privacyVersion: zod.string().nullish(),
+  marketingOptIn: zod.boolean(),
+  marketingConsentUpdatedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
 
 /**
- * @summary Get a published ATL Legend
+ * @summary Staff login with username and password
  */
-export const GetLegendParams = zod.object({
-  slug: zod.coerce.string(),
+
+export const StaffLoginBody = zod.object({
+  username: zod.string().min(1),
+  password: zod.string().min(1),
 });
 
-export const GetLegendResponse = zod
-  .object({
-    id: zod.string(),
-    slug: zod.string(),
-    title: zod.string(),
-    subtitle: zod.string().nullish(),
-    excerpt: zod.string().nullish(),
-    category: zod.string(),
-    tags: zod.array(zod.string()),
-    authorName: zod.string().nullish(),
-    authorImage: zod.string().nullish(),
-    heroImage: zod.string().nullish(),
-    publishedAt: zod.coerce.date(),
-    isFeatured: zod.boolean(),
-    readingTimeMinutes: zod.number().nullish(),
-  })
-  .and(
+export const StaffLoginResponse = zod.object({
+  authenticated: zod.boolean(),
+  user: zod
+    .object({
+      id: zod.string(),
+      username: zod.string(),
+      email: zod.string().nullish(),
+      status: zod.string(),
+      mustChangePassword: zod.boolean(),
+      lastLoginAt: zod.coerce.date().nullish(),
+      passwordChangedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+});
+
+/**
+ * @summary Log out the current staff session
+ */
+export const StaffLogoutResponse = zod.object({
+  ok: zod.boolean(),
+});
+
+/**
+ * @summary Current staff session, if any
+ */
+export const GetStaffMeResponse = zod.object({
+  authenticated: zod.boolean(),
+  user: zod
+    .object({
+      id: zod.string(),
+      username: zod.string(),
+      email: zod.string().nullish(),
+      status: zod.string(),
+      mustChangePassword: zod.boolean(),
+      lastLoginAt: zod.coerce.date().nullish(),
+      passwordChangedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+});
+
+/**
+ * @summary Change the current staff user's password
+ */
+
+export const staffChangePasswordBodyNewPasswordMin = 10;
+
+export const StaffChangePasswordBody = zod.object({
+  currentPassword: zod.string().min(1),
+  newPassword: zod.string().min(staffChangePasswordBodyNewPasswordMin),
+});
+
+export const StaffChangePasswordResponse = zod.object({
+  authenticated: zod.boolean(),
+  user: zod
+    .object({
+      id: zod.string(),
+      username: zod.string(),
+      email: zod.string().nullish(),
+      status: zod.string(),
+      mustChangePassword: zod.boolean(),
+      lastLoginAt: zod.coerce.date().nullish(),
+      passwordChangedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+});
+
+/**
+ * @summary List staff users (never includes password hashes)
+ */
+export const ListStaffUsersResponseItem = zod.object({
+  id: zod.string(),
+  username: zod.string(),
+  email: zod.string().nullish(),
+  status: zod.string(),
+  mustChangePassword: zod.boolean(),
+  lastLoginAt: zod.coerce.date().nullish(),
+  passwordChangedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListStaffUsersResponse = zod.array(ListStaffUsersResponseItem);
+
+/**
+ * @summary Update a staff user's email or status
+ */
+export const UpdateStaffUserParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateStaffUserBody = zod.object({
+  email: zod.string().nullish(),
+  status: zod.enum(["active", "disabled"]).optional(),
+});
+
+export const UpdateStaffUserResponse = zod.object({
+  id: zod.string(),
+  username: zod.string(),
+  email: zod.string().nullish(),
+  status: zod.string(),
+  mustChangePassword: zod.boolean(),
+  lastLoginAt: zod.coerce.date().nullish(),
+  passwordChangedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Recent admin action history
+ */
+export const ListAdminAuditLogQueryParams = zod.object({
+  limit: zod.coerce.number().optional(),
+});
+
+export const ListAdminAuditLogResponseItem = zod.object({
+  id: zod.string(),
+  actor: zod.string(),
+  action: zod.string(),
+  entityType: zod.string().nullish(),
+  entityId: zod.string().nullish(),
+  detail: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const ListAdminAuditLogResponse = zod.array(
+  ListAdminAuditLogResponseItem,
+);
+
+/**
+ * @summary Whether the legacy shared admin secret is still accepted
+ */
+export const GetLegacyAccessStatusResponse = zod.object({
+  enabled: zod.boolean(),
+});
+
+/**
+ * @summary Enable or disable the legacy shared admin secret (staff session required)
+ */
+export const SetLegacyAccessStatusBody = zod.object({
+  enabled: zod.boolean(),
+});
+
+export const SetLegacyAccessStatusResponse = zod.object({
+  enabled: zod.boolean(),
+});
+
+/**
+ * @summary Unified partner totals across events, locations, and vendors
+ */
+export const GetPartnersSummaryResponse = zod.object({
+  events: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  locations: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  vendors: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  businesses: zod.object({
+    total: zod.number(),
+    paid: zod.number(),
+    pendingFollowUp: zod.number(),
+    revenue: zod.number(),
+  }),
+  totalRevenue: zod.number(),
+  paidRevenue: zod.number(),
+});
+
+/**
+ * @summary Unified CRM records (events, locations, vendors, partners)
+ */
+export const ListCrmRecordsQueryParams = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]).optional(),
+  bucket: zod
+    .enum(["overdue", "upcoming", "unassigned", "paid"])
+    .optional()
+    .describe("Follow-up queue filter"),
+});
+
+export const ListCrmRecordsResponseItem = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]),
+  id: zod.string(),
+  name: zod.string(),
+  contactName: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  packageId: zod.string().nullish(),
+  listingPrice: zod.number().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  workflowStatus: zod.string().nullish(),
+  salesStage: zod.string(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+export const ListCrmRecordsResponse = zod.array(ListCrmRecordsResponseItem);
+
+/**
+ * @summary Update CRM fields on a submission record
+ */
+export const UpdateCrmRecordParams = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]),
+  id: zod.coerce.string(),
+});
+
+export const UpdateCrmRecordBody = zod.object({
+  salesStage: zod
+    .enum([
+      "new",
+      "contacted",
+      "negotiating",
+      "committed",
+      "closed-won",
+      "closed-lost",
+    ])
+    .optional(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.enum(["unpaid", "invoiced", "paid", "comped"]).optional(),
+});
+
+export const UpdateCrmRecordResponse = zod.object({
+  recordType: zod.enum(["event", "location", "vendor", "business"]),
+  id: zod.string(),
+  name: zod.string(),
+  contactName: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  packageId: zod.string().nullish(),
+  listingPrice: zod.number().nullish(),
+  addOns: zod.array(zod.string()).nullish(),
+  workflowStatus: zod.string().nullish(),
+  salesStage: zod.string(),
+  assignedTo: zod.string().nullish(),
+  lastContactAt: zod.coerce.date().nullish(),
+  nextFollowUpAt: zod.coerce.date().nullish(),
+  crmNotes: zod.string().nullish(),
+  paymentStatus: zod.string(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Manually trigger the follow-up reminder check and email digest
+ */
+export const RunReminderCheckResponse = zod.object({
+  overdue: zod.number(),
+  dueToday: zod.number(),
+  digestSent: zod.boolean(),
+  digestSkippedReason: zod.string().nullish(),
+  staffDigestsSent: zod.number().optional(),
+});
+
+/**
+ * @summary Staff directory (name -> email) used to route per-staff reminder digests
+ */
+export const GetStaffDirectoryResponse = zod.object({
+  entries: zod.array(
     zod.object({
-      body: zod.string().nullish(),
-      authorBio: zod.string().nullish(),
-      galleryImages: zod.array(zod.string()),
-      seoTitle: zod.string().nullish(),
-      seoDescription: zod.string().nullish(),
-      socialPreviewImage: zod.string().nullish(),
-      relatedLocationSlugs: zod.array(zod.string()),
-      relatedEventIds: zod.array(zod.string()),
-      relatedRouteSlugs: zod.array(zod.string()),
-      relatedExperienceSlugs: zod.array(zod.string()),
+      name: zod.string(),
+      email: zod.string().email(),
     }),
-  );
+  ),
+});
+
+/**
+ * @summary Replace the staff directory (admin-editable name -> email mapping)
+ */
+export const UpdateStaffDirectoryBody = zod.object({
+  entries: zod.array(
+    zod.object({
+      name: zod.string(),
+      email: zod.string().email(),
+    }),
+  ),
+});
+
+export const UpdateStaffDirectoryResponse = zod.object({
+  entries: zod.array(
+    zod.object({
+      name: zod.string(),
+      email: zod.string().email(),
+    }),
+  ),
+});
+
+/**
+ * @summary Platform insights — users, growth, engagement, stamps, rewards, events
+ */
+export const GetAdminInsightsResponse = zod.object({
+  registeredUsers: zod.number(),
+  newUsersLast7Days: zod.number(),
+  newUsersLast30Days: zod.number(),
+  activeStampers: zod.number(),
+  totalStamps: zod.number(),
+  stampsLast7Days: zod.number(),
+  totalRedemptions: zod.number(),
+  publishedEvents: zod.number(),
+  promoOptIns: zod.number(),
+  diagnostics: zod.array(
+    zod.object({
+      label: zod.string(),
+      value: zod.string(),
+      status: zod.enum(["ok", "warn", "error"]),
+    }),
+  ),
+});

@@ -284,20 +284,20 @@
    in @layer utilities reliably override them. */
 @layer components {
   .shadow-pop {
-    box-shadow: 6px 6px 0 0 hsl(var(--foreground));
+    box-shadow: 6px 6px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
   .shadow-pop-sm {
-    box-shadow: 4px 4px 0 0 hsl(var(--foreground));
+    box-shadow: 4px 4px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
   .shadow-pop-lg {
-    box-shadow: 10px 10px 0 0 hsl(var(--foreground));
+    box-shadow: 10px 10px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
 
   .card-pop {
     background: hsl(var(--card));
-    border: 3px solid hsl(var(--foreground));
+    border: 3px solid var(--pop-border, hsl(var(--foreground)));
     border-radius: 20px;
-    box-shadow: 8px 8px 0 0 hsl(var(--foreground));
+    box-shadow: 8px 8px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
 
   .badge-sticker {
@@ -306,14 +306,14 @@
     gap: 6px;
     background: hsl(var(--brand-yellow));
     color: hsl(var(--brand-yellow-foreground));
-    border: 2px solid hsl(var(--foreground));
+    border: 2px solid var(--pop-border, hsl(var(--foreground)));
     border-radius: 999px;
     padding: 6px 14px;
     font-family: var(--app-font-display);
     font-size: 0.7rem;
     letter-spacing: .12em;
     text-transform: uppercase;
-    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+    box-shadow: 3px 3px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
 
   .section-kicker {
@@ -322,12 +322,12 @@
     text-transform: uppercase;
     color: hsl(var(--foreground));
     background: hsl(var(--brand-lime));
-    border: 2px solid hsl(var(--foreground));
+    border: 2px solid var(--pop-border, hsl(var(--foreground)));
     border-radius: 999px;
     padding: 5px 14px;
     font-size: 0.7rem;
     letter-spacing: .14em;
-    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+    box-shadow: 3px 3px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
 
   .button-pop {
@@ -335,16 +335,16 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: hsl(var(--brand-red));
-    color: #fff;
-    border: 3px solid hsl(var(--foreground));
+    background: var(--button-pop-bg, hsl(var(--brand-red)));
+    color: var(--button-pop-fg, #fff);
+    border: 3px solid var(--pop-border, hsl(var(--foreground)));
     border-radius: 999px;
     padding: 12px 18px;
     font-family: var(--app-font-display);
     font-size: 0.82rem;
     letter-spacing: .04em;
     text-transform: uppercase;
-    box-shadow: 5px 5px 0 0 hsl(var(--foreground));
+    box-shadow: 5px 5px 0 0 var(--pop-shadow, hsl(var(--foreground)));
     transition: transform .15s ease, box-shadow .15s ease;
     cursor: pointer;
     min-width: 0;
@@ -360,22 +360,22 @@
   }
   .button-pop:hover {
     transform: translate(2px, 2px);
-    box-shadow: 3px 3px 0 0 hsl(var(--foreground));
+    box-shadow: 3px 3px 0 0 var(--pop-shadow, hsl(var(--foreground)));
   }
   .button-pop.button-pop-yellow {
-    background: hsl(var(--brand-yellow));
-    color: hsl(var(--brand-yellow-foreground));
+    background: var(--button-pop-yellow-bg, hsl(var(--brand-yellow)));
+    color: var(--button-pop-yellow-fg, hsl(var(--brand-yellow-foreground)));
   }
   .button-pop.button-pop-cream {
-    background: hsl(var(--brand-cream));
-    color: hsl(var(--foreground));
+    background: var(--button-pop-cream-bg, hsl(var(--brand-cream)));
+    color: var(--button-pop-cream-fg, hsl(var(--foreground)));
   }
 
   .highlight-yellow {
     background: hsl(var(--brand-yellow));
     color: hsl(var(--brand-yellow-foreground));
-    border: 3px solid hsl(var(--foreground));
-    box-shadow: 6px 6px 0 0 hsl(var(--foreground));
+    border: 3px solid var(--pop-border, hsl(var(--foreground)));
+    box-shadow: 6px 6px 0 0 var(--pop-shadow, hsl(var(--foreground)));
     padding: 0 .12em;
     border-radius: 12px;
     display: inline-block;
@@ -568,29 +568,6 @@
 
 [data-location="trap-museum"] {
 
-  /* ── Background / surface colors → pure white ───────────────────────────
-     Override both the Tailwind CSS-var aliases AND the primitives so the
-     correct value is picked up whichever way a utility resolves the token. */
-  background-color: #fff;
-  --background: 0 0% 100%;
-  --color-background: #fff;
-  --card: 0 0% 100%;
-  --color-card: #fff;
-  --popover: 0 0% 100%;
-  --color-popover: #fff;
-  --muted: 0 0% 93%;
-  --color-muted: #ededed;
-  --border: 0 0% 80%;
-  --color-border: #ccc;
-  --input: 0 0% 80%;
-
-  /* Force utility classes that may inline static values */
-  .bg-background { background-color: #fff !important; }
-  .bg-card       { background-color: #fff !important; }
-  .card-pop      { background-color: #fff !important; }
-  .bg-popover    { background-color: #fff !important; }
-  .bg-muted      { background-color: #ededed !important; }
-
   /* ── Typography — Bebas Neue headings, Helvetica Neue Bold body ─────────
 
    Hero heading — desktop h1 */
@@ -698,66 +675,4 @@
   .card-pop .flex.items-center.gap-3 {
     justify-content: center;
   }
-
-  /* ── B&W color overrides ────────────────────────────────────────────────
-     CategoryBadge uses inline style → unaffected by class-based overrides.
-     Map snapshot is a static <img> → CSS color rules don't apply to it. */
-
-  /* Brand-red → black */
-  .text-brand-red              { color: #111 !important; }
-  .bg-brand-red                { background-color: #111 !important; border-color: #111 !important; }
-  a.text-brand-red,
-  a.text-brand-red:visited     { color: #111 !important; }
-
-  /* Brand-navy → black (MARTA badge) */
-  .bg-brand-navy               { background-color: #111 !important; border-color: #111 !important; }
-  .text-brand-navy             { color: #111 !important; }
-
-  /* Brand-lime → light gray (BELTLINE badge) */
-  .bg-brand-lime               { background-color: #d4d4d4 !important; border-color: #d4d4d4 !important; color: #111 !important; }
-
-  /* All button-pop buttons → solid black with white text (B&W motif).
-     The base .button-pop rule uses hsl(var(--brand-red)) which bypasses the
-     utility-class override, so we target the class directly here. */
-  .button-pop {
-    background: #111 !important;
-    color: #fff !important;
-  }
-
-  /* Brand-yellow / yellow button → white with black pop shadow */
-  .bg-brand-yellow             { background-color: #fff !important; border-color: #111 !important; color: #111 !important; }
-  .button-pop-yellow {
-    background: #fff !important;
-    background-color: #fff !important;
-    color: #111 !important;
-    border-color: #111 !important;
-    box-shadow: 3px 3px 0 0 #111 !important;
-  }
-
-  /* Primary / accent text (deep-green → black) */
-  .text-primary                { color: #111 !important; }
-  .text-accent                 { color: #111 !important; }
-
-  /* Brand cream → white */
-  .bg-brand-cream              { background-color: #fafafa !important; }
-
-  /* Map pin circle stays dark with white icon */
-  .bg-brand-red.text-white     { background-color: #111 !important; color: #fff !important; }
-
-  /* Focus rings → black */
-  .focus-visible\:ring-brand-red:focus-visible { --tw-ring-color: #111 !important; }
-
-  /* ── Card / bubble pop shadows → grey ────────────────────────────────────
-     Elsewhere the offset "pop" shadow uses the foreground color; on the
-     white TMM page a solid black shadow reads too heavy. Keep the same
-     offsets (so card sizing/spacing matches the rest of the site) but
-     render them in grey. */
-  .card-pop       { box-shadow: 8px 8px 0 0 #c7c7c7 !important; }
-  .badge-sticker  { box-shadow: 3px 3px 0 0 #c7c7c7 !important; }
-  .shadow-pop     { box-shadow: 6px 6px 0 0 #c7c7c7 !important; }
-  .shadow-pop-sm  { box-shadow: 4px 4px 0 0 #c7c7c7 !important; }
-  .shadow-pop-lg  { box-shadow: 10px 10px 0 0 #c7c7c7 !important; }
-  .button-pop        { box-shadow: 5px 5px 0 0 #c7c7c7 !important; }
-  .button-pop:hover  { box-shadow: 3px 3px 0 0 #c7c7c7 !important; }
-  .button-pop-yellow { box-shadow: 3px 3px 0 0 #c7c7c7 !important; }
 }

@@ -7,8 +7,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
 import Home from "@/pages/home";
-import Partners from "@/pages/partners";
-import PartnersComingSoon from "@/pages/partners-coming-soon";
 import EventDetail from "@/pages/event-detail";
 import RouteDetail from "@/pages/route-detail";
 import Apply from "@/pages/apply";
@@ -25,6 +23,10 @@ import AdminApplications from "@/pages/admin-applications";
 import AdminContent from "@/pages/admin-content";
 import AdminRoutes from "@/pages/admin-routes";
 import AdminPartners from "@/pages/admin-partners";
+import AdminCrm from "@/pages/admin-crm";
+import AdminVendors from "@/pages/admin-vendors";
+import AdminUsers from "@/pages/admin-users";
+import AdminInsights from "@/pages/admin-insights";
 import ListALocation from "@/pages/list-a-location";
 import PartnerPortal from "@/pages/partner-portal";
 import { VisitorProvider } from "@/passport/VisitorProvider";
@@ -58,7 +60,7 @@ function MarketingRoutes() {
         {/* TEMPORARY: applications paused — /apply shows the same holding page
             as /partners. To revert, change `PartnersComingSoon` back to `Apply`
             (the real page is still imported above and fully intact). */}
-        <Route path="/apply" component={PartnersComingSoon} />
+        <Route path="/apply">{() => <Apply />}</Route>
         {/* Event submissions stay open while partner applications are paused:
             /list-event renders the full event listing form. */}
         <Route path="/list-event" component={ListEvent} />
@@ -307,6 +309,18 @@ function Router() {
     }
     if (location === "/admin/partners") {
       return <AdminPartners />;
+    }
+    if (location === "/admin/crm") {
+      return <AdminCrm />;
+    }
+    if (location === "/admin/vendors") {
+      return <AdminVendors />;
+    }
+    if (location === "/admin/users") {
+      return <AdminUsers />;
+    }
+    if (location === "/admin/insights") {
+      return <AdminInsights />;
     }
     if (isMapShellRoute(location)) {
       return null;

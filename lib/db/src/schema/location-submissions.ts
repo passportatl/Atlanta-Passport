@@ -61,6 +61,17 @@ export const locationSubmissionsTable = pgTable("location_submissions", {
   duplicateOfId: uuid("duplicate_of_id"),
   importSource: text("import_source"),
 
+  // ── Pricing (validated server-side against @workspace/pricing) ───────────
+  addOns: text("add_ons").array(),
+  listingPrice: integer("listing_price"),
+
+  // ── CRM fields ────────────────────────────────────────────────────────────
+  salesStage: text("sales_stage").notNull().default("new"),
+  lastContactAt: timestamp("last_contact_at", { withTimezone: true }),
+  nextFollowUpAt: timestamp("next_follow_up_at", { withTimezone: true }),
+  crmNotes: text("crm_notes"),
+  paymentStatus: text("payment_status").notNull().default("unpaid"),
+
   // ── Promotion tracking ────────────────────────────────────────────────────
   promotedBusinessId: uuid("promoted_business_id"),
   promotedAt: timestamp("promoted_at", { withTimezone: true }),

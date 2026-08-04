@@ -1,7 +1,10 @@
+- [Staff admin accounts](staff-auth.md) — staff cookie sessions + legacy x-admin-key coexist in requireAdmin; seeding from INITIAL_STAFF_PASSWORD; AdminGate wraps all admin pages; audit prefers session user.
+- [Pricing single source](pricing-single-source.md) — @workspace/pricing is the only price list; intake routes recompute totals server-side, never trust client prices.
 - [Dev→prod data copy](dev-prod-data-copy.md) — publishing never copies data; use the flag-gated admin snapshot-import route, parents first, and filter seeded-slug collisions.
 - [Admin session gating](admin-session-gating.md) — validate the sessionStorage admin key server-side on mount and clear on 401; blind trust after secret rotation looks like total data loss.
 - [Explore page interactive map](explore-map.md) — native Google Map for click-to-focus; external embed has no deep-link/postMessage hook (home/beltline keep the iframe).
 - [Clerk React v6 custom OAuth](clerk-react-v6-custom-oauth.md) — for custom social buttons (authenticateWithRedirect), import useSignUp/useSignIn from `@clerk/react/legacy`, not `@clerk/react`.
+- [Adding a canonical area](area-taxonomy.md) — new neighborhood needs sample-data.ts list + normalizer aliases + passport/data.ts metadata; also retrofit existing DB rows (seed never does).
 - [Adding a passport stamp spot](stamp-spot-dual-layer.md) — a collectible stamp needs BOTH a STAMP_SLUG entry (frontend list) AND a seed.ts row (backend collectible); editing one only is broken.
 - [Google Drive / Sheets export](google-drive-sheets-export.md) — google-sheet connector is read-only; use google-drive connector + Drive CSV media-upload to write a Sheet (proxy can't reach the Sheets host).
 - [i18n regen + framer useScroll](i18n-and-scroll.md) — translate only NEW keys & merge (full-file regen times out/SIGKILLs, esp. Arabic); use window `scrollY` not `target:ref` to kill the useScroll warning.

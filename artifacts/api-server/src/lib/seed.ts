@@ -143,10 +143,10 @@ const SEED_BUSINESSES: InsertBusiness[] = [
   { slug: "homegrown", name: "Homegrown", category: "food", neighborhood: "Reynoldstown", stampColor: "green", icon: "utensils" },
   { slug: "sugarloaf", name: "Sugarloaf", category: "drinks", neighborhood: "Reynoldstown", stampColor: "green", icon: "wine" },
 
-  // Poncey-Highland — cream-black / disc
-  { slug: "pickled-paint", name: "Pickled Paint", category: "drinks", neighborhood: "Poncey-Highland", stampColor: "cream-black", icon: "wine" },
-  { slug: "smiths-olde-bar", name: "Smith's Olde Bar", category: "nightlife", neighborhood: "Poncey-Highland", stampColor: "cream-black", icon: "music" },
-  { slug: "virginia-highland-bars", name: "Virginia-Highland Bars", category: "drinks", neighborhood: "Poncey-Highland", stampColor: "cream-black", icon: "disc" },
+  // Poncey-Highlands — cream-black / disc
+  { slug: "pickled-paint", name: "Pickled Paint", category: "drinks", neighborhood: "Poncey-Highlands", stampColor: "cream-black", icon: "wine" },
+  { slug: "smiths-olde-bar", name: "Smith's Olde Bar", category: "nightlife", neighborhood: "Poncey-Highlands", stampColor: "cream-black", icon: "music" },
+  { slug: "virginia-highland-bars", name: "Virginia-Highland Bars", category: "drinks", neighborhood: "Poncey-Highlands", stampColor: "cream-black", icon: "disc" },
 
   // Midtown — green-dark / building
   { slug: "ri-ra", name: "Rí Rá", category: "drinks", neighborhood: "Midtown", stampColor: "green-dark", icon: "wine" },

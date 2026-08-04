@@ -254,7 +254,7 @@ export default function LocationEventCalendar({
       <div className="flex items-end justify-between mb-5 gap-2">
         <div
           className="flex items-center gap-2 font-bold"
-          style={accentTextStyle ?? { color: "hsl(var(--foreground))" }}
+          style={accentTextStyle ?? { color: "var(--color-foreground)" }}
         >
           <Calendar className="w-4 h-4 shrink-0" aria-hidden />
           <span className="font-display text-sm tracking-[0.14em] uppercase">
@@ -276,7 +276,7 @@ export default function LocationEventCalendar({
               <div className="flex items-center gap-3 mb-3">
                 <div
                   className="h-4 w-1 rounded-full shrink-0"
-                  style={accentStyle ?? { backgroundColor: "hsl(var(--foreground))" }}
+                  style={accentStyle ?? { backgroundColor: "var(--color-foreground)" }}
                   aria-hidden
                 />
                 <p className="font-display text-xs tracking-[0.18em] uppercase font-bold text-foreground">
@@ -306,7 +306,7 @@ export default function LocationEventCalendar({
                           style={
                             accentColor
                               ? { backgroundColor: accentColor, borderColor: accentColor, color: accentFg }
-                              : { backgroundColor: "hsl(var(--foreground))", color: "hsl(var(--background))" }
+                              : { backgroundColor: "var(--color-foreground)", color: "var(--color-background)" }
                           }
                           aria-hidden
                         >
@@ -364,7 +364,7 @@ export default function LocationEventCalendar({
                         style={
                           accentColor
                             ? { borderColor: accentColor, color: accentColor }
-                            : { borderColor: "hsl(var(--muted-foreground))", color: "hsl(var(--muted-foreground))" }
+                            : { borderColor: "var(--color-muted-foreground)", color: "var(--color-muted-foreground)" }
                         }
                         aria-hidden
                       >

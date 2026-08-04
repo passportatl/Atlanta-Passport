@@ -45,7 +45,7 @@ function StampRow({
   return (
     <li className="flex items-center gap-3 px-4 py-3 border-t-2 border-dashed border-foreground/15 first:border-t-0">
       <div className="flex-1 min-w-0">
-        <div className="font-black text-sm leading-tight">{name}</div>
+        <div className="font-black text-sm leading-tight text-foreground">{name}</div>
         <div className="text-[10px] uppercase tracking-wider font-black text-foreground/45">
           {meta}
         </div>
@@ -70,7 +70,7 @@ function StampRow({
           </Link>
         )}
       </div>
-      <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-[hsl(var(--brand-cream))]/40 flex items-center justify-center">
+      <div className="relative shrink-0 w-16 h-16 rounded-md border-2 border-dashed border-foreground/35 bg-brand-cream/40 flex items-center justify-center">
         {stamp ? (
           <StampGraphic
             neighborhood={stamp.neighborhood}
@@ -157,8 +157,8 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
   const total = rows.length;
 
   return (
-    <section className="card-pop bg-white overflow-hidden">
-      <header className="flex items-center justify-between px-4 py-2.5 bg-foreground text-[hsl(var(--brand-cream))]">
+    <section className="card-pop bg-[var(--surface-card,#ffffff)] overflow-hidden">
+      <header className="flex items-center justify-between px-4 py-2.5 bg-foreground text-[var(--surface-header-fg,hsl(var(--brand-cream)))]">
         <span
           className="font-black text-xs tracking-widest uppercase"
           style={{ fontFamily: "Bungee, sans-serif" }}
@@ -184,7 +184,7 @@ export default function StampChecklist({ targets }: { targets: StampTarget[] }) 
           />
         ))}
       </ul>
-      <div className="px-4 py-3 border-t-2 border-dashed border-foreground/15 bg-[hsl(var(--brand-cream))]/30">
+      <div className="px-4 py-3 border-t-2 border-dashed border-foreground/15 bg-brand-cream/30">
         {visitorId ? (
           <p className="text-xs font-bold text-foreground/70 leading-snug">
             Scan the QR code at the location or event — or speak to an employee there — to collect each stamp.

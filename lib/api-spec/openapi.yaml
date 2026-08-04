@@ -24,8 +24,6 @@ tags:
     description: Partner applications
   - name: events
     description: Event calendar and intake
-  - name: legends
-    description: ATL Legends editorial content
 paths:
   /healthz:
     get:
@@ -97,43 +95,6 @@ paths:
                 $ref: "#/components/schemas/Visitor"
         "404":
           description: Not found
-
-  /visitors/{id}/preferences:
-    patch:
-      operationId: updateVisitorPreferences
-      tags: [visitors]
-      summary: Record legal consent and update communication preferences
-      description: >
-        Updates the signed-in visitor's optional marketing preference. Required
-        legal acceptance is recorded once with the current policy versions and
-        cannot be revoked through this endpoint.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateVisitorPreferencesInput"
-      responses:
-        "200":
-          description: Updated visitor
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Visitor"
-        "400":
-          description: Invalid input
-        "401":
-          description: Not authenticated
-        "403":
-          description: Visitor does not belong to the signed-in account
-        "404":
-          description: Visitor not found
 
   /visitors/{id}/stamps:
     get:
@@ -391,15 +352,7 @@ paths:
           name: locationFilter
           schema:
             type: string
-            enum:
-              [
-                ready,
-                verified_address,
-                missing_partial,
-                unable_to_map,
-                out_of_area,
-                needs_location_review,
-              ]
+            enum: [ready, verified_address, missing_partial, unable_to_map, out_of_area, needs_location_review]
       responses:
         "200":
           description: All events
@@ -450,16 +403,7 @@ paths:
                   skippedManuallyVerified: { type: integer }
                   outOfArea: { type: integer }
                   remainingNeedingGeocode: { type: integer }
-                required:
-                  [
-                    scanned,
-                    classified,
-                    geocodeAttempted,
-                    geocodeResolved,
-                    skippedManuallyVerified,
-                    outOfArea,
-                    remainingNeedingGeocode,
-                  ]
+                required: [scanned, classified, geocodeAttempted, geocodeResolved, skippedManuallyVerified, outOfArea, remainingNeedingGeocode]
         "401":
           description: Unauthorized
 
@@ -507,6 +451,323 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContactReceipt"
+
+  /visitors/{id}/preferences:
+    patch:
+      operationId: updateVisitorPreferences
+      tags: [visitors]
+      summary: Update a visitor's communication preferences (promo email consent)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVisitorPreferencesInput"
+      responses:
+        "200":
+          description: Updated visitor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Visitor"
+
+  /admin/auth/login:
+    post:
+      operationId: staffLogin
+      tags: [admin]
+      summary: Staff login with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffLoginInput"
+      responses:
+        "200":
+          description: Logged in (session cookie set)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffSessionInfo"
+
+  /admin/auth/logout:
+    post:
+      operationId: staffLogout
+      tags: [admin]
+      summary: Log out the current staff session
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                required: [ok]
+
+  /admin/auth/me:
+    get:
+      operationId: getStaffMe
+      tags: [admin]
+      summary: Current staff session, if any
+      responses:
+        "200":
+          description: Session info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffSessionInfo"
+
+  /admin/auth/change-password:
+    post:
+      operationId: staffChangePassword
+      tags: [admin]
+      summary: Change the current staff user's password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffChangePasswordInput"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffSessionInfo"
+
+  /admin/users:
+    get:
+      operationId: listStaffUsers
+      tags: [admin]
+      summary: List staff users (never includes password hashes)
+      responses:
+        "200":
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StaffUser"
+
+  /admin/users/{id}:
+    patch:
+      operationId: updateStaffUser
+      tags: [admin]
+      summary: Update a staff user's email or status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStaffUserInput"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffUser"
+
+  /admin/audit-log:
+    get:
+      operationId: listAdminAuditLog
+      tags: [admin]
+      summary: Recent admin action history
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Audit entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminAuditEntry"
+
+  /admin/settings/legacy-access:
+    get:
+      operationId: getLegacyAccessStatus
+      tags: [admin]
+      summary: Whether the legacy shared admin secret is still accepted
+      responses:
+        "200":
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LegacyAccessStatus"
+    patch:
+      operationId: setLegacyAccessStatus
+      tags: [admin]
+      summary: Enable or disable the legacy shared admin secret (staff session required)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LegacyAccessStatus"
+      responses:
+        "200":
+          description: Updated status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LegacyAccessStatus"
+
+  /admin/partners/summary:
+    get:
+      operationId: getPartnersSummary
+      tags: [admin]
+      summary: Unified partner totals across events, locations, and vendors
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartnersSummary"
+
+  /admin/crm/records:
+    get:
+      operationId: listCrmRecords
+      tags: [admin]
+      summary: Unified CRM records (events, locations, vendors, partners)
+      parameters:
+        - name: recordType
+          in: query
+          schema:
+            type: string
+            enum: [event, location, vendor, business]
+        - name: bucket
+          in: query
+          description: Follow-up queue filter
+          schema:
+            type: string
+            enum: [overdue, upcoming, unassigned, paid]
+      responses:
+        "200":
+          description: Records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CrmRecord"
+
+  /admin/crm/{recordType}/{id}:
+    patch:
+      operationId: updateCrmRecord
+      tags: [admin]
+      summary: Update CRM fields on a submission record
+      parameters:
+        - name: recordType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [event, location, vendor, business]
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrmUpdateInput"
+      responses:
+        "200":
+          description: Updated record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrmRecord"
+
+  /admin/reminders/run:
+    post:
+      operationId: runReminderCheck
+      tags: [admin]
+      summary: Manually trigger the follow-up reminder check and email digest
+      responses:
+        "200":
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReminderRunResult"
+
+  /admin/staff-directory:
+    get:
+      operationId: getStaffDirectory
+      tags: [admin]
+      summary: Staff directory (name -> email) used to route per-staff reminder digests
+      responses:
+        "200":
+          description: Directory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffDirectory"
+    put:
+      operationId: updateStaffDirectory
+      tags: [admin]
+      summary: Replace the staff directory (admin-editable name -> email mapping)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffDirectoryInput"
+      responses:
+        "200":
+          description: Updated directory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffDirectory"
+
+  /admin/insights:
+    get:
+      operationId: getAdminInsights
+      tags: [admin]
+      summary: Platform insights — users, growth, engagement, stamps, rewards, events
+      responses:
+        "200":
+          description: Insights
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminInsights"
+
+  /admin/newsletter-export:
+    get:
+      operationId: exportNewsletterCsv
+      tags: [admin]
+      summary: CSV export of users who explicitly opted into promotional email
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema: { type: string }
 
   /legends:
     get:
@@ -558,90 +819,48 @@ components:
     LegendSummary:
       type: object
       properties:
-        id:
-          type: string
-        slug:
-          type: string
-        title:
-          type: string
-        subtitle:
-          type: string
-          nullable: true
-        excerpt:
-          type: string
-          nullable: true
-        category:
-          type: string
+        id: { type: string }
+        slug: { type: string }
+        title: { type: string }
+        subtitle: { type: string, nullable: true }
+        excerpt: { type: string, nullable: true }
+        category: { type: string }
         tags:
           type: array
-          items:
-            type: string
-        authorName:
-          type: string
-          nullable: true
-        authorImage:
-          type: string
-          nullable: true
-        heroImage:
-          type: string
-          nullable: true
-        publishedAt:
-          type: string
-          format: date-time
-        isFeatured:
-          type: boolean
-        readingTimeMinutes:
-          type: integer
-          nullable: true
-      required:
-        - id
-        - slug
-        - title
-        - category
-        - tags
-        - publishedAt
-        - isFeatured
+          items: { type: string }
+        authorName: { type: string, nullable: true }
+        authorImage: { type: string, nullable: true }
+        heroImage: { type: string, nullable: true }
+        publishedAt: { type: string, format: date-time }
+        isFeatured: { type: boolean }
+        readingTimeMinutes: { type: integer, nullable: true }
+      required: [id, slug, title, category, tags, publishedAt, isFeatured]
 
     Legend:
       allOf:
         - $ref: "#/components/schemas/LegendSummary"
         - type: object
           properties:
-            body:
-              type: string
-              nullable: true
-            authorBio:
-              type: string
-              nullable: true
+            body: { type: string, nullable: true }
+            authorBio: { type: string, nullable: true }
             galleryImages:
               type: array
-              items:
-                type: string
-            seoTitle:
-              type: string
-              nullable: true
-            seoDescription:
-              type: string
-              nullable: true
-            socialPreviewImage:
-              type: string
-              nullable: true
+              items: { type: string }
+            seoTitle: { type: string, nullable: true }
+            seoDescription: { type: string, nullable: true }
+            socialPreviewImage: { type: string, nullable: true }
             relatedLocationSlugs:
               type: array
-              items:
-                type: string
+              items: { type: string }
             relatedEventIds:
               type: array
-              items:
-                type: string
+              items: { type: string }
             relatedRouteSlugs:
               type: array
-              items:
-                type: string
+              items: { type: string }
             relatedExperienceSlugs:
               type: array
-              items:
-                type: string
+              items: { type: string }
           required:
             - galleryImages
             - relatedLocationSlugs
@@ -668,6 +887,12 @@ components:
         phone:
           type: string
           nullable: true
+        promoOptIn:
+          type: boolean
+        promoOptInAt:
+          type: string
+          format: date-time
+          nullable: true
         termsAcceptedAt:
           type: string
           format: date-time
@@ -691,7 +916,7 @@ components:
         createdAt:
           type: string
           format: date-time
-      required: [id, firstName, email, marketingOptIn, createdAt]
+      required: [id, firstName, email, promoOptIn, marketingOptIn, createdAt]
 
     CreateVisitorInput:
       type: object
@@ -706,17 +931,6 @@ components:
           type: string
       required: [firstName, email]
 
-    UpdateVisitorPreferencesInput:
-      type: object
-      properties:
-        acceptTerms:
-          type: boolean
-        acceptPrivacy:
-          type: boolean
-        marketingOptIn:
-          type: boolean
-      required: [marketingOptIn]
-
     Business:
       type: object
       properties:
@@ -726,18 +940,17 @@ components:
           type: string
         name:
           type: string
-        category:
-          type: string
-        categoryId:
-          type: string
-        tags:
-          type: array
-          items:
+          category:
             type: string
-        neighborhood:
-          type: string
-        areaId:
-          type: string
+          categoryId:
+            type: string
+          tags:
+            type: array
+            items: { type: string }
+          neighborhood:
+            type: string
+          areaId:
+            type: string
         description:
           type: string
         address:
@@ -754,63 +967,48 @@ components:
         latitude:
           type: number
           nullable: true
-        longitude:
-          type: number
-          nullable: true
-        mapReadiness:
-          type: string
-          enum: [verified, coordinates-present, missing-coordinates]
-        publicStatus:
-          type: string
-        isStampStop:
-          type: boolean
-        priorityListing:
-          type: boolean
-        priorityRank:
-          type: integer
-        detailPageEnabled:
-          type: boolean
-        entitlementStartsAt:
-          type: string
-          format: date-time
-          nullable: true
-        entitlementEndsAt:
-          type: string
-          format: date-time
-          nullable: true
-        hasPublicOffer:
-          type: boolean
-        publicUpdatedAt:
-          type: string
-          format: date-time
-        sortKey:
-          type: string
-        isActive:
-          type: boolean
+          longitude:
+            type: number
+            nullable: true
+          mapReadiness:
+            type: string
+            enum: [verified, coordinates-present, missing-coordinates]
+          publicStatus: { type: string }
+          isStampStop: { type: boolean }
+          priorityListing: { type: boolean }
+          priorityRank: { type: integer }
+          detailPageEnabled: { type: boolean }
+          entitlementStartsAt: { type: string, format: date-time, nullable: true }
+          entitlementEndsAt: { type: string, format: date-time, nullable: true }
+          hasPublicOffer: { type: boolean }
+          publicUpdatedAt: { type: string, format: date-time }
+          sortKey: { type: string }
+          isActive:
+            type: boolean
       required:
         - id
         - slug
         - name
-        - category
-        - categoryId
-        - tags
-        - neighborhood
-        - areaId
+          - category
+          - categoryId
+          - tags
+          - neighborhood
+          - areaId
         - description
         - address
         - stampName
         - stampColor
-        - icon
-        - mapReadiness
-        - publicStatus
-        - isStampStop
-        - priorityListing
-        - priorityRank
-        - detailPageEnabled
-        - hasPublicOffer
-        - publicUpdatedAt
-        - sortKey
-        - isActive
+          - icon
+          - mapReadiness
+          - publicStatus
+          - isStampStop
+          - priorityListing
+          - priorityRank
+          - detailPageEnabled
+          - hasPublicOffer
+          - publicUpdatedAt
+          - sortKey
+          - isActive
 
     BusinessList:
       type: array
@@ -936,7 +1134,7 @@ components:
       properties:
         submissionType:
           type: string
-          enum: [business, event]
+          enum: [business, event, vendor]
         businessName: { type: string, minLength: 2 }
         contactName: { type: string, minLength: 2 }
         email: { type: string, format: email }
@@ -951,9 +1149,15 @@ components:
         address: { type: string, minLength: 5 }
         package:
           type: string
-          enum: [starter, featured, premier, route, custom, event]
+          enum: [starter, featured, premier, route, custom, event, free, standard, market-day, weekend, featured-vendor]
+        addOns:
+          type: array
+          items: { type: string }
+        vendorType: { type: string }
         routeId: { type: string }
-        offer: { type: string, minLength: 5 }
+        # Empty for vendor/event submissions; the business form and server-side
+        # checks enforce a meaningful offer where it's required.
+        offer: { type: string }
         prizeSponsorship: { type: string }
         nearMarta: { type: boolean }
         nearBeltline: { type: boolean }
@@ -1018,6 +1222,18 @@ components:
         eventUrl: { type: string, nullable: true }
         promoContact: { type: boolean, nullable: true }
         promoContactMethod: { type: string, nullable: true }
+        vendorType: { type: string, nullable: true }
+        addOns:
+          type: array
+          items: { type: string }
+          nullable: true
+        listingPrice: { type: number, nullable: true }
+        salesStage: { type: string }
+        assignedTo: { type: string, nullable: true }
+        lastContactAt: { type: string, format: date-time, nullable: true }
+        nextFollowUpAt: { type: string, format: date-time, nullable: true }
+        crmNotes: { type: string, nullable: true }
+        paymentStatus: { type: string }
         emailDelivered: { type: string }
         createdAt: { type: string, format: date-time }
       required:
@@ -1047,6 +1263,209 @@ components:
         emailDelivered: { type: string }
       required: [id, emailDelivered]
 
+    StaffLoginInput:
+      type: object
+      properties:
+        username: { type: string, minLength: 1 }
+        password: { type: string, minLength: 1 }
+      required: [username, password]
+
+    StaffChangePasswordInput:
+      type: object
+      properties:
+        currentPassword: { type: string, minLength: 1 }
+        newPassword: { type: string, minLength: 10 }
+      required: [currentPassword, newPassword]
+
+    StaffUser:
+      type: object
+      properties:
+        id: { type: string }
+        username: { type: string }
+        email: { type: string, nullable: true }
+        status: { type: string }
+        mustChangePassword: { type: boolean }
+        lastLoginAt: { type: string, format: date-time, nullable: true }
+        passwordChangedAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, username, status, mustChangePassword, createdAt]
+
+    StaffSessionInfo:
+      type: object
+      properties:
+        authenticated: { type: boolean }
+        user:
+          $ref: "#/components/schemas/StaffUser"
+      required: [authenticated]
+
+    UpdateStaffUserInput:
+      type: object
+      properties:
+        email: { type: string, nullable: true }
+        status:
+          type: string
+          enum: [active, disabled]
+
+    AdminAuditEntry:
+      type: object
+      properties:
+        id: { type: string }
+        actor: { type: string }
+        action: { type: string }
+        entityType: { type: string, nullable: true }
+        entityId: { type: string, nullable: true }
+        detail: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, actor, action, createdAt]
+
+    LegacyAccessStatus:
+      type: object
+      properties:
+        enabled: { type: boolean }
+      required: [enabled]
+
+    UpdateVisitorPreferencesInput:
+      type: object
+      properties:
+        promoOptIn: { type: boolean }
+        acceptTerms: { type: boolean }
+        acceptPrivacy: { type: boolean }
+        marketingOptIn: { type: boolean }
+
+    CrmUpdateInput:
+      type: object
+      properties:
+        salesStage:
+          type: string
+          enum: [new, contacted, negotiating, committed, closed-won, closed-lost]
+        assignedTo: { type: string, nullable: true }
+        lastContactAt: { type: string, format: date-time, nullable: true }
+        nextFollowUpAt: { type: string, format: date-time, nullable: true }
+        crmNotes: { type: string, nullable: true }
+        paymentStatus:
+          type: string
+          enum: [unpaid, invoiced, paid, comped]
+
+    CrmRecord:
+      type: object
+      properties:
+        recordType:
+          type: string
+          enum: [event, location, vendor, business]
+        id: { type: string }
+        name: { type: string }
+        contactName: { type: string, nullable: true }
+        contactEmail: { type: string, nullable: true }
+        packageId: { type: string, nullable: true }
+        listingPrice: { type: number, nullable: true }
+        addOns:
+          type: array
+          items: { type: string }
+          nullable: true
+        workflowStatus: { type: string, nullable: true }
+        salesStage: { type: string }
+        assignedTo: { type: string, nullable: true }
+        lastContactAt: { type: string, format: date-time, nullable: true }
+        nextFollowUpAt: { type: string, format: date-time, nullable: true }
+        crmNotes: { type: string, nullable: true }
+        paymentStatus: { type: string }
+        createdAt: { type: string, format: date-time }
+      required: [recordType, id, name, salesStage, paymentStatus, createdAt]
+
+    PartnersSummary:
+      type: object
+      properties:
+        events:
+          $ref: "#/components/schemas/PartnerKindTotals"
+        locations:
+          $ref: "#/components/schemas/PartnerKindTotals"
+        vendors:
+          $ref: "#/components/schemas/PartnerKindTotals"
+        businesses:
+          $ref: "#/components/schemas/PartnerKindTotals"
+        totalRevenue: { type: number }
+        paidRevenue: { type: number }
+      required: [events, locations, vendors, businesses, totalRevenue, paidRevenue]
+
+    PartnerKindTotals:
+      type: object
+      properties:
+        total: { type: number }
+        paid: { type: number }
+        pendingFollowUp: { type: number }
+        revenue: { type: number }
+      required: [total, paid, pendingFollowUp, revenue]
+
+    ReminderRunResult:
+      type: object
+      properties:
+        overdue: { type: number }
+        dueToday: { type: number }
+        digestSent: { type: boolean }
+        digestSkippedReason: { type: string, nullable: true }
+        staffDigestsSent: { type: number }
+      required: [overdue, dueToday, digestSent]
+
+    StaffMember:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+      required: [name, email]
+
+    StaffDirectory:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/StaffMember"
+      required: [entries]
+
+    StaffDirectoryInput:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/StaffMember"
+      required: [entries]
+
+    AdminInsights:
+      type: object
+      properties:
+        registeredUsers: { type: number }
+        newUsersLast7Days: { type: number }
+        newUsersLast30Days: { type: number }
+        activeStampers: { type: number }
+        totalStamps: { type: number }
+        stampsLast7Days: { type: number }
+        totalRedemptions: { type: number }
+        publishedEvents: { type: number }
+        promoOptIns: { type: number }
+        diagnostics:
+          type: array
+          items:
+            type: object
+            properties:
+              label: { type: string }
+              value: { type: string }
+              status:
+                type: string
+                enum: [ok, warn, error]
+            required: [label, value, status]
+      required:
+        - registeredUsers
+        - newUsersLast7Days
+        - newUsersLast30Days
+        - activeStampers
+        - totalStamps
+        - stampsLast7Days
+        - totalRedemptions
+        - publishedEvents
+        - promoOptIns
+        - diagnostics
+
     SubmitContactMessageInput:
       type: object
       properties:
@@ -1054,16 +1473,7 @@ components:
         email: { type: string, format: email }
         topic:
           type: string
-          enum:
-            - general_question
-            - technical_support
-            - media_press
-            - partnership
-            - event_listing
-            - location_listing
-            - sponsorship
-            - billing
-            - other
+            enum: [general_question, technical_support, media_press, partnership, event_listing, location_listing, sponsorship, billing, other]
         message: { type: string, minLength: 10 }
       required:
         - name

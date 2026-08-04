@@ -26,8 +26,9 @@ export interface SubmitApplicationInput {
   /** @minLength 5 */
   address: string;
   package?: SubmitApplicationInputPackage;
+  addOns?: string[];
+  vendorType?: string;
   routeId?: string;
-  /** @minLength 5 */
   offer: string;
   prizeSponsorship?: string;
   nearMarta?: boolean;

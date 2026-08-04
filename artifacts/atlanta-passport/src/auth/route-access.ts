@@ -9,6 +9,7 @@ const PUBLIC_GUEST_ROUTES = new Set([
   "/passport/contact",
   "/privacy-policy",
   "/terms-of-service",
+  "/admin",
   "/sign-in",
   "/sign-up",
 ]);
@@ -18,6 +19,7 @@ const PUBLIC_GUEST_PREFIXES = [
   "/sign-up/",
   "/partners/",
   "/stamp/",
+  "/admin/",
 ];
 
 function normalizePathname(location: string): string {

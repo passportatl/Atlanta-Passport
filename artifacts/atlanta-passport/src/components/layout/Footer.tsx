@@ -10,7 +10,7 @@ const PARTNER_LOGOS = [
   { src: dpAndCo, alt: "DP & Co" },
   { src: wheelhausBikes, alt: "Wheelhaus Bikes" },
   { src: peachtree, alt: "Peachtree Wellness" },
-  { src: trapMuseum, alt: "The Atlanta Trap Museum" },
+  { src: trapMuseum, alt: "The Atlanta Trap Music Museum" },
 ];
 
 // `clearBottomNav` adds extra bottom padding so the footer clears the fixed
