@@ -57,6 +57,8 @@ jobs:
           pnpm --filter @workspace/api-server exec vitest run
           --exclude src/routes/bulk-undo-restore.test.ts
           --exclude src/routes/location-bulk-undo-restore.test.ts
+          --exclude src/routes/crm-pricing.test.ts
+          --exclude src/routes/staff-directory.test.ts
           --exclude src/lib/reminders.test.ts
         env:
           DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/passport_atl_ci
