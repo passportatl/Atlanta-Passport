@@ -709,7 +709,17 @@ export const submitContactMessageBodyMessageMin = 10;
 export const SubmitContactMessageBody = zod.object({
   name: zod.string().min(submitContactMessageBodyNameMin),
   email: zod.string().email(),
-  topic: zod.enum(["question", "suggestion", "feedback", "business", "other"]),
+  topic: zod.enum([
+    "general_question",
+    "technical_support",
+    "media_press",
+    "partnership",
+    "event_listing",
+    "location_listing",
+    "sponsorship",
+    "billing",
+    "other",
+  ]),
   message: zod.string().min(submitContactMessageBodyMessageMin),
 });
 
