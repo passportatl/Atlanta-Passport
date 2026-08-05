@@ -29,6 +29,12 @@ channel = "stable-25_05"
 DISABLE_GEOFENCE = "true"
 CLERK_IDENTITY_RECOVERY_ENABLED = "true"
 
+[userenv.shared]
+CONTACT_NOTIFY_EMAIL = "info@passportatl.com"
+
+[userenv.production]
+CLERK_IDENTITY_RECOVERY_ENABLED = "true"
+
 [[ports]]
 localPort = 8080
 externalPort = 8080
