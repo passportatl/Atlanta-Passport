@@ -4,8 +4,10 @@ import {
   useGetAdminEventsSummary,
   useUpdateAdminEvent,
   useReprocessEventLocations,
+  useGetStaffMe,
   getListAdminEventsQueryKey,
   getGetAdminEventsSummaryQueryKey,
+  getGetStaffMeQueryKey,
   type Application,
   type AdminEventRecord,
   type AdminEventsSummary,
@@ -53,6 +55,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import AdminNav from "@/components/AdminNav";
+import AdminGate from "@/components/AdminGate";
 import { NotificationsBell, OpsDashboardPanel } from "@/components/admin/ops-dashboard";
 import { EVENT_TYPES, AGE_OPTIONS } from "@/data/event-taxonomy";
 import { persistUndo, readPersistedUndo, clearPersistedUndo } from "@/lib/bulkUndoStorage";
@@ -76,14 +79,17 @@ function adminActorHeader(): Record<string, string> {
 
 /** Tracks the signed-in Clerk user and returns "Name (email)" (or fallback). */
 function useAdminActor(): string {
+  const { data: staffMe } = useGetStaffMe({ query: { queryKey: getGetStaffMeQueryKey() } });
   const { user } = useUser();
   const actor = useMemo(() => {
+    // If authenticated via Staff accounts, no x-admin-actor is needed; the backend handles it.
+    if (staffMe?.authenticated) return "";
     if (!user) return "";
     const name = user.fullName ?? user.username ?? "";
     const email = user.primaryEmailAddress?.emailAddress ?? "";
     if (name && email) return `${name} (${email})`;
     return name || email;
-  }, [user]);
+  }, [user, staffMe]);
   useEffect(() => {
     currentAdminActor = actor;
   }, [actor]);
@@ -1073,9 +1079,6 @@ const SYNC_STATUS_COLORS: Record<string, string> = {
   partial: "bg-brand-yellow text-brand-yellow-foreground",
 };
 
-const UNLOCK_KEY = "atlanta-passport-admin-unlocked";
-const ADMIN_KEY_STORAGE = "atlanta-passport-admin-key";
-
 const PACKAGE_COLORS: Record<string, string> = {
   starter: "bg-brand-yellow text-brand-yellow-foreground",
   featured: "bg-brand-red text-white",
@@ -1102,71 +1105,6 @@ const WORKFLOW_COLORS: Record<string, string> = {
   canceled: "bg-foreground/20 text-foreground",
   archived: "bg-foreground/10 text-foreground/60",
 };
-
-function AdminGate({ onUnlock }: { onUnlock: (key: string) => void }) {
-  const [pw, setPw] = useState("");
-  const [err, setErr] = useState(false);
-  const [checking, setChecking] = useState(false);
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (checking) return;
-    setChecking(true);
-    try {
-      // Validate against the server — the password is never baked into the bundle.
-      const res = await fetch(`${API_BASE}/admin/sources`, { headers: { "x-admin-key": pw } });
-      if (res.ok) {
-        sessionStorage.setItem(UNLOCK_KEY, "1");
-        sessionStorage.setItem(ADMIN_KEY_STORAGE, pw);
-        onUnlock(pw);
-      } else {
-        setErr(true);
-      }
-    } catch {
-      setErr(true);
-    } finally {
-      setChecking(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper grid place-items-center px-4">
-      <form onSubmit={submit} className="card-pop bg-white p-6 max-w-sm w-full">
-        <div className="flex items-center gap-2 mb-3">
-          <Lock className="w-5 h-5" />
-          <h1 className="text-xl font-black" style={{ fontFamily: "Bungee, sans-serif" }}>
-            Admin access
-          </h1>
-        </div>
-        <p className="text-sm text-foreground/70 mb-4">
-          Enter the admin password to view submissions.
-        </p>
-        <label className="block text-xs font-black uppercase tracking-wider mb-1">
-          Password
-        </label>
-        <input
-          type="password"
-          value={pw}
-          onChange={(e) => {
-            setPw(e.target.value);
-            setErr(false);
-          }}
-          autoFocus
-          className="w-full border-2 border-foreground rounded-md px-3 py-2 font-mono text-sm bg-[hsl(var(--brand-cream))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--brand-yellow))]"
-          placeholder="••••••••"
-        />
-        {err && (
-          <p className="text-xs text-[hsl(var(--brand-red))] font-bold mt-2">
-            Incorrect password.
-          </p>
-        )}
-        <button type="submit" className="button-pop button-pop-yellow w-full mt-4">
-          Unlock
-        </button>
-      </form>
-    </div>
-  );
-}
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -3700,36 +3638,22 @@ export function EventsOpsPanel({ adminKey }: { adminKey: string }) {
 // ── Main admin page ──────────────────────────────────────────────────────────
 
 export default function AdminApplications() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [adminKey, setAdminKey] = useState("");
+  return (
+    <AdminGate>
+      {(adminKey) => <AdminApplicationsContent adminKey={adminKey} />}
+    </AdminGate>
+  );
+}
+
+function AdminApplicationsContent({ adminKey }: { adminKey: string }) {
   // Keep the module-level actor identity fresh for all fetch helpers on this
   // page (bulk status updates, duplicate resolution, etc.).
   useAdminActor();
 
-  useEffect(() => {
-    void restoreAdminKey().then((key) => {
-      if (key) {
-        setUnlocked(true);
-        setAdminKey(key);
-      }
-    });
-  }, []);
-
-  if (!unlocked) {
-    return (
-      <AdminGate
-        onUnlock={(key) => {
-          setAdminKey(key);
-          setUnlocked(true);
-        }}
-      />
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[hsl(var(--brand-cream))] texture-paper py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <AdminNav onLock={() => setUnlocked(false)} />
+        <AdminNav />
         <div className="mb-4">
           <h1
             className="text-3xl font-black"

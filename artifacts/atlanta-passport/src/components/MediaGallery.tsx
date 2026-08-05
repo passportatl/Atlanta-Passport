@@ -144,7 +144,7 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
             )}
             {item.type === "video" && (
               <span className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
-                <span className="w-11 h-11 rounded-full bg-white/90 border-2 border-foreground flex items-center justify-center">
+                <span className="w-11 h-11 rounded-full bg-[var(--surface-card-90,rgba(255,255,255,0.9))] border-2 border-foreground flex items-center justify-center">
                   <Play className="w-5 h-5 text-foreground translate-x-[1px]" fill="currentColor" />
                 </span>
               </span>
@@ -157,7 +157,7 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
           <button
             type="button"
             onClick={() => scrollStrip(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80 z-10"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[var(--surface-card,#ffffff)] border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80 z-10"
             aria-label="Scroll gallery left"
           >
             <ChevronLeft className="w-5 h-5 text-foreground" />
@@ -167,7 +167,7 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
           <button
             type="button"
             onClick={() => scrollStrip(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-9 h-9 rounded-full bg-white border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80 z-10"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-9 h-9 rounded-full bg-[var(--surface-card,#ffffff)] border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80 z-10"
             aria-label="Scroll gallery right"
           >
             <ChevronRight className="w-5 h-5 text-foreground" />
@@ -188,7 +188,7 @@ export default function MediaGallery({ items }: { items: MediaGalleryItem[] }) {
             ref={closeButtonRef}
             type="button"
             onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-[var(--surface-card,#ffffff)] border-2 border-foreground shadow-pop-sm flex items-center justify-center hover:opacity-80"
             aria-label="Close"
           >
             <X className="w-5 h-5 text-foreground" />

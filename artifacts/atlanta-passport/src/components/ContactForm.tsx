@@ -24,20 +24,37 @@ import {
 } from "@/components/ui/select";
 
 const TOPICS = [
-  { value: "question", label: "General question" },
-  { value: "suggestion", label: "Suggestion" },
-  { value: "feedback", label: "Feedback" },
-  { value: "business", label: "Business inquiry" },
+  { value: "general_question", label: "General question" },
+  { value: "technical_support", label: "Technical support" },
+  { value: "media_press", label: "Media or press" },
+  { value: "partnership", label: "Partnership inquiry" },
+  { value: "event_listing", label: "Event listing" },
+  { value: "location_listing", label: "Location listing" },
+  { value: "sponsorship", label: "Sponsorship" },
+  { value: "billing", label: "Billing" },
   { value: "other", label: "Other" },
 ] as const;
 
 const formSchema = z.object({
   name: z.string().min(2, "Please enter your name."),
   email: z.string().email("Please enter a valid email address."),
-  topic: z.enum(["question", "suggestion", "feedback", "business", "other"], {
-    required_error: "Please pick a topic.",
-  }),
-  message: z.string().min(10, "Tell us a little more (at least 10 characters)."),
+  topic: z.enum(
+    [
+      "general_question",
+      "technical_support",
+      "media_press",
+      "partnership",
+      "event_listing",
+      "location_listing",
+      "sponsorship",
+      "billing",
+      "other",
+    ],
+    { required_error: "Please select a reason for contacting us." },
+  ),
+  message: z
+    .string()
+    .min(10, "Tell us a little more (at least 10 characters)."),
 });
 
 export function ContactForm({
@@ -71,11 +88,16 @@ export function ContactForm({
         <div className="badge-sticker bg-foreground text-brand-yellow inline-block mb-3 uppercase">
           ★ Message sent
         </div>
-        <h2 className="text-2xl font-serif font-bold mb-3">Thanks for reaching out!</h2>
+        <h2 className="text-2xl font-serif font-bold mb-3">
+          Thanks for reaching out!
+        </h2>
         <p className="mb-6 leading-snug">
           We read every message and suggestion — we'll get back to you soon.
         </p>
-        <Link href={doneHref} className="button-pop inline-flex justify-center w-full">
+        <Link
+          href={doneHref}
+          className="button-pop inline-flex justify-center w-full"
+        >
           {doneLabel}
         </Link>
       </div>
@@ -107,7 +129,11 @@ export function ContactForm({
                 <FormItem>
                   <FormLabel>Email *</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="jane@example.com" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="jane@example.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,11 +146,11 @@ export function ContactForm({
             name="topic"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>What's this about? *</FormLabel>
+                <FormLabel>Reason for contacting us *</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pick a topic" />
+                      <SelectValue placeholder="Select a reason" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -148,7 +174,7 @@ export function ContactForm({
                 <FormLabel>Message *</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Tell us what's on your mind, or suggest a spot we should feature…"
+                    placeholder="Tell us how we can help."
                     rows={6}
                     {...field}
                   />

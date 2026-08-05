@@ -110,8 +110,82 @@ export default function Listing() {
     ? { color: branding.accentColor }
     : undefined;
 
+  // Tailwind is configured with `@theme inline`, so utility classes like
+  // `bg-background` compile to `hsl(var(--background))` — overriding the
+  // derived `--color-*` vars alone does nothing. We must also override the
+  // raw HSL-triplet vars. Convert theme hex values to "H S% L%" triplets.
+  const hexToHslTriplet = (hex: string): string => {
+    const m = hex.replace("#", "");
+    const r = parseInt(m.slice(0, 2), 16) / 255;
+    const g = parseInt(m.slice(2, 4), 16) / 255;
+    const b = parseInt(m.slice(4, 6), 16) / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    let h = 0;
+    let s = 0;
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+      else if (max === g) h = ((b - r) / d + 2) / 6;
+      else h = ((r - g) / d + 4) / 6;
+    }
+    return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+  };
+  const rawVar = (name: string, hex?: string) =>
+    hex ? { [name]: hexToHslTriplet(hex) } : {};
+
+  const themeVars = branding?.theme ? {
+    // Raw HSL-triplet overrides (used by compiled Tailwind utilities).
+    ...rawVar("--background", branding.theme.background),
+    ...rawVar("--foreground", branding.theme.foreground),
+    ...rawVar("--card", branding.theme.card),
+    ...rawVar("--card-foreground", branding.theme.cardForeground),
+    ...rawVar("--border", branding.theme.border),
+    ...rawVar("--card-border", branding.theme.border),
+    ...rawVar("--muted", branding.theme.muted),
+    ...rawVar("--muted-foreground", branding.theme.mutedForeground),
+    ...rawVar("--primary", branding.theme.primary),
+    ...rawVar("--brand-red", branding.theme.brandRed),
+    ...rawVar("--brand-red-foreground", branding.theme.brandRedForeground),
+    ...rawVar("--brand-yellow", branding.theme.brandYellow),
+    ...rawVar("--brand-yellow-foreground", branding.theme.brandYellowForeground),
+    ...rawVar("--brand-navy", branding.theme.brandNavy),
+    ...rawVar("--brand-lime", branding.theme.brandLime),
+    ...rawVar("--brand-cream", branding.theme.brandCream),
+    // Derived vars (used by inline `var(--color-*)` styles in shared components).
+    ...(branding.theme.background && { "--color-background": branding.theme.background }),
+    ...(branding.theme.foreground && { "--color-foreground": branding.theme.foreground }),
+    ...(branding.theme.card && {
+      "--color-card": branding.theme.card,
+      // Themed surfaces for shared components (default to white when unset).
+      "--surface-card": branding.theme.card,
+      "--surface-card-90": `${branding.theme.card}E6`,
+    }),
+    ...(branding.theme.background && { "--surface-header-fg": branding.theme.background }),
+    ...(branding.theme.cardForeground && { "--color-card-foreground": branding.theme.cardForeground }),
+    ...(branding.theme.border && { "--color-border": branding.theme.border }),
+    ...(branding.theme.muted && { "--color-muted": branding.theme.muted }),
+    ...(branding.theme.mutedForeground && { "--color-muted-foreground": branding.theme.mutedForeground }),
+    ...(branding.theme.primary && { "--color-primary": branding.theme.primary }),
+    ...(branding.theme.brandRed && { "--color-brand-red": branding.theme.brandRed }),
+    ...(branding.theme.brandRedForeground && { "--color-brand-red-foreground": branding.theme.brandRedForeground }),
+    ...(branding.theme.brandYellow && { "--color-brand-yellow": branding.theme.brandYellow }),
+    ...(branding.theme.brandYellowForeground && { "--color-brand-yellow-foreground": branding.theme.brandYellowForeground }),
+    ...(branding.theme.brandNavy && { "--color-brand-navy": branding.theme.brandNavy }),
+    ...(branding.theme.brandLime && { "--color-brand-lime": branding.theme.brandLime }),
+    ...(branding.theme.brandCream && { "--color-brand-cream": branding.theme.brandCream }),
+    ...(branding.theme.popBorder && { "--pop-border": branding.theme.popBorder }),
+    ...(branding.theme.popShadow && { "--pop-shadow": branding.theme.popShadow }),
+    ...(branding.theme.buttonPopBg && { "--button-pop-bg": branding.theme.buttonPopBg }),
+    ...(branding.theme.buttonPopFg && { "--button-pop-fg": branding.theme.buttonPopFg }),
+    ...(branding.theme.buttonPopYellowBg && { "--button-pop-yellow-bg": branding.theme.buttonPopYellowBg }),
+    ...(branding.theme.buttonPopYellowFg && { "--button-pop-yellow-fg": branding.theme.buttonPopYellowFg }),
+  } as React.CSSProperties : undefined;
+
   return (
-    <div className="w-full pb-24 bg-background" data-location={business.id}>
+    <div className="w-full pb-24 bg-background" data-location={business.id} style={themeVars}>
       {/* Hero Image */}
       <div className="w-full h-[40vh] md:h-[50vh] relative">
         <BusinessImage
@@ -403,7 +477,7 @@ export default function Listing() {
               {(business.address || (business.lat != null && business.lng != null)) && (
                 <div className="card-pop bg-card p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-brand-red text-white flex items-center justify-center border-2 border-foreground">
+                    <div className="w-10 h-10 rounded-full bg-brand-red flex items-center justify-center border-2 border-foreground text-[var(--color-brand-red-foreground,#fff)]">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <h4 className="font-display text-xs tracking-[0.18em] text-foreground uppercase">{t("listing_page.address_label")}</h4>
@@ -451,7 +525,7 @@ export default function Listing() {
                       <div
                         className="w-1 rounded-full shrink-0 mt-1"
                         style={{
-                          backgroundColor: branding?.accentColor ?? "hsl(var(--brand-red))",
+                          backgroundColor: branding?.accentColor ?? "var(--color-brand-red)",
                           minHeight: "1.5rem",
                         }}
                         aria-hidden

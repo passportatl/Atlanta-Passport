@@ -406,7 +406,7 @@ const businessesRaw = [
   },
   {
     id: "trap-museum",
-    name: "Trap Museum",
+    name: "Trap Music Museum",
     image: trapMuseumFeatured,
     stampImage: trapMuseumStamp,
     logo: trapMuseumLogo,
@@ -2654,6 +2654,7 @@ export const neighborhoods = [
   { id: "l5p", name: "Little Five Points", description: "Vintage shops, weird corners, music, and street-level Atlanta.", color: "red", hex: "#14B8A6" },
   { id: "decatur", name: "Decatur", description: "Coffee, cocktails, bookstores, patios.", color: "sky", hex: "#1D3461" },
   { id: "poncey", name: "Virginia Highlands", description: "Food halls, rooftops, markets, and Beltline energy.", color: "yellow", hex: "#A0522D" },
+  { id: "poncey-highlands", name: "Poncey-Highlands", description: "Ponce corridor patios, murals, and Freedom Park trails.", color: "red", hex: "#C0392B" },
   { id: "glenwood-park", name: "Glenwood Park", description: "Walkable square, Beltline Southeast Trail, patios and pubs.", color: "lime", hex: "#C2D500" },
   { id: "buckhead", name: "Buckhead", description: "Upscale dining, galleries, nightlife, and leafy streets.", color: "navy", hex: "#475569" },
   { id: "inman-park", name: "Inman Park", description: "Victorian homes, festival energy, patios, and Beltline access.", color: "red", hex: "#DB2777" },

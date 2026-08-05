@@ -27,16 +27,13 @@ channel = "stable-25_05"
 
 [userenv.development]
 DISABLE_GEOFENCE = "true"
+CLERK_IDENTITY_RECOVERY_ENABLED = "true"
 
 [userenv.shared]
-AI_INTEGRATIONS_ANTHROPIC_API_KEY = "_DUMMY_API_KEY_"
-AI_INTEGRATIONS_ANTHROPIC_BASE_URL = "http://localhost:1106/modelfarm/anthropic"
-CLERK_PUBLISHABLE_KEY = "pk_test_c21vb3RoLWhvcm5ldC02MC5jbGVyay5hY2NvdW50cy5kZXYk"
-CLERK_SECRET_KEY = "sk_test_SGFUYyb3uH3NVL9YW1eaAdBFpKp1gdhNxjr0sxcGES"
-GITHUB_TOKEN = "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"
-SESSION_SECRET = "Ctfxj8c7kSNqkh+CatrIbhK109js/AVI54S5PB1E8x75vGBoFiLcHhtk3EDjC6SpMlGlLoCiH0aFZ8C/fBHGOA=="
-VITE_CLERK_PUBLISHABLE_KEY = "pk_test_c21vb3RoLWhvcm5ldC02MC5jbGVyay5hY2NvdW50cy5kZXYk"
-VITE_GOOGLE_MAPS_API_KEY = "AIzaSyCMLcC7ys5LyTgQngrnA_VsHCLvlPepVKE"
+CONTACT_NOTIFY_EMAIL = "info@passportatl.com"
+
+[userenv.production]
+CLERK_IDENTITY_RECOVERY_ENABLED = "true"
 
 [[ports]]
 localPort = 8080

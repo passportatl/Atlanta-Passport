@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const applicationsTable = pgTable("applications", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -32,6 +32,18 @@ export const applicationsTable = pgTable("applications", {
   eventUrl: text("event_url"),
   promoContact: boolean("promo_contact"),
   promoContactMethod: text("promo_contact_method"),
+  // ── Vendor submissions (submissionType = "vendor") ───────────────────────
+  vendorType: text("vendor_type"),
+  // ── Authoritative pricing (validated server-side against @workspace/pricing)
+  addOns: text("add_ons").array(),
+  listingPrice: integer("listing_price"),
+  // ── CRM fields ────────────────────────────────────────────────────────────
+  salesStage: text("sales_stage").notNull().default("new"),
+  assignedTo: text("assigned_to"),
+  lastContactAt: timestamp("last_contact_at", { withTimezone: true }),
+  nextFollowUpAt: timestamp("next_follow_up_at", { withTimezone: true }),
+  crmNotes: text("crm_notes"),
+  paymentStatus: text("payment_status").notNull().default("unpaid"),
   emailDelivered: text("email_delivered").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

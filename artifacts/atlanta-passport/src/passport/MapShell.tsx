@@ -1,9 +1,16 @@
-import { useState, useMemo, useEffect, type ReactNode } from "react";
+import {
+  useState,
+  useMemo,
+  useEffect,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from "react";
 import { useLocation, useSearch, useRoute, Link } from "wouter";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
-  businesses,
+  businesses as staticBusinesses,
   neighborhoods,
   exploreCategories,
   mapRoutes,
@@ -12,6 +19,21 @@ import {
   type RouteStart,
   type RouteTime,
 } from "@/data/sample-data";
+import {
+  resolveLocationCategoryId,
+  toLocationTaxonomyId,
+} from "@/data/location-taxonomy";
+import { useExploreLocations } from "@/hooks/useExploreLocations";
+import {
+  getExploreFilterOptions,
+  matchesExploreFilters,
+} from "@/lib/explore-filtering";
+import {
+  getExploreSessionSeed,
+  rankExploreLocations,
+} from "@/lib/explore-ranking";
+import { LegendsFeed } from "@/passport/LegendsFeed";
+import { LegendDetail } from "@/passport/LegendDetail";
 import BusinessMap, { type EventMarkerData } from "@/components/BusinessMap";
 import ExploreContent from "@/pages/explore";
 import EventsFeed from "@/passport/EventsFeed";
@@ -22,6 +44,7 @@ import EventDetailBody from "@/pages/event-detail-body";
 import RouteDetailBody from "@/pages/route-detail-body";
 import { PassportBottomNav } from "@/passport/PassportBottomNav";
 import Footer from "@/components/layout/Footer";
+import { MemberComingSoon } from "@/passport/MemberComingSoon";
 
 export type RouteOptions = { start: RouteStart; time: RouteTime };
 const DEFAULT_ROUTE_OPTIONS: RouteOptions = { start: "marta", time: "noon" };
@@ -46,51 +69,69 @@ export default function MapShell() {
   const { t } = useTranslation();
   const [isEventDetail, eventDetailParams] = useRoute("/passport/events/:id");
   const [isRouteDetail, routeDetailParams] = useRoute("/passport/routes/:id");
+  const [isLegendDetail, legendDetailParams] = useRoute(
+    "/passport/legends/:slug",
+  );
   const view = isEventDetail
     ? "event-detail"
     : isRouteDetail
       ? "route-detail"
+      : isLegendDetail
+        ? "legend-detail"
       : location === "/passport"
         ? "profile"
         : location === "/passport/events"
           ? "events"
           : location === "/passport/stamps"
             ? "stamps"
-            : location === "/passport/routes"
-              ? "routes"
-              : "explore";
+            : location === "/passport/legends"
+              ? "legends"
+              : location === "/passport/shop"
+                ? "shop"
+                : location === "/passport/routes"
+                  ? "routes"
+                  : "explore";
 
   const params =
     typeof window !== "undefined"
       ? new URLSearchParams(window.location.search)
       : null;
   const neighborhoodParam = params?.get("neighborhood");
-  const initialNeighborhood =
-    neighborhoods.find((n) => n.id === neighborhoodParam)?.name ??
-    neighborhoods.find((n) => n.name === neighborhoodParam)?.name ??
-    null;
-  const initialCategory =
-    exploreCategories.find((c) => c.id === params?.get("category"))?.label ??
-    null;
+  const initialAreaId = neighborhoodParam
+    ? (neighborhoods.find((n) => n.id === neighborhoodParam)?.id ??
+      neighborhoods.find((n) => n.name === neighborhoodParam)?.id ??
+      toLocationTaxonomyId(neighborhoodParam))
+    : null;
+  const categoryParam = params?.get("category");
+  const initialCategoryId = categoryParam
+    ? resolveLocationCategoryId(
+        exploreCategories.find((c) => c.id === categoryParam)?.label ??
+          categoryParam,
+      )
+    : null;
 
-  const [activeCategories, setActiveCategories] = useState<string[]>(
-    initialCategory ? [initialCategory] : [],
+  const [activeCategoryIds, setActiveCategoryIds] = useState<string[]>(
+    initialCategoryId ? [initialCategoryId] : [],
   );
-  const [activeNeighborhoods, setActiveNeighborhoods] = useState<string[]>(
-    initialNeighborhood ? [initialNeighborhood] : [],
+  const [activeAreaIds, setActiveAreaIds] = useState<string[]>(
+    initialAreaId ? [initialAreaId] : [],
   );
+  const [activeTagIds, setActiveTagIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [onlyOffers, setOnlyOffers] = useState(false);
+  const [exploreSessionSeed] = useState(getExploreSessionSeed);
   const [selectedBizId, setSelectedBizId] = useState<string | undefined>(
     undefined,
   );
   const [selectedRouteId, setSelectedRouteId] = useState<string | undefined>(
     undefined,
   );
-  const [selectedEventMarker, setSelectedEventMarker] = useState<EventMarkerData | null>(null);
+  const [selectedEventMarker, setSelectedEventMarker] =
+    useState<EventMarkerData | null>(null);
   const [routeOptions, setRouteOptions] = useState<
     Record<string, RouteOptions>
   >({});
+  const { locations: exploreBusinesses, status: exploreDataStatus } =
+    useExploreLocations();
 
   const getRouteOptions = (id: string): RouteOptions =>
     routeOptions[id] ?? DEFAULT_ROUTE_OPTIONS;
@@ -108,8 +149,9 @@ export default function MapShell() {
     const ev = events.find((e) => e.id === eventDetailParams?.id);
     if (!ev) return undefined;
     const evAddress = "address" in ev ? ev.address : "";
-    const venue = businesses.find(
-      (b) => b.name === ev.venue || (evAddress !== "" && b.address === evAddress),
+    const venue = staticBusinesses.find(
+      (b) =>
+        b.name === ev.venue || (evAddress !== "" && b.address === evAddress),
     );
     return venue?.id;
   }, [isEventDetail, eventDetailParams?.id]);
@@ -129,41 +171,39 @@ export default function MapShell() {
     }
   }, [isRouteDetail, routeDetailParams?.id]);
 
-  const toggleCategory = (cat: string) => {
-    setActiveCategories((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
+  const toggleValue = (
+    value: string,
+    setter: Dispatch<SetStateAction<string[]>>,
+  ) =>
+    setter((previous) =>
+      previous.includes(value)
+        ? previous.filter((candidate) => candidate !== value)
+        : [...previous, value],
     );
-  };
 
-  const toggleNeighborhood = (n: string) => {
-    setActiveNeighborhoods((prev) =>
-      prev.includes(n) ? prev.filter((x) => x !== n) : [...prev, n],
-    );
-  };
+  const filterOptions = useMemo(
+    () => getExploreFilterOptions(exploreBusinesses),
+    [exploreBusinesses],
+  );
 
   const filteredBusinesses = useMemo(() => {
-    return businesses.filter((biz) => {
-      const bizCategories = [
-        biz.category,
-        ...(((biz as { categories?: string[] }).categories) ?? []),
-      ];
-      const matchCategory =
-        activeCategories.length === 0 ||
-        activeCategories.some((c) => bizCategories.includes(c));
-      const matchNeighborhood =
-        activeNeighborhoods.length === 0 ||
-        activeNeighborhoods.some((n) =>
-          biz.neighborhood.toLowerCase().includes(n.toLowerCase()),
-        );
-      const matchSearch =
-        biz.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        biz.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchOffer =
-        !onlyOffers || Boolean((biz as { offer?: string }).offer);
-
-      return matchCategory && matchNeighborhood && matchSearch && matchOffer;
-    });
-  }, [activeCategories, activeNeighborhoods, searchQuery, onlyOffers]);
+    const matching = exploreBusinesses.filter((business) =>
+      matchesExploreFilters(business, {
+        query: searchQuery,
+        areaIds: activeAreaIds,
+        categoryIds: activeCategoryIds,
+        tagIds: activeTagIds,
+      }),
+    );
+    return rankExploreLocations(matching, exploreSessionSeed);
+  }, [
+    exploreBusinesses,
+    activeAreaIds,
+    activeCategoryIds,
+    activeTagIds,
+    searchQuery,
+    exploreSessionSeed,
+  ]);
 
   // The Routes view highlights one curated route at a time: the map shows only
   // that route's stops (in order) and draws a connecting line. With no route
@@ -191,16 +231,11 @@ export default function MapShell() {
   // must always resolve against the full dataset — otherwise carried-over
   // Explore filters would silently drop the clicked spot).
   const mapBusinesses = useMemo(() => {
-    // A picked route (from the Routes tab OR the Explore dropdown) takes over the
-    // map: show only its stops, in order.
-    if (
-      selectedRoute &&
-      (view === "routes" || view === "explore" || view === "route-detail")
-    )
+    if (selectedRoute && (view === "routes" || view === "route-detail"))
       return routeBusinesses;
-    if (view === "routes") return businesses;
+    if (view === "routes") return staticBusinesses;
     if (view === "explore" || view === "events") return filteredBusinesses;
-    return businesses;
+    return staticBusinesses;
   }, [view, selectedRoute, routeBusinesses, filteredBusinesses]);
 
   // Drop a stale selection/InfoWindow only when the selected spot is no longer
@@ -216,7 +251,7 @@ export default function MapShell() {
   const routePath = useMemo(() => {
     if (
       !resolvedSelectedRoute ||
-      (view !== "routes" && view !== "explore" && view !== "route-detail")
+      (view !== "routes" && view !== "route-detail")
     )
       return undefined;
     const { startAnchor, stops } = resolvedSelectedRoute;
@@ -241,7 +276,7 @@ export default function MapShell() {
   const routeNeighborhoods = useMemo(() => {
     if (
       !resolvedSelectedRoute ||
-      (view !== "routes" && view !== "explore" && view !== "route-detail")
+      (view !== "routes" && view !== "route-detail")
     )
       return [];
     return Array.from(
@@ -259,15 +294,22 @@ export default function MapShell() {
     if (location !== "/passport/explore" && location !== "/passport/events")
       return;
     const sp = new URLSearchParams(search);
-    const cat =
-      exploreCategories.find((c) => c.id === sp.get("category"))?.label ?? null;
+    const categoryValue = sp.get("category");
+    const cat = categoryValue
+      ? resolveLocationCategoryId(
+          exploreCategories.find((c) => c.id === categoryValue)?.label ??
+            categoryValue,
+        )
+      : null;
     const nbhdParam = sp.get("neighborhood");
     const nbhd =
-      neighborhoods.find((n) => n.id === nbhdParam)?.name ??
-      neighborhoods.find((n) => n.name === nbhdParam)?.name ??
-      null;
-    if (cat) setActiveCategories([cat]);
-    if (nbhd) setActiveNeighborhoods([nbhd]);
+      neighborhoods.find((n) => n.id === nbhdParam)?.id ??
+      neighborhoods.find((n) => n.name === nbhdParam)?.id ??
+      (nbhdParam ? toLocationTaxonomyId(nbhdParam) : null);
+    const tags = sp.get("tags")?.split(",").filter(Boolean);
+    if (cat) setActiveCategoryIds([cat]);
+    if (nbhd) setActiveAreaIds([nbhd]);
+    if (tags?.length) setActiveTagIds(tags);
   }, [search, location]);
 
   return (
@@ -285,15 +327,19 @@ export default function MapShell() {
                 routeTravelMode={routeTravelMode}
                 highlightNeighborhoods={
                   selectedRoute &&
-                  (view === "routes" ||
-                    view === "explore" ||
-                    view === "route-detail")
+                  (view === "routes" || view === "route-detail")
                     ? routeNeighborhoods
                     : view === "explore"
-                      ? activeNeighborhoods
+                      ? filterOptions.areas
+                          .filter((area) => activeAreaIds.includes(area.id))
+                          .map((area) => area.name)
                       : []
                 }
-                eventMarker={view === "events" && selectedEventMarker ? selectedEventMarker : undefined}
+                eventMarker={
+                  view === "events" && selectedEventMarker
+                    ? selectedEventMarker
+                    : undefined
+                }
                 onEventMarkerClose={() => setSelectedEventMarker(null)}
               />
             </div>
@@ -368,26 +414,50 @@ export default function MapShell() {
           <PassportStamps onSelectBusiness={setSelectedBizId} />
         </PassportPanel>
       )}
+      {view === "legends" && (
+        <PassportPanel>
+          <LegendsFeed />
+        </PassportPanel>
+      )}
+      {view === "legend-detail" && (
+        <PassportPanel>
+          <Link
+            href="/passport/legends"
+            className="mb-4 inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.16em] text-brand-red hover:underline"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" />
+            Back to ATL Legends
+          </Link>
+          <LegendDetail slug={legendDetailParams?.slug ?? ""} />
+        </PassportPanel>
+      )}
+      {view === "shop" && (
+        <PassportPanel>
+          <MemberComingSoon
+            eyebrow="Passport ATL goods"
+            title="Shop"
+            description="Passport merchandise, Atlanta keepsakes, and member-exclusive drops are coming in the next major Passport ATL update."
+            icon={ShoppingBag}
+          />
+        </PassportPanel>
+      )}
       {view === "explore" && (
         <ExploreContent
           filteredBusinesses={filteredBusinesses}
-          activeCategories={activeCategories}
-          activeNeighborhoods={activeNeighborhoods}
+          filterOptions={filterOptions}
+          activeCategoryIds={activeCategoryIds}
+          activeAreaIds={activeAreaIds}
+          activeTagIds={activeTagIds}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          setActiveCategories={setActiveCategories}
-          toggleCategory={toggleCategory}
-          setActiveNeighborhoods={setActiveNeighborhoods}
-          toggleNeighborhood={toggleNeighborhood}
-          onlyOffers={onlyOffers}
-          setOnlyOffers={setOnlyOffers}
+          setActiveCategoryIds={setActiveCategoryIds}
+          toggleCategory={(id) => toggleValue(id, setActiveCategoryIds)}
+          setActiveAreaIds={setActiveAreaIds}
+          toggleArea={(id) => toggleValue(id, setActiveAreaIds)}
+          setActiveTagIds={setActiveTagIds}
+          toggleTag={(id) => toggleValue(id, setActiveTagIds)}
+          dataStatus={exploreDataStatus}
           onSelectBusiness={setSelectedBizId}
-          selectedRouteId={selectedRouteId}
-          onSelectRoute={(id) => {
-            setSelectedRouteId(id);
-            setSelectedBizId(undefined);
-          }}
-          selectedRouteResolved={resolvedSelectedRoute}
         />
       )}
 

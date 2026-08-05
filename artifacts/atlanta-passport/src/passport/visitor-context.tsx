@@ -25,3 +25,7 @@ export function useVisitor(): VisitorContextValue {
   if (!ctx) throw new Error("useVisitor must be used within VisitorProvider");
   return ctx;
 }
+
+export function hasCurrentLegalConsent(visitor: Visitor | null): boolean {
+  return Boolean(visitor?.termsAcceptedAt && visitor?.privacyAcceptedAt);
+}

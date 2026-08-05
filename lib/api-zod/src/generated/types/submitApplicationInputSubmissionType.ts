@@ -12,4 +12,5 @@ export type SubmitApplicationInputSubmissionType =
 export const SubmitApplicationInputSubmissionType = {
   business: "business",
   event: "event",
+  vendor: "vendor",
 } as const;
