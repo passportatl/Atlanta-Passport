@@ -27,6 +27,7 @@ channel = "stable-25_05"
 
 [userenv.development]
 DISABLE_GEOFENCE = "true"
+CLERK_IDENTITY_RECOVERY_ENABLED = "true"
 
 [[ports]]
 localPort = 8080
