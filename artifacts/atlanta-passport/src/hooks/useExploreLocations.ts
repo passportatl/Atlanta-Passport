@@ -115,7 +115,7 @@ export function mergeCanonicalExploreLocations(
       canonicalId: record.id,
       canonicalSlug: record.slug,
       categoryId: record.categoryId,
-      tags: record.tags.length > 0 ? record.tags : legacyTagIds(location),
+      tags: Array.isArray(record.tags) && record.tags.length > 0 ? record.tags : legacyTagIds(location),
       areaId: record.areaId,
       mapReadiness: record.mapReadiness,
       isStampStop: record.isStampStop,

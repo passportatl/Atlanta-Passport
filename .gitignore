@@ -49,3 +49,7 @@ Thumbs.db
 .cache/
 .local/
 .backups/
+backups-download/
+artifacts/atlanta-passport/public/passport-atl-production-2026-08-04.dump
+artifacts/atlanta-passport/public/passport-atl-production-2026-08-04.sql
+artifacts/atlanta-passport/public/passport-atl-production-backup-2026-08-04.zip
