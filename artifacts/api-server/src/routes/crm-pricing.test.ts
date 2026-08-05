@@ -4,17 +4,39 @@
 //     ignored).
 //   - PATCH /admin/crm/:recordType/:id updates fields; follow-up buckets
 //     (overdue/upcoming/unassigned/paid) reflect the patch.
-//   - PATCH /visitors/:id/preferences returns 403 for cross-user updates on
-//     Clerk-linked visitors.
+//   - PATCH /visitors/:id/preferences requires authentication (401 without a
+//     session), only the owning visitor can update, and non-owned/unknown ids
+//     get the same non-enumerating 404.
 //   - GET /admin/newsletter-export contains only opted-in visitors.
 //
 // Runs against the dev database (DATABASE_URL). Emails are disabled by
 // clearing RESEND_API_KEY for the process — mailer reads it at call time.
 
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import express from "express";
 import request from "supertest";
 import { clerkMiddleware } from "@clerk/express";
+
+// Simulate an authenticated Clerk session in tests via the x-test-clerk-user
+// header. Requests without the header keep the real (unauthenticated)
+// behavior, so the 401 path is still exercised end-to-end. NOTE: this is
+// intentional test-only auth simulation — it does NOT validate real Clerk
+// tokens. Never copy this pattern into application code.
+vi.mock("@clerk/express", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@clerk/express")>();
+  return {
+    ...actual,
+    getAuth: (req: Parameters<typeof actual.getAuth>[0]) => {
+      const testUser = (req as { headers: Record<string, unknown> }).headers[
+        "x-test-clerk-user"
+      ];
+      if (typeof testUser === "string" && testUser) {
+        return { userId: testUser } as ReturnType<typeof actual.getAuth>;
+      }
+      return actual.getAuth(req);
+    },
+  };
+});
 import { inArray, eq } from "drizzle-orm";
 import {
   db,
@@ -329,26 +351,77 @@ describe("PATCH /visitors/:id/preferences ownership", () => {
     createdVisitorIds.push(linkedId, anonId);
   });
 
-  it("403s when an unauthenticated request targets a Clerk-linked visitor", async () => {
+  it("401s an unauthenticated request without changing data", async () => {
     const res = await request(app)
       .patch(`/api/visitors/${linkedId}/preferences`)
       .send({ promoOptIn: true });
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
     const [row] = await db.select().from(visitorsTable).where(eq(visitorsTable.id, linkedId));
     expect(row!.promoOptIn).toBe(false);
+
+    const anonRes = await request(app)
+      .patch(`/api/visitors/${anonId}/preferences`)
+      .send({ promoOptIn: true });
+    expect(anonRes.status).toBe(401);
+    const [anonRow] = await db.select().from(visitorsTable).where(eq(visitorsTable.id, anonId));
+    expect(anonRow!.promoOptIn).toBe(false);
   });
 
-  it("allows updating an unlinked (anonymous) visitor", async () => {
+  it("lets the authenticated visitor update their own preferences", async () => {
     const res = await request(app)
-      .patch(`/api/visitors/${anonId}/preferences`)
+      .patch(`/api/visitors/${linkedId}/preferences`)
+      .set("x-test-clerk-user", `${TEST_PREFIX}user_abc`)
       .send({ promoOptIn: true });
     expect(res.status).toBe(200);
     expect(res.body.promoOptIn).toBe(true);
+    const [row] = await db.select().from(visitorsTable).where(eq(visitorsTable.id, linkedId));
+    expect(row!.promoOptIn).toBe(true);
   });
 
-  it("404s for an unknown visitor", async () => {
+  it("does not let an authenticated visitor update another visitor (non-enumerating 404)", async () => {
+    const res = await request(app)
+      .patch(`/api/visitors/${anonId}/preferences`)
+      .set("x-test-clerk-user", `${TEST_PREFIX}user_other`)
+      .send({ promoOptIn: true });
+    expect(res.status).toBe(404);
+    const [row] = await db.select().from(visitorsTable).where(eq(visitorsTable.id, anonId));
+    expect(row!.promoOptIn).toBe(false);
+  });
+
+  it("does not let authenticated user A update user B's Clerk-linked record, and the denial is indistinguishable from an unknown id", async () => {
+    // Second linked visitor owned by a different Clerk user.
+    const [linkedB] = await db
+      .insert(visitorsTable)
+      .values({
+        firstName: "LinkedTestB",
+        email: `${TEST_PREFIX}linked-b@example.com`,
+        clerkUserId: `${TEST_PREFIX}user_b`,
+      })
+      .returning({ id: visitorsTable.id });
+    createdVisitorIds.push(linkedB!.id);
+
+    const denied = await request(app)
+      .patch(`/api/visitors/${linkedB!.id}/preferences`)
+      .set("x-test-clerk-user", `${TEST_PREFIX}user_abc`)
+      .send({ promoOptIn: true });
+    const unknown = await request(app)
+      .patch("/api/visitors/00000000-0000-0000-0000-000000000000/preferences")
+      .set("x-test-clerk-user", `${TEST_PREFIX}user_abc`)
+      .send({ promoOptIn: true });
+
+    // Non-enumeration: denied-known-id and unknown-id must be identical.
+    expect(denied.status).toBe(404);
+    expect(unknown.status).toBe(404);
+    expect(denied.body).toEqual(unknown.body);
+
+    const [rowB] = await db.select().from(visitorsTable).where(eq(visitorsTable.id, linkedB!.id));
+    expect(rowB!.promoOptIn).toBe(false);
+  });
+
+  it("404s an authenticated request for an unknown visitor (same as non-owned)", async () => {
     const res = await request(app)
       .patch("/api/visitors/00000000-0000-0000-0000-000000000000/preferences")
+      .set("x-test-clerk-user", `${TEST_PREFIX}user_abc`)
       .send({ promoOptIn: true });
     expect(res.status).toBe(404);
   });
