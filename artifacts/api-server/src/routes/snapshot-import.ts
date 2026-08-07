@@ -7,6 +7,9 @@ import {
   masterRoutesTable,
   routeStopsTable,
   eventsTable,
+  visitorsTable,
+  stampsTable,
+  redemptionsTable,
 } from "@workspace/db";
 import { requireAdmin } from "../lib/admin-auth";
 import { logger } from "../lib/logger";
@@ -24,13 +27,27 @@ const TABLES = {
   masterRoutes: masterRoutesTable,
   routeStops: routeStopsTable,
   events: eventsTable,
+  visitors: visitorsTable,
+  stamps: stampsTable,
+  redemptions: redemptionsTable,
 } as const;
 
 type TableKey = keyof typeof TABLES;
 
 // Order matters: parents before children (events reference sources; stops
-// reference routes).
-const INSERT_ORDER: TableKey[] = ["eventSources", "masterRoutes", "routeStops", "events"];
+// reference routes; stamps/redemptions reference visitors). Stamps also
+// reference businesses by id — the importing client must remap
+// stamps.business_id to the target database's business ids (matched via
+// business_slug) before posting, since businesses are seeded with fresh ids.
+const INSERT_ORDER: TableKey[] = [
+  "eventSources",
+  "masterRoutes",
+  "routeStops",
+  "events",
+  "visitors",
+  "stamps",
+  "redemptions",
+];
 
 function coerceRow(table: PgTable, raw: Record<string, unknown>): Record<string, unknown> {
   const columns = getTableColumns(table);
